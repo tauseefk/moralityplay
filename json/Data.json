@@ -1,0 +1,181 @@
+{
+    "videos": {
+        "pensive1": "./Videos/pensive_2.mp4",
+        "flashback1": "./Videos/Flashback_rough.mp4",
+        "start": "./Videos/mockup2.mp4"
+    },
+    "images": {
+        "thoughtIcon": "./Images/Icons/icon.png",
+        "cmu1": "./Images/Locations/CMU1.jpg",
+        "mainTitle": "./Images/UI/Title.png"
+    },
+    "scenes": {
+        "campusMap": {
+            "stateType": "LocationState",
+            "draggable": true,
+            "bgImageKey": "cmu1",
+            "videoFilter": "none",
+            "transition": {
+                "fadeIn": true,
+                "fadeOut": true
+            },
+            "icons": {                
+                "size": 5,
+                "type": ["IMAGE_BUTTON_SCENECHANGE",
+                    "IMAGE_BUTTON_SCENECHANGE",
+                    "IMAGE_BUTTON_SCENECHANGE",
+                    "IMAGE_BUTTON_SCENECHANGE",
+                    "IMAGE_BUTTON_SCENECHANGE"
+                ],
+                "key": [
+                    "thoughtIcon",
+                    "thoughtIcon",
+                    "thoughtIcon",
+                    "thoughtIcon",
+                    "thoughtIcon"                    
+                ],
+                "coords": [
+                    [100, 100],
+                    [500, 880],
+                    [800, 260],
+                    [1000, 50],
+                    [4500, 900]
+                ],
+                "targetScene": [
+                    "movie1",
+                    "movie1",
+                    "movie1",
+                    "movie1",
+                    "movie1"
+                ]
+            }
+        },
+        "movie1" : {
+            "stateType": "MovieState",
+            "movieKey": "start",
+            "movieSrc": "./Videos/mockup2.mp4",
+            "transition": {
+                "fadeIn": true,
+                "fadeOut": false
+            },
+            "nextScenes": "pensive1"
+        },
+        "pensive1": {
+            "stateType": "InteractState",
+            "videoFilter": "sepia",
+            "movieKey": "pensive1",
+            "movieSrc": "./Videos/pensive_2.mp4",
+            "transition": {
+                "fadeIn": true,
+                "fadeOut": true
+            },
+            "thoughtIconKey": "thoughtIcon",
+            "nextScenes": "flashbackScene1",
+            "thoughts": {
+                "type": "TEXT_THOUGHTS",
+                "sourceCoords": [900, 200],
+                "textProperties": {
+                    "fontSize": 30,
+                    "align": "center",
+                    "font": "Roboto"
+                },
+                "size": 3,
+                "content": [
+                    "I will probably fail.",
+                    "I just want the test to be over.",
+                    "They think I'm good at math \njust because I'm Asian."
+                ],
+                "destination":[ 
+                    [600, 600],
+                    [600, 250],
+                    [1300, 500]
+                ]
+            },
+            "choices": {
+                "type": "TEXT_CHOICES",
+                "textProperties": {
+                    "fontSize": 40,
+                    "align": "left",
+                    "font": "Roboto",
+                    "strokeThickness": 5,
+                    "fill": "#ffffff",
+                    "stroke": "#000000"
+                },
+                "size": 3,
+                "content": [
+                    "Is there something else besides math that's bothering you?\n",
+                    "Don't worry, you'll do great!\n",
+                    "Good luck!\n"
+                ],
+                "coords":[ 
+                    [500, 800],
+                    [500, 880],
+                    [500, 960]
+                ],
+                "targetScene": [
+                    "flashbackScene1",
+                    "movieScene1",
+                    "movieScene1"
+                ]
+            }
+        },
+        "flashbackScene1": {
+            "stateType": "FlashbackState",
+            "movieKey": "flashback1",
+            "movieSrc": "./Videos/Flashback_rough.mp4",
+            "videoFilter": "sepia",
+            "transition": {
+                "fadeIn": true,
+                "fadeOut": true
+            },
+            "nextScenes": "startScene"
+        },
+        "startScene": {
+            "stateType": "MenuState",
+            "draggable": false,
+            "bgImageKey": "cmu1",
+            "videoFilter": "none",
+            "transition": {
+                "fadeIn": true,
+                "fadeOut": true
+            },
+            "icons": {                
+                "size": 1,
+                "type": ["IMAGE_BUTTON_SCENECHANGE"
+                ],
+                "key": [
+                    "mainTitle"                 
+                ],
+                "coords": [
+                    [800, 500]
+                ],
+                "targetScene": [
+                    "campusMap"
+                ]
+            },
+            "input": {
+                "size": 1,
+                "name": [
+                    "Name:"
+                ],
+                "type": [
+                    "INPUT_TEXT"
+                ],
+                "coords": [
+                    [800, 800]
+                ],
+                "properties": [
+                    {
+                        "font": "100px Roboto",
+                        "width": 620,
+                        "height": 90,
+                        "max": 8,
+                        "placeHolder": "<Name>",
+                        "padding": 20,
+                        "textAlign": "center"
+                    }
+                ]
+            }
+        }
+    }
+}
