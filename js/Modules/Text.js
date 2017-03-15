@@ -5,7 +5,8 @@ define(['Modules/Linkable'], function(Linkable) {
 
     var TextTypeEnum = {
         Thoughts: 'TEXT_THOUGHTS',
-        Choices: 'TEXT_CHOICES'
+        MeaningfulChoices: 'TEXT_MEANINGFUL_CHOICES',
+        MeaninglessChoices: 'TEXT_MEANINGLESS_CHOICES'
     }
 
     var Text = function(content, xPos, yPos, properties) {
@@ -25,27 +26,23 @@ define(['Modules/Linkable'], function(Linkable) {
         this._text.padding.set(10, 0);
     }
 
-    Text.prototype.setCustomProperties = function() {
-        var property;
-        for(property in this._properties) {
-            this._text[property] = this._properties[property];
-        }
-    }
-
     Text.prototype.addToGame = function(game) {
-        this._text = game.add.text(this._xPos, this._yPos, this._content);
-        this.setDefaultProperties();
+        this._text = game.add.text(this._xPos, this._yPos, this._content, this._properties);
+        //this.setDefaultProperties();
     }
-    //arg1 can be: xTo, targetScene
-    //arg2 can be: yTo, signal
+    //arg1 can be: xTo, targetScene, endFilterSignal
+    //arg2 can be: yTo, changeSceneSignal
     //arg3 can be: filter
     Text.prototype.changeText = function(game, enumType, arg1, arg2, arg3) {
         switch(enumType) {
             case TextTypeEnum.Thoughts:
                 this.changeToThoughts(game, arg1, arg2, arg3);
                 break;
-            case TextTypeEnum.Choices:
-                this.changeToChoices(game, arg1, arg2);
+            case TextTypeEnum.MeaningfulChoices:
+                this.changeToMeaningfulChoices(game, arg1, arg2);
+                break;
+            case TextTypeEnum.MeaninglessChoices:
+                this.changeToMeaninglessChoices(game, arg1);
                 break;
             default:
                 console.warn("Invalid Text Type.");
@@ -53,32 +50,22 @@ define(['Modules/Linkable'], function(Linkable) {
     }
 
     Text.prototype.changeToThoughts = function(game, xTo, yTo, filter) {
-        this.setCustomProperties();
         this._text.anchor.setTo(0.5);
         this._text.alpha = 0;
-        this._text.inputEnabled = true;
-     //   this._text.filters = filter.getBlur();
-        this._text.setShadow(0, 0, 'rgba(255,255,255,1', 7);
-    //    this.addFadeTween(game);
         this.addInterpolationTween(game, xTo, yTo);
         Linkable.SetLinkProperties(game, true, false, this._text, this._text.events);
-  //      this.addMouseOverBlurEvents();
     }
 
-    Text.prototype.changeToChoices = function(game, targetScene, signal) {        
-        this.setCustomProperties();
+    Text.prototype.changeToMeaningfulChoices = function(game, targetScene, changeSceneSignal) {
         this._text.alpha = 0;
-        //this._text.strokeThickness = 8;
         this._text.inputEnabled = true;
-        Linkable.SetLinkProperties(game, true, false, this._text, this._text.events, changeScene, targetScene, signal);
+        Linkable.SetLinkProperties(game, true, false, this._text, this._text.events, ChangeScene, targetScene, changeSceneSignal);
     }
 
-
-    Text.prototype.addTweens = function(game) { 
-        
-    //    var textFocusX = _game.add.tween(_text.filters[0]).to({blur:Filter.getBlurNone()[0].blur}, 1000, Phaser.Easing.Linear.None, false, 0, 0, false);
-    //    var textFocusY = _game.add.tween(_text.filters[1]).to({blur:Filter.getBlurNone()[1].blur}, 1000, Phaser.Easing.Linear.None, false, 0, 0, false);
-        
+    Text.prototype.changeToMeaninglessChoices = function(game, endInteractionSignal) {      
+        this._text.alpha = 0;
+        this._text.inputEnabled = true;
+        Linkable.SetLinkProperties(game, true, true, this._text, this._text.events, EndInteraction, endInteractionSignal);
     }
 
     Text.prototype.addInterpolationTween = function(game, xTo, yTo) {
@@ -88,27 +75,17 @@ define(['Modules/Linkable'], function(Linkable) {
             });
     }
 
-    Text.prototype.addMouseOverBlurEvents = function() {
-        return this._text.events.onInputOver.addOnce(focusText(this._text), this);
+    Text.prototype.fadeOut = function(game) {
+        Linkable.fadeOut(game, this._text, true);
     }
 
-    function changeScene(scene, signal) {
+    function ChangeScene(scene, signal) {
         signal.dispatch(scene);
     }
 
-    function focusText(text) {
-        return function() {
-         //   console.log("FIlter: " + this._filter);
-         //   text.filters = this._filter._blurNone;
-            text.filters = null;
-        }
-     //   textFadeX.start();
-      //  textFadeY.start();
+    function EndInteraction(signal) {
+        signal.dispatch();
     }
-
-    function blurifyText() {
-        _text.filters = Filter.getBlur();
-    } 
 
     return Text;
 });

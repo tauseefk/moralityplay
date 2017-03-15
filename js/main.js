@@ -16,6 +16,7 @@ function initGame(Boot, Preload, StateManager, ResourceLoader) {
 
     function preload () {        
         game.load.json('data', 'json/Data.json');
+        game.load.json('style', 'json/Style.json');
     }
 
     function create() {

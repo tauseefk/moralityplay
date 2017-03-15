@@ -1,0 +1,25 @@
+{   
+    "UI": {
+        "namePlate": {
+            "x": 0,
+            "y": 0,
+            "width": 100,
+            "height": 30
+        }
+    },    
+    "thoughtsTextProperties": {
+        "fontSize": 30,
+        "align": "center",
+        "font": "Roboto",
+        "stroke": "#ffffff",
+        "strokeThickness": 5
+    },
+    "choicesTextProperties": {
+        "fontSize": 40,
+        "align": "left",
+        "font": "Roboto",
+        "strokeThickness": 5,
+        "fill": "#ffffff",
+        "stroke": "#000000"
+    }
+}

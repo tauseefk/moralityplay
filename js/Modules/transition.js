@@ -4,12 +4,10 @@ define(function() {
 	var _instance = null;
 	var _game = null;
 	var _rectGraphic = null;
-	var _fadeInSignal = null;
-	var _fadeOutSignal = null;
 	const TRANSITION_COLOR = 0xFFFFFF;
 
 
-	function fade(isFadeIn, color) {
+	function fade(isFadeIn) {
 		var val = 0;
 		if(isFadeIn)
 			val = 1;
@@ -39,18 +37,14 @@ define(function() {
 			if(_instance !== null)
 				return _instance;
 			_instance = this;
-			_game = game;
-			_fadeInSignal = new Phaser.Signal();
-			_fadeInSignal.add(fade, this, 0, true);
-			_fadeOutSignal = new Phaser.Signal();
-			_fadeOutSignal.add(fade, this, 0, false);		
+			_game = game;	
 			return _instance;
 		},
-		getFadeInSignal: function() {
-			return _fadeInSignal;
+		fadeInTransition: function() {
+			fade(true);
 		},
-		getFadeOutSignal: function() {
-			return _fadeOutSignal;
+		fadeOutTransition: function() {
+			fade(false);
 		}
 	}
 

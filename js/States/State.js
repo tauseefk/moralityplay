@@ -10,28 +10,36 @@ define(function()  {
       this._scene = scene;
     };
 
+
     State.prototype.getMovieKey = function() {
       return this._scene.movieKey;
     }
-    State.prototype.getThoughts = function() {
+    State.prototype.getChoiceMoments = function() {
+      return this._scene.choiceMoments;
+    }
+    State.prototype.getThoughtBubble = function(index) {
+      return this._scene.choiceMoments.choiceMomentsProperties[index].thoughtBubbles;
+    }
+    /*
+    State.prototype.getThoughtsInfo = function() {
       return this._scene.thoughts;
     }
-    State.prototype.getChoices = function() {
+    State.prototype.getChoicesInfo = function() {
       return this._scene.choices;
     }
     State.prototype.getThoughtIconKey = function() {
       return this._scene.thoughtIconKey;
-    }
+    }*/
 
     State.prototype.getBgImageKey = function() {
       return this._scene.bgImageKey;
     }
 
-    State.prototype.getIcons = function() {
+    State.prototype.getIconsInfo = function() {
       return this._scene.icons;
     }
 
-    State.prototype.getInput = function() {
+    State.prototype.getInputInfo = function() {
       return this._scene.input;
     }
 
@@ -39,7 +47,7 @@ define(function()  {
       return this._scene.movieSrc;
     }
 
-    State.prototype.getTransition = function() {
+    State.prototype.getTransitionInfo = function() {
       return this._scene.transition;
     }
 

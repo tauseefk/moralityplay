@@ -7,7 +7,6 @@ define(['Modules/Text'], function(Text) {
     var _instance = null;
     var _game = null;
     var _text = [];
-    var _choiceFont = null;
 
     return {
         init: function(game) {
@@ -19,12 +18,24 @@ define(['Modules/Text'], function(Text) {
         },
         preload: function() {
         },
-        create: function(info, signal) {
+        createMeaningfulChoices: function(info) {
             for(var i=0; i < info.size; i++) {
-                _text.push(new Text(info.content[i], info.coords[i][0], info.coords[i][1], info.textProperties));
+                _text.push(new Text(info.content[i], info.coords[i][0], info.coords[i][1], _game.global.style.choicesTextProperties));
                 _text[i].addToGame(_game);
-                _text[i].changeText( _game, 'TEXT_CHOICES', info.targetScene[i], signal);
-            };            
+                _text[i].changeText( _game, 'TEXT_MEANINGFUL_CHOICES', info.targetScene[i], _game.global.gameManager.getChangeSceneSignal());
+            };
+        },
+        createMeaninglessChoices: function(info) {
+            for(var i=0; i < info.size; i++) {
+                _text.push(new Text(info.content[i], info.coords[i][0], info.coords[i][1], _game.global.style.choicesTextProperties));
+                _text[i].addToGame(_game);
+                _text[i].changeText( _game, 'TEXT_MEANINGLESS_CHOICES', _game.global.gameManager.getEndInteractionSignal());
+            };
+        },
+        endInteraction: function() {
+            _text.forEach(function(text) {
+                text.fadeOut(_game);
+            });
         }
     }
 

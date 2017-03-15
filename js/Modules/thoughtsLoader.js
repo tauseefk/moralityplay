@@ -18,12 +18,17 @@ define(['Modules/Text'], function(Text) {
         },
         preload: function() {
         },
-        create: function(info) {
+        create: function(info, coords) {
             for(var i=0; i < info.size; i++) {
-                _text.push(new Text(info.content[i], info.sourceCoords[0], info.sourceCoords[1], info.textProperties));
+                _text.push(new Text(info.content[i], coords[0], coords[1], _game.global.style.thoughtsTextProperties));
                 _text[i].addToGame(_game);
                 _text[i].changeText(_game, 'TEXT_THOUGHTS', info.destination[i][0], info.destination[i][1]);
             };
+        },
+        endInteraction: function() {
+            _text.forEach(function(text) {
+                text.fadeOut(_game);
+            });
         }
     }
 

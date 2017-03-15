@@ -11,11 +11,17 @@ define(function() {
         google: {
           families: ['Roboto', 'Roboto Condensed'],
         }
-
     };    
 
-    function delayedCreate() {        
+    function delayedCreate() {
+        createGlobalVars(); 
         _game.state.start("preload");
+    }
+
+    function createGlobalVars() {
+        _game.global = {
+            playerName: null
+        }
     }
 
     return {

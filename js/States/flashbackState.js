@@ -19,9 +19,9 @@ define(['Modules/videoLoader', 'Modules/transition', 'States/State'], function(V
         preload: function() {
         },
         create: function() {     
-            Video.create(_stateInfo.getMovieSrc(), _stateInfo.getTransition().fadeOut, Transition.getFadeOutSignal(), _stateInfo.getVideoFilter(), _stateInfo.getNextScenes());     
-            if(_stateInfo.getTransition().fadeIn)
-                Transition.getFadeInSignal().dispatch();
+            Video.create(_stateInfo.getMovieSrc(), _stateInfo.getTransitionInfo().fadeOut, _stateInfo.getVideoFilter(), _stateInfo.getNextScenes());     
+            if(_stateInfo.getTransitionInfo().fadeIn)
+                this.game.global.gameManager.getFadeInTransitionSignal().dispatch();
         }
     }
     

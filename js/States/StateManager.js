@@ -1,9 +1,9 @@
 
-define(['Modules/resourceLoader', 'Modules/transition', 'Modules/videoLoader', 'States/menuState', 'States/locationState', 'States/interactState', 'States/flashbackState', 'States/movieState'], function(Resources, Transition, Video, MenuState, LocationState, InteractState, FlashbackState, MovieState)  {
+define(['Modules/resourceLoader', 'Modules/transition', 'Modules/videoLoader', 'States/menuState', 'States/locationState', 'States/interactState', 'States/flashbackState', 'States/movieState'], 
+    function(Resources, Transition, Video, MenuState, LocationState, InteractState, FlashbackState, MovieState)  {
     "use strict";
 
-    var _instance = null;
-    var _sceneChangeSignal = null;
+    var _stateManagerInstance = null;
     var _transitionSignal = null;
     var _game = null;
 
@@ -15,64 +15,66 @@ define(['Modules/resourceLoader', 'Modules/transition', 'Modules/videoLoader', '
         LocationState: 'LocationState'
     }
 
-    function changeScene(scene) {
-        console.log(scene);
-   //     Transition.fadeIn();
+    function ChangeScene(scene) {
         var nextScene = Resources.getScene(scene);
         if(nextScene === null)
             console.warn("Scene: " + scene + "is undefined.");
         console.log("Changing scene to: " + nextScene.stateType);
         switch(nextScene.stateType) {
             case StateEnum.MenuState:                
-                _game.state.start(nextScene.stateType, true, false, nextScene, _sceneChangeSignal);
+                _stateManagerInstance.start(nextScene.stateType, true, false, nextScene);
                 break;
             case StateEnum.InteractState:
-                _game.state.start(nextScene.stateType, true, false, nextScene, _sceneChangeSignal);
+                _stateManagerInstance.start(nextScene.stateType, true, false, nextScene);
                 break;
             case StateEnum.FlashbackState:
-                _game.state.start(nextScene.stateType, true, false, nextScene, _sceneChangeSignal);
+                _stateManagerInstance.start(nextScene.stateType, true, false, nextScene);
                 break;
             case StateEnum.MovieState:
-                _game.state.start(nextScene.stateType, true, false, nextScene, _sceneChangeSignal);
+                _stateManagerInstance.start(nextScene.stateType, true, false, nextScene);
                 break;
             case StateEnum.LocationState:
-                _game.state.start(nextScene.stateType, true, false, nextScene, _sceneChangeSignal);
+                _stateManagerInstance.start(nextScene.stateType, true, false, nextScene);
                 break;
             default:
                 console.warn("Invalid State.");
         }
     }
 
-    function startTransition() {
-        Transition.fadeIn();
+    function AddAllStates() {
+        _stateManagerInstance.add(StateEnum.MenuState, MenuState);
+        _stateManagerInstance.add(StateEnum.LocationState, LocationState);
+        _stateManagerInstance.add(StateEnum.InteractState, InteractState);
+        _stateManagerInstance.add(StateEnum.FlashbackState, FlashbackState);
+        _stateManagerInstance.add(StateEnum.MovieState, MovieState);
     }
 
-    function addAllStates() {
-        _game.state.add(StateEnum.MenuState, MenuState);
-        _game.state.add(StateEnum.LocationState, LocationState);
-        _game.state.add(StateEnum.InteractState, InteractState);
-        _game.state.add(StateEnum.FlashbackState, FlashbackState);
-        _game.state.add(StateEnum.MovieState, MovieState);
+    function ChangePlayerName() {
+        return function() {
+            this.game.playerName = MenuState.getPlayerName();_input[0].getInput().text;
+            console.log("this.game.playerName");
+        };
     }
 
     return {
         init: function() {
             console.log("Initializing StateManager");
-            if(_instance !== null)
+            if(_stateManagerInstance !== null)
                 return _instance;
-            _instance = this;
+            _stateManagerInstance = this.game.state;
             _game = this.game;
-            _sceneChangeSignal = new Phaser.Signal();
-            _sceneChangeSignal.add(changeScene, this);
-            Transition.init(_game, _sceneChangeSignal);
-            addAllStates();
-            return _instance;
+            Transition.init(_game);
+            AddAllStates();
+            return _stateManagerInstance;
         },
         preload: function() {            
         },
         create: function() {
             Video.stop();
-            changeScene(Resources.getStartSceneKey());
+            _game.global.gameManager.getChangeSceneSignal().dispatch(Resources.getStartSceneKey());
+        },
+        changeScene: function(scene) {
+            ChangeScene(scene);
         }
     }
     

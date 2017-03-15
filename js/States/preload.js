@@ -1,6 +1,6 @@
 //Dependency: None
 
-define(['Modules/resourceLoader'], function(Resources) {
+define(['Modules/resourceLoader', 'Modules/gameManager'], function(Resources, GameManager) {
     var _instance = null
     var _game = null;
 
@@ -10,6 +10,7 @@ define(['Modules/resourceLoader'], function(Resources) {
                 return _instance;
             _game = this.game;
             Resources.init(_game);
+            _game.global.gameManager = new GameManager();
             return _instance;
         },
         preload: function() {
@@ -17,6 +18,8 @@ define(['Modules/resourceLoader'], function(Resources) {
         },
         create: function() {
             Resources.create();
+            _game.global.gameManager.initSignals();
+            _game.global.style = Resources.getStyle();
             _game.state.start("stateManager");
         }
     }

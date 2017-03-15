@@ -3,46 +3,39 @@ define(['Modules/filter', 'Modules/thoughtsLoader', 'Modules/choiceLoader', 'Mod
 
     var _instance = null;
     var _game = null;
-    var _signal = null;
-    var _icons = null;
-
-    //arg1 can be thoughts
-    //arg2 can be choices
-    function createIcon(iconKey, thoughts, choices) {        
-        _icons = [];
-        var button = new Image(thoughts.sourceCoords[0], thoughts.sourceCoords[1], iconKey);
+    var _icons = [];
+    
+    function CreateThoughtIcon(iconKey, coords, thoughts, choices) {
+        var button = new Image(coords[0], coords[1], iconKey);
         button.addButtonToGame(_game);
-        button.changeImage(_game, 'IMAGE_BUTTON_THOUGHT', buttonPressed);
+        button.changeImage(_game, 'IMAGE_BUTTON_THOUGHT', ButtonPressed);
 
         _icons.push(button);
-        function buttonPressed() {
-            createThoughtsAndChoices(thoughts, choices, _signal);
+        function ButtonPressed() {
+            Thoughts.create(thoughts, coords);
+            if(choices.targetScene)
+                Choices.createMeaningfulChoices(choices, _game.global.gameManager.getChangeSceneSignal());
+            else
+                Choices.createMeaninglessChoices(choices);
         }        
     }
 
-    function createIcons(key, coords, targetScene, type, reference) {
+    function CreateExploratoryIcons(key, coords, targetScene, type, reference) {
         var button = new Image(coords[0], coords[1], key);
         button.addButtonToGame(_game);
-        button.changeImage(_game, type, targetScene, _signal);
+        button.changeImage(_game, type, targetScene, _game.global.gameManager.getChangeSceneSignal());
         _icons.push(button.getPhaserImage());
     }
 
-    function createThoughtsAndChoices(thoughts, choices, signal) {
-        createThoughts(thoughts);
-        createChoices(choices, signal);
-    }
-
-    function createThoughts(thoughts) {
-        Thoughts.create(thoughts);
-    }
-
-    function createChoices(choices, signal) {
-        Choices.create(choices, signal);
+    function EndInteraction() {
+        _icons.forEach(function(icon) {
+            if(icon.alive)
+                icon.fadeOut(_game);
+        });
     }
 
     return {
-        init: function(game, signal) {            
-            _signal = signal;
+        init: function(game) {
             if(_instance !== null)
                 return _instance;
             Thoughts.init(game);        
@@ -53,16 +46,21 @@ define(['Modules/filter', 'Modules/thoughtsLoader', 'Modules/choiceLoader', 'Mod
         },
         preload: function() {
         },
-        create: function(icons, thoughts, choices) {
+        createThoughtIcon: function(iconKey, coords, thoughts, choices) {
             _icons = [];
-            createIcon(icons, thoughts, choices);
+            CreateThoughtIcon(iconKey, coords, thoughts, choices);
         },
-        createMovingIcons: function(icons) {
+        createExploratoryIcons: function(icons) {
             _icons = [];
             for(var i=0; i<icons.size; i++) {
-                createIcons(icons.key[i], icons.coords[i], icons.targetScene[i], icons.type[i]);
+                CreateExploratoryIcons(icons.key[i], icons.coords[i], icons.targetScene[i], icons.type[i]);
             }
             return _icons;
+        },
+        endInteraction: function() {
+            EndInteraction();
+            Choices.endInteraction();
+            Thoughts.endInteraction();
         }
     }
 

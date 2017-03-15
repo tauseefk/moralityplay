@@ -3,15 +3,10 @@
 define(function() {
     "use strict";
 
-    var LinkableTypeEnum = {
-        Info: 'IMAGE_BUTTON_INFO',
-        SceneChange: 'IMAGE_BUTTON_SCENECHANGE',
-        Thought: 'IMAGE_BUTTON_THOUGHT',
-        Transition: 'IMAGE_TRANSITION',
-        Background: 'IMAGE_BACKGROUND'
-    }
+    var _filterFadeSignal = null;
+    const FADE_SPEED = 700;
 
-    //Image constructor
+    //Linkable constructor
     var Linkable = function(xPos, yPos, key, properties) {
         this._xPos = xPos;
         this._yPos = yPos;
@@ -20,15 +15,14 @@ define(function() {
         this._image = null;
     }
 
-
     Linkable.SetLinkProperties = function(game, fadeIn, fadeOut, object, event, callbackFunc, targetScene, signal) {
         
         if(fadeIn) {
-            game.add.tween(object).to({alpha:1}, 1000, Phaser.Easing.Linear.None, true, 0, 0, false);  
+            game.add.tween(object).to({alpha:1}, FADE_SPEED, Phaser.Easing.Linear.None, true, 0, 0, false);  
         }
 
         if(fadeOut) {
-            var objectFadeOut = game.add.tween(object).to({alpha:0}, 500, Phaser.Easing.Linear.None, false, 0, 0, false);
+            var objectFadeOut = game.add.tween(object).to({alpha:0}, FADE_SPEED, Phaser.Easing.Linear.None, false, 0, 0, false);
             objectFadeOut.onComplete.add(DisableButton, this);
         }
         event.onInputUp.addOnce(ButtonPressed, this);
@@ -40,9 +34,24 @@ define(function() {
                 DisableButton();
         }
 
-        function DisableButton() {      
-            callbackFunc(targetScene, signal);
+        function DisableButton() {
+            if(callbackFunc)   
+                callbackFunc(targetScene, signal);
             object.destroy();
+        }
+    }
+
+    Linkable.fadeIn = function(game, object) {
+        game.add.tween(object).to({alpha:1}, FADE_SPEED, Phaser.Easing.Linear.None, true, 0, 0, false);
+    }
+
+    Linkable.fadeOut = function(game, object, destroy) {
+        var tween = game.add.tween(object).to({alpha:0}, FADE_SPEED, Phaser.Easing.Linear.None, true, 0, 0, false);
+        tween.onComplete.add(Disable, this);
+
+        function Disable() {
+            if(destroy)
+                object.destroy();
         }
     }
 

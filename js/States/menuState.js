@@ -4,20 +4,32 @@ define(['Modules/inputLoader', 'Modules/transition', 'States/State', 'Modules/mo
 
     var _instance = null;
     var _stateInfo = null;
-    var _signal = null;
+    var _changeSceneSignal = null;
     var _input = [];
+
+    function setPlayerName(game) {
+        if(_input[0])
+            return function() {game.global.playerName = _input[0].getInput().text._text;};
+        else {
+            "Input not eneabled.";
+        }
+    }
+
+    function updatePlayerNameCallback(game) {
+        game.state.onShutDownCallback = setPlayerName(game);
+    }
 
     return {
         init: function(scene, signal) { 
             if(_stateInfo !== null)
                 _stateInfo.setStateScene(scene);         
             if(_instance !== null)
-                return _instance;
+                return _instance;            
+            _instance = this;            
             _stateInfo = new State(scene);
-            _signal = signal;
-            _instance = this;
+            _changeSceneSignal = signal;
             MovingBackground.init(this.game);
-            Icons.init(this.game, signal);
+            Icons.init(this.game, _changeSceneSignal);
             Input.init(this.game);
             return _instance;
         },
@@ -25,17 +37,16 @@ define(['Modules/inputLoader', 'Modules/transition', 'States/State', 'Modules/mo
         },
         create: function() {
             _input = [];
+            updatePlayerNameCallback(this.game); 
             //Video.create(_stateInfo.getMovieSrc(), _stateInfo.getTransition().fadeOut, Transition.getFadeOutSignal(), _stateInfo.getVideoFilter(), _stateInfo.getNextScenes());
             MovingBackground.create(_stateInfo.getBgImageKey(), _stateInfo.getDraggable());
-            Icons.createMovingIcons(_stateInfo.getIcons());
-            _input = Input.create(_stateInfo.getInput());
-            console.log(_input[0].getInput(0));
-            if(_stateInfo.getTransition().fadeIn)
-                Transition.getFadeInSignal().dispatch();
+            Icons.createExploratoryIcons(_stateInfo.getIconsInfo());
+            //_input = Input.create(_stateInfo.getInputInfo());
+            if(_stateInfo.getTransitionInfo().fadeIn)
+                this.game.global.gameManager.getFadeInTransitionSignal().dispatch();
         },
         update: function() {
             _input.forEach(function(element) {
-
                 element.getInput().update();
             });
         }
