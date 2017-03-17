@@ -21,7 +21,8 @@ define(['Modules/videoFilterLoader'], function(VideoFilter) {
         if(doFadeOut)            
             _game.time.events.add((_video.video.duration-FADEOUT_OFFSET_SECONDS)*1000, fadeOut, this, signal);
         */
-        _video.onComplete.addOnce(ChangeScene(nextScenes), this);
+        if(nextScenes)
+            _video.onComplete.addOnce(ChangeScene(nextScenes), this);
     }
 
     function AddInteractionEvents() {
@@ -37,7 +38,7 @@ define(['Modules/videoFilterLoader'], function(VideoFilter) {
         function OnVideoLoad() {
             
             if(doFadeOut) {
-                _game.time.events.add((_video.video.duration-FADEOUT_OFFSET_SECONDS)*Phaser.Timer.SECOND, FadeOut, this);
+                //_game.time.events.add((_video.video.duration-FADEOUT_OFFSET_SECONDS)*Phaser.Timer.SECOND, FadeOut, this);
             }
 
             if(_videoFilter != null && _videoFilter != 'none') {            
@@ -52,7 +53,7 @@ define(['Modules/videoFilterLoader'], function(VideoFilter) {
         console.log(_video.video.duration);
         console.log(_video.video.currentTime);
         VideoFilter.startFilterFade(_game);
-        ReducePlaybackSpeed();
+        //ReducePlaybackSpeed();
         _game.global.gameManager.getTriggerInteractionSignal().dispatch();
     }
 
@@ -63,15 +64,17 @@ define(['Modules/videoFilterLoader'], function(VideoFilter) {
             TriggerMoment();
             AddInteractionEvents();
         }
-      },1000);
+      },500);
     }
 
     function ReducePlaybackSpeed() {
          _video.playbackRate = VIDEO_SLOW_PLAYBACK_RATE;
     }
 
-    function ResumePlaybackSpeed() {        
-        _video.playbackRate = 1;
+    function ResumePlaybackSpeed() {   
+        _video.play();
+        //_game.time.resume();
+        //_video.playbackRate = 1;
     }
     
     function FadeOut(signal) {

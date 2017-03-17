@@ -20,6 +20,9 @@
         "font": "Roboto",
         "strokeThickness": 5,
         "fill": "#ffffff",
-        "stroke": "#000000"
+        "stroke": "#000000",
+        "boundsHeight": 100
+    },
+    "choiceTextBgProperties": {
     }
 }

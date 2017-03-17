@@ -9,24 +9,18 @@ define(['Modules/Linkable'], function(Linkable) {
         Thought: 'IMAGE_BUTTON_THOUGHT',
         Transition: 'IMAGE_TRANSITION',
         Background: 'IMAGE_BACKGROUND',
-        ChoiceBackground: 'IMAGE_CHOICE_BACKGROUND'
+        Static: 'IMAGE_STATIC'
     }
 
     //Image constructor
-    var Image = function(xPos, yPos, key, properties) {
+    var Graphic = function(xPos, yPos) {
         this._xPos = xPos;
         this._yPos = yPos;
-        this._properties = properties;
-        this._key = key;
-        this._image = null;
     }
 
-    Image.prototype.addImageToGame = function(game, type) {
-        if(type && (type == ImageTypeEnum.SceneChange || type == ImageTypeEnum.Thought))            
-            this._image = game.add.button(this._xPos, this._yPos, this._key);
-        else {
-            this._image = game.add.image(this._xPos, this._yPos, this._key);
-        }
+    Image.prototype.addGraphicsToGame = function(game, fill) {
+        this._graphics = game.add.graphics(this._xPos, this._yPos);
+
     }
 
     Image.prototype.addButtonToGame = function(game) {
@@ -38,7 +32,9 @@ define(['Modules/Linkable'], function(Linkable) {
     }
 
     //Assigns image change function depending on enum
-    Image.prototype.changeImage = function (game, enumType, arg1, arg2, arg3) {
+    //arg1 can be boolean: draggable, function: button callback, targetScene
+    //arg2 can be signal
+    Image.prototype.changeImage = function (game, enumType, arg1, arg2) {
         switch(enumType) {
             case ImageTypeEnum.Background:
                 this.changeToBgImage(game, arg1);
@@ -49,8 +45,8 @@ define(['Modules/Linkable'], function(Linkable) {
             case ImageTypeEnum.SceneChange:
                 this.changeToSceneChangeImage(game, arg1, arg2);
                 break;
-            case ImageTypeEnum.ChoiceBackground:
-                this.changeToChoiceBackgroundImage(game, arg1, arg2);
+            case ImageTypeEnum.Static:
+                this.changeToStaticImage(game, arg1, arg2);
                 break;
             default:
                 console.warn("Invalid Image Type.");
@@ -81,14 +77,13 @@ define(['Modules/Linkable'], function(Linkable) {
         Linkable.SetLinkProperties(game, true, true, this._image, this._image, changeScene, targetScene, signal);
     }
 
-    Image.prototype.changeToChoiceBackgroundImage = function(game, width, height) {
-        this._image.anchor.x = 0.5;
-        this._image.x = game.width/2;
-        this._image.width = width;
-        this._image.height = height;
+    Image.prototype.changeToStaticImage = function(game, targetScene, signal) {
         return this._image;
     }
 
+    Image.prototype.changeToChoiceBgImage = function(game, width, height) {
+
+    }
 
     //Changes cursor image on mouseover
     Image.prototype.changeCursorImage = function(game, cursorImageSrc) {
@@ -140,5 +135,5 @@ define(['Modules/Linkable'], function(Linkable) {
         graphics.drawRect(0, 0, bounds.width, bounds.height);
     }
 
-    return Image;
+    return Graphic;
 });

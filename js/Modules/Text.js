@@ -2,6 +2,7 @@
 
 define(['Modules/Linkable'], function(Linkable) {
     "use strict";
+    const PADDING = 10;
 
     var TextTypeEnum = {
         Thoughts: 'TEXT_THOUGHTS',
@@ -33,16 +34,16 @@ define(['Modules/Linkable'], function(Linkable) {
     //arg1 can be: xTo, targetScene, endFilterSignal
     //arg2 can be: yTo, changeSceneSignal
     //arg3 can be: filter
-    Text.prototype.changeText = function(game, enumType, arg1, arg2, arg3) {
+    Text.prototype.changeText = function(game, enumType, arg1, arg2, arg3, arg4, arg5) {
         switch(enumType) {
             case TextTypeEnum.Thoughts:
                 this.changeToThoughts(game, arg1, arg2, arg3);
                 break;
             case TextTypeEnum.MeaningfulChoices:
-                this.changeToMeaningfulChoices(game, arg1, arg2);
+                this.changeToMeaningfulChoices(game, arg1, arg2, arg3, arg4, arg5);
                 break;
             case TextTypeEnum.MeaninglessChoices:
-                this.changeToMeaninglessChoices(game, arg1);
+                this.changeToMeaninglessChoices(game, arg1, arg2, arg3, arg4);
                 break;
             default:
                 console.warn("Invalid Text Type.");
@@ -56,15 +57,29 @@ define(['Modules/Linkable'], function(Linkable) {
         Linkable.SetLinkProperties(game, true, false, this._text, this._text.events);
     }
 
-    Text.prototype.changeToMeaningfulChoices = function(game, targetScene, changeSceneSignal) {
+    Text.prototype.changeToMeaningfulChoices = function(game, targetScene, changeSceneSignal, boundsY, boundsWidth, boundsHeight) {
+        this._text.anchor.x = 0.5
+        this._text.x = game.width/2;
         this._text.alpha = 0;
-        this._text.inputEnabled = true;
+        this._text.inputEnabled = true;        
+        //this._text.boundsAlignH = "center";
+        this._text.boundsAlignV = "middle";
+        this._text.setTextBounds(0, boundsY, boundsWidth, boundsHeight);
+        //this._text.y = 0;
+        //this._text.x = 0;
         Linkable.SetLinkProperties(game, true, false, this._text, this._text.events, ChangeScene, targetScene, changeSceneSignal);
     }
 
-    Text.prototype.changeToMeaninglessChoices = function(game, endInteractionSignal) {      
+    Text.prototype.changeToMeaninglessChoices = function(game, endInteractionSignal, boundsY, boundsWidth, boundsHeight) {
+        this._text.anchor.x = 0.5
+        this._text.x = game.width/2;
         this._text.alpha = 0;
         this._text.inputEnabled = true;
+        //this._text.boundsAlignH = "center";
+        this._text.setTextBounds(0, boundsY, boundsWidth, boundsHeight);
+        this._text.boundsAlignV = "middle";
+        //this._text.y = 0;
+        //this._text.x = 0;
         Linkable.SetLinkProperties(game, true, true, this._text, this._text.events, EndInteraction, endInteractionSignal);
     }
 

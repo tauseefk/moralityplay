@@ -16,6 +16,7 @@ define(['Modules/Linkable', 'Lib/jsmanipulate.min'], function(Linkable) {
 
     function StartFilterFadeIn() {
         Linkable.fadeIn(_game, _bitmapSprite);
+        _video.stop();
     }
 
     function EndFilter() {

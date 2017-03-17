@@ -22,7 +22,7 @@ define(['Modules/filter', 'Modules/thoughtsLoader', 'Modules/choiceLoader', 'Mod
 
     function CreateExploratoryIcons(key, coords, targetScene, type, reference) {
         var button = new Image(coords[0], coords[1], key);
-        button.addButtonToGame(_game);
+        button.addImageToGame(_game, type);
         button.changeImage(_game, type, targetScene, _game.global.gameManager.getChangeSceneSignal());
         _icons.push(button.getPhaserImage());
     }

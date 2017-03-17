@@ -2,7 +2,8 @@
     "images": {
         "thoughtIcon": "./Images/Icons/icon.png",
         "cmu1": "./Images/Locations/CMU1.jpg",
-        "mainTitle": "./Images/UI/Title.png"
+        "mainTitle": "./Images/UI/Title.png",
+        "choiceBg" : "./Images/UI/Option_bg.png"
     },
     "scenes": {
         "campusMap": {
@@ -94,16 +95,22 @@
                                 {
                                     "size": 3,
                                     "content": [
-                                        "Is there something else besides math that's bothering you?\n",
-                                        "Don't worry, you'll do great!\n",
-                                        "Good luck!\n"
+                                        "Is there something else besides math that's bothering you?",
+                                        "Don't worry, you'll do great!",
+                                        "Good luck!"
                                     ],
-                                    "coords":[ 
-                                        [500, 800],
-                                        [500, 880],
-                                        [500, 960]
+                                    "y":[
+                                        750,
+                                        850,
+                                        950
+                                    ],
+                                    "bounds": [
+                                        [1400, 100],
+                                        [1400, 100],
+                                        [1400, 100]
+
                                     ]
-                                }
+                                }           
                             ]
                         }
                     },
@@ -136,17 +143,23 @@
                                 {
                                     "size": 3,
                                     "content": [
-                                        "Is there something else besides math that's bothering you?\n",
-                                        "Don't worry, you'll do great!\n",
-                                        "Good luck!\n"
+                                        "Is there something else besides math that's bothering you?",
+                                        "Don't worry, you'll do great!",
+                                        "Good luck!"
                                     ],
-                                    "coords":[ 
-                                        [500, 800],
-                                        [500, 880],
-                                        [500, 960]
+                                    "y":[
+                                        750,
+                                        850,
+                                        950
+                                    ],
+                                    "bounds": [
+                                        [1300, 100],
+                                        [1300, 100],
+                                        [1300, 100]
+
                                     ],
                                     "targetScene": [
-                                        "flashbackScene1",
+                                        "movie1",
                                         "movieScene1",
                                         "movieScene1"
                                     ]
@@ -167,7 +180,7 @@
             },
             "nextScenes": "startScene"
         },
-        "startSc1ene": {
+        "startSce1ne": {
             "stateType": "MenuState",
             "draggable": false,
             "bgImageKey": "cmu1",
