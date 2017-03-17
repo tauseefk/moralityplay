@@ -9,7 +9,7 @@ define(function() {
         active: function() { _game.time.events.add(Phaser.Timer.SECOND, delayedCreate, this); },
 
         google: {
-          families: ['Roboto', 'Roboto Condensed'],
+          families: ['Roboto', 'Roboto Condensed','Abel'],
         }
     };    
 

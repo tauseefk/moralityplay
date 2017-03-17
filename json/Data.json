@@ -1,12 +1,94 @@
-{   
-    "images": {
-        "thoughtIcon": "./Images/Icons/icon.png",
-        "cmu1": "./Images/Locations/CMU1.jpg",
-        "mainTitle": "./Images/UI/Title.png",
-        "choiceBg" : "./Images/UI/Option_bg.png"
-    },
+{
+  "images": {
+    "cmu1": "./Images/Locations/LocationBG.jpg",
+    "leftArrow": "./Images/UI/arrow_left.png",
+    "leftOutline": "./Images/UI/outline_left.png",
+    "mainTitle": "./Images/UI/Title.png",
+    "middleArrow": "./Images/UI/arrow_middle.png",
+    "middleOutline": "./Images/UI/outline_middle.png",
+    "rightArrow": "./Images/UI/arrow_right.png",
+    "rightOutline": "./Images/UI/outline_right.png",
+    "thoughtIcon": "./Images/Icons/icon.png",
+    "choiceBg": "./Images/UI/Option_bg.png"
+  },
     "scenes": {
-        "campusMap": {
+        "asian1": {
+            "videoFilter": "sepia",
+            "movieSrc": "./Videos/Asian1.mp4",
+            "stateType": "InteractState",
+            "transition": {
+          "fadeIn": true,
+          "fadeOut": false
+        },
+          "choiceMoments": {
+            "size": 1,
+            "choiceMomentsProperties": [
+              {
+                "timeStamp": 2,
+                "thoughtBubbles": {
+                  "size": 1,
+                  "thoughtIconKey": [
+                    "thoughtIcon"
+                  ],
+                  "coords": [
+                    [ 640, 100 ]
+                  ],
+                  "thoughts": [
+                    {
+                      "size": 3,
+                      "content": [
+                        "we got this",
+                        "I guess it is ok if not all participate",
+                        "I can do much more than nothing"
+                      ],
+                      "destination": [
+                        [ 600, 200 ],
+                        [ 600, 150 ],
+                        [ 900, 100 ]
+                      ]
+                    }
+                  ],
+                  "choices": [
+                    {
+                      "size": 2,
+                      "content": [
+                        "Just a thought, but Li has worked so hard on this I feel like we just ignoring her and \n everything that she did I mean she IS part of our group\n",
+                        "Are you OK? I think we are set for getting a good grade and you can probably participate\n more next time just let it gor for now\n "
+                      ],
+                      "y": [
+                        480,
+                        600
+                      ],
+                      "bounds": [
+                        [ 1000, 100 ],
+                        [1000,100]
+                      ],
+                      "targetScene": [
+                        "asian2",
+                        "asian2"
+                      ]
+                    }
+                  ]
+                }
+              }
+            ]
+
+          }
+      },
+        "asian2": {
+          "stateType": "MovieState",
+          "movieSrc": "./Videos/Asian2.mp4",
+          "transition": {
+            "fadeIn": true,
+            "fadeOut": false
+          },
+          "nextScenes": "startScene"
+
+      },
+
+
+
+        "startScene": {
             "stateType": "LocationState",
             "draggable": true,
             "bgImageKey": "cmu1",
@@ -16,33 +98,41 @@
                 "fadeOut": true
             },
             "icons": {                
-                "size": 5,
-                "type": ["IMAGE_BUTTON_SCENECHANGE",
-                    "IMAGE_BUTTON_SCENECHANGE",
-                    "IMAGE_BUTTON_SCENECHANGE",
-                    "IMAGE_BUTTON_SCENECHANGE",
-                    "IMAGE_BUTTON_SCENECHANGE"
-                ],
-                "key": [
-                    "thoughtIcon",
-                    "thoughtIcon",
-                    "thoughtIcon",
-                    "thoughtIcon",
-                    "thoughtIcon"                    
-                ],
+                "size": 6,
+              "type": [
+                "IMAGE_BUTTON_SCENECHANGE",
+                "IMAGE_BUTTON_SCENECHANGE",
+                "IMAGE_BUTTON_SCENECHANGE",
+                "IMAGE_BUTTON_SCENECHANGE",
+                "IMAGE_BUTTON_SCENECHANGE",
+                "IMAGE_BUTTON_SCENECHANGE"
+              ],
+              "key": [
+                "leftArrow",
+                "leftOutline",
+                "middleArrow",
+                "middleOutline",
+                "rightArrow",
+                "rightOutline"
+              ],
                 "coords": [
-                    [100, 100],
-                    [500, 880],
-                    [800, 260],
-                    [1000, 50],
-                    [4500, 900]
+                  [ 995, 500 ],
+                  [ 855, 220 ],
+                  [ 1907, 500 ],
+                  [ 1731, 170 ],
+                  [ 3300, 500 ],
+                  [ 3480, 230 ]
+
                 ],
                 "targetScene": [
-                    "movie1",
-                    "movie1",
-                    "movie1",
-                    "movie1",
-                    "movie1"
+                    
+                  "movie1",
+                  "movie1",
+                  "movie1",
+                  "movie1",
+                  "asian1",
+                  "asian1"
+
                 ]
             }
         },
@@ -55,7 +145,7 @@
             },
             "nextScenes": "pensive1"
         },
-        "startScene": {
+        "startScene2": {
             "stateType": "InteractState",
             "videoFilter": "sepia",
             "movieSrc": "./Videos/pensive_2.mp4",
@@ -95,22 +185,16 @@
                                 {
                                     "size": 3,
                                     "content": [
-                                        "Is there something else besides math that's bothering you?",
-                                        "Don't worry, you'll do great!",
-                                        "Good luck!"
+                                        "Is there something else besides math that's bothering you?\n",
+                                        "Don't worry, you'll do great!\n",
+                                        "Good luck!\n"
                                     ],
-                                    "y":[
-                                        750,
-                                        850,
-                                        950
-                                    ],
-                                    "bounds": [
-                                        [1400, 100],
-                                        [1400, 100],
-                                        [1400, 100]
-
+                                    "coords":[ 
+                                        [500, 800],
+                                        [500, 880],
+                                        [500, 960]
                                     ]
-                                }           
+                                }
                             ]
                         }
                     },
@@ -143,23 +227,17 @@
                                 {
                                     "size": 3,
                                     "content": [
-                                        "Is there something else besides math that's bothering you?",
-                                        "Don't worry, you'll do great!",
-                                        "Good luck!"
+                                        "Is there something else besides math that's bothering you?\n",
+                                        "Don't worry, you'll do great!\n",
+                                        "Good luck!\n"
                                     ],
-                                    "y":[
-                                        750,
-                                        850,
-                                        950
-                                    ],
-                                    "bounds": [
-                                        [1300, 100],
-                                        [1300, 100],
-                                        [1300, 100]
-
+                                    "coords":[ 
+                                        [500, 800],
+                                        [500, 880],
+                                        [500, 960]
                                     ],
                                     "targetScene": [
-                                        "movie1",
+                                        "flashbackScene1",
                                         "movieScene1",
                                         "movieScene1"
                                     ]
@@ -180,7 +258,7 @@
             },
             "nextScenes": "startScene"
         },
-        "startSce1ne": {
+        "startSc1ene": {
             "stateType": "MenuState",
             "draggable": false,
             "bgImageKey": "cmu1",

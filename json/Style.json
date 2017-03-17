@@ -8,14 +8,14 @@
         }
     },    
     "thoughtsTextProperties": {
-        "fontSize": 30,
+        "fontSize": 25,
         "align": "center",
-        "font": "Roboto",
+        "font": "Abel",
         "stroke": "#ffffff",
         "strokeThickness": 5
     },
     "choicesTextProperties": {
-        "fontSize": 40,
+        "fontSize": 30,
         "align": "left",
         "font": "Roboto",
         "strokeThickness": 5,

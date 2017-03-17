@@ -4,7 +4,7 @@ require(['States/boot', 'States/preload', 'States/StateManager', 'Modules/resour
 });
 
 function initGame(Boot, Preload, StateManager, ResourceLoader) {
-    var game = new Phaser.Game(1920, 1080, Phaser.CANVAS, '', { init: init, preload: preload, create: create, update: update });
+    var game = new Phaser.Game(1280, 720, Phaser.CANVAS, '', { init: init, preload: preload, create: create, update: update });
 
     function init() {        
         console.log("Game initialized.");
