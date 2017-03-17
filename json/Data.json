@@ -24,7 +24,7 @@
             "size": 1,
             "choiceMomentsProperties": [
               {
-                "timeStamp": 2,
+                "timeStamp": 120,
                 "thoughtBubbles": {
                   "size": 1,
                   "thoughtIconKey": [
@@ -35,16 +35,14 @@
                   ],
                   "thoughts": [
                     {
-                      "size": 3,
+                      "size": 2,
                       "content": [
-                        "We got this",
                         "I guess it is okay if not everyone participates",
                         "I can do much more than nothing"
                       ],
                       "destination": [
-                        [ 600, 200 ],
-                        [ 600, 150 ],
-                        [ 900, 100 ]
+                        [ 900, 25 ],
+                        [ 300, 50]
                       ]
                     }
                   ],
