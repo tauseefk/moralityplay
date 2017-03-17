@@ -16,7 +16,7 @@
     },
     "choicesTextProperties": {
         "fontSize": 30,
-        "align": "left",
+        "align": "center",
         "font": "Roboto",
         "strokeThickness": 5,
         "fill": "#ffffff",

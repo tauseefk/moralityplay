@@ -52,16 +52,16 @@
                     {
                       "size": 2,
                       "content": [
-                        "Just a thought, but Li has worked so hard on this I feel like we just ignoring her and \n everything that she did I mean she IS part of our group\n",
-                        "Are you OK? I think we are set for getting a good grade and you can probably participate\n more next time just let it gor for now\n "
+                        "Just a thought, but Li has worked so hard on this I feel like we just ignoring her and \n everything that she did I mean she IS part of our group",
+                        "Are you OK? I think we are set for getting a good grade and you can probably participate\n more next time just let it gor for now"
                       ],
                       "y": [
                         480,
                         600
                       ],
                       "bounds": [
-                        [ 1000, 100 ],
-                        [1000,100]
+                        [ 1200, 100 ],
+                        [1200,100]
                       ],
                       "targetScene": [
                         "asian2",
