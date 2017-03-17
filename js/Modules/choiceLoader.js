@@ -1,6 +1,6 @@
 //Dependency: choiceText
 
-define(['Modules/Text', 'Modules/image'], function(Text, Image) {
+define(['Modules/Text', 'Modules/Image'], function(Text, Image) {
     "use strict";
 
     //initializes once
