@@ -1,5 +1,5 @@
 
-define(['Modules/videoLoader', 'Modules/transition', 'Modules/iconsLoader', 'States/State'], function(Video, Transition, Icons, State)  {
+define(['Modules/videoLoader', 'Modules/transition', 'Modules/iconsLoader', 'States/State', 'Modules/choiceLoader'], function(Video, Transition, Icons, State, Choices)  {
     "use strict";
 
     var _stateInfo = null;
@@ -8,15 +8,22 @@ define(['Modules/videoLoader', 'Modules/transition', 'Modules/iconsLoader', 'Sta
 
     function CreateThought() {
         Icons.endInteraction();
-        var thoughtBubbles = _stateInfo.getThoughtBubble(_momentCount++);
-            console.log(thoughtBubbles);
-        for(var i=0; i<thoughtBubbles.size; i++) {
-            Icons.createThoughtIcon(thoughtBubbles.thoughtIconKey[i], thoughtBubbles.coords[i], thoughtBubbles.thoughts[i], thoughtBubbles.choices[i]);
+        var thoughtBubbles = _stateInfo.getThoughtBubble(_momentCount);
+        if(thoughtBubbles) {
+            for(var i=0; i<thoughtBubbles.size; i++) {
+                Icons.createThoughtIcon(thoughtBubbles.thoughtIconKey[i], thoughtBubbles.coords[i], thoughtBubbles.thoughts[i], thoughtBubbles.choices[i]);
+            }
         }
+        else {
+            var choices = _stateInfo.getChoices(_momentCount);
+            Choices.create(choices);
+        }
+        _momentCount++;
     }
 
-    function EndInteraction() {
+    function EndInteraction(lingeringChoice) {
         Icons.endInteraction();
+        Choices.endInteraction(lingeringChoice);
         Video.endFilter();
     }
 
@@ -54,8 +61,8 @@ define(['Modules/videoLoader', 'Modules/transition', 'Modules/iconsLoader', 'Sta
         createThought: function() {
             CreateThought();
         },
-        endInteraction: function() {
-            EndInteraction();
+        endInteraction: function(lingeringChoice) {
+            EndInteraction(lingeringChoice);
         }
     }
     

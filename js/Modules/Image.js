@@ -65,7 +65,6 @@ define(['Modules/Linkable'], function(Linkable) {
         var scale = game.height/this._image.height;
         this._image.height = Math.floor(this._image.height*scale);
         this._image.width = Math.floor(this._image.width*scale);
-
         //Initializes container for bg image to be dragged around
 
         if(draggable) {
@@ -112,7 +111,7 @@ define(['Modules/Linkable'], function(Linkable) {
         this._image.input.draggable = true;
         this._image.input.allowVerticalDrag = !lockVertical;
         this._image.input.allowHorizontalDrag = !lockHorizontal;
-
+        this._image.x = -this._image.width/2;
         //Changes mouseover image
         this.changeCursorImage(game, 'url("./Images/UI/hand_2.png"), auto');
     }

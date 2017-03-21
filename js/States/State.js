@@ -20,6 +20,9 @@ define(function()  {
     State.prototype.getThoughtBubble = function(index) {
       return this._scene.choiceMoments.choiceMomentsProperties[index].thoughtBubbles;
     }
+    State.prototype.getChoices = function(index){
+      return this._scene.choiceMoments.choiceMomentsProperties[index].choices;
+    }
     /*
     State.prototype.getThoughtsInfo = function() {
       return this._scene.thoughts;

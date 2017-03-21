@@ -12,10 +12,13 @@ define(['Modules/Linkable', 'Lib/jsmanipulate.min'], function(Linkable) {
     var _framebuffer = null;
     var _effect = null;
     var _fadeOutSignal = null;
+    
     const REFRESH_TIME_MS = 10;
+    const FADE_IN_TIME_MS = 2000;
 
     function StartFilterFadeIn() {
-        Linkable.fadeIn(_game, _bitmapSprite);
+        Linkable.fadeIn(_game, _bitmapSprite, FADE_IN_TIME_MS);
+        Linkable.zoomIn(_game, _bitmapSprite, 1.05);
         _video.stop();
     }
 
@@ -65,8 +68,9 @@ define(['Modules/Linkable', 'Lib/jsmanipulate.min'], function(Linkable) {
             console.log("Filter initialized");
             //Initialize and add filter canvas before loading to ensure proper object layering (icons on top of filter canvas) 
             _bitmapCanvas = game.add.bitmapData(game.width, game.height);
-            _bitmapSprite = game.add.sprite(0, 0, _bitmapCanvas);
+            _bitmapSprite = game.add.sprite(game.width/2, game.height/2, _bitmapCanvas);
             _bitmapSprite.alpha = 0;
+            _bitmapSprite.anchor.setTo(0.5);
             _context = _bitmapCanvas.context;
 
             if(_instance !== null) 

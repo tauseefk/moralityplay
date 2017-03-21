@@ -41,8 +41,15 @@ define(function() {
         }
     }
 
-    Linkable.fadeIn = function(game, object) {
-        game.add.tween(object).to({alpha:1}, FADE_SPEED, Phaser.Easing.Linear.None, true, 0, 0, false);
+    Linkable.fadeIn = function(game, object, time, event, callbackFunc) {
+        if(time)
+            game.add.tween(object).to({alpha:1}, time, Phaser.Easing.Linear.None, true, 0, 0, false);
+        else
+            game.add.tween(object).to({alpha:1}, FADE_SPEED, Phaser.Easing.Linear.None, true, 0, 0, false);
+    }
+
+    Linkable.setLink = function(event, callbackFunc, scope) {
+        event.onInputUp.addOnce(callbackFunc, scope);
     }
 
     Linkable.fadeOut = function(game, object, destroy) {
@@ -53,6 +60,23 @@ define(function() {
             if(destroy)
                 object.destroy();
         }
+    }
+
+    Linkable.fadeOutOthers = function(game, object, event, callbackFunc) {
+        game.add.tween(object).to({alpha:1}, FADE_SPEED, Phaser.Easing.Linear.None, true, 0, 0, false);
+        otherObjArr.forEach(function(element) {
+            game.add.tween(element).to({alpha:1}, FADE_SPEED, Phaser.Easing.Linear.None, true, 0, 0, false);
+        });
+
+        var objectFadeOut = game.add.tween(object).to({alpha:0}, FADE_SPEED, Phaser.Easing.Linear.None, false, 0, 0, false);
+        objectFadeOut.onComplete.add(DisableButton, this);
+
+        game.add.tween(object).to({alpha:1}, FADE_SPEED, Phaser.Easing.Linear.None, true, 0, 0, false); 
+
+    }
+
+    Linkable.zoomIn = function(game, object, scale) {
+        var tween = game.add.tween(object).to({width:object.width*scale, height:object.height*scale}, FADE_SPEED, Phaser.Easing.Linear.None, true, 0, 0, false);
     }
 
 

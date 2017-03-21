@@ -78,9 +78,11 @@ define(['Modules/Linkable'], function(Linkable) {
         //this._text.boundsAlignH = "center";
         this._text.setTextBounds(0, boundsY, boundsWidth, boundsHeight);
         this._text.boundsAlignV = "middle";
+        this._signal = endInteractionSignal;
         //this._text.y = 0;
         //this._text.x = 0;
-        Linkable.SetLinkProperties(game, true, true, this._text, this._text.events, EndInteraction, endInteractionSignal);
+        Linkable.fadeIn(game, this._text, null, this);
+        Linkable.setLink(this._text.events, this.endInteraction, this);
     }
 
     Text.prototype.addInterpolationTween = function(game, xTo, yTo) {
@@ -94,12 +96,20 @@ define(['Modules/Linkable'], function(Linkable) {
         Linkable.fadeOut(game, this._text, true);
     }
 
+    Text.prototype.endInteraction = function() {
+        this._signal.dispatch(this);
+    }
+
+    Text.prototype.getPhaserText = function() {
+        return this._text;
+    }
+
     function ChangeScene(scene, signal) {
         signal.dispatch(scene);
     }
 
-    function EndInteraction(signal) {
-        signal.dispatch();
+    function EndInteraction(signal, text) {
+        signal.dispatch(text);
     }
 
     return Text;

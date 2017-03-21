@@ -13,11 +13,63 @@ define(['Modules/Text', 'Modules/Image'], function(Text, Image) {
         _text = [];
         _choiceBg = [];
     }
-    function createBg(y, width, height) {
+
+    function CreateBg(y, width, height) {
         var choiceBg = new Image(0, y, 'choiceBg');
         choiceBg.addImageToGame(_game);
         choiceBg.changeImage(_game, 'IMAGE_CHOICE_BACKGROUND', width, height);
         return choiceBg;
+    }
+
+    function CreateChoices(choices) {
+        if(choices.targetScene)
+            CreateMeaningfulChoices(choices, _game.global.gameManager.getChangeSceneSignal());
+        else
+            CreateMeaninglessChoices(choices);
+    }
+
+    function CreateMeaningfulChoices(info) {
+        resetElements();
+        for(var i=0; i < info.size; i++) {
+            var bgImg = CreateBg(info.y[i], info.bounds[i][0], info.bounds[i][1]);
+            _choiceBg.push(bgImg);
+            _text.push(new Text(info.content[i], 0, 0, _game.global.style.choicesTextProperties));
+            _text[i].index = i;
+            _text[i].addToGame(_game);
+            _text[i].changeText(_game, 'TEXT_MEANINGFUL_CHOICES', info.targetScene[i], _game.global.gameManager.getChangeSceneSignal(), 
+                bgImg.getPhaserImage().y, bgImg.getPhaserImage().width, bgImg.getPhaserImage().height);
+        };
+    }
+
+    function CreateMeaninglessChoices(info) {
+        resetElements();
+        for(var i=0; i < info.size; i++) {
+            var bgImg = CreateBg(info.y[i], info.bounds[i][0], info.bounds[i][1]);
+            _choiceBg.push(bgImg);
+            _text.push(new Text(info.content[i], 0, 0, _game.global.style.choicesTextProperties));
+            _text[i].index = i;
+            _text[i].addToGame(_game);
+            _text[i].changeText(_game, 'TEXT_MEANINGLESS_CHOICES', _game.global.gameManager.getEndInteractionSignal(), 
+                bgImg.getPhaserImage().y, bgImg.getPhaserImage().width, bgImg.getPhaserImage().height);
+        };       
+    }
+
+    function FadeChoicesExcept(choiceText){  
+        _text.forEach(function(text) {
+            if(text.index != choiceText.index)
+                text.fadeOut(_game);
+        });
+        _choiceBg.forEach(function(choiceBg) {
+            choiceBg.fadeOut(_game);
+        });
+    }
+
+    function FadeChoiceAfterDelay(choiceText) {
+        _game.time.events.add(Phaser.Timer.SECOND*1, fadeChoice, this);
+
+        function fadeChoice(){
+            choiceText.fadeOut(_game);
+        }
     }
 
     return {
@@ -30,35 +82,12 @@ define(['Modules/Text', 'Modules/Image'], function(Text, Image) {
         },
         preload: function() {
         },
-        createMeaningfulChoices: function(info) {            
-            resetElements();
-            for(var i=0; i < info.size; i++) {
-                var bgImg = createBg(info.y[i], info.bounds[i][0], info.bounds[i][1]);
-                _choiceBg.push(bgImg);
-                _text.push(new Text(info.content[i], 0, 0, _game.global.style.choicesTextProperties));
-                _text[i].addToGame(_game);
-                _text[i].changeText(_game, 'TEXT_MEANINGFUL_CHOICES', info.targetScene[i], _game.global.gameManager.getChangeSceneSignal(), 
-                    bgImg.getPhaserImage().y, bgImg.getPhaserImage().width, bgImg.getPhaserImage().height);
-            };
+        create: function(choices) {
+            CreateChoices(choices);
         },
-        createMeaninglessChoices: function(info) {
-            resetElements();
-            for(var i=0; i < info.size; i++) {
-                var bgImg = createBg(info.y[i], info.bounds[i][0], info.bounds[i][1]);                
-                _choiceBg.push(bgImg);
-                _text.push(new Text(info.content[i], 0, 0, _game.global.style.choicesTextProperties));
-                _text[i].addToGame(_game);
-                _text[i].changeText(_game, 'TEXT_MEANINGLESS_CHOICES', _game.global.gameManager.getEndInteractionSignal(), 
-                    bgImg.getPhaserImage().y, bgImg.getPhaserImage().width, bgImg.getPhaserImage().height);
-            };
-        },
-        endInteraction: function() {
-            _text.forEach(function(text) {
-                text.fadeOut(_game);
-            });
-            _choiceBg.forEach(function(choiceBg) {
-                choiceBg.fadeOut(_game);
-            });
+        endInteraction: function(lingeringChoice) {
+            FadeChoicesExcept(lingeringChoice);
+            FadeChoiceAfterDelay(lingeringChoice);
         }
     }
 

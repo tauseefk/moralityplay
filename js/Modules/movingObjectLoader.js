@@ -17,7 +17,7 @@ define(['Modules/Text', 'Modules/Image'], function(Text, Image) {
         _bgImage.changeImage(_game, 'IMAGE_BACKGROUND',draggable);
     }
     
-    function dragStart() {
+    function dragStart() {        
     }
 
     function dragUpdate() {
@@ -51,7 +51,9 @@ define(['Modules/Text', 'Modules/Image'], function(Text, Image) {
             });
 
             _bgImage.getPhaserImage().events.onDragStart.add(dragStart);
-            _bgImage.getPhaserImage().events.onDragUpdate.add(dragUpdate);
+            _bgImage.getPhaserImage().events.onDragUpdate.add(dragUpdate);            
+            _group.x = _bgImage.getPhaserImage().x;
+            _group.y = _bgImage.getPhaserImage().y;
         }
     }
 

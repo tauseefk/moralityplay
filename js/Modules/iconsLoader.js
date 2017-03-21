@@ -13,10 +13,7 @@ define(['Modules/filter', 'Modules/thoughtsLoader', 'Modules/choiceLoader', 'Mod
         _icons.push(button);
         function ButtonPressed() {
             Thoughts.create(thoughts, coords);
-            if(choices.targetScene)
-                Choices.createMeaningfulChoices(choices, _game.global.gameManager.getChangeSceneSignal());
-            else
-                Choices.createMeaninglessChoices(choices);
+            Choices.create(choices);
         }        
     }
 
@@ -59,7 +56,6 @@ define(['Modules/filter', 'Modules/thoughtsLoader', 'Modules/choiceLoader', 'Mod
         },
         endInteraction: function() {
             EndInteraction();
-            Choices.endInteraction();
             Thoughts.endInteraction();
         }
     }

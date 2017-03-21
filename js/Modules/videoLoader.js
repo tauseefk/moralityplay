@@ -1,4 +1,4 @@
-define(['Modules/videoFilterLoader'], function(VideoFilter) {
+define(['Modules/videoFilterLoader', 'Modules/Linkable'], function(VideoFilter, Linkable) {
     "use strict";
 
     var _instance = null;
@@ -34,7 +34,6 @@ define(['Modules/videoFilterLoader'], function(VideoFilter) {
     function AddVideoOrFilter(doFadeOut) {
         _video.addToWorld(0, 0, 0, 0);
         _video.onChangeSource.addOnce(OnVideoLoad, this);
-
         function OnVideoLoad() {
             
             if(doFadeOut) {
@@ -53,8 +52,13 @@ define(['Modules/videoFilterLoader'], function(VideoFilter) {
         console.log(_video.video.duration);
         console.log(_video.video.currentTime);
         VideoFilter.startFilterFade(_game);
+        //VideoZoom();
         //ReducePlaybackSpeed();
         _game.global.gameManager.getTriggerInteractionSignal().dispatch();
+    }
+
+    function VideoZoom() {
+        Linkable.zoomIn(_game, _video, 1.5);
     }
 
     function checkVideoDuration(time) {
