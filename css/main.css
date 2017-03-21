@@ -1,7 +1,16 @@
 /*
-.container {
-	width:10px;
-	height:10px;
-	margin:0px;
+@media screen and (orientation:landscape) {
+
+  .container {
+    -ms-transform: rotate(-90deg); 
+    -webkit-transform: rotate(-90deg);
+    transform: rotate(-90deg);
+    width: 1280;
+    height: 720 ;
+    overflow: scroll;
+  }
 }
 */
+.center {
+	margin: 0 auto;
+}
