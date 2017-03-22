@@ -84,7 +84,7 @@
 
       },
 
-      "black1": {
+        "black1": {
         "videoFilter": "sepia",
         "movieSrc": "./Videos/Black1.mp4",
         "stateType": "InteractState",
@@ -123,7 +123,7 @@
          }      
        },
 
-      "startScene": {
+        "black2": {
         "videoFilter": "sepia",
         "movieSrc": "./Videos/Black2.mp4",
         "stateType": "InteractState",
@@ -135,7 +135,7 @@
             "size": 3,
           "choiceMomentsProperties": [
             {
-              "timeStamp": 3,
+              "timeStamp": 37,
               "choices": 
                 {
                   "size": 2,
@@ -154,7 +154,7 @@
                 }
             },
             {
-              "timeStamp": 5,
+              "timeStamp": 53,
               "choices": {
                 "size": 2,
                 "content": [
@@ -172,14 +172,14 @@
               }
             },
             {
-              "timeStamp": 7,
+              "timeStamp": 72,
               "thoughtBubbles": {
                 "size": 1,
                 "thoughtIconKey": [
                   "thoughtIcon"
                 ],
                 "coords": [
-                  [ 900, 200 ]
+                  [ 600, 100 ]
                 ],
                 "thoughts": [
                   {
@@ -241,7 +241,7 @@
             "nextScenes": "startScene"
         },
 
-        "startS1cene": {
+        "startScene": {
             "stateType": "LocationState",
             "draggable": true,
             "bgImageKey": "cmu1",
