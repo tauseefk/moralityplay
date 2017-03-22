@@ -14,7 +14,8 @@ define(function() {
     };    
 
     function delayedCreate() {
-        createGlobalVars(); 
+        createGlobalVars();
+        initGameGroups();
         _game.state.start("preload");
     }
 
@@ -22,6 +23,11 @@ define(function() {
         _game.global = {
             playerName: null
         }
+    }
+
+    function initGameGroups() {
+        _game.mediaGroup = _game.add.group();
+        _game.uiGroup = _game.add.group();
     }
 
     return {

@@ -39,17 +39,30 @@ define(function() {
                 callbackFunc(targetScene, signal);
             object.destroy();
         }
-    }
+    }    
 
-    Linkable.fadeIn = function(game, object, time, event, callbackFunc) {
+    Linkable.fadeIn = function(game, object, time, signal) {
+        var tween;
+
         if(time)
-            game.add.tween(object).to({alpha:1}, time, Phaser.Easing.Linear.None, true, 0, 0, false);
+            tween = game.add.tween(object).to({alpha:1}, time, Phaser.Easing.Linear.None, true, 0, 0, false);
         else
-            game.add.tween(object).to({alpha:1}, FADE_SPEED, Phaser.Easing.Linear.None, true, 0, 0, false);
+            tween = game.add.tween(object).to({alpha:1}, FADE_SPEED, Phaser.Easing.Linear.None, true, 0, 0, false);
+        
+        if(signal)
+            tween.onComplete.add(SignalDispatcher);
+
+        function SignalDispatcher(){
+            signal.dispatch();
+        }
     }
 
-    Linkable.setLink = function(event, callbackFunc, scope) {
-        event.onInputUp.addOnce(callbackFunc, scope);
+    Linkable.setLink = function(event, callbackFunc, scope, arg1, arg2) {
+        event.onInputUp.addOnce(driver, scope);
+
+        function driver() {
+            callbackFunc(arg1, arg2);
+        }
     }
 
     Linkable.fadeOut = function(game, object, destroy) {

@@ -1,5 +1,5 @@
 
-define(['Modules/transition', 'States/State', 'Modules/uiLoader', 'Modules/movingObjectLoader', 'Modules/iconsLoader'], function(Transition, State, UI, MovingBackground, Icons)  {
+define(['Modules/transition', 'Modules/groupLoader', 'States/State', 'Modules/uiLoader', 'Modules/movingObjectLoader', 'Modules/iconsLoader'], function(Transition, Group, State, UI, MovingBackground, Icons)  {
     "use strict";
 
     var _instance = null;
@@ -7,13 +7,13 @@ define(['Modules/transition', 'States/State', 'Modules/uiLoader', 'Modules/movin
 
     return {
         init: function(scene) { 
+            Group.initializeGroups();
             if(_stateInfo !== null)
                 _stateInfo.setStateScene(scene);         
             if(_instance !== null)
                 return _instance;
             _stateInfo = new State(scene);
             _instance = this;
-            UI.init(this.game);
             MovingBackground.init(this.game);
             Icons.init(this.game);
             return _instance;

@@ -4,13 +4,14 @@ define(['Modules/videoFilterLoader', 'Modules/Linkable'], function(VideoFilter, 
     var _instance = null;
     var _game = null;
     var _video = null
+    var _videoImage = null;
     var _videoFilter = null;
     var _interactionTimeStamps = null;
     const FADEOUT_OFFSET_SECONDS = 5;
     const VIDEO_SLOW_PLAYBACK_RATE = 0.2;
 
     function CreateVideo(src, doFadeOut, nextScenes, interactionTimeStamps) {
-        _video = _video.changeSource(src, doFadeOut);
+        _video = _video.changeSource(src);
         _video.play();
     //    _video.video.setAttribute('autoplay', 'autoplay');
         AddVideoOrFilter(doFadeOut);
@@ -32,10 +33,10 @@ define(['Modules/videoFilterLoader', 'Modules/Linkable'], function(VideoFilter, 
     }
 
     function AddVideoOrFilter(doFadeOut) {
-        _video.addToWorld(0, 0, 0, 0);
+        _videoImage = _video.addToWorld(0, 0, 0, 0);
+        _game.mediaGroup.add(_videoImage);
         _video.onChangeSource.addOnce(OnVideoLoad, this);
         function OnVideoLoad() {
-            
             if(doFadeOut) {
                 //_game.time.events.add((_video.video.duration-FADEOUT_OFFSET_SECONDS)*Phaser.Timer.SECOND, FadeOut, this);
             }
@@ -51,10 +52,7 @@ define(['Modules/videoFilterLoader', 'Modules/Linkable'], function(VideoFilter, 
     function TriggerMoment() {
         console.log(_video.video.duration);
         console.log(_video.video.currentTime);
-        VideoFilter.startFilterFade(_game);
-        //VideoZoom();
-        //ReducePlaybackSpeed();
-        _game.global.gameManager.getTriggerInteractionSignal().dispatch();
+        VideoFilter.startFilterFade(_game.global.gameManager.getTriggerInteractionSignal());
     }
 
     function VideoZoom() {

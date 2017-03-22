@@ -1,6 +1,6 @@
 
-define(['Modules/resourceLoader', 'Modules/transition', 'Modules/videoLoader', 'States/menuState', 'States/locationState', 'States/interactState', 'States/flashbackState', 'States/movieState'], 
-    function(Resources, Transition, Video, MenuState, LocationState, InteractState, FlashbackState, MovieState)  {
+define(['Modules/resourceLoader', 'Modules/groupLoader', 'Modules/transition', 'Modules/uiLoader', 'Modules/videoLoader', 'States/menuState', 'States/locationState', 'States/interactState', 'States/flashbackState', 'States/movieState'], 
+    function(Resources, Group, Transition, UI, Video, MenuState, LocationState, InteractState, FlashbackState, MovieState)  {
     "use strict";
 
     var _stateManagerInstance = null;
@@ -63,8 +63,10 @@ define(['Modules/resourceLoader', 'Modules/transition', 'Modules/videoLoader', '
                 return _instance;
             _stateManagerInstance = this.game.state;
             _game = this.game;
+            Group.init(_game);
             Transition.init(_game);
             AddAllStates();
+            UI.init(_game);
             return _stateManagerInstance;
         },
         preload: function() {            
@@ -74,6 +76,7 @@ define(['Modules/resourceLoader', 'Modules/transition', 'Modules/videoLoader', '
             _game.global.gameManager.getChangeSceneSignal().dispatch(Resources.getStartSceneKey());
         },
         changeScene: function(scene) {
+            _game.mediaGroup.removeAll();
             ChangeScene(scene);
         }
     }

@@ -11,10 +11,12 @@ define(['Modules/Text', 'Modules/Image'], function(Text, Image) {
     var _bgImage = null;
     var _group = null;
 
+    const bgImageKeyEnum = 'IMAGE_BACKGROUND';
+
     function createBgImage(key, draggable) {
         _bgImage = new Image(0, 0, key);
-        _bgImage.addImageToGame(_game);
-        _bgImage.changeImage(_game, 'IMAGE_BACKGROUND',draggable);
+        _bgImage.addImageToGame(_game, bgImageKeyEnum, _game.mediaGroup);
+        _bgImage.changeImage(_game, bgImageKeyEnum, draggable);
     }
     
     function dragStart() {        

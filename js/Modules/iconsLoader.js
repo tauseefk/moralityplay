@@ -4,11 +4,13 @@ define(['Modules/filter', 'Modules/thoughtsLoader', 'Modules/choiceLoader', 'Mod
     var _instance = null;
     var _game = null;
     var _icons = [];
+
+    const buttonImageKeyEnum = 'IMAGE_BUTTON_THOUGHT';
     
     function CreateThoughtIcon(iconKey, coords, thoughts, choices) {
         var button = new Image(coords[0], coords[1], iconKey);
-        button.addButtonToGame(_game);
-        button.changeImage(_game, 'IMAGE_BUTTON_THOUGHT', ButtonPressed);
+        button.addImageToGame(_game, buttonImageKeyEnum, _game.mediaGroup);
+        button.changeImage(_game, buttonImageKeyEnum, ButtonPressed);
 
         _icons.push(button);
         function ButtonPressed() {
@@ -19,7 +21,7 @@ define(['Modules/filter', 'Modules/thoughtsLoader', 'Modules/choiceLoader', 'Mod
 
     function CreateExploratoryIcons(key, coords, targetScene, type, reference) {
         var button = new Image(coords[0], coords[1], key);
-        button.addImageToGame(_game, type);
+        button.addImageToGame(_game, type, _game.mediaGroup);
         button.changeImage(_game, type, targetScene, _game.global.gameManager.getChangeSceneSignal());
         _icons.push(button.getPhaserImage());
     }

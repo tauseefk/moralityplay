@@ -9,7 +9,8 @@ define(['Modules/Linkable'], function(Linkable) {
         Thought: 'IMAGE_BUTTON_THOUGHT',
         Transition: 'IMAGE_TRANSITION',
         Background: 'IMAGE_BACKGROUND',
-        ChoiceBackground: 'IMAGE_CHOICE_BACKGROUND'
+        ChoiceBackground: 'IMAGE_CHOICE_BACKGROUND',
+        Pause: 'IMAGE_PAUSE'
     }
 
     //Image constructor
@@ -21,16 +22,14 @@ define(['Modules/Linkable'], function(Linkable) {
         this._image = null;
     }
 
-    Image.prototype.addImageToGame = function(game, type) {
-        if(type && (type == ImageTypeEnum.SceneChange || type == ImageTypeEnum.Thought))            
+    Image.prototype.addImageToGame = function(game, type, group) {
+        console.log(type);
+        if(type && (type == ImageTypeEnum.SceneChange || type == ImageTypeEnum.Thought || type == ImageTypeEnum.Pause))            
             this._image = game.add.button(this._xPos, this._yPos, this._key);
         else {
             this._image = game.add.image(this._xPos, this._yPos, this._key);
         }
-    }
-
-    Image.prototype.addButtonToGame = function(game) {
-        this._image = game.add.button(this._xPos, this._yPos, this._key);
+        group.add(this._image);
     }
 
     Image.prototype.setImage = function(key) {
@@ -88,6 +87,9 @@ define(['Modules/Linkable'], function(Linkable) {
         return this._image;
     }
 
+    Image.prototype.changeToPauseButton = function(game) {
+
+    }
 
     //Changes cursor image on mouseover
     Image.prototype.changeCursorImage = function(game, cursorImageSrc) {
