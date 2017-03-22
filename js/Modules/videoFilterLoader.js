@@ -11,6 +11,7 @@ define(['Modules/Linkable', 'Lib/jsmanipulate.min'], function(Linkable) {
     var _context = null;
     var _framebuffer = null;
     var _effect = null;
+    var _filter = null;
     var _fadeOutSignal = null;
 
     const REFRESH_TIME_MS = 10;
@@ -35,13 +36,11 @@ define(['Modules/Linkable', 'Lib/jsmanipulate.min'], function(Linkable) {
         Linkable.fadeOut(_game, _bitmapSprite, false);
     }
 
-    function CreateVideoFilter(filter) {
-        if(filter in JSManipulate) {
-            _effect = JSManipulate[filter];
+    function CreateVideoFilter() {
          //   _game.time.reset();
             Render();
         //_game.time.events.repeat(10, 1, render, this);
-        }
+        
     };
 
     function Render() {
@@ -62,7 +61,16 @@ define(['Modules/Linkable', 'Lib/jsmanipulate.min'], function(Linkable) {
         _context.drawImage(_videoHTML, 0, 0, _video.width,
             _video.height, 0, 0, _game.width, _game.height);
         var data = _context.getImageData(0, 0, _game.width, _game.height);
-        _effect.filter(data, _effect.defaultValues);
+        var effect;
+        _filter.forEach(function(filter) {
+            if(filter[0] in JSManipulate) {
+                _effect = JSManipulate[filter[0]];
+            }
+            if(filter[1])
+                _effect.filter(data, filter[1]);
+            else
+                _effect.filter(data, _effect.defaultValues);
+        });
         _context.putImageData(data, 0, 0);
         return;
     };
@@ -92,8 +100,10 @@ define(['Modules/Linkable', 'Lib/jsmanipulate.min'], function(Linkable) {
             return _instance;
         },
         create: function(filter) {
+            console.log(filter);
+            _filter = filter;
             InitializeBitmapOverlay(_game);
-            CreateVideoFilter(filter);
+            CreateVideoFilter();
         },
         startFilterFade: function(signal) {
             StartFilterFadeIn(signal);
