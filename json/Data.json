@@ -84,9 +84,164 @@
 
       },
 
+      "black1": {
+        "videoFilter": "sepia",
+        "movieSrc": "./Videos/Black1.mp4",
+        "stateType": "InteractState",
+        "transition": {
+          "fadeIn": true,
+          "fadeOut": false
+        },
+        "choiceMoments": {
+            "size": 1,
+          "choiceMomentsProperties": [
+            {
+              "timeStamp": 9,
+              "choices": 
+                {
+                  "size": 2,
+                  "content": [
+                    "Hard working, perfectionist but not in a bad way",
+                    "Does not like star wars but likes artsy films."
+                  ],
+                  "y": [
+                    480,
+                    600
+                  ],
+                  "bounds": [
+                    [ 1200, 100 ],
+                    [ 1200, 100 ]
+                  ],
+                  "targetScene": [
+                    "black2",
+                    "black2"
+                  ]
+                }
+              
+            }
+          ]
+         }      
+       },
 
+      "startScene": {
+        "videoFilter": "sepia",
+        "movieSrc": "./Videos/Black2.mp4",
+        "stateType": "InteractState",
+        "transition": {
+          "fadeIn": true,
+          "fadeOut": false
+        },
+        "choiceMoments": {
+            "size": 3,
+          "choiceMomentsProperties": [
+            {
+              "timeStamp": 3,
+              "choices": 
+                {
+                  "size": 2,
+                  "content": [
+                    "If you practiced all day you must be ready",
+                    "Like Rebecca said, we believe in you."
+                  ],
+                  "y": [
+                    480,
+                    600
+                  ],
+                  "bounds": [
+                    [ 1200, 100 ],
+                    [ 1200, 100 ]
+                  ]
+                }
+            },
+            {
+              "timeStamp": 5,
+              "choices": {
+                "size": 2,
+                "content": [
+                  "Are you sure?",
+                  "If she is right then it is one less reason not to be nervous"
+                ],
+                "y": [
+                  480,
+                  600
+                ],
+                "bounds": [
+                  [ 1200, 100 ],
+                  [ 1200, 100 ]
+                ]
+              }
+            },
+            {
+              "timeStamp": 7,
+              "thoughtBubbles": {
+                "size": 1,
+                "thoughtIconKey": [
+                  "thoughtIcon"
+                ],
+                "coords": [
+                  [ 900, 200 ]
+                ],
+                "thoughts": [
+                  {
+                    "size": 2,
+                    "content": [
+                      "I just wanted to calm him down...",
+                      "Why would she even say that...\ndoes she not understand what it actually means?"
+                    ],
+                    "destination": [
+                      [300, 50 ],
+                      [ 1000, 300 ]
+                    ]
+                  }
+                ],
+                "choices": [
+                  {
+                    "size": 2,
+                    "content": [
+                      "Relax, you know she did not mean anything by it.\n",
+                      "Why do you think that is an advantage?\n"
+                    ],
+                    "y": [
+                      480,
+                      600
+                    ],
+                    "bounds": [
+                      [ 1200, 100 ],
+                      [ 1200, 100 ]
+                    ],
+                    "targetScene": [
+                      "black3bad",
+                      "black3good"
+                    ]
+                  }
+                ]
 
-        "startScene": {
+              }                  
+            }
+          ]
+          }      
+       },
+        "black3bad" : {
+            "stateType": "MovieState",
+            "movieSrc": "./Videos/Black3_Bad.mp4",
+            "transition": {
+                "fadeIn": true,
+                "fadeOut": false
+            },
+            "nextScenes": "startScene"
+        },
+
+        "black3good" : {
+            "stateType": "MovieState",
+            "movieSrc": "./Videos/Black3_Good.mp4",
+            "transition": {
+                "fadeIn": true,
+                "fadeOut": false
+            },
+            "nextScenes": "startScene"
+        },
+
+        "startS1cene": {
             "stateType": "LocationState",
             "draggable": true,
             "bgImageKey": "cmu1",
@@ -126,8 +281,8 @@
                     
                   "movie1",
                   "movie1",
-                  "movie1",
-                  "movie1",
+                  "black1",
+                  "black1",
                   "asian1",
                   "asian1"
 
