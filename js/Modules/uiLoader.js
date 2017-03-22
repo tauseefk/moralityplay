@@ -1,6 +1,6 @@
 //Dependency: Nonde
 
-define(['Modules/Image'], function(Image) {
+define(['Modules/Image', 'Modules/videoLoader'], function(Image, Video) {
     "use strict";
 
     var _instance = null;
@@ -29,10 +29,13 @@ define(['Modules/Image'], function(Image) {
         if(!_game.paused) {
             _game.input.onDown.addOnce(Unpause, self);
             _game.paused = true;
+            Video.stop();
             drawRect();
         }
 
         function Unpause() {
+
+            Video.play();
             _game.paused = false;
             _graphics.destroy();
         }

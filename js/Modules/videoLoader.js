@@ -69,16 +69,6 @@ define(['Modules/videoFilterLoader', 'Modules/Linkable'], function(VideoFilter, 
       },500);
     }
 
-    function ReducePlaybackSpeed() {
-         _video.playbackRate = VIDEO_SLOW_PLAYBACK_RATE;
-    }
-
-    function ResumePlaybackSpeed() {   
-        _video.play();
-        //_game.time.resume();
-        //_video.playbackRate = 1;
-    }
-    
     function FadeOut(signal) {
         _game.global.gameManager.getFadeOutTransitionSignal().dispatch();      
     }
@@ -121,8 +111,12 @@ define(['Modules/videoFilterLoader', 'Modules/Linkable'], function(VideoFilter, 
             if(_video)
                 _video.stop();
         },
+        play: function() {            
+            if(_video)
+                _video.play();
+        },
         endFilter() {
-            ResumePlaybackSpeed();
+            this.play();
             VideoFilter.endFilter();
         }
     }
