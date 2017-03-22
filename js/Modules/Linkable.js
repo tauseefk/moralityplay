@@ -88,7 +88,9 @@ define(function() {
 
     }
 
-    Linkable.zoomIn = function(game, object, scale) {
+    Linkable.zoomIn = function(game, object, scale, originalWidth, originalHeight) {
+        object.width = originalWidth;
+        object.height = originalHeight;
         var tween = game.add.tween(object).to({width:object.width*scale, height:object.height*scale}, FADE_SPEED, Phaser.Easing.Linear.None, true, 0, 0, false);
     }
 

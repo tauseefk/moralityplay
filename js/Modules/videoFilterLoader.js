@@ -18,7 +18,7 @@ define(['Modules/Linkable', 'Lib/jsmanipulate.min'], function(Linkable) {
 
     function StartFilterFadeIn(signal) {
         Linkable.fadeIn(_game, _bitmapSprite, FADE_IN_TIME_MS, signal);
-        Linkable.zoomIn(_game, _bitmapSprite, 1.05);
+        Linkable.zoomIn(_game, _bitmapSprite, 1.05, _game.width, _game.height);
         _video.stop();
     }
 

@@ -41,7 +41,7 @@ define(['Modules/videoFilterLoader', 'Modules/Linkable'], function(VideoFilter, 
                 //_game.time.events.add((_video.video.duration-FADEOUT_OFFSET_SECONDS)*Phaser.Timer.SECOND, FadeOut, this);
             }
 
-            if(_videoFilter != null && _videoFilter != 'none') {            
+            if(_videoFilter != null && _videoFilter != 'none') {
                 VideoFilter.init(_game, _video);            
                 VideoFilter.create(_videoFilter);
             } 

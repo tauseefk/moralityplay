@@ -1,5 +1,5 @@
 
-define(['Modules/videoLoader', 'Modules/transition', 'States/State'], function(Video, Transition, State)  {
+define(['Modules/groupLoader', 'Modules/uiLoader', 'Modules/videoLoader', 'Modules/transition', 'States/State'], function(Group, UI, Video, Transition, State)  {
     "use strict";
 
     var _instance = null;
@@ -19,9 +19,11 @@ define(['Modules/videoLoader', 'Modules/transition', 'States/State'], function(V
         preload: function() {
         },
         create: function() {     
+            Group.initializeGroups();
             Video.create(_stateInfo.getMovieSrc(), _stateInfo.getTransitionInfo().fadeOut, _stateInfo.getVideoFilter(), _stateInfo.getNextScenes());     
             if(_stateInfo.getTransitionInfo().fadeIn)
                 this.game.global.gameManager.getFadeInTransitionSignal().dispatch();
+            UI.create();
         }
     }
     
