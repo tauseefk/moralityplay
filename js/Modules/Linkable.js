@@ -15,32 +15,6 @@ define(function() {
         this._image = null;
     }
 
-    Linkable.SetLinkProperties = function(game, fadeIn, fadeOut, object, event, callbackFunc, targetScene, signal) {
-        
-        if(fadeIn) {
-            game.add.tween(object).to({alpha:1}, FADE_SPEED, Phaser.Easing.Linear.None, true, 0, 0, false);  
-        }
-
-        if(fadeOut) {
-            var objectFadeOut = game.add.tween(object).to({alpha:0}, FADE_SPEED, Phaser.Easing.Linear.None, false, 0, 0, false);
-            objectFadeOut.onComplete.add(DisableButton, this);
-        }
-        event.onInputUp.addOnce(ButtonPressed, this);
-
-        function ButtonPressed() {
-            if(fadeOut)
-                objectFadeOut.start();
-            else
-                DisableButton();
-        }
-
-        function DisableButton() {
-            if(callbackFunc)   
-                callbackFunc(targetScene, signal);
-            object.destroy();
-        }
-    }    
-
     Linkable.fadeIn = function(game, object, time, signal) {
         var tween;
 
@@ -59,6 +33,14 @@ define(function() {
 
     Linkable.setLink = function(event, callbackFunc, scope, arg1, arg2) {
         event.onInputUp.addOnce(driver, scope);
+
+        function driver() {
+            callbackFunc(arg1, arg2);
+        }
+    }
+
+    Linkable.setPermanentLink = function(event, callbackFunc, scope, arg1, arg2) {
+        event.onInputUp.add(driver, scope);
 
         function driver() {
             callbackFunc(arg1, arg2);

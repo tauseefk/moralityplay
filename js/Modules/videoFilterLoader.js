@@ -16,6 +16,15 @@ define(['Modules/Linkable', 'Lib/jsmanipulate.min'], function(Linkable) {
     const REFRESH_TIME_MS = 10;
     const FADE_IN_TIME_MS = 2000;
 
+    function InitializeBitmapOverlay(game) {
+        _bitmapCanvas = game.add.bitmapData(game.width, game.height);
+        _bitmapSprite = game.add.sprite(game.width/2, game.height/2, _bitmapCanvas);
+        game.mediaGroup.add(_bitmapSprite);
+        _bitmapSprite.alpha = 0;
+        _bitmapSprite.anchor.setTo(0.5);
+        _context = _bitmapCanvas.context;
+    }
+
     function StartFilterFadeIn(signal) {
         Linkable.fadeIn(_game, _bitmapSprite, FADE_IN_TIME_MS, signal);
         Linkable.zoomIn(_game, _bitmapSprite, 1.05, _game.width, _game.height);
@@ -66,13 +75,6 @@ define(['Modules/Linkable', 'Lib/jsmanipulate.min'], function(Linkable) {
     return {
         init: function(game, video) {
             console.log("Filter initialized");
-            //Initialize and add filter canvas before loading to ensure proper object layering (icons on top of filter canvas) 
-            _bitmapCanvas = game.add.bitmapData(game.width, game.height);
-            _bitmapSprite = game.add.sprite(game.width/2, game.height/2, _bitmapCanvas);
-            game.mediaGroup.add(_bitmapSprite);
-            _bitmapSprite.alpha = 0;
-            _bitmapSprite.anchor.setTo(0.5);
-            _context = _bitmapCanvas.context;
 
             if(_instance !== null) 
                 return _instance;
@@ -90,6 +92,7 @@ define(['Modules/Linkable', 'Lib/jsmanipulate.min'], function(Linkable) {
             return _instance;
         },
         create: function(filter) {
+            InitializeBitmapOverlay(_game);
             CreateVideoFilter(filter);
         },
         startFilterFade: function(signal) {

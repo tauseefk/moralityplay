@@ -51,6 +51,9 @@ define(['Modules/Linkable'], function(Linkable) {
             case ImageTypeEnum.ChoiceBackground:
                 this.changeToChoiceBackgroundImage(game, arg1, arg2);
                 break;
+            case ImageTypeEnum.Pause:
+                this.changeToPauseButton(game, arg1, arg2);
+                break;
             default:
                 console.warn("Invalid Image Type.");
         }
@@ -71,12 +74,12 @@ define(['Modules/Linkable'], function(Linkable) {
         }
     }
 
-    Image.prototype.changeToThoughtIcon = function(game, callbackFunc) {
-        this.addLinkProperties(game, callbackFunc);
+    Image.prototype.changeToThoughtIcon = function(game, callbackFunc) { 
+        Linkable.setLink(this._image, callbackFunc);
     }
 
-    Image.prototype.changeToSceneChangeImage = function(game, targetScene, signal) {
-        Linkable.SetLinkProperties(game, true, true, this._image, this._image, changeScene, targetScene, signal);
+    Image.prototype.changeToSceneChangeImage = function(game, signal, targetScene) {
+        Linkable.setLink(this._image, SignalDispatcher, this, signal, targetScene);
     }
 
     Image.prototype.changeToChoiceBackgroundImage = function(game, width, height) {
@@ -87,8 +90,8 @@ define(['Modules/Linkable'], function(Linkable) {
         return this._image;
     }
 
-    Image.prototype.changeToPauseButton = function(game) {
-
+    Image.prototype.changeToPauseButton = function(game, signal) {
+        Linkable.setPermanentLink(this._image, SignalDispatcher, this, signal);
     }
 
     //Changes cursor image on mouseover
@@ -118,10 +121,6 @@ define(['Modules/Linkable'], function(Linkable) {
         this.changeCursorImage(game, 'url("./Images/UI/hand_2.png"), auto');
     }
 
-    Image.prototype.addLinkProperties = function(game, callbackFunc) {        
-        Linkable.SetLinkProperties(game, true, true, this._image, this._image, callbackFunc);
-    }
-
     Image.prototype.getPhaserImage = function() {
         return this._image;
     }
@@ -130,8 +129,23 @@ define(['Modules/Linkable'], function(Linkable) {
         Linkable.fadeOut(game, this._image, true);
     }
 
-    function changeScene(scene, signal) {
-        signal.dispatch(scene);
+    function SignalDispatcher(signal, scene) {
+        if(scene)
+            signal.dispatch(scene);
+        else 
+            signal.dispatch();
+    }
+
+    function PauseScene(game) {
+        console.log(game.paused);
+        if(!game.paused) {
+            game.input.onDown.add(Unpause, self);
+        }
+        game.paused = true;;
+
+        function Unpause() {
+            game.paused = false;
+        }
     }
 
     function DebugRect(x, y, width, height, game) {

@@ -1,5 +1,5 @@
 
-define(['States/StateManager', 'States/interactState', 'Modules/transition'], function(StateManager, InteractState, Transition)  {
+define(['States/StateManager', 'States/interactState', 'Modules/transition', 'Modules/uiLoader'], function(StateManager, InteractState, Transition, UI)  {
     "use strict";
 
     var _instance = null;
@@ -17,6 +17,8 @@ define(['States/StateManager', 'States/interactState', 'Modules/transition'], fu
         this._triggerInteractionSignal = null;
         this._endInteractionSignal = null;
 
+        this._pauseSignal = null;
+
         return _instance;
     }    
 
@@ -33,6 +35,9 @@ define(['States/StateManager', 'States/interactState', 'Modules/transition'], fu
         this._triggerInteractionSignal.add(InteractState.createThought, this);
         this._endInteractionSignal = new Phaser.Signal();
         this._endInteractionSignal.add(InteractState.endInteraction, this)
+
+        this._pauseSignal = new Phaser.Signal();
+        this._pauseSignal.add(UI.pause, this);
     }
 
     GameManager.prototype.getChangeSceneSignal = function() {
@@ -53,6 +58,10 @@ define(['States/StateManager', 'States/interactState', 'Modules/transition'], fu
 
     GameManager.prototype.getEndInteractionSignal = function() {
         return this._endInteractionSignal;
+    }
+
+    GameManager.prototype.getPauseSignal = function() {
+        return this._pauseSignal;
     }
 
     return GameManager;
