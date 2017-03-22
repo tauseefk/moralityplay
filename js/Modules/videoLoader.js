@@ -11,7 +11,7 @@ define(['Modules/videoFilterLoader', 'Modules/Linkable'], function(VideoFilter, 
     const VIDEO_SLOW_PLAYBACK_RATE = 0.2;
 
     function CreateVideo(src, doFadeOut, nextScenes, interactionTimeStamps) {
-        _video = _video.changeSource(src);
+        _video = _video.changeSource(src, false);
         _video.play();
     //    _video.video.setAttribute('autoplay', 'autoplay');
         AddVideoOrFilter(doFadeOut);
