@@ -12,66 +12,76 @@
     "choiceBg": "./Images/UI/Option_bg.png"
   },
     "scenes": {
-        "asian1": {
-            "videoFilter": "sepia",
-            "movieSrc": "./Videos/Asian1.mp4",
-            "stateType": "InteractState",
-            "transition": {
-          "fadeIn": true,
-          "fadeOut": false
-        },
-          "choiceMoments": {
-            "size": 1,
-            "choiceMomentsProperties": [
-              {
-                "timeStamp": 120,
-                "thoughtBubbles": {
-                  "size": 1,
-                  "thoughtIconKey": [
-                    "thoughtIcon"
-                  ],
-                  "coords": [
-                    [ 640, 100 ]
-                  ],
-                  "thoughts": [
-                    {
-                      "size": 2,
-                      "content": [
-                        "I guess it is okay if not everyone participates",
-                        "I can do much more than nothing"
-                      ],
-                      "destination": [
-                        [ 900, 25 ],
-                        [ 300, 50]
-                      ]
-                    }
-                  ],
-                  "choices": [
-                    {
-                      "size": 2,
-                      "content": [
-                        "Just a thought, but Li has worked so hard on this.\nI feel like we just ignoring her.",
-                        "I think we are set for getting a good grade and \nYou can probably participate more next time."
-                      ],
-                      "y": [
-                        480,
-                        600
-                      ],
-                      "bounds": [
-                        [1200, 100],
-                        [1200,100]
-                      ],
-                      "targetScene": [
-                        "asian2",
-                        "asian2"
-                      ]
-                    }
-                  ]
+      "asian1": {
+        "videoFilter": [
+          [ "grayscale", null ]
+        ],
+            "movieSrc"
+            :
+            "./Videos/Asian1.mp4",
+            "stateType"
+            :
+            "InteractState",
+            "transition"
+            :
+            {
+              "fadeIn": true,
+              "fadeOut": false
+            },
+            "choiceMoments"
+            :
+            {
+              "size": 1,
+              "choiceMomentsProperties": [
+                {
+                  "timeStamp": 120,
+                  "thoughtBubbles": {
+                    "size": 1,
+                    "thoughtIconKey": [
+                      "thoughtIcon"
+                    ],
+                    "coords": [
+                      [ 640, 100 ]
+                    ],
+                    "thoughts": [
+                      {
+                        "size": 2,
+                        "content": [
+                          "I guess it is okay if not everyone participates",
+                          "I can do much more than nothing"
+                        ],
+                        "destination": [
+                          [ 900, 25 ],
+                          [ 300, 50 ]
+                        ]
+                      }
+                    ],
+                    "choices": [
+                      {
+                        "size": 2,
+                        "content": [
+                          "Just a thought, but Li has worked so hard on this.\nI feel like we just ignoring her.",
+                          "I think we are set for getting a good grade and \nYou can probably participate more next time."
+                        ],
+                        "y": [
+                          480,
+                          600
+                        ],
+                        "bounds": [
+                          [ 1200, 100 ],
+                          [ 1200, 100 ]
+                        ],
+                        "targetScene": [
+                          "asian2",
+                          "asian2"
+                        ]
+                      }
+                    ]
+                  }
                 }
-              }
-            ]
+              ]
 
-          }
+            }
       },
         "asian2": {
           "stateType": "MovieState",
@@ -85,7 +95,9 @@
       },
 
         "black1": {
-        "videoFilter": "sepia",
+        "videoFilter": [
+          [ "grayscale", null ]
+        ],
         "movieSrc": "./Videos/Black1.mp4",
         "stateType": "InteractState",
         "transition": {
@@ -124,7 +136,9 @@
        },
 
         "black2": {
-        "videoFilter": "sepia",
+        "videoFilter": [
+          [ "grayscale", null ]
+        ],
         "movieSrc": "./Videos/Black2.mp4",
         "stateType": "InteractState",
         "transition": {
@@ -300,7 +314,9 @@
         },
         "startScene2": {
             "stateType": "InteractState",
-            "videoFilter": "sepia",
+        "videoFilter": [
+          [ "grayscale", null ]
+        ],
             "movieSrc": "./Videos/pensive_2.mp4",
             "transition": {
                 "fadeIn": true,
@@ -404,7 +420,9 @@
         "flashbackScene1": {
             "stateType": "FlashbackState",
             "movieSrc": "./Videos/Flashback_rough.mp4",
-            "videoFilter": "sepia",
+        "videoFilter": [
+          [ "grayscale", null ]
+        ],
             "transition": {
                 "fadeIn": true,
                 "fadeOut": true
@@ -415,7 +433,9 @@
             "stateType": "MenuState",
             "draggable": false,
             "bgImageKey": "cmu1",
-            "videoFilter": "none",
+        "videoFilter": [
+          [ "sepia", null ]
+        ],
             "transition": {
                 "fadeIn": true,
                 "fadeOut": true
