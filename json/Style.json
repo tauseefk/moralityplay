@@ -6,22 +6,30 @@
             "width": 100,
             "height": 30
         }
-    },    
+    },
+    "subtitleTextProperties": {
+        "fontSize": 25,
+        "align": "center",
+        "font": "Merienda One",
+        "backgroundColor": "rgba(0, 255, 0, 0.25)"
+    },
     "thoughtsTextProperties": {
         "fontSize": 25,
         "align": "center",
-        "font": "Abel",
+        "font": "Merienda One",
         "stroke": "#ffffff",
         "strokeThickness": 5
     },
     "choicesTextProperties": {
         "fontSize": 30,
         "align": "center",
-        "font": "Roboto",
+        "font": "Kadwa",
         "strokeThickness": 5,
         "fill": "#ffffff",
         "stroke": "#000000",
-        "boundsHeight": 100
+        "boundsHeight": 100,
+        "lineSpacing": -5,
+        "shadow": [3, 3, "rgba(0,0,0,0.5)", 5]
     },
     "choiceTextBgProperties": {
     }

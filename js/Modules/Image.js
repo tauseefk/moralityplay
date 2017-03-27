@@ -1,9 +1,6 @@
-//Dependency: Nonde
+"use strict";
 
-define(['Modules/Linkable'], function(Linkable) {
-    "use strict";
-
-    var ImageTypeEnum = {
+var ImageTypeEnum = {
         Info: 'IMAGE_BUTTON_INFO',
         SceneChange: 'IMAGE_BUTTON_SCENECHANGE',
         Thought: 'IMAGE_BUTTON_THOUGHT',
@@ -12,148 +9,147 @@ define(['Modules/Linkable'], function(Linkable) {
         ChoiceBackground: 'IMAGE_CHOICE_BACKGROUND',
         Pause: 'IMAGE_PAUSE'
     }
+var Linkable = require('./Linkable');
 
-    //Image constructor
-    var Image = function(xPos, yPos, key, properties) {
-        this._xPos = xPos;
-        this._yPos = yPos;
-        this._properties = properties;
-        this._key = key;
-        this._image = null;
+//Image constructor
+var Image = function(xPos, yPos, key, properties) {
+    this._xPos = xPos;
+    this._yPos = yPos;
+    this._properties = properties;
+    this._key = key;
+    this._image = null;
+}
+
+Image.prototype.addImageToGame = function(game, type, group) {
+    if(type && (type == ImageTypeEnum.SceneChange || type == ImageTypeEnum.Thought || type == ImageTypeEnum.Pause))
+        this._image = game.add.button(this._xPos, this._yPos, this._key);
+    else {
+        this._image = game.add.image(this._xPos, this._yPos, this._key);
     }
+    group.add(this._image);
+}
 
-    Image.prototype.addImageToGame = function(game, type, group) {
-        console.log(type);
-        if(type && (type == ImageTypeEnum.SceneChange || type == ImageTypeEnum.Thought || type == ImageTypeEnum.Pause))            
-            this._image = game.add.button(this._xPos, this._yPos, this._key);
-        else {
-            this._image = game.add.image(this._xPos, this._yPos, this._key);
-        }
-        group.add(this._image);
+Image.prototype.setImage = function(key) {
+    this._key = key;
+}
+
+//Assigns image change function depending on enum
+Image.prototype.changeImage = function (game, enumType, arg1, arg2, arg3) {
+    switch(enumType) {
+        case ImageTypeEnum.Background:
+            this.changeToBgImage(game, arg1);
+            break;
+        case ImageTypeEnum.Thought:
+            this.changeToThoughtIcon(game, arg1);
+            break;
+        case ImageTypeEnum.SceneChange:
+            this.changeToSceneChangeImage(game, arg1, arg2);
+            break;
+        case ImageTypeEnum.ChoiceBackground:
+            this.changeToChoiceBackgroundImage(game, arg1, arg2);
+            break;
+        case ImageTypeEnum.Pause:
+            this.changeToPauseButton(game, arg1, arg2);
+            break;
+        default:
+            console.warn("Invalid Image Type.");
     }
+}
 
-    Image.prototype.setImage = function(key) {
-        this._key = key;
+//Changes image to a horizontally draggable image
+//Scales and sets a rectangle container for Bg image to pan around
+Image.prototype.changeToBgImage = function(game, draggable) {
+
+    //Scales Bg image to fit game height, maintains Bg image aspect ratio
+    var scale = game.height/this._image.height;
+    this._image.height = Math.floor(this._image.height*scale);
+    this._image.width = Math.floor(this._image.width*scale);
+    //Initializes container for bg image to be dragged around
+
+    if(draggable) {
+        this.makeDraggable(game, 'stub', false, true, -this._image.width+game.width, 0, this._image.width*2-game.width, this._image.height)
     }
+}
 
-    //Assigns image change function depending on enum
-    Image.prototype.changeImage = function (game, enumType, arg1, arg2, arg3) {
-        switch(enumType) {
-            case ImageTypeEnum.Background:
-                this.changeToBgImage(game, arg1);
-                break;
-            case ImageTypeEnum.Thought:
-                this.changeToThoughtIcon(game, arg1);
-                break;
-            case ImageTypeEnum.SceneChange:
-                this.changeToSceneChangeImage(game, arg1, arg2);
-                break;
-            case ImageTypeEnum.ChoiceBackground:
-                this.changeToChoiceBackgroundImage(game, arg1, arg2);
-                break;
-            case ImageTypeEnum.Pause:
-                this.changeToPauseButton(game, arg1, arg2);
-                break;
-            default:
-                console.warn("Invalid Image Type.");
-        }
+Image.prototype.changeToThoughtIcon = function(game, callbackFunc, thoughts) {
+    Linkable.setLink(this._image, callbackFunc);
+}
+
+Image.prototype.changeToSceneChangeImage = function(game, signal, targetScene) {
+    Linkable.setLink(this._image, SignalDispatcher, this, signal, targetScene);
+}
+
+Image.prototype.changeToChoiceBackgroundImage = function(game, width, height) {
+    this._image.anchor.x = 0.5;
+    this._image.x = game.width/2;
+    this._image.width = width;
+    this._image.height = height;
+    return this._image;
+}
+
+Image.prototype.changeToPauseButton = function(game, signal) {
+    Linkable.setPermanentLink(this._image, SignalDispatcher, this, signal);
+}
+
+//Changes cursor image on mouseover
+Image.prototype.changeCursorImage = function(game, cursorImageSrc) {
+    this._image.events.onInputOver.add(function(){
+    game.canvas.style.cursor = cursorImageSrc;
+    }, this);
+
+    this._image.events.onInputOut.add(function(){
+    game.canvas.style.cursor = "default";
+    }, this);
+}
+
+Image.prototype.makeDraggable = function(game, hoverImageSrc, lockHorizontal, lockVertical, boundsX, boundsY, boundsWidth, boundsHeight) {
+
+    //Enables drag interaction on the horizontal axis
+    this._image.inputEnabled = true;
+    if(boundsX !== undefined && boundsX !== undefined) {
+        var dragBounds = new Phaser.Rectangle(boundsX, boundsY, boundsWidth, boundsHeight);
+        this._image.input.boundsRect = dragBounds;
     }
+    this._image.input.draggable = true;
+    this._image.input.allowVerticalDrag = !lockVertical;
+    this._image.input.allowHorizontalDrag = !lockHorizontal;
+    this._image.x = -this._image.width/2;
+    //Changes mouseover image
+    this.changeCursorImage(game, 'url("./Images/UI/hand_2.png"), auto');
+}
 
-    //Changes image to a horizontally draggable image
-    //Scales and sets a rectangle container for Bg image to pan around
-    Image.prototype.changeToBgImage = function(game, draggable) {
+Image.prototype.getPhaserImage = function() {
+    return this._image;
+}
 
-        //Scales Bg image to fit game height, maintains Bg image aspect ratio
-        var scale = game.height/this._image.height;
-        this._image.height = Math.floor(this._image.height*scale);
-        this._image.width = Math.floor(this._image.width*scale);
-        //Initializes container for bg image to be dragged around
+Image.prototype.fadeOut = function(game) {
+    Linkable.fadeOut(game, this._image, true);
+}
 
-        if(draggable) {
-            this.makeDraggable(game, 'stub', false, true, -this._image.width+game.width, 0, this._image.width*2-game.width, this._image.height)
-        }
+function SignalDispatcher(signal, scene) {
+    if(scene)
+        signal.dispatch(scene);
+    else
+        signal.dispatch();
+}
+
+function PauseScene(game) {
+    console.log(game.paused);
+    if(!game.paused) {
+        game.input.onDown.add(Unpause, self);
     }
+    game.paused = true;;
 
-    Image.prototype.changeToThoughtIcon = function(game, callbackFunc) { 
-        Linkable.setLink(this._image, callbackFunc);
+    function Unpause() {
+        game.paused = false;
     }
+}
 
-    Image.prototype.changeToSceneChangeImage = function(game, signal, targetScene) {
-        Linkable.setLink(this._image, SignalDispatcher, this, signal, targetScene);
-    }
+function DebugRect(x, y, width, height, game) {
+    var bounds = new Phaser.Rectangle(x, y, width, height);
+    var graphics = game.add.graphics(bounds.x, bounds.y);
+    graphics.beginFill(0x000077);
+    graphics.drawRect(0, 0, bounds.width, bounds.height);
+}
 
-    Image.prototype.changeToChoiceBackgroundImage = function(game, width, height) {
-        this._image.anchor.x = 0.5;
-        this._image.x = game.width/2;
-        this._image.width = width;
-        this._image.height = height;
-        return this._image;
-    }
-
-    Image.prototype.changeToPauseButton = function(game, signal) {
-        Linkable.setPermanentLink(this._image, SignalDispatcher, this, signal);
-    }
-
-    //Changes cursor image on mouseover
-    Image.prototype.changeCursorImage = function(game, cursorImageSrc) {
-        this._image.events.onInputOver.add(function(){
-        game.canvas.style.cursor = cursorImageSrc;
-        }, this);
-
-        this._image.events.onInputOut.add(function(){
-        game.canvas.style.cursor = "default";
-        }, this);
-    }
-
-    Image.prototype.makeDraggable = function(game, hoverImageSrc, lockHorizontal, lockVertical, boundsX, boundsY, boundsWidth, boundsHeight) {
-        
-        //Enables drag interaction on the horizontal axis
-        this._image.inputEnabled = true;
-        if(boundsX !== undefined && boundsX !== undefined) {
-            var dragBounds = new Phaser.Rectangle(boundsX, boundsY, boundsWidth, boundsHeight);
-            this._image.input.boundsRect = dragBounds;
-        }
-        this._image.input.draggable = true;
-        this._image.input.allowVerticalDrag = !lockVertical;
-        this._image.input.allowHorizontalDrag = !lockHorizontal;
-        this._image.x = -this._image.width/2;
-        //Changes mouseover image
-        this.changeCursorImage(game, 'url("./Images/UI/hand_2.png"), auto');
-    }
-
-    Image.prototype.getPhaserImage = function() {
-        return this._image;
-    }
-
-    Image.prototype.fadeOut = function(game) {
-        Linkable.fadeOut(game, this._image, true);
-    }
-
-    function SignalDispatcher(signal, scene) {
-        if(scene)
-            signal.dispatch(scene);
-        else 
-            signal.dispatch();
-    }
-
-    function PauseScene(game) {
-        console.log(game.paused);
-        if(!game.paused) {
-            game.input.onDown.add(Unpause, self);
-        }
-        game.paused = true;;
-
-        function Unpause() {
-            game.paused = false;
-        }
-    }
-
-    function DebugRect(x, y, width, height, game) {
-        var bounds = new Phaser.Rectangle(x, y, width, height);
-        var graphics = game.add.graphics(bounds.x, bounds.y);
-        graphics.beginFill(0x000077);
-        graphics.drawRect(0, 0, bounds.width, bounds.height);
-    }
-
-    return Image;
-});
+module.exports = Image;

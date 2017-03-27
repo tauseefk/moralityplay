@@ -1,5 +1,3 @@
-
-define(function()  {
     "use strict";
 
     var State = function(scene) {
@@ -10,16 +8,18 @@ define(function()  {
       this._scene = scene;
     };
 
-
     State.prototype.getMovieKey = function() {
       return this._scene.movieKey;
     }
+
     State.prototype.getChoiceMoments = function() {
       return this._scene.choiceMoments;
     }
+
     State.prototype.getThoughtBubble = function(index) {
       return this._scene.choiceMoments.choiceMomentsProperties[index].thoughtBubbles;
     }
+
     State.prototype.getChoices = function(index){
       return this._scene.choiceMoments.choiceMomentsProperties[index].choices;
     }
@@ -50,6 +50,10 @@ define(function()  {
       return this._scene.movieSrc;
     }
 
+    State.prototype.getMovieSubKey = function() {
+      return this._scene.sub;
+    }
+
     State.prototype.getTransitionInfo = function() {
       return this._scene.transition;
     }
@@ -66,6 +70,4 @@ define(function()  {
       return this._scene.draggable;
     }
 
-
-    return State;
-});
+    module.exports = State;

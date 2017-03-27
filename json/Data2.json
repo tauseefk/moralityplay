@@ -10,82 +10,43 @@
     "rightOutline": "./Images/UI/outline_right.png",
     "thoughtIcon": "./Images/Icons/icon.png",
     "choiceBg": "./Images/UI/Option_bg.png"
-  },  
-  "subtitles": {
-    "sub1": "./Videos/Subtitles/test.srt"
   },
-
     "scenes": {
-      "asian1": {
-        "videoFilter": [
-          [ "grayscale", null ]
-        ],
-            "movieSrc":"./Videos/Asian1.mp4",
-            "sub": "sub1",
-
-            "stateType"
-            :
-            "InteractState",
-            "transition"
-            :
-            {
-              "fadeIn": true,
-              "fadeOut": false
-            },
-            "choiceMoments"
-            :
-            {
-              "size": 1,
-              "choiceMomentsProperties": [
-                {
-                  "timeStamp": 120,
-                  "thoughtBubbles": {
-                    "size": 1,
-                    "thoughtIconKey": [
-                      "thoughtIcon"
-                    ],
-                    "coords": [
-                      [ 640, 100 ]
-                    ],
-                    "thoughts": [
-                      {
-                        "size": 2,
-                        "content": [
-                          "I guess it is okay if not everyone participates",
-                          "I can do much more than nothing"
-                        ],
-                        "destination": [
-                          [ 900, 25 ],
-                          [ 300, 50 ]
-                        ]
-                      }
-                    ],
-                    "choices": [
-                      {
-                        "size": 2,
-                        "content": [
-                          "Just a thought, but Li has worked so hard on this.\nI feel like we just ignoring her.",
-                          "I think we are set for getting a good grade and \nYou can probably participate more next time."
-                        ],
-                        "y": [
-                          480,
-                          600
-                        ],
-                        "bounds": [
-                          [ 1200, 100 ],
-                          [ 1200, 100 ]
-                        ],
-                        "targetScene": [
-                          "asian2",
-                          "asian2"
-                        ]
-                      }
-                    ]
-                  }
+        "asian1": {
+            "videoFilter": "sepia",
+            "movieSrc": "./Videos/Asian1.mp4",
+            "stateType": "InteractState",
+            "transition": {
+          "fadeIn": true,
+          "fadeOut": false
+        },
+          "choiceMoments": {
+            "size": 1,
+            "choiceMomentsProperties": [
+              {
+                "timeStamp": 2,
+                  "choices": 
+                    {
+                      "size": 2,
+                      "content": [
+                        "Just a thought, but Li has worked so hard on this.\nI feel like we just ignoring her.",
+                        "I think we are set for getting a good grade and \nYou can probably participate more next time."
+                      ],
+                      "y": [
+                        480,
+                        600
+                      ],
+                      "bounds": [
+                        [1200, 100],
+                        [1200,100]
+                      ]
+                    }
+                  
                 }
-              ]
+              
+            ]
 
-            }
+          }
       },
         "asian2": {
           "stateType": "MovieState",
@@ -98,166 +59,7 @@
 
       },
 
-        "black1": {
-        "videoFilter": [
-          [ "grayscale", null ]
-        ],
-        "movieSrc": "./Videos/Black1.mp4",
-        "stateType": "InteractState",
-        "transition": {
-          "fadeIn": true,
-          "fadeOut": false
-        },
-        "choiceMoments": {
-            "size": 1,
-          "choiceMomentsProperties": [
-            {
-              "timeStamp": 9,
-              "choices": 
-                {
-                  "size": 2,
-                  "content": [
-                    "Hard working, perfectionist but not in a bad way",
-                    "Does not like star wars but likes artsy films."
-                  ],
-                  "y": [
-                    480,
-                    600
-                  ],
-                  "bounds": [
-                    [ 1200, 100 ],
-                    [ 1200, 100 ]
-                  ],
-                  "targetScene": [
-                    "black2",
-                    "black2"
-                  ]
-                }
-              
-            }
-          ]
-         }      
-       },
 
-        "black2": {
-        "videoFilter": [
-          [ "grayscale", null ]
-        ],
-        "movieSrc": "./Videos/Black2.mp4",
-        "stateType": "InteractState",
-        "transition": {
-          "fadeIn": true,
-          "fadeOut": false
-        },
-        "choiceMoments": {
-            "size": 3,
-          "choiceMomentsProperties": [
-            {
-              "timeStamp": 37,
-              "choices": 
-                {
-                  "size": 2,
-                  "content": [
-                    "If you practiced all day you must be ready",
-                    "Like Rebecca said, we believe in you."
-                  ],
-                  "y": [
-                    480,
-                    600
-                  ],
-                  "bounds": [
-                    [ 1200, 100 ],
-                    [ 1200, 100 ]
-                  ]
-                }
-            },
-            {
-              "timeStamp": 53,
-              "choices": {
-                "size": 2,
-                "content": [
-                  "Are you sure?",
-                  "If she is right then it is one less reason not to be nervous"
-                ],
-                "y": [
-                  480,
-                  600
-                ],
-                "bounds": [
-                  [ 1200, 100 ],
-                  [ 1200, 100 ]
-                ]
-              }
-            },
-            {
-              "timeStamp": 72,
-              "thoughtBubbles": {
-                "size": 1,
-                "thoughtIconKey": [
-                  "thoughtIcon"
-                ],
-                "coords": [
-                  [ 600, 100 ]
-                ],
-                "thoughts": [
-                  {
-                    "size": 2,
-                    "content": [
-                      "I just wanted to calm him down...",
-                      "Why would she even say that...\ndoes she not understand what it actually means?"
-                    ],
-                    "destination": [
-                      [300, 50 ],
-                      [ 1000, 300 ]
-                    ]
-                  }
-                ],
-                "choices": [
-                  {
-                    "size": 2,
-                    "content": [
-                      "Relax, you know she did not mean anything by it.\n",
-                      "Why do you think that is an advantage?\n"
-                    ],
-                    "y": [
-                      480,
-                      600
-                    ],
-                    "bounds": [
-                      [ 1200, 100 ],
-                      [ 1200, 100 ]
-                    ],
-                    "targetScene": [
-                      "black3bad",
-                      "black3good"
-                    ]
-                  }
-                ]
-
-              }                  
-            }
-          ]
-          }      
-       },
-        "black3bad" : {
-            "stateType": "MovieState",
-            "movieSrc": "./Videos/Black3_Bad.mp4",
-            "transition": {
-                "fadeIn": true,
-                "fadeOut": false
-            },
-            "nextScenes": "startScene"
-        },
-
-        "black3good" : {
-            "stateType": "MovieState",
-            "movieSrc": "./Videos/Black3_Good.mp4",
-            "transition": {
-                "fadeIn": true,
-                "fadeOut": false
-            },
-            "nextScenes": "startScene"
-        },
 
         "startScene": {
             "stateType": "LocationState",
@@ -299,8 +101,8 @@
                     
                   "movie1",
                   "movie1",
-                  "black1",
-                  "black1",
+                  "movie1",
+                  "movie1",
                   "asian1",
                   "asian1"
 
@@ -318,9 +120,7 @@
         },
         "startScene2": {
             "stateType": "InteractState",
-        "videoFilter": [
-          [ "grayscale", null ]
-        ],
+            "videoFilter": "sepia",
             "movieSrc": "./Videos/pensive_2.mp4",
             "transition": {
                 "fadeIn": true,
@@ -424,9 +224,7 @@
         "flashbackScene1": {
             "stateType": "FlashbackState",
             "movieSrc": "./Videos/Flashback_rough.mp4",
-        "videoFilter": [
-          [ "grayscale", null ]
-        ],
+            "videoFilter": "sepia",
             "transition": {
                 "fadeIn": true,
                 "fadeOut": true
@@ -437,9 +235,7 @@
             "stateType": "MenuState",
             "draggable": false,
             "bgImageKey": "cmu1",
-        "videoFilter": [
-          [ "sepia", null ]
-        ],
+            "videoFilter": "none",
             "transition": {
                 "fadeIn": true,
                 "fadeOut": true
