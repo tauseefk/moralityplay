@@ -1,21 +1,24 @@
 "use strict";
 
-var _instance = null;
-var _game = null;
-var _icons = [];
-var Filter = require('./filter'),
+const Filter = require('./filter'),
     Thoughts = require('./thoughtsLoader'),
     Choices = require('./choiceLoader'),
     Image = require('./Image');
 
-const buttonImageKeyEnum = 'IMAGE_BUTTON_THOUGHT';
+var _instance = null;
+var _game = null;
+var _icons = [];
+
+const buttonThoughtImageKeyEnum = 'IMAGE_BUTTON_THOUGHT';
+const sceneChangeImageKeyEnum = 'IMAGE_BUTTON_SCENECHANGE';
 
 function CreateThoughtIcon(iconKey, coords, thoughts, choices) {
-    var button = new Image(coords[0], coords[1], iconKey);
-    button.addImageToGame(_game, buttonImageKeyEnum, _game.mediaGroup);
-    button.changeImage(_game, buttonImageKeyEnum, ButtonPressed);
+    var button = new Image(coords[0], coords[1], iconKey, buttonThoughtImageKeyEnum);
+    button.addImageToGame(_game, _game.mediaGroup);
+    button.changeImage(_game, ButtonPressed);
 
     _icons.push(button);
+
     function ButtonPressed() {
         console.log(thoughts);
         Thoughts.create(thoughts, coords);
@@ -23,17 +26,25 @@ function CreateThoughtIcon(iconKey, coords, thoughts, choices) {
     }
 }
 
-function CreateExploratoryIcons(key, coords, targetScene, type, reference) {
-    var button = new Image(coords[0], coords[1], key);
-    button.addImageToGame(_game, type, _game.mediaGroup);
-    button.changeImage(_game, type, _game.global.gameManager.getChangeSceneSignal(), targetScene);
-    _icons.push(button.getPhaserImage());
+function CreateExploratoryIcons(key, coords, target, type, reference) {
+    var button = new Image(coords[0], coords[1], key, type);
+    button.addImageToGame(_game, _game.mediaGroup);
+    button.changeImage(_game, target);
+    _icons.push(button);
 }
 
 function EndInteraction() {
     _icons.forEach(function(icon) {
-        if(icon.alive)
+        if(icon.getPhaserImage().alive)
             icon.fadeOut(_game);
+    });
+}
+
+function HideIconType(iconType) {
+    _icons.forEach(function(icon) {
+        if(icon.getType() == iconType) {
+            icon.setVisible(false);
+        }
     });
 }
 
@@ -56,12 +67,18 @@ module.exports = {
     createExploratoryIcons: function(icons) {
         _icons = [];
         for(var i=0; i<icons.size; i++) {
-            CreateExploratoryIcons(icons.key[i], icons.coords[i], icons.targetScene[i], icons.type[i]);
-        }
+            CreateExploratoryIcons(icons.key[i], icons.coords[i], icons.targetImageIndexOrScene[i], icons.type[i]);
+        }        
+        HideIconType(sceneChangeImageKeyEnum);
         return _icons;
     },
     endInteraction: function() {
         EndInteraction();
         Thoughts.endInteraction();
+    },
+    displayIcon: function(index, hideSameType) {
+        if(hideSameType)
+            HideIconType(_icons[index].getType());
+        _icons[index].setVisible(true);
     }
 }

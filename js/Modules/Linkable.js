@@ -28,19 +28,19 @@ Linkable.fadeIn = function(game, object, time, signal) {
     }
 }
 
-Linkable.setLink = function(event, callbackFunc, scope, arg1, arg2) {
+Linkable.setLink = function(event, callbackFunc, scope, arg1, arg2, arg3) {
     event.onInputUp.addOnce(driver, scope);
 
     function driver() {
-        callbackFunc(arg1, arg2);
+        callbackFunc(arg1, arg2, arg3);
     }
 }
 
-Linkable.setPermanentLink = function(event, callbackFunc, scope, arg1, arg2) {
+Linkable.setPermanentLink = function(event, callbackFunc, scope, arg1, arg2, arg3) {
     event.onInputUp.add(driver, scope);
 
     function driver() {
-        callbackFunc(arg1, arg2);
+        callbackFunc(arg1, arg2, arg3);
     }
 }
 

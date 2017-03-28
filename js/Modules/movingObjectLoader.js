@@ -14,9 +14,9 @@ var Text = require('./Text'),
 const bgImageKeyEnum = 'IMAGE_BACKGROUND';
 
 function createBgImage(key, draggable) {
-    _bgImage = new Image(0, 0, key);
-    _bgImage.addImageToGame(_game, bgImageKeyEnum, _game.mediaGroup);
-    _bgImage.changeImage(_game, bgImageKeyEnum, draggable);
+    _bgImage = new Image(0, 0, key, bgImageKeyEnum);
+    _bgImage.addImageToGame(_game, _game.mediaGroup);
+    _bgImage.changeImage(_game, draggable);
 }
 
 function dragStart() {
@@ -48,8 +48,8 @@ module.exports = {
     },
     assignFollowIcons: function(icons) {
         _group = _game.add.group();
-        icons.forEach(function(element) {
-            _group.add(element);
+        icons.forEach(function(icon) {
+            _group.add(icon.getPhaserImage());
         });
 
         _bgImage.getPhaserImage().events.onDragStart.add(dragStart);

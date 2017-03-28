@@ -11,36 +11,32 @@ var _pauseImage = null;
 
 const pauseButtonImageKeyEnum = 'IMAGE_PAUSE';
 
-function drawPauseButton() {
-    if(_pauseImage) {
-        _pauseImage.addImageToGame(_game, pauseButtonImageKeyEnum, _game.uiGroup);
-        _pauseImage.changeImage(_game, pauseButtonImageKeyEnum, _game.global.gameManager.getPauseSignal());
-    }
-    else {
-        _pauseImage = new Image(10, 10, 'thoughtIcon');
-        _pauseImage.addImageToGame(_game, pauseButtonImageKeyEnum, _game.uiGroup);
-        _pauseImage.changeImage(_game, pauseButtonImageKeyEnum, _game.global.gameManager.getPauseSignal());
-    }
+function DrawPauseButton() {
+    if(!_pauseImage)
+        _pauseImage = new Image(10, 10, 'thoughtIcon', pauseButtonImageKeyEnum);
+    _pauseImage.addImageToGame(_game, _game.uiGroup);
+    _pauseImage.changeImage(_game, _game.global.gameManager.getPauseSignal());
 }
 
 function Pause() {
-    console.log(_game.paused);
     if(!_game.paused) {
         _game.input.onDown.addOnce(Unpause, self);
         _game.paused = true;
         Video.stop();
-        drawRect();
+        if(_graphics)
+            _graphics.visible = true;
+        else
+            DrawRect();
     }
 
     function Unpause() {
-
         Video.play();
         _game.paused = false;
-        _graphics.destroy();
+        _graphics.visible = false;;
     }
 }
 
-function drawRect() {
+function DrawRect() {
     _graphics = _game.add.graphics(0, 0);
     _graphics.beginFill(0x000000, 0.8);
     _graphics.drawRect(0, 0, _game.width, _game.height);
@@ -68,7 +64,7 @@ module.exports = {
     preload: function() {
     },
     create: function() {
-        drawPauseButton();
+        DrawPauseButton();
     },
     pause: function() {
         Pause();

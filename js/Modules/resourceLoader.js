@@ -27,7 +27,6 @@ function loadImages(images) {
 function loadSubs(subs) {
     console.log("Loading subs");
     for (var key in subs) {
-        console.log(key);
         _game.load.text(key, subs[key]);
     }
 }

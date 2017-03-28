@@ -1,18 +1,20 @@
 "use strict";
 
+const Linkable = require('./Linkable');
+
 var ImageTypeEnum = {
-        Info: 'IMAGE_BUTTON_INFO',
         SceneChange: 'IMAGE_BUTTON_SCENECHANGE',
+        DisplayImage: 'IMAGE_BUTTON_DISPLAY_IMAGE',
         Thought: 'IMAGE_BUTTON_THOUGHT',
         Transition: 'IMAGE_TRANSITION',
         Background: 'IMAGE_BACKGROUND',
         ChoiceBackground: 'IMAGE_CHOICE_BACKGROUND',
         Pause: 'IMAGE_PAUSE'
     }
-var Linkable = require('./Linkable');
 
 //Image constructor
-var Image = function(xPos, yPos, key, properties) {
+var Image = function(xPos, yPos, key, type, properties) {
+    this._type = type;
     this._xPos = xPos;
     this._yPos = yPos;
     this._properties = properties;
@@ -20,11 +22,20 @@ var Image = function(xPos, yPos, key, properties) {
     this._image = null;
 }
 
-Image.prototype.addImageToGame = function(game, type, group) {
-    if(type && (type == ImageTypeEnum.SceneChange || type == ImageTypeEnum.Thought || type == ImageTypeEnum.Pause))
-        this._image = game.add.button(this._xPos, this._yPos, this._key);
-    else {
-        this._image = game.add.image(this._xPos, this._yPos, this._key);
+Image.prototype.addImageToGame = function(game, group) {
+    switch(this._type) {
+        case ImageTypeEnum.Pause:
+        case ImageTypeEnum.Thought:
+        case ImageTypeEnum.SceneChange:
+        case ImageTypeEnum.DisplayImage:
+            this._image = game.add.button(this._xPos, this._yPos, this._key);
+            break;
+        case ImageTypeEnum.Background:
+        case ImageTypeEnum.ChoiceBackground:
+            this._image = game.add.image(this._xPos, this._yPos, this._key);
+            break;
+        default:
+            console.warn("Invalid image type not added.");
     }
     group.add(this._image);
 }
@@ -34,8 +45,8 @@ Image.prototype.setImage = function(key) {
 }
 
 //Assigns image change function depending on enum
-Image.prototype.changeImage = function (game, enumType, arg1, arg2, arg3) {
-    switch(enumType) {
+Image.prototype.changeImage = function (game, arg1, arg2, arg3) {
+    switch(this._type) {
         case ImageTypeEnum.Background:
             this.changeToBgImage(game, arg1);
             break;
@@ -45,11 +56,14 @@ Image.prototype.changeImage = function (game, enumType, arg1, arg2, arg3) {
         case ImageTypeEnum.SceneChange:
             this.changeToSceneChangeImage(game, arg1, arg2);
             break;
+        case ImageTypeEnum.DisplayImage:
+            this.changeToDisplayImage(game, arg1);
+            break;
         case ImageTypeEnum.ChoiceBackground:
             this.changeToChoiceBackgroundImage(game, arg1, arg2);
             break;
         case ImageTypeEnum.Pause:
-            this.changeToPauseButton(game, arg1, arg2);
+            this.changeToPauseButton(game, arg1);
             break;
         default:
             console.warn("Invalid Image Type.");
@@ -71,12 +85,16 @@ Image.prototype.changeToBgImage = function(game, draggable) {
     }
 }
 
-Image.prototype.changeToThoughtIcon = function(game, callbackFunc, thoughts) {
+Image.prototype.changeToThoughtIcon = function(game, callbackFunc) {
     Linkable.setLink(this._image, callbackFunc);
 }
 
-Image.prototype.changeToSceneChangeImage = function(game, signal, targetScene) {
-    Linkable.setLink(this._image, SignalDispatcher, this, signal, targetScene);
+Image.prototype.changeToSceneChangeImage = function(game, targetScene) {
+    Linkable.setLink(this._image, SignalDispatcher, this, game.global.gameManager.getChangeSceneSignal(), targetScene);
+}
+
+Image.prototype.changeToDisplayImage = function(game, target) {
+    Linkable.setPermanentLink(this._image, SignalDispatcher, this, game.global.gameManager.getDisplayImageSignal(), target, true);
 }
 
 Image.prototype.changeToChoiceBackgroundImage = function(game, width, height) {
@@ -122,15 +140,20 @@ Image.prototype.getPhaserImage = function() {
     return this._image;
 }
 
+Image.prototype.getType = function() {
+    return this._type;
+}
+
+Image.prototype.setVisible = function(isVisible) {
+    this._image.visible = isVisible;
+}
+
 Image.prototype.fadeOut = function(game) {
     Linkable.fadeOut(game, this._image, true);
 }
 
-function SignalDispatcher(signal, scene) {
-    if(scene)
-        signal.dispatch(scene);
-    else
-        signal.dispatch();
+function SignalDispatcher(signal, arg1, arg2) {
+    signal.dispatch(arg1, arg2);
 }
 
 function PauseScene(game) {

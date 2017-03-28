@@ -6,6 +6,8 @@ var _instance = null;
 var _game = null;
 var _textSlots = [null, null];
 
+const subtitleTextKeyEnum = 'TEXT_SUBTITLE';
+
 const SUBTITLE_Y_POS = 650;
 const SUBTITLE_SPACING = 5;
 
@@ -24,9 +26,9 @@ function AddSubEvents(parsedSrt, video) {
 		function show() {
 			if(video.currentTime >= sub.startTime){
            		video.removeEventListener("timeupdate", show);
-	            var text = new Text(sub.text, 0, -500, _game.global.style.subtitleTextProperties);
+	            var text = new Text(sub.text, 0, -500, subtitleTextKeyEnum, _game.global.style.subtitleTextProperties);
 	            text.addToGame(_game, _game.mediaGroup);
-	            text.changeText(_game, 'TEXT_SUBTITLE');	            
+	            text.changeText(_game);	            
 	            var slotIndex = FindSubtitleSlot(text);
 	            AddDestroyEvent(video, sub, text, slotIndex);
 	            //console.log("added sub");
@@ -56,7 +58,6 @@ function FindSubtitleSlot(text) {
 	}
 	else if(!_textSlots[1]) {
 		_textSlots[1] = text;
-
 		text.setY(SUBTITLE_Y_POS - text.getHeight() - SUBTITLE_SPACING);
 		return 1;
 	}

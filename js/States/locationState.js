@@ -33,5 +33,8 @@ module.exports = {
         UI.create();
         if(_stateInfo.getTransitionInfo().fadeIn)
             this.game.global.gameManager.getFadeInTransitionSignal().dispatch();
+    },
+    displayImage: function(index, hideSameType) {
+        Icons.displayIcon(index, hideSameType);
     }
 }

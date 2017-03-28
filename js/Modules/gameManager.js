@@ -1,11 +1,13 @@
 "use strict";
 
-var _instance = null;
-var _game = null;
-var StateManager = require('../States/StateManager'),
+const StateManager = require('../States/StateManager'),
     InteractState = require('../States/interactState'),
+    LocationState = require('../States/locationState'),
     Transition = require('./transition'),
     UI = require('./uiLoader');
+
+var _instance = null;
+var _game = null;
 
 var GameManager = function() {
     if(_instance === null)
@@ -18,6 +20,8 @@ var GameManager = function() {
 
     this._triggerInteractionSignal = null;
     this._endInteractionSignal = null;
+
+    this._displayImageSignal = null;
 
     this._pauseSignal = null;
 
@@ -36,7 +40,10 @@ GameManager.prototype.initSignals = function() {
     this._triggerInteractionSignal = new Phaser.Signal();
     this._triggerInteractionSignal.add(InteractState.createThought, this);
     this._endInteractionSignal = new Phaser.Signal();
-    this._endInteractionSignal.add(InteractState.endInteraction, this)
+    this._endInteractionSignal.add(InteractState.endInteraction, this);
+
+    this._displayImageSignal = new Phaser.Signal();
+    this._displayImageSignal.add(LocationState.displayImage, this);
 
     this._pauseSignal = new Phaser.Signal();
     this._pauseSignal.add(UI.pause, this);
@@ -60,6 +67,10 @@ GameManager.prototype.getTriggerInteractionSignal = function() {
 
 GameManager.prototype.getEndInteractionSignal = function() {
     return this._endInteractionSignal;
+}
+
+GameManager.prototype.getDisplayImageSignal = function() {
+    return this._displayImageSignal;
 }
 
 GameManager.prototype.getPauseSignal = function() {

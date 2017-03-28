@@ -1,6 +1,7 @@
 "use strict";
 
 const Linkable = require('./Linkable');
+
 const PADDING = 10;
 
 var TextTypeEnum = {
@@ -10,7 +11,8 @@ var TextTypeEnum = {
     Subtitle: 'TEXT_SUBTITLE'
 }
 
-var Text = function(content, xPos, yPos, properties) {
+var Text = function(content, xPos, yPos, type, properties) {
+    this._type = type;
     this._xPos = xPos;
     this._yPos = yPos;
     this._content = content;
@@ -46,8 +48,8 @@ Text.prototype.addToGame = function(game, group) {
 //arg1 can be: xTo, targetScene, endFilterSignal
 //arg2 can be: yTo, changeSceneSignal
 //arg3 can be: filter
-Text.prototype.changeText = function(game, enumType, arg1, arg2, arg3, arg4, arg5) {
-    switch(enumType) {
+Text.prototype.changeText = function(game, arg1, arg2, arg3, arg4, arg5) {
+    switch(this._type) {
         case TextTypeEnum.Thoughts:
             this.changeToThoughts(game, arg1, arg2, arg3);
             break;
