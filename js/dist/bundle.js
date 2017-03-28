@@ -137,14 +137,23 @@ var _instance = null;
 var _game = null;
 var _graphics = null;
 var _pauseImage = null;
+var _toggleSubtitleImage = null;
 
-const pauseButtonImageKeyEnum = 'IMAGE_PAUSE';
+const pauseButtonImageKeyEnum = 'IMAGE_BUTTON_PAUSE';
+const toggleSubtitleButtonImageKeyEnum = 'IMAGE_BUTTON_TOGGLE_SUBTITLE';
 
 function DrawPauseButton() {
     if(!_pauseImage)
         _pauseImage = new Image(10, 10, 'thoughtIcon', pauseButtonImageKeyEnum);
     _pauseImage.addImageToGame(_game, _game.uiGroup);
     _pauseImage.changeImage(_game, _game.global.gameManager.getPauseSignal());
+}
+
+function DrawToggleSubtitleButton() {
+    if(!_toggleSubtitleImage)        
+        _toggleSubtitleImage = new Image(80, 10, 'thoughtIcon', toggleSubtitleButtonImageKeyEnum);    
+    _toggleSubtitleImage.addImageToGame(_game, _game.uiGroup);
+    _toggleSubtitleImage.changeImage(_game, _game.global.gameManager.getToggleSubtitleSignal());
 }
 
 function Pause() {
@@ -192,8 +201,11 @@ module.exports = {
     },
     preload: function() {
     },
-    create: function() {
-        DrawPauseButton();
+    create: function(drawPause, drawSubtitleToggle) {
+        if(drawPause)
+            DrawPauseButton();
+        if(drawSubtitleToggle)
+            DrawToggleSubtitleButton();
     },
     pause: function() {
         Pause();
@@ -388,17 +400,6 @@ function TriggerMoment() {
 function VideoZoom() {
     Linkable.zoomIn(_game, _video, 1.5);
 }
-/*
-function checkVideoDuration(time) {
-  var interval = setInterval(function(){
-    if(_video.video.currentTime >= time){
-        clearInterval(interval);
-        TriggerMoment();
-        AddInteractionEvents();
-    }
-  },500);
-}
-*/
 
 function checkVideoDuration(time) {
     _video.video.addEventListener("timeupdate", function trigger() {        
@@ -441,9 +442,11 @@ module.exports = {
         _video.video.setAttribute('playsinline', 'playsinline');
         return _instance;
     },
+    /*
     preload: function(videos) {
         load(videos);
     },
+    */
     create: function(src, doFadeOut, videoFilter, scenes, sub, interactionTimeStamps) {
         _videoFilter = videoFilter;
         _interactionTimeStamps = interactionTimeStamps;
@@ -460,6 +463,9 @@ module.exports = {
     endFilter() {
         this.play();
         VideoFilter.endFilter();
+    },
+    toggleSubtitle() {
+        Subtitle.toggleSubtitle();
     }
 }
 
@@ -560,7 +566,8 @@ var ImageTypeEnum = {
         Transition: 'IMAGE_TRANSITION',
         Background: 'IMAGE_BACKGROUND',
         ChoiceBackground: 'IMAGE_CHOICE_BACKGROUND',
-        Pause: 'IMAGE_PAUSE'
+        Pause: 'IMAGE_BUTTON_PAUSE',
+        ToggleSubtitle: 'IMAGE_BUTTON_TOGGLE_SUBTITLE'
     }
 
 //Image constructor
@@ -579,6 +586,7 @@ Image.prototype.addImageToGame = function(game, group) {
         case ImageTypeEnum.Thought:
         case ImageTypeEnum.SceneChange:
         case ImageTypeEnum.DisplayImage:
+        case ImageTypeEnum.ToggleSubtitle:
             this._image = game.add.button(this._xPos, this._yPos, this._key);
             break;
         case ImageTypeEnum.Background:
@@ -614,6 +622,9 @@ Image.prototype.changeImage = function (game, arg1, arg2, arg3) {
             this.changeToChoiceBackgroundImage(game, arg1, arg2);
             break;
         case ImageTypeEnum.Pause:
+            this.changeToPauseButton(game, arg1);
+            break;
+        case ImageTypeEnum.ToggleSubtitle:
             this.changeToPauseButton(game, arg1);
             break;
         default:
@@ -657,6 +668,10 @@ Image.prototype.changeToChoiceBackgroundImage = function(game, width, height) {
 }
 
 Image.prototype.changeToPauseButton = function(game, signal) {
+    Linkable.setPermanentLink(this._image, SignalDispatcher, this, signal);
+}
+
+Image.prototype.changeToToggleSubtitleButton = function(game, signal) {
     Linkable.setPermanentLink(this._image, SignalDispatcher, this, signal);
 }
 
@@ -796,7 +811,7 @@ Text.prototype.changeText = function(game, arg1, arg2, arg3, arg4, arg5) {
             this.changeToMeaninglessChoices(game, arg1, arg2, arg3, arg4);
             break;
         case TextTypeEnum.Subtitle:
-            this.changeToSubtitle(game);
+            this.changeToSubtitle(game, arg1);
             break;
         default:
             console.warn("Invalid Text Type.");
@@ -815,12 +830,8 @@ Text.prototype.changeToMeaningfulChoices = function(game, targetScene, changeSce
     this._text.x = game.width/2;
     this._text.alpha = 0;
     this._text.inputEnabled = true;
-    //this._text.boundsAlignH = "center";
     this._text.boundsAlignV = "middle";
     this._text.setTextBounds(0, boundsY, boundsWidth, boundsHeight);
-    //this._text.y = 0;
-    //this._text.x = 0;
-
     Linkable.fadeIn(game, this._text);
     Linkable.setLink(this._text.events, ChangeScene, this, changeSceneSignal, targetScene);
 }
@@ -830,18 +841,16 @@ Text.prototype.changeToMeaninglessChoices = function(game, endInteractionSignal,
     this._text.x = game.width/2;
     this._text.alpha = 0;
     this._text.inputEnabled = true;
-    //this._text.boundsAlignH = "center";
     this._text.setTextBounds(0, boundsY, boundsWidth, boundsHeight);
     this._text.boundsAlignV = "middle";
-    //this._text.y = 0;
-    //this._text.x = 0;
     Linkable.fadeIn(game, this._text);
     Linkable.setLink(this._text.events, EndInteraction, this, endInteractionSignal, this);
 }
 
-Text.prototype.changeToSubtitle = function(game) {
+Text.prototype.changeToSubtitle = function(game, isVisible) {
     this._text.anchor.x = 0.5
     this._text.x = game.width/2;
+    this.setVisible(isVisible);
 }
 
 Text.prototype.addInterpolationTween = function(game, xTo, yTo) {
@@ -862,21 +871,17 @@ Text.prototype.disableInput = function(game) {
 Text.prototype.destroy = function() {
     this._text.destroy();
 }
-/*
-Text.prototype.changeScene = function() {
-    this._signal.dispatch(this._targetScene);
-}
 
-Text.prototype.endInteraction = function() {
-    this._signal.dispatch(this);
-}
-*/
 Text.prototype.getPhaserText = function() {
     return this._text;
 }
 
 Text.prototype.getHeight = function() {
     return this._text.height;
+}
+
+Text.prototype.setVisible = function(isVisible) {
+    this._text.visible = isVisible;
 }
 
 Text.prototype.setY = function(val) {
@@ -1087,6 +1092,7 @@ const Text = __webpack_require__(7);
 var _instance = null;
 var _game = null;
 var _textSlots = [null, null];
+var _subtitleVisible = true;
 
 const subtitleTextKeyEnum = 'TEXT_SUBTITLE';
 
@@ -1096,7 +1102,6 @@ const SUBTITLE_SPACING = 5;
 function CreateSubs(video, subs) {
 	var srt = _game.cache.getText(subs);
 	var parsedSrt = fromSrt(srt, true);
-	console.log(parsedSrt);
 	AddSubEvents(parsedSrt, video);
 }
 
@@ -1110,10 +1115,9 @@ function AddSubEvents(parsedSrt, video) {
            		video.removeEventListener("timeupdate", show);
 	            var text = new Text(sub.text, 0, -500, subtitleTextKeyEnum, _game.global.style.subtitleTextProperties);
 	            text.addToGame(_game, _game.mediaGroup);
-	            text.changeText(_game);	            
+	            text.changeText(_game, _subtitleVisible);
 	            var slotIndex = FindSubtitleSlot(text);
 	            AddDestroyEvent(video, sub, text, slotIndex);
-	            //console.log("added sub");
 	        }
 		}		
 	});
@@ -1127,7 +1131,6 @@ function AddDestroyEvent(video, sub, text, slotIndex) {
        		video.removeEventListener("timeupdate", destroy); 
             text.destroy();
             _textSlots[slotIndex] = null;
-            //console.log("destroyed sub");
         }
 	}
 }
@@ -1147,8 +1150,12 @@ function FindSubtitleSlot(text) {
 		console.warn("Max number of concurrent subtitles reached.");
 }
 
-function createSubText() {
-
+function ToggleSubtitle() {
+	_subtitleVisible = !_subtitleVisible;
+	_textSlots.forEach(function(slot) {
+		if(slot)
+			slot.setVisible(_subtitleVisible);
+	});
 }
 
 function fromSrt(data, ms) {
@@ -1200,6 +1207,9 @@ module.exports = {
 	},
 	create: function(video, subs) {
 		CreateSubs(video, subs);
+	},
+	toggleSubtitle: function() {
+		ToggleSubtitle();
 	}
 }
 
@@ -1536,8 +1546,7 @@ const Group = __webpack_require__(3),
     Transition = __webpack_require__(0),
     Icons = __webpack_require__(9),
     State = __webpack_require__(5),
-    Choices = __webpack_require__(12),
-    Subtitles = __webpack_require__(10);
+    Choices = __webpack_require__(12);
     
 var _stateInfo = null;
 var _instance = null;
@@ -1602,7 +1611,7 @@ module.exports = {
             _stateInfo.getVideoFilter(), _stateInfo.getNextScenes(), _stateInfo.getMovieSubKey(), timeStamps);
         if(_stateInfo.getTransitionInfo().fadeIn)
             this.game.global.gameManager.getFadeInTransitionSignal().dispatch();
-        UI.create();
+        UI.create(true, true);
     },
     createThought: function() {
         CreateThought();
@@ -1650,7 +1659,7 @@ module.exports = {
         var icons = Icons.createExploratoryIcons(_stateInfo.getIconsInfo());
         if(_stateInfo.getDraggable())
             MovingBackground.assignFollowIcons(icons);
-        UI.create();
+        UI.create(true, false);
         if(_stateInfo.getTransitionInfo().fadeIn)
             this.game.global.gameManager.getFadeInTransitionSignal().dispatch();
     },
@@ -1790,7 +1799,8 @@ const StateManager = __webpack_require__(11),
     InteractState = __webpack_require__(15),
     LocationState = __webpack_require__(16),
     Transition = __webpack_require__(0),
-    UI = __webpack_require__(1);
+    UI = __webpack_require__(1),
+    Video = __webpack_require__(4);
 
 var _instance = null;
 var _game = null;
@@ -1810,6 +1820,7 @@ var GameManager = function() {
     this._displayImageSignal = null;
 
     this._pauseSignal = null;
+    this._toggleSubtitleSignal = null;
 
     return _instance;
 }
@@ -1833,6 +1844,8 @@ GameManager.prototype.initSignals = function() {
 
     this._pauseSignal = new Phaser.Signal();
     this._pauseSignal.add(UI.pause, this);
+    this._toggleSubtitleSignal = new Phaser.Signal();
+    this._toggleSubtitleSignal.add(Video.toggleSubtitle, this);
 }
 
 GameManager.prototype.getChangeSceneSignal = function() {
@@ -1861,6 +1874,10 @@ GameManager.prototype.getDisplayImageSignal = function() {
 
 GameManager.prototype.getPauseSignal = function() {
     return this._pauseSignal;
+}
+
+GameManager.prototype.getToggleSubtitleSignal = function() {
+    return this._toggleSubtitleSignal;
 }
 
 module.exports = GameManager;
@@ -2098,7 +2115,7 @@ module.exports = {
         Video.create(_stateInfo.getMovieSrc(), _stateInfo.getTransitionInfo().fadeOut, _stateInfo.getVideoFilter(), _stateInfo.getNextScenes());
         if(_stateInfo.getTransitionInfo().fadeIn)
             this.game.global.gameManager.getFadeInTransitionSignal().dispatch();
-        UI.create();
+        UI.create(true, true);
     }
 }
 
@@ -2197,10 +2214,10 @@ module.exports = {
     },
     create: function() {
         Group.initializeGroups();
-        Video.create(_stateInfo.getMovieSrc(), _stateInfo.getTransitionInfo().fadeOut, _stateInfo.getVideoFilter(), _stateInfo.getNextScenes());
+        Video.create(_stateInfo.getMovieSrc(), _stateInfo.getTransitionInfo().fadeOut, _stateInfo.getVideoFilter(), _stateInfo.getNextScenes(), _stateInfo.getMovieSubKey());
         if(_stateInfo.getTransitionInfo().fadeIn)
             this.game.global.gameManager.getFadeInTransitionSignal().dispatch();
-        UI.create();
+        UI.create(true, true);
     }
 }
 

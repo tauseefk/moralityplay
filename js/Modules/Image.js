@@ -9,7 +9,8 @@ var ImageTypeEnum = {
         Transition: 'IMAGE_TRANSITION',
         Background: 'IMAGE_BACKGROUND',
         ChoiceBackground: 'IMAGE_CHOICE_BACKGROUND',
-        Pause: 'IMAGE_PAUSE'
+        Pause: 'IMAGE_BUTTON_PAUSE',
+        ToggleSubtitle: 'IMAGE_BUTTON_TOGGLE_SUBTITLE'
     }
 
 //Image constructor
@@ -28,6 +29,7 @@ Image.prototype.addImageToGame = function(game, group) {
         case ImageTypeEnum.Thought:
         case ImageTypeEnum.SceneChange:
         case ImageTypeEnum.DisplayImage:
+        case ImageTypeEnum.ToggleSubtitle:
             this._image = game.add.button(this._xPos, this._yPos, this._key);
             break;
         case ImageTypeEnum.Background:
@@ -63,6 +65,9 @@ Image.prototype.changeImage = function (game, arg1, arg2, arg3) {
             this.changeToChoiceBackgroundImage(game, arg1, arg2);
             break;
         case ImageTypeEnum.Pause:
+            this.changeToPauseButton(game, arg1);
+            break;
+        case ImageTypeEnum.ToggleSubtitle:
             this.changeToPauseButton(game, arg1);
             break;
         default:
@@ -106,6 +111,10 @@ Image.prototype.changeToChoiceBackgroundImage = function(game, width, height) {
 }
 
 Image.prototype.changeToPauseButton = function(game, signal) {
+    Linkable.setPermanentLink(this._image, SignalDispatcher, this, signal);
+}
+
+Image.prototype.changeToToggleSubtitleButton = function(game, signal) {
     Linkable.setPermanentLink(this._image, SignalDispatcher, this, signal);
 }
 

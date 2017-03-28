@@ -8,14 +8,23 @@ var _instance = null;
 var _game = null;
 var _graphics = null;
 var _pauseImage = null;
+var _toggleSubtitleImage = null;
 
-const pauseButtonImageKeyEnum = 'IMAGE_PAUSE';
+const pauseButtonImageKeyEnum = 'IMAGE_BUTTON_PAUSE';
+const toggleSubtitleButtonImageKeyEnum = 'IMAGE_BUTTON_TOGGLE_SUBTITLE';
 
 function DrawPauseButton() {
     if(!_pauseImage)
         _pauseImage = new Image(10, 10, 'thoughtIcon', pauseButtonImageKeyEnum);
     _pauseImage.addImageToGame(_game, _game.uiGroup);
     _pauseImage.changeImage(_game, _game.global.gameManager.getPauseSignal());
+}
+
+function DrawToggleSubtitleButton() {
+    if(!_toggleSubtitleImage)        
+        _toggleSubtitleImage = new Image(80, 10, 'thoughtIcon', toggleSubtitleButtonImageKeyEnum);    
+    _toggleSubtitleImage.addImageToGame(_game, _game.uiGroup);
+    _toggleSubtitleImage.changeImage(_game, _game.global.gameManager.getToggleSubtitleSignal());
 }
 
 function Pause() {
@@ -63,8 +72,11 @@ module.exports = {
     },
     preload: function() {
     },
-    create: function() {
-        DrawPauseButton();
+    create: function(drawPause, drawSubtitleToggle) {
+        if(drawPause)
+            DrawPauseButton();
+        if(drawSubtitleToggle)
+            DrawToggleSubtitleButton();
     },
     pause: function() {
         Pause();

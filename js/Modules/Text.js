@@ -60,7 +60,7 @@ Text.prototype.changeText = function(game, arg1, arg2, arg3, arg4, arg5) {
             this.changeToMeaninglessChoices(game, arg1, arg2, arg3, arg4);
             break;
         case TextTypeEnum.Subtitle:
-            this.changeToSubtitle(game);
+            this.changeToSubtitle(game, arg1);
             break;
         default:
             console.warn("Invalid Text Type.");
@@ -79,12 +79,8 @@ Text.prototype.changeToMeaningfulChoices = function(game, targetScene, changeSce
     this._text.x = game.width/2;
     this._text.alpha = 0;
     this._text.inputEnabled = true;
-    //this._text.boundsAlignH = "center";
     this._text.boundsAlignV = "middle";
     this._text.setTextBounds(0, boundsY, boundsWidth, boundsHeight);
-    //this._text.y = 0;
-    //this._text.x = 0;
-
     Linkable.fadeIn(game, this._text);
     Linkable.setLink(this._text.events, ChangeScene, this, changeSceneSignal, targetScene);
 }
@@ -94,18 +90,16 @@ Text.prototype.changeToMeaninglessChoices = function(game, endInteractionSignal,
     this._text.x = game.width/2;
     this._text.alpha = 0;
     this._text.inputEnabled = true;
-    //this._text.boundsAlignH = "center";
     this._text.setTextBounds(0, boundsY, boundsWidth, boundsHeight);
     this._text.boundsAlignV = "middle";
-    //this._text.y = 0;
-    //this._text.x = 0;
     Linkable.fadeIn(game, this._text);
     Linkable.setLink(this._text.events, EndInteraction, this, endInteractionSignal, this);
 }
 
-Text.prototype.changeToSubtitle = function(game) {
+Text.prototype.changeToSubtitle = function(game, isVisible) {
     this._text.anchor.x = 0.5
     this._text.x = game.width/2;
+    this.setVisible(isVisible);
 }
 
 Text.prototype.addInterpolationTween = function(game, xTo, yTo) {
@@ -126,21 +120,17 @@ Text.prototype.disableInput = function(game) {
 Text.prototype.destroy = function() {
     this._text.destroy();
 }
-/*
-Text.prototype.changeScene = function() {
-    this._signal.dispatch(this._targetScene);
-}
 
-Text.prototype.endInteraction = function() {
-    this._signal.dispatch(this);
-}
-*/
 Text.prototype.getPhaserText = function() {
     return this._text;
 }
 
 Text.prototype.getHeight = function() {
     return this._text.height;
+}
+
+Text.prototype.setVisible = function(isVisible) {
+    this._text.visible = isVisible;
 }
 
 Text.prototype.setY = function(val) {

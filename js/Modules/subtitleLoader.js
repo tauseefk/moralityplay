@@ -5,6 +5,7 @@ const Text = require('./Text');
 var _instance = null;
 var _game = null;
 var _textSlots = [null, null];
+var _subtitleVisible = true;
 
 const subtitleTextKeyEnum = 'TEXT_SUBTITLE';
 
@@ -14,7 +15,6 @@ const SUBTITLE_SPACING = 5;
 function CreateSubs(video, subs) {
 	var srt = _game.cache.getText(subs);
 	var parsedSrt = fromSrt(srt, true);
-	console.log(parsedSrt);
 	AddSubEvents(parsedSrt, video);
 }
 
@@ -28,10 +28,9 @@ function AddSubEvents(parsedSrt, video) {
            		video.removeEventListener("timeupdate", show);
 	            var text = new Text(sub.text, 0, -500, subtitleTextKeyEnum, _game.global.style.subtitleTextProperties);
 	            text.addToGame(_game, _game.mediaGroup);
-	            text.changeText(_game);	            
+	            text.changeText(_game, _subtitleVisible);
 	            var slotIndex = FindSubtitleSlot(text);
 	            AddDestroyEvent(video, sub, text, slotIndex);
-	            //console.log("added sub");
 	        }
 		}		
 	});
@@ -45,7 +44,6 @@ function AddDestroyEvent(video, sub, text, slotIndex) {
        		video.removeEventListener("timeupdate", destroy); 
             text.destroy();
             _textSlots[slotIndex] = null;
-            //console.log("destroyed sub");
         }
 	}
 }
@@ -65,8 +63,12 @@ function FindSubtitleSlot(text) {
 		console.warn("Max number of concurrent subtitles reached.");
 }
 
-function createSubText() {
-
+function ToggleSubtitle() {
+	_subtitleVisible = !_subtitleVisible;
+	_textSlots.forEach(function(slot) {
+		if(slot)
+			slot.setVisible(_subtitleVisible);
+	});
 }
 
 function fromSrt(data, ms) {
@@ -118,5 +120,8 @@ module.exports = {
 	},
 	create: function(video, subs) {
 		CreateSubs(video, subs);
+	},
+	toggleSubtitle: function() {
+		ToggleSubtitle();
 	}
 }

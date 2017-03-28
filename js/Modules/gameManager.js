@@ -4,7 +4,8 @@ const StateManager = require('../States/StateManager'),
     InteractState = require('../States/interactState'),
     LocationState = require('../States/locationState'),
     Transition = require('./transition'),
-    UI = require('./uiLoader');
+    UI = require('./uiLoader'),
+    Video = require('./videoLoader');
 
 var _instance = null;
 var _game = null;
@@ -24,6 +25,7 @@ var GameManager = function() {
     this._displayImageSignal = null;
 
     this._pauseSignal = null;
+    this._toggleSubtitleSignal = null;
 
     return _instance;
 }
@@ -47,6 +49,8 @@ GameManager.prototype.initSignals = function() {
 
     this._pauseSignal = new Phaser.Signal();
     this._pauseSignal.add(UI.pause, this);
+    this._toggleSubtitleSignal = new Phaser.Signal();
+    this._toggleSubtitleSignal.add(Video.toggleSubtitle, this);
 }
 
 GameManager.prototype.getChangeSceneSignal = function() {
@@ -75,6 +79,10 @@ GameManager.prototype.getDisplayImageSignal = function() {
 
 GameManager.prototype.getPauseSignal = function() {
     return this._pauseSignal;
+}
+
+GameManager.prototype.getToggleSubtitleSignal = function() {
+    return this._toggleSubtitleSignal;
 }
 
 module.exports = GameManager;

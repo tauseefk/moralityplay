@@ -6,8 +6,7 @@ const Group = require('../Modules/groupLoader'),
     Transition = require('../Modules/transition'),
     Icons = require('../Modules/iconsLoader'),
     State = require('./State'),
-    Choices = require('../Modules/choiceLoader'),
-    Subtitles = require('../Modules/subtitleLoader');
+    Choices = require('../Modules/choiceLoader');
     
 var _stateInfo = null;
 var _instance = null;
@@ -72,7 +71,7 @@ module.exports = {
             _stateInfo.getVideoFilter(), _stateInfo.getNextScenes(), _stateInfo.getMovieSubKey(), timeStamps);
         if(_stateInfo.getTransitionInfo().fadeIn)
             this.game.global.gameManager.getFadeInTransitionSignal().dispatch();
-        UI.create();
+        UI.create(true, true);
     },
     createThought: function() {
         CreateThought();

@@ -62,17 +62,6 @@ function TriggerMoment() {
 function VideoZoom() {
     Linkable.zoomIn(_game, _video, 1.5);
 }
-/*
-function checkVideoDuration(time) {
-  var interval = setInterval(function(){
-    if(_video.video.currentTime >= time){
-        clearInterval(interval);
-        TriggerMoment();
-        AddInteractionEvents();
-    }
-  },500);
-}
-*/
 
 function checkVideoDuration(time) {
     _video.video.addEventListener("timeupdate", function trigger() {        
@@ -115,9 +104,11 @@ module.exports = {
         _video.video.setAttribute('playsinline', 'playsinline');
         return _instance;
     },
+    /*
     preload: function(videos) {
         load(videos);
     },
+    */
     create: function(src, doFadeOut, videoFilter, scenes, sub, interactionTimeStamps) {
         _videoFilter = videoFilter;
         _interactionTimeStamps = interactionTimeStamps;
@@ -134,5 +125,8 @@ module.exports = {
     endFilter() {
         this.play();
         VideoFilter.endFilter();
+    },
+    toggleSubtitle() {
+        Subtitle.toggleSubtitle();
     }
 }
