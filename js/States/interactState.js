@@ -30,9 +30,9 @@ function CreateThought() {
     _momentCount++;
 }
 
-function EndInteraction(lingeringChoice) {
+function EndInteraction(lingeringChoice, targetScene) {
     Icons.endInteraction();
-    Choices.endInteraction(lingeringChoice);
+    Choices.endInteraction(lingeringChoice, targetScene);
     Video.endFilter();
 }
 
@@ -51,7 +51,6 @@ module.exports = {
     init: function(scene) {
         if(_stateInfo) {
             _stateInfo.setStateScene(scene);
-            console.log(scene);
         }
         Video.init(this.game);
         Icons.init(this.game);
@@ -76,7 +75,7 @@ module.exports = {
     createThought: function() {
         CreateThought();
     },
-    endInteraction: function(lingeringChoice) {
-        EndInteraction(lingeringChoice);
+    endInteraction: function(lingeringChoice, targetScene) {
+        EndInteraction(lingeringChoice, targetScene);
     }
 }

@@ -103,10 +103,12 @@ Image.prototype.changeToDisplayImage = function(game, target) {
 }
 
 Image.prototype.changeToChoiceBackgroundImage = function(game, width, height) {
+    this._image.alpha = 0;
     this._image.anchor.x = 0.5;
     this._image.x = game.width/2;
     this._image.width = width;
     this._image.height = height;
+    Linkable.fadeIn(game, this._image);
     return this._image;
 }
 

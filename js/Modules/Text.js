@@ -74,7 +74,7 @@ Text.prototype.changeToThoughts = function(game, xTo, yTo, filter) {
     Linkable.fadeIn(game, this._text);
 }
 
-Text.prototype.changeToMeaningfulChoices = function(game, targetScene, changeSceneSignal, boundsY, boundsWidth, boundsHeight) {
+Text.prototype.changeToMeaningfulChoices = function(game, targetScene, endInteractionSignal, boundsY, boundsWidth, boundsHeight) {
     this._text.anchor.x = 0.5
     this._text.x = game.width/2;
     this._text.alpha = 0;
@@ -82,7 +82,7 @@ Text.prototype.changeToMeaningfulChoices = function(game, targetScene, changeSce
     this._text.boundsAlignV = "middle";
     this._text.setTextBounds(0, boundsY, boundsWidth, boundsHeight);
     Linkable.fadeIn(game, this._text);
-    Linkable.setLink(this._text.events, ChangeScene, this, changeSceneSignal, targetScene);
+    Linkable.setLink(this._text.events, EndInteraction, this, endInteractionSignal, this, targetScene);
 }
 
 Text.prototype.changeToMeaninglessChoices = function(game, endInteractionSignal, boundsY, boundsWidth, boundsHeight) {
@@ -109,8 +109,8 @@ Text.prototype.addInterpolationTween = function(game, xTo, yTo) {
         });
 }
 
-Text.prototype.fadeOut = function(game) {
-    Linkable.fadeOut(game, this._text, true);
+Text.prototype.fadeOut = function(game, chainSignal, arg1) {
+    Linkable.fadeOut(game, this._text, true, chainSignal, arg1);
 }
 
 Text.prototype.disableInput = function(game) {
@@ -141,8 +141,8 @@ function ChangeScene(signal, scene) {
     signal.dispatch(scene);
 }
 
-function EndInteraction(signal, text) {
-    signal.dispatch(text);
+function EndInteraction(signal, text, targetScene) {
+    signal.dispatch(text, targetScene);
 }
 
 module.exports = Text;

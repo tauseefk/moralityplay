@@ -271,11 +271,11 @@
             "icons": {                
                 "size": 6,
               "type": [
+                "IMAGE_BUTTON_DISPLAY_IMAGE",
                 "IMAGE_BUTTON_SCENECHANGE",
+                "IMAGE_BUTTON_DISPLAY_IMAGE",
                 "IMAGE_BUTTON_SCENECHANGE",
-                "IMAGE_BUTTON_SCENECHANGE",
-                "IMAGE_BUTTON_SCENECHANGE",
-                "IMAGE_BUTTON_SCENECHANGE",
+                "IMAGE_BUTTON_DISPLAY_IMAGE",
                 "IMAGE_BUTTON_SCENECHANGE"
               ],
               "key": [
@@ -295,13 +295,12 @@
                   [ 3480, 230 ]
 
                 ],
-                "targetScene": [
-                    
+                "targetImageIndexOrScene": [                    
+                  1,
                   "movie1",
-                  "movie1",
+                  3,
                   "black1",
-                  "black1",
-                  "asian1",
+                  5,
                   "asian1"
 
                 ]

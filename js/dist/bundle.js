@@ -138,6 +138,7 @@ var _game = null;
 var _graphics = null;
 var _pauseImage = null;
 var _toggleSubtitleImage = null;
+var _uiVisible = true;
 
 const pauseButtonImageKeyEnum = 'IMAGE_BUTTON_PAUSE';
 const toggleSubtitleButtonImageKeyEnum = 'IMAGE_BUTTON_TOGGLE_SUBTITLE';
@@ -147,6 +148,7 @@ function DrawPauseButton() {
         _pauseImage = new Image(10, 10, 'thoughtIcon', pauseButtonImageKeyEnum);
     _pauseImage.addImageToGame(_game, _game.uiGroup);
     _pauseImage.changeImage(_game, _game.global.gameManager.getPauseSignal());
+    DrawRect();
 }
 
 function DrawToggleSubtitleButton() {
@@ -161,10 +163,9 @@ function Pause() {
         _game.input.onDown.addOnce(Unpause, self);
         _game.paused = true;
         Video.stop();
-        if(_graphics)
+        if(_graphics) {
             _graphics.visible = true;
-        else
-            DrawRect();
+        }
     }
 
     function Unpause() {
@@ -174,10 +175,18 @@ function Pause() {
     }
 }
 
+function ToggleUI() {
+    _uiVisible = !_uiVisible;
+    _pauseImage.setVisible(_uiVisible);
+    _toggleSubtitleImage.setVisible(_uiVisible);
+}
+
 function DrawRect() {
     _graphics = _game.add.graphics(0, 0);
     _graphics.beginFill(0x000000, 0.8);
     _graphics.drawRect(0, 0, _game.width, _game.height);
+    _graphics.visible = false;
+    _game.uiGroup.add(_graphics);
 }
 
 function drawUI() {
@@ -202,13 +211,16 @@ module.exports = {
     preload: function() {
     },
     create: function(drawPause, drawSubtitleToggle) {
-        if(drawPause)
-            DrawPauseButton();
         if(drawSubtitleToggle)
             DrawToggleSubtitleButton();
+        if(drawPause)
+            DrawPauseButton();
     },
     pause: function() {
         Pause();
+    },
+    toggleUI: function() {
+        ToggleUI();
     }
 }
 
@@ -252,7 +264,7 @@ Linkable.setLink = function(event, callbackFunc, scope, arg1, arg2, arg3) {
     event.onInputUp.addOnce(driver, scope);
 
     function driver() {
-        callbackFunc(arg1, arg2, arg3);
+        DriverFunc(callbackFunc, arg1, arg2, arg3);
     }
 }
 
@@ -260,37 +272,30 @@ Linkable.setPermanentLink = function(event, callbackFunc, scope, arg1, arg2, arg
     event.onInputUp.add(driver, scope);
 
     function driver() {
-        callbackFunc(arg1, arg2, arg3);
+        DriverFunc(callbackFunc, arg1, arg2, arg3);
     }
 }
 
-Linkable.fadeOut = function(game, object, destroy) {
+Linkable.fadeOut = function(game, object, destroy, signal, arg1) {
     var tween = game.add.tween(object).to({alpha:0}, FADE_SPEED, Phaser.Easing.Linear.None, true, 0, 0, false);
     tween.onComplete.add(Disable, this);
 
     function Disable() {
         if(destroy)
             object.destroy();
+        if(signal)
+            signal.dispatch(arg1);
     }
-}
-
-Linkable.fadeOutOthers = function(game, object, event, callbackFunc) {
-    game.add.tween(object).to({alpha:1}, FADE_SPEED, Phaser.Easing.Linear.None, true, 0, 0, false);
-    otherObjArr.forEach(function(element) {
-        game.add.tween(element).to({alpha:1}, FADE_SPEED, Phaser.Easing.Linear.None, true, 0, 0, false);
-    });
-
-    var objectFadeOut = game.add.tween(object).to({alpha:0}, FADE_SPEED, Phaser.Easing.Linear.None, false, 0, 0, false);
-    objectFadeOut.onComplete.add(DisableButton, this);
-
-    game.add.tween(object).to({alpha:1}, FADE_SPEED, Phaser.Easing.Linear.None, true, 0, 0, false);
-
 }
 
 Linkable.zoomIn = function(game, object, scale, originalWidth, originalHeight) {
     object.width = originalWidth;
     object.height = originalHeight;
     var tween = game.add.tween(object).to({width:object.width*scale, height:object.height*scale}, FADE_SPEED, Phaser.Easing.Linear.None, true, 0, 0, false);
+}
+
+function DriverFunc(triggerFunc, arg1, arg2, arg3) {
+    triggerFunc(arg1, arg2, arg3);
 }
 
 
@@ -660,10 +665,12 @@ Image.prototype.changeToDisplayImage = function(game, target) {
 }
 
 Image.prototype.changeToChoiceBackgroundImage = function(game, width, height) {
+    this._image.alpha = 0;
     this._image.anchor.x = 0.5;
     this._image.x = game.width/2;
     this._image.width = width;
     this._image.height = height;
+    Linkable.fadeIn(game, this._image);
     return this._image;
 }
 
@@ -825,7 +832,7 @@ Text.prototype.changeToThoughts = function(game, xTo, yTo, filter) {
     Linkable.fadeIn(game, this._text);
 }
 
-Text.prototype.changeToMeaningfulChoices = function(game, targetScene, changeSceneSignal, boundsY, boundsWidth, boundsHeight) {
+Text.prototype.changeToMeaningfulChoices = function(game, targetScene, endInteractionSignal, boundsY, boundsWidth, boundsHeight) {
     this._text.anchor.x = 0.5
     this._text.x = game.width/2;
     this._text.alpha = 0;
@@ -833,7 +840,7 @@ Text.prototype.changeToMeaningfulChoices = function(game, targetScene, changeSce
     this._text.boundsAlignV = "middle";
     this._text.setTextBounds(0, boundsY, boundsWidth, boundsHeight);
     Linkable.fadeIn(game, this._text);
-    Linkable.setLink(this._text.events, ChangeScene, this, changeSceneSignal, targetScene);
+    Linkable.setLink(this._text.events, EndInteraction, this, endInteractionSignal, this, targetScene);
 }
 
 Text.prototype.changeToMeaninglessChoices = function(game, endInteractionSignal, boundsY, boundsWidth, boundsHeight) {
@@ -860,8 +867,8 @@ Text.prototype.addInterpolationTween = function(game, xTo, yTo) {
         });
 }
 
-Text.prototype.fadeOut = function(game) {
-    Linkable.fadeOut(game, this._text, true);
+Text.prototype.fadeOut = function(game, chainSignal, arg1) {
+    Linkable.fadeOut(game, this._text, true, chainSignal, arg1);
 }
 
 Text.prototype.disableInput = function(game) {
@@ -892,8 +899,8 @@ function ChangeScene(signal, scene) {
     signal.dispatch(scene);
 }
 
-function EndInteraction(signal, text) {
-    signal.dispatch(text);
+function EndInteraction(signal, text, targetScene) {
+    signal.dispatch(text, targetScene);
 }
 
 module.exports = Text;
@@ -1333,6 +1340,8 @@ const choiceBgKeyEnum = 'IMAGE_CHOICE_BACKGROUND';
 const meaningfulTextKeyEnum = 'TEXT_MEANINGFUL_CHOICES';
 const meaninglessTextKeyEnum = 'TEXT_MEANINGLESS_CHOICES';
 
+const FADE_DELAY = 1;
+
 function CreateBg(y, width, height) {
     var choiceBg = new Image(0, y, 'choiceBg', choiceBgKeyEnum);
     choiceBg.addImageToGame(_game, _game.mediaGroup);
@@ -1345,6 +1354,7 @@ function CreateChoices(choices) {
         CreateMeaningfulChoices(choices, _game.global.gameManager.getChangeSceneSignal());
     else
         CreateMeaninglessChoices(choices);
+    _game.global.gameManager.getToggleUISignal().dispatch();
 }
 
 function CreateMeaningfulChoices(info) {
@@ -1355,7 +1365,7 @@ function CreateMeaningfulChoices(info) {
         _text.push(new Text(info.content[i], 0, 0, meaningfulTextKeyEnum, _game.global.style.choicesTextProperties));
         _text[i].index = i;
         _text[i].addToGame(_game, _game.mediaGroup);
-        _text[i].changeText(_game, info.targetScene[i], _game.global.gameManager.getChangeSceneSignal(),
+        _text[i].changeText(_game, info.targetScene[i], _game.global.gameManager.getEndInteractionSignal(),
             bgImg.getPhaserImage().y, bgImg.getPhaserImage().width, bgImg.getPhaserImage().height);
     };
 }
@@ -1385,11 +1395,14 @@ function FadeChoicesExcept(choiceText){
     });
 }
 
-function FadeChoiceAfterDelay(choiceText) {
-    _game.time.events.add(Phaser.Timer.SECOND*1, fadeChoice, this);
+function FadeChoiceAfterDelay(choiceText, targetScene) {
+    _game.time.events.add(Phaser.Timer.SECOND*FADE_DELAY, fadeChoice, this);
 
     function fadeChoice(){
-        choiceText.fadeOut(_game);
+        if(targetScene)
+            choiceText.fadeOut(_game, _game.global.gameManager.getChangeSceneSignal(), targetScene);
+        else
+            choiceText.fadeOut(_game);
     }
 }
 
@@ -1411,9 +1424,9 @@ module.exports = {
     create: function(choices) {
         CreateChoices(choices);
     },
-    endInteraction: function(lingeringChoice) {
+    endInteraction: function(lingeringChoice, targetScene) {
         FadeChoicesExcept(lingeringChoice);
-        FadeChoiceAfterDelay(lingeringChoice);
+        FadeChoiceAfterDelay(lingeringChoice, targetScene);
     }
 }
 
@@ -1570,9 +1583,9 @@ function CreateThought() {
     _momentCount++;
 }
 
-function EndInteraction(lingeringChoice) {
+function EndInteraction(lingeringChoice, targetScene) {
     Icons.endInteraction();
-    Choices.endInteraction(lingeringChoice);
+    Choices.endInteraction(lingeringChoice, targetScene);
     Video.endFilter();
 }
 
@@ -1591,7 +1604,6 @@ module.exports = {
     init: function(scene) {
         if(_stateInfo) {
             _stateInfo.setStateScene(scene);
-            console.log(scene);
         }
         Video.init(this.game);
         Icons.init(this.game);
@@ -1616,8 +1628,8 @@ module.exports = {
     createThought: function() {
         CreateThought();
     },
-    endInteraction: function(lingeringChoice) {
-        EndInteraction(lingeringChoice);
+    endInteraction: function(lingeringChoice, targetScene) {
+        EndInteraction(lingeringChoice, targetScene);
     }
 }
 
@@ -1689,6 +1701,7 @@ WebFontConfig = {
 function delayedCreate() {
     createGlobalVars();
     initGameGroups();
+    _game.stage.backgroundColor = "#ffffff";
     _game.state.start("preload");
 }
 
@@ -1819,6 +1832,7 @@ var GameManager = function() {
 
     this._displayImageSignal = null;
 
+    this._toggleUISignal = null;
     this._pauseSignal = null;
     this._toggleSubtitleSignal = null;
 
@@ -1842,6 +1856,8 @@ GameManager.prototype.initSignals = function() {
     this._displayImageSignal = new Phaser.Signal();
     this._displayImageSignal.add(LocationState.displayImage, this);
 
+    this._toggleUISignal = new Phaser.Signal();
+    this._toggleUISignal.add(UI.toggleUI, this);
     this._pauseSignal = new Phaser.Signal();
     this._pauseSignal.add(UI.pause, this);
     this._toggleSubtitleSignal = new Phaser.Signal();
@@ -1870,6 +1886,10 @@ GameManager.prototype.getEndInteractionSignal = function() {
 
 GameManager.prototype.getDisplayImageSignal = function() {
     return this._displayImageSignal;
+}
+
+GameManager.prototype.getToggleUISignal = function() {
+    return this._toggleUISignal;
 }
 
 GameManager.prototype.getPauseSignal = function() {

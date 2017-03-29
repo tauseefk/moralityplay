@@ -24,6 +24,7 @@ var GameManager = function() {
 
     this._displayImageSignal = null;
 
+    this._toggleUISignal = null;
     this._pauseSignal = null;
     this._toggleSubtitleSignal = null;
 
@@ -47,6 +48,8 @@ GameManager.prototype.initSignals = function() {
     this._displayImageSignal = new Phaser.Signal();
     this._displayImageSignal.add(LocationState.displayImage, this);
 
+    this._toggleUISignal = new Phaser.Signal();
+    this._toggleUISignal.add(UI.toggleUI, this);
     this._pauseSignal = new Phaser.Signal();
     this._pauseSignal.add(UI.pause, this);
     this._toggleSubtitleSignal = new Phaser.Signal();
@@ -75,6 +78,10 @@ GameManager.prototype.getEndInteractionSignal = function() {
 
 GameManager.prototype.getDisplayImageSignal = function() {
     return this._displayImageSignal;
+}
+
+GameManager.prototype.getToggleUISignal = function() {
+    return this._toggleUISignal;
 }
 
 GameManager.prototype.getPauseSignal = function() {

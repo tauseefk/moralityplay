@@ -13,6 +13,8 @@ const choiceBgKeyEnum = 'IMAGE_CHOICE_BACKGROUND';
 const meaningfulTextKeyEnum = 'TEXT_MEANINGFUL_CHOICES';
 const meaninglessTextKeyEnum = 'TEXT_MEANINGLESS_CHOICES';
 
+const FADE_DELAY = 1;
+
 function CreateBg(y, width, height) {
     var choiceBg = new Image(0, y, 'choiceBg', choiceBgKeyEnum);
     choiceBg.addImageToGame(_game, _game.mediaGroup);
@@ -25,6 +27,7 @@ function CreateChoices(choices) {
         CreateMeaningfulChoices(choices, _game.global.gameManager.getChangeSceneSignal());
     else
         CreateMeaninglessChoices(choices);
+    _game.global.gameManager.getToggleUISignal().dispatch();
 }
 
 function CreateMeaningfulChoices(info) {
@@ -35,7 +38,7 @@ function CreateMeaningfulChoices(info) {
         _text.push(new Text(info.content[i], 0, 0, meaningfulTextKeyEnum, _game.global.style.choicesTextProperties));
         _text[i].index = i;
         _text[i].addToGame(_game, _game.mediaGroup);
-        _text[i].changeText(_game, info.targetScene[i], _game.global.gameManager.getChangeSceneSignal(),
+        _text[i].changeText(_game, info.targetScene[i], _game.global.gameManager.getEndInteractionSignal(),
             bgImg.getPhaserImage().y, bgImg.getPhaserImage().width, bgImg.getPhaserImage().height);
     };
 }
@@ -65,11 +68,14 @@ function FadeChoicesExcept(choiceText){
     });
 }
 
-function FadeChoiceAfterDelay(choiceText) {
-    _game.time.events.add(Phaser.Timer.SECOND*1, fadeChoice, this);
+function FadeChoiceAfterDelay(choiceText, targetScene) {
+    _game.time.events.add(Phaser.Timer.SECOND*FADE_DELAY, fadeChoice, this);
 
     function fadeChoice(){
-        choiceText.fadeOut(_game);
+        if(targetScene)
+            choiceText.fadeOut(_game, _game.global.gameManager.getChangeSceneSignal(), targetScene);
+        else
+            choiceText.fadeOut(_game);
     }
 }
 
@@ -91,8 +97,8 @@ module.exports = {
     create: function(choices) {
         CreateChoices(choices);
     },
-    endInteraction: function(lingeringChoice) {
+    endInteraction: function(lingeringChoice, targetScene) {
         FadeChoicesExcept(lingeringChoice);
-        FadeChoiceAfterDelay(lingeringChoice);
+        FadeChoiceAfterDelay(lingeringChoice, targetScene);
     }
 }
