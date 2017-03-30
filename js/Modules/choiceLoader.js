@@ -32,27 +32,31 @@ function CreateChoices(choices) {
 
 function CreateMeaningfulChoices(info) {
     resetElements();
+
     for(var i=0; i < MAX_CHOICE; i++) {
         var bgImg = CreateBg(info.y[i], info.bounds[i][0], info.bounds[i][1], i);
         _choiceBg.push(bgImg);
+
         _text.push(new Text(info.content[i], 0, 0, meaningfulTextKeyEnum, _game.global.style.choicesTextProperties));
         _text[i].index = i;
         _text[i].addToGame(_game, _game.mediaGroup);
         _text[i].changeText(_game, info.targetScene[i], _game.global.gameManager.getEndInteractionSignal(),
-            bgImg.getPhaserImage().y, bgImg.getPhaserImage().width, bgImg.getPhaserImage().height, i);
+            bgImg.getPhaserImage().y, i);
     };
 }
 
 function CreateMeaninglessChoices(info) {
     resetElements();
+
     for(var i=0; i < MAX_CHOICE; i++) {
         var bgImg = CreateBg(info.y[i], info.bounds[i][0], info.bounds[i][1], i);
         _choiceBg.push(bgImg);
+
         _text.push(new Text(info.content[i], 0, 0, meaninglessTextKeyEnum, _game.global.style.choicesTextProperties));
         _text[i].index = i;
         _text[i].addToGame(_game, _game.mediaGroup);
         _text[i].changeText(_game, _game.global.gameManager.getEndInteractionSignal(),
-            bgImg.getPhaserImage().y, bgImg.getPhaserImage().width, bgImg.getPhaserImage().height, i);
+            bgImg.getPhaserImage().y, i);
     };
 }
 
@@ -63,6 +67,7 @@ function FadeChoicesExcept(choiceText){
             text.fadeOut(_game);
         }
     });
+
     _choiceBg.forEach(function(choiceBg) {
         choiceBg.fadeOut(_game);
     });

@@ -24,14 +24,14 @@ function InitializeBitmapOverlay(game) {
     _bitmapSprite = game.add.sprite(game.width/2, game.height/2, _bitmapCanvas);
     game.mediaGroup.add(_bitmapSprite);
     _bitmapSprite.alpha = 0;
-    _bitmapSprite.anchor.setTo(0.5);
+    _bitmapSprite.anchor.setTo(0.5, 0.5);
     _context = _bitmapCanvas.context;
 }
 
 function StartFilterFadeIn(signal) {    
     var linkable = new Linkable(_game, signal);
-    linkable.addAnimation(Animation.fade(_game, _bitmapSprite, 1, false));
-    linkable.addAnimation(Animation.scale(_game, _bitmapSprite, false, _game.width, _game.height));
+    linkable.addOnClickAnimation(Animation.fade(_game, _bitmapSprite, 1, false));
+    linkable.addOnClickAnimation(Animation.scale(_game, _bitmapSprite, false, _game.width, _game.height));
     linkable.onTrigger();
     _video.stop();
 }

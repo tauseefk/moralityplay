@@ -75,37 +75,39 @@ Text.prototype.changeToThoughts = function(game, xTo, yTo, filter) {
     Animation.fadeIn(game, this._text);
 }
 
-Text.prototype.changeToMeaningfulChoices = function(game, targetScene, endInteractionSignal, boundsY, boundsWidth, boundsHeight, index) {
-    this._text.anchor.x = 0.5
+Text.prototype.changeToMeaningfulChoices = function(game, targetScene, endInteractionSignal, boundsY, index) {
+    this._text.anchor.set(0.5, 0.5);
     if(index == 0)
         this._text.x = game.width/4;
     else if(index == 1)
         this._text.x = game.width/4*3;
+    this._text.y = boundsY;
     this._text.alpha = 0;
     this._text.inputEnabled = true;
     this._text.input.useHandCursor = true;
-    this._text.boundsAlignV = "middle";
-    this._text.setTextBounds(0, boundsY, boundsWidth, boundsHeight);
-    this._linkable = new Linkable(this._text.events, endInteractionSignal, this, targetScene);
-    //this._linkable.addAnimation(Animation.fade(game, this._text, 0, false));
-    this._linkable.setAsButton(true);
+    //this._text.boundsAlignV = "middle";
+    //this._text.setTextBounds(0, boundsY, boundsWidth, boundsHeight);
+    this._link = new Linkable(this._text.events, endInteractionSignal, this, targetScene);
+    this._link.setAsButton(true);    
+    this._link.addMouseOverScaleEffect(game, this._text);
     Animation.fadeIn(game, this._text);
 }
 
-Text.prototype.changeToMeaninglessChoices = function(game, endInteractionSignal, boundsY, boundsWidth, boundsHeight, index) {
-    this._text.anchor.x = 0.5
+Text.prototype.changeToMeaninglessChoices = function(game, endInteractionSignal, boundsY, index) {
+    this._text.anchor.set(0.5, 0.5);
     if(index == 0)
         this._text.x = game.width/4;
     else if(index == 1)
         this._text.x = game.width/4*3;
+    this._text.y = boundsY;
     this._text.alpha = 0;
     this._text.inputEnabled = true;
     this._text.input.useHandCursor = true;
-    this._text.setTextBounds(0, boundsY, boundsWidth, boundsHeight);
-    this._text.boundsAlignV = "middle";
-    this._linkable = new Linkable(this._text.events, endInteractionSignal, this);
-    //this._linkable.addAnimation(Animation.fade(game, this._text, 0, false));
-    this._linkable.setAsButton(true);    
+    //this._text.setTextBounds(0, boundsY, boundsWidth, boundsHeight);
+    //this._text.boundsAlignV = "middle";
+    this._link = new Linkable(this._text.events, endInteractionSignal, this);
+    this._link.setAsButton(true);
+    this._link.addMouseOverScaleEffect(game, this._text);
     Animation.fadeIn(game, this._text);
 }
 
@@ -148,14 +150,6 @@ Text.prototype.setVisible = function(isVisible) {
 
 Text.prototype.setY = function(val) {
     this._text.y = val;
-}
-
-function ChangeScene(signal, scene) {
-    signal.dispatch(scene);
-}
-
-function EndInteraction(signal, text, targetScene) {
-    signal.dispatch(text, targetScene);
 }
 
 module.exports = Text;

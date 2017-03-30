@@ -1,7 +1,9 @@
 "use strict";
 
+const Animation = require('./Animation');
 
 const FADE_SPEED = 700;
+const MOUSEOVER_SPEED = 300;
 
 //Linkable constructor
 var Linkable = function(event, signal, arg1, arg2, arg3) {
@@ -11,7 +13,9 @@ var Linkable = function(event, signal, arg1, arg2, arg3) {
     this._arg1 = arg1;
     this._arg2 = arg2;
     this._arg3 = arg3;
-    this._animations = [];
+    this._onClickAnimations = [];
+    this._onMouseOverAnimations = [];
+    this._onMouseOutAnimations = [];
 }
 
 Linkable.prototype.setAsButton = function(once) {
@@ -24,29 +28,68 @@ Linkable.prototype.setAsButton = function(once) {
     }
 }
 
-Linkable.prototype.addAnimation = function(tween) {
-    this._animations.push(tween);
+Linkable.prototype.setMouseOver = function() {
+    this._event.onInputOver.add(this.playOnMouseOverAnimations, this);
 }
 
-Linkable.prototype.playAnimations = function() {    
+Linkable.prototype.setMouseOut = function() {
+    this._event.onInputOut.add(this.playOnMouseOutAnimations, this);
+}
+
+Linkable.prototype.addOnClickAnimation = function(tween) {
+    this._onClickAnimations.push(tween);
+}
+
+Linkable.prototype.addMouseOverAnimation = function(tween) {
+    this._onMouseOverAnimations.push(tween);
+}
+
+Linkable.prototype.addMouseOutAnimation = function(tween) {
+    this._onMouseOutAnimations.push(tween);
+}
+
+Linkable.prototype.playOnClickAnimations = function() {    
     var tween = null;
-    this._animations.forEach(function(animation) {
+    this._onClickAnimations.forEach(function(animation) {
+        tween = animation.start();
+    });
+    return tween;
+}
+
+Linkable.prototype.playOnMouseOverAnimations = function() {    
+    var tween = null;
+    this._onMouseOverAnimations.forEach(function(animation) {
+        animation.reverse = false;
+        tween = animation.start();
+    });
+    return tween;
+}
+
+Linkable.prototype.playOnMouseOutAnimations = function() {    
+    var tween = null;
+    this._onMouseOutAnimations.forEach(function(animation) {
         tween = animation.start();
     });
     return tween;
 }
 
 Linkable.prototype.removeInput = function() {
-    if(this._event.inputEnabled)
-        this._event.inputEnabled = false;
+    this._event.inputEnabled = false;    
 }
 
 Linkable.prototype.onTrigger = function() {
-    var tween = this._linkable.playAnimations();
+    var tween = this._linkable.playOnClickAnimations();
     if(tween)
         tween.onComplete.add(this.dispatchSignal, this);
     else
         this.dispatchSignal();
+}
+
+Linkable.prototype.addMouseOverScaleEffect = function(game, object) {
+    this._linkable.addMouseOverAnimation(Animation.scale(game, object, false, object.width *1.05, object.height *1.05, MOUSEOVER_SPEED));
+    this._linkable.setMouseOver();    
+    this._linkable.addMouseOutAnimation(Animation.scale(game, object, false, object.width, object.height, MOUSEOVER_SPEED));
+    this._linkable.setMouseOut();
 }
 
 Linkable.prototype.dispatchSignal = function() {

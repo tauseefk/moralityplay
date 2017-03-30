@@ -3,6 +3,8 @@
 const Linkable = require('./Linkable'),
     Animation = require('./Animation');
 
+const MOUSEOVER_SPEED = 300;
+
 var ImageTypeEnum = {
         Static: 'IMAGE_STATIC',
         SceneChange: 'IMAGE_BUTTON_SCENECHANGE',
@@ -84,7 +86,7 @@ Image.prototype.changeImage = function (game, arg1, arg2, arg3, arg4, arg5) {
 }
 
 Image.prototype.changeToStaticImage = function(game) {
-    
+
 }
 
 //Changes image to a horizontally draggable image
@@ -107,8 +109,8 @@ Image.prototype.changeToThoughtIcon = function(game, thoughtsAndChoicesSignal, t
     this._image.height = 100;
     this._image.anchor.setTo(0.5, 0.5);
     this._link = new Linkable(this._image, thoughtsAndChoicesSignal, thoughts, coords, choices);
-    this._link.addAnimation(Animation.fade(game, this._image, 0, false));
-    this._link.addAnimation(Animation.scale(game, this._image, false));
+    this._link.addOnClickAnimation(Animation.fade(game, this._image, 0, false));
+    this._link.addOnClickAnimation(Animation.scale(game, this._image, false));
     this._link.setAsButton(true);
 }
 
@@ -118,13 +120,15 @@ Image.prototype.changeToSceneChangeImage = function(game, targetScene) {
 }
 
 Image.prototype.changeToDisplayImage = function(game, target) {
+    this._image.anchor.setTo(0.5, 0.5);
     this._link = new Linkable(this._image, game.global.gameManager.getDisplayImageSignal(), target, true);
     this._link.setAsButton(false);
+    this._link.addMouseOverScaleEffect(game, this._image);
 }
 
 Image.prototype.changeToChoiceBackgroundImage = function(game, width, height, index) {
     this._image.alpha = 0;
-    this._image.anchor.x = 0.5;
+    this._image.anchor.set(0.5, 0.5);
     console.log(index);
     if(index == 0)
         this._image.x = game.width/4;
@@ -171,6 +175,14 @@ Image.prototype.makeDraggable = function(game, hoverImageSrc, lockHorizontal, lo
     this._image.x = -this._image.width/2;
     //Changes mouseover image
     this.changeCursorImage(game, 'url("./Images/UI/hand_2.png"), auto');
+}
+
+Image.prototype.addMouseOverScaleEffect = function(game, link) {
+
+}
+
+Image.prototype.destroy = function() {
+    this._image.destroy();
 }
 
 Image.prototype.getPhaserImage = function() {

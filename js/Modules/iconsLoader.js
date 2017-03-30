@@ -8,7 +8,6 @@ const Filter = require('./filter'),
 var _instance = null;
 var _game = null;
 var _icons = [];
-var _thoughts
 
 const buttonThoughtImageKeyEnum = 'IMAGE_BUTTON_THOUGHT';
 const sceneChangeImageKeyEnum = 'IMAGE_BUTTON_SCENECHANGE';
@@ -78,5 +77,11 @@ module.exports = {
     createThoughtsAndChoices: function(thoughts, coords, choices) {
         _game.global.gameManager.getCreateThoughtsSignal().dispatch(thoughts, coords);
         _game.global.gameManager.getCreateChoicesSignal().dispatch(choices);
+    },
+    destroy: function() {
+        _icons.forEach(function(icon) {
+            icon.destroy();
+        });
+        _icons = [];
     }
 }
