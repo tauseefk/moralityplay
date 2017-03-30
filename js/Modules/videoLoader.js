@@ -55,7 +55,8 @@ function AddVideoAndFilter(doFadeOut, sub) {
 
 function TriggerMoment() {
     console.log(_video.video.duration);
-    console.log(_video.video.currentTime);
+    console.log(_video.video.currentTime);    
+    _game.global.gameManager.getToggleUISignal().dispatch();
     VideoFilter.startFilterFade(_game.global.gameManager.getTriggerInteractionSignal());
 }
 
@@ -123,7 +124,6 @@ module.exports = {
             _video.play();
     },
     endFilter() {
-        this.play();
         VideoFilter.endFilter();
     },
     toggleSubtitle() {

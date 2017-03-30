@@ -8,6 +8,7 @@ const Filter = require('./filter'),
 var _instance = null;
 var _game = null;
 var _icons = [];
+var _thoughts
 
 const buttonThoughtImageKeyEnum = 'IMAGE_BUTTON_THOUGHT';
 const sceneChangeImageKeyEnum = 'IMAGE_BUTTON_SCENECHANGE';
@@ -15,15 +16,8 @@ const sceneChangeImageKeyEnum = 'IMAGE_BUTTON_SCENECHANGE';
 function CreateThoughtIcon(iconKey, coords, thoughts, choices) {
     var button = new Image(coords[0], coords[1], iconKey, buttonThoughtImageKeyEnum);
     button.addImageToGame(_game, _game.mediaGroup);
-    button.changeImage(_game, ButtonPressed);
-
+    button.changeImage(_game, _game.global.gameManager.getCreateThoughtsAndChoicesSignal(), thoughts, coords, choices);
     _icons.push(button);
-
-    function ButtonPressed() {
-        console.log(thoughts);
-        Thoughts.create(thoughts, coords);
-        Choices.create(choices);
-    }
 }
 
 function CreateExploratoryIcons(key, coords, target, type, reference) {
@@ -80,5 +74,9 @@ module.exports = {
         if(hideSameType)
             HideIconType(_icons[index].getType());
         _icons[index].setVisible(true);
+    },
+    createThoughtsAndChoices: function(thoughts, coords, choices) {
+        _game.global.gameManager.getCreateThoughtsSignal().dispatch(thoughts, coords);
+        _game.global.gameManager.getCreateChoicesSignal().dispatch(choices);
     }
 }

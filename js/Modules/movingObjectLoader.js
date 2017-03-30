@@ -48,6 +48,7 @@ module.exports = {
     },
     assignFollowIcons: function(icons) {
         _group = _game.add.group();
+        _game.mediaGroup.add(_group);
         icons.forEach(function(icon) {
             _group.add(icon.getPhaserImage());
         });

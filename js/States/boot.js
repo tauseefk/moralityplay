@@ -14,6 +14,7 @@ WebFontConfig = {
 function delayedCreate() {
     createGlobalVars();
     initGameGroups();
+    _game.stage.disableVisibilityChange = true;
     _game.stage.backgroundColor = "#ffffff";
     _game.state.start("preload");
 }

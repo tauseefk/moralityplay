@@ -1,69 +1,56 @@
 "use strict";
 
-var _filterFadeSignal = null;
+
 const FADE_SPEED = 700;
 
 //Linkable constructor
-var Linkable = function(xPos, yPos, key, properties) {
-    this._xPos = xPos;
-    this._yPos = yPos;
-    this._properties = properties;
-    this._key = key;
-    this._image = null;
+var Linkable = function(event, signal, arg1, arg2, arg3) {
+    this._linkable = this;
+    this._event = event;
+    this._signal = signal;
+    this._arg1 = arg1;
+    this._arg2 = arg2;
+    this._arg3 = arg3;
+    this._animations = [];
 }
 
-Linkable.fadeIn = function(game, object, time, signal) {
-    var tween;
+Linkable.prototype.setAsButton = function(once) {
+    if(once) {
+        this._event.onInputUp.addOnce(this.onTrigger, this);
+        this._event.onInputUp.addOnce(this.removeInput, this);
+    }
+    else {        
+        this._event.onInputUp.add(this.onTrigger, this);
+    }
+}
 
-    if(time)
-        tween = game.add.tween(object).to({alpha:1}, time, Phaser.Easing.Linear.None, true, 0, 0, false);
+Linkable.prototype.addAnimation = function(tween) {
+    this._animations.push(tween);
+}
+
+Linkable.prototype.playAnimations = function() {    
+    var tween = null;
+    this._animations.forEach(function(animation) {
+        tween = animation.start();
+    });
+    return tween;
+}
+
+Linkable.prototype.removeInput = function() {
+    if(this._event.inputEnabled)
+        this._event.inputEnabled = false;
+}
+
+Linkable.prototype.onTrigger = function() {
+    var tween = this._linkable.playAnimations();
+    if(tween)
+        tween.onComplete.add(this.dispatchSignal, this);
     else
-        tween = game.add.tween(object).to({alpha:1}, FADE_SPEED, Phaser.Easing.Linear.None, true, 0, 0, false);
-
-    if(signal)
-        tween.onComplete.add(SignalDispatcher);
-
-    function SignalDispatcher(){
-        signal.dispatch();
-    }
+        this.dispatchSignal();
 }
 
-Linkable.setLink = function(event, callbackFunc, scope, arg1, arg2, arg3) {
-    event.onInputUp.addOnce(driver, scope);
-
-    function driver() {
-        DriverFunc(callbackFunc, arg1, arg2, arg3);
-    }
-}
-
-Linkable.setPermanentLink = function(event, callbackFunc, scope, arg1, arg2, arg3) {
-    event.onInputUp.add(driver, scope);
-
-    function driver() {
-        DriverFunc(callbackFunc, arg1, arg2, arg3);
-    }
-}
-
-Linkable.fadeOut = function(game, object, destroy, signal, arg1) {
-    var tween = game.add.tween(object).to({alpha:0}, FADE_SPEED, Phaser.Easing.Linear.None, true, 0, 0, false);
-    tween.onComplete.add(Disable, this);
-
-    function Disable() {
-        if(destroy)
-            object.destroy();
-        if(signal)
-            signal.dispatch(arg1);
-    }
-}
-
-Linkable.zoomIn = function(game, object, scale, originalWidth, originalHeight) {
-    object.width = originalWidth;
-    object.height = originalHeight;
-    var tween = game.add.tween(object).to({width:object.width*scale, height:object.height*scale}, FADE_SPEED, Phaser.Easing.Linear.None, true, 0, 0, false);
-}
-
-function DriverFunc(triggerFunc, arg1, arg2, arg3) {
-    triggerFunc(arg1, arg2, arg3);
+Linkable.prototype.dispatchSignal = function() {
+    this._signal.dispatch(this._arg1, this._arg2, this._arg3);
 }
 
 

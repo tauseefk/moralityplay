@@ -16,7 +16,7 @@ const toggleSubtitleButtonImageKeyEnum = 'IMAGE_BUTTON_TOGGLE_SUBTITLE';
 
 function DrawPauseButton() {
     if(!_pauseImage)
-        _pauseImage = new Image(10, 10, 'thoughtIcon', pauseButtonImageKeyEnum);
+        _pauseImage = new Image(10, 10, 'pauseButton', pauseButtonImageKeyEnum);
     _pauseImage.addImageToGame(_game, _game.uiGroup);
     _pauseImage.changeImage(_game, _game.global.gameManager.getPauseSignal());
     DrawRect();
@@ -24,7 +24,7 @@ function DrawPauseButton() {
 
 function DrawToggleSubtitleButton() {
     if(!_toggleSubtitleImage)        
-        _toggleSubtitleImage = new Image(80, 10, 'thoughtIcon', toggleSubtitleButtonImageKeyEnum);    
+        _toggleSubtitleImage = new Image(10, 100, 'subtitleButton', toggleSubtitleButtonImageKeyEnum);    
     _toggleSubtitleImage.addImageToGame(_game, _game.uiGroup);
     _toggleSubtitleImage.changeImage(_game, _game.global.gameManager.getToggleSubtitleSignal());
 }
@@ -82,6 +82,7 @@ module.exports = {
     preload: function() {
     },
     create: function(drawPause, drawSubtitleToggle) {
+        _uiVisible = true;
         if(drawSubtitleToggle)
             DrawToggleSubtitleButton();
         if(drawPause)

@@ -7,7 +7,7 @@ const Group = require('../Modules/groupLoader'),
     Icons = require('../Modules/iconsLoader'),
     State = require('./State'),
     Choices = require('../Modules/choiceLoader');
-    
+
 var _stateInfo = null;
 var _instance = null;
 var _momentCount = null;
@@ -33,6 +33,10 @@ function CreateThought() {
 function EndInteraction(lingeringChoice, targetScene) {
     Icons.endInteraction();
     Choices.endInteraction(lingeringChoice, targetScene);
+    if(!targetScene) {
+        Video.play();
+        _instance.game.global.gameManager.getToggleUISignal().dispatch();
+    }
     Video.endFilter();
 }
 
@@ -54,6 +58,7 @@ module.exports = {
         }
         Video.init(this.game);
         Icons.init(this.game);
+
         if(_instance !== null)
             return _instance;
         _stateInfo = new State(scene);

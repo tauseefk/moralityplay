@@ -145,7 +145,7 @@ const toggleSubtitleButtonImageKeyEnum = 'IMAGE_BUTTON_TOGGLE_SUBTITLE';
 
 function DrawPauseButton() {
     if(!_pauseImage)
-        _pauseImage = new Image(10, 10, 'thoughtIcon', pauseButtonImageKeyEnum);
+        _pauseImage = new Image(10, 10, 'pauseButton', pauseButtonImageKeyEnum);
     _pauseImage.addImageToGame(_game, _game.uiGroup);
     _pauseImage.changeImage(_game, _game.global.gameManager.getPauseSignal());
     DrawRect();
@@ -153,7 +153,7 @@ function DrawPauseButton() {
 
 function DrawToggleSubtitleButton() {
     if(!_toggleSubtitleImage)        
-        _toggleSubtitleImage = new Image(80, 10, 'thoughtIcon', toggleSubtitleButtonImageKeyEnum);    
+        _toggleSubtitleImage = new Image(10, 100, 'subtitleButton', toggleSubtitleButtonImageKeyEnum);    
     _toggleSubtitleImage.addImageToGame(_game, _game.uiGroup);
     _toggleSubtitleImage.changeImage(_game, _game.global.gameManager.getToggleSubtitleSignal());
 }
@@ -211,6 +211,7 @@ module.exports = {
     preload: function() {
     },
     create: function(drawPause, drawSubtitleToggle) {
+        _uiVisible = true;
         if(drawSubtitleToggle)
             DrawToggleSubtitleButton();
         if(drawPause)
@@ -232,70 +233,57 @@ module.exports = {
 "use strict";
 
 
-var _filterFadeSignal = null;
+
 const FADE_SPEED = 700;
 
 //Linkable constructor
-var Linkable = function(xPos, yPos, key, properties) {
-    this._xPos = xPos;
-    this._yPos = yPos;
-    this._properties = properties;
-    this._key = key;
-    this._image = null;
+var Linkable = function(event, signal, arg1, arg2, arg3) {
+    this._linkable = this;
+    this._event = event;
+    this._signal = signal;
+    this._arg1 = arg1;
+    this._arg2 = arg2;
+    this._arg3 = arg3;
+    this._animations = [];
 }
 
-Linkable.fadeIn = function(game, object, time, signal) {
-    var tween;
+Linkable.prototype.setAsButton = function(once) {
+    if(once) {
+        this._event.onInputUp.addOnce(this.onTrigger, this);
+        this._event.onInputUp.addOnce(this.removeInput, this);
+    }
+    else {        
+        this._event.onInputUp.add(this.onTrigger, this);
+    }
+}
 
-    if(time)
-        tween = game.add.tween(object).to({alpha:1}, time, Phaser.Easing.Linear.None, true, 0, 0, false);
+Linkable.prototype.addAnimation = function(tween) {
+    this._animations.push(tween);
+}
+
+Linkable.prototype.playAnimations = function() {    
+    var tween = null;
+    this._animations.forEach(function(animation) {
+        tween = animation.start();
+    });
+    return tween;
+}
+
+Linkable.prototype.removeInput = function() {
+    if(this._event.inputEnabled)
+        this._event.inputEnabled = false;
+}
+
+Linkable.prototype.onTrigger = function() {
+    var tween = this._linkable.playAnimations();
+    if(tween)
+        tween.onComplete.add(this.dispatchSignal, this);
     else
-        tween = game.add.tween(object).to({alpha:1}, FADE_SPEED, Phaser.Easing.Linear.None, true, 0, 0, false);
-
-    if(signal)
-        tween.onComplete.add(SignalDispatcher);
-
-    function SignalDispatcher(){
-        signal.dispatch();
-    }
+        this.dispatchSignal();
 }
 
-Linkable.setLink = function(event, callbackFunc, scope, arg1, arg2, arg3) {
-    event.onInputUp.addOnce(driver, scope);
-
-    function driver() {
-        DriverFunc(callbackFunc, arg1, arg2, arg3);
-    }
-}
-
-Linkable.setPermanentLink = function(event, callbackFunc, scope, arg1, arg2, arg3) {
-    event.onInputUp.add(driver, scope);
-
-    function driver() {
-        DriverFunc(callbackFunc, arg1, arg2, arg3);
-    }
-}
-
-Linkable.fadeOut = function(game, object, destroy, signal, arg1) {
-    var tween = game.add.tween(object).to({alpha:0}, FADE_SPEED, Phaser.Easing.Linear.None, true, 0, 0, false);
-    tween.onComplete.add(Disable, this);
-
-    function Disable() {
-        if(destroy)
-            object.destroy();
-        if(signal)
-            signal.dispatch(arg1);
-    }
-}
-
-Linkable.zoomIn = function(game, object, scale, originalWidth, originalHeight) {
-    object.width = originalWidth;
-    object.height = originalHeight;
-    var tween = game.add.tween(object).to({width:object.width*scale, height:object.height*scale}, FADE_SPEED, Phaser.Easing.Linear.None, true, 0, 0, false);
-}
-
-function DriverFunc(triggerFunc, arg1, arg2, arg3) {
-    triggerFunc(arg1, arg2, arg3);
+Linkable.prototype.dispatchSignal = function() {
+    this._signal.dispatch(this._arg1, this._arg2, this._arg3);
 }
 
 
@@ -398,7 +386,8 @@ function AddVideoAndFilter(doFadeOut, sub) {
 
 function TriggerMoment() {
     console.log(_video.video.duration);
-    console.log(_video.video.currentTime);
+    console.log(_video.video.currentTime);    
+    _game.global.gameManager.getToggleUISignal().dispatch();
     VideoFilter.startFilterFade(_game.global.gameManager.getTriggerInteractionSignal());
 }
 
@@ -466,7 +455,6 @@ module.exports = {
             _video.play();
     },
     endFilter() {
-        this.play();
         VideoFilter.endFilter();
     },
     toggleSubtitle() {
@@ -562,9 +550,11 @@ module.exports = {
 "use strict";
 
 
-const Linkable = __webpack_require__(2);
+const Linkable = __webpack_require__(2),
+    Animation = __webpack_require__(28);
 
 var ImageTypeEnum = {
+        Static: 'IMAGE_STATIC',
         SceneChange: 'IMAGE_BUTTON_SCENECHANGE',
         DisplayImage: 'IMAGE_BUTTON_DISPLAY_IMAGE',
         Thought: 'IMAGE_BUTTON_THOUGHT',
@@ -582,7 +572,8 @@ var Image = function(xPos, yPos, key, type, properties) {
     this._yPos = yPos;
     this._properties = properties;
     this._key = key;
-    this._image = null;
+    this._link = null;
+    this._image = this;
 }
 
 Image.prototype.addImageToGame = function(game, group) {
@@ -593,7 +584,9 @@ Image.prototype.addImageToGame = function(game, group) {
         case ImageTypeEnum.DisplayImage:
         case ImageTypeEnum.ToggleSubtitle:
             this._image = game.add.button(this._xPos, this._yPos, this._key);
+            this._image.inputEnabled = true;
             break;
+        case ImageTypeEnum.Static:
         case ImageTypeEnum.Background:
         case ImageTypeEnum.ChoiceBackground:
             this._image = game.add.image(this._xPos, this._yPos, this._key);
@@ -609,13 +602,16 @@ Image.prototype.setImage = function(key) {
 }
 
 //Assigns image change function depending on enum
-Image.prototype.changeImage = function (game, arg1, arg2, arg3) {
+Image.prototype.changeImage = function (game, arg1, arg2, arg3, arg4, arg5) {
     switch(this._type) {
+        case ImageTypeEnum.Static:            
+            this.changeToStaticImage(game);
+            break;
         case ImageTypeEnum.Background:
             this.changeToBgImage(game, arg1);
             break;
         case ImageTypeEnum.Thought:
-            this.changeToThoughtIcon(game, arg1);
+            this.changeToThoughtIcon(game, arg1, arg2, arg3, arg4, arg5);
             break;
         case ImageTypeEnum.SceneChange:
             this.changeToSceneChangeImage(game, arg1, arg2);
@@ -624,7 +620,7 @@ Image.prototype.changeImage = function (game, arg1, arg2, arg3) {
             this.changeToDisplayImage(game, arg1);
             break;
         case ImageTypeEnum.ChoiceBackground:
-            this.changeToChoiceBackgroundImage(game, arg1, arg2);
+            this.changeToChoiceBackgroundImage(game, arg1, arg2, arg3);
             break;
         case ImageTypeEnum.Pause:
             this.changeToPauseButton(game, arg1);
@@ -635,6 +631,10 @@ Image.prototype.changeImage = function (game, arg1, arg2, arg3) {
         default:
             console.warn("Invalid Image Type.");
     }
+}
+
+Image.prototype.changeToStaticImage = function(game) {
+    
 }
 
 //Changes image to a horizontally draggable image
@@ -652,34 +652,48 @@ Image.prototype.changeToBgImage = function(game, draggable) {
     }
 }
 
-Image.prototype.changeToThoughtIcon = function(game, callbackFunc) {
-    Linkable.setLink(this._image, callbackFunc);
+Image.prototype.changeToThoughtIcon = function(game, thoughtsAndChoicesSignal, thoughts, coords, choices) {
+    this._image.width = 100;
+    this._image.height = 100;
+    this._image.anchor.setTo(0.5, 0.5);
+    this._link = new Linkable(this._image, thoughtsAndChoicesSignal, thoughts, coords, choices);
+    this._link.addAnimation(Animation.fade(game, this._image, 0, false));
+    this._link.addAnimation(Animation.scale(game, this._image, false));
+    this._link.setAsButton(true);
 }
 
 Image.prototype.changeToSceneChangeImage = function(game, targetScene) {
-    Linkable.setLink(this._image, SignalDispatcher, this, game.global.gameManager.getChangeSceneSignal(), targetScene);
+    this._link = new Linkable(this._image, game.global.gameManager.getChangeSceneSignal(), targetScene);
+    this._link.setAsButton(true);
 }
 
 Image.prototype.changeToDisplayImage = function(game, target) {
-    Linkable.setPermanentLink(this._image, SignalDispatcher, this, game.global.gameManager.getDisplayImageSignal(), target, true);
+    this._link = new Linkable(this._image, game.global.gameManager.getDisplayImageSignal(), target, true);
+    this._link.setAsButton(false);
 }
 
-Image.prototype.changeToChoiceBackgroundImage = function(game, width, height) {
+Image.prototype.changeToChoiceBackgroundImage = function(game, width, height, index) {
     this._image.alpha = 0;
     this._image.anchor.x = 0.5;
-    this._image.x = game.width/2;
+    console.log(index);
+    if(index == 0)
+        this._image.x = game.width/4;
+    else if(index == 1)
+        this._image.x = game.width/4*3;
     this._image.width = width;
     this._image.height = height;
-    Linkable.fadeIn(game, this._image);
+    Animation.fadeIn(game, this._image);
     return this._image;
 }
 
 Image.prototype.changeToPauseButton = function(game, signal) {
-    Linkable.setPermanentLink(this._image, SignalDispatcher, this, signal);
+    this._link = new Linkable(this._image, signal);
+    this._link.setAsButton(false);
 }
 
 Image.prototype.changeToToggleSubtitleButton = function(game, signal) {
-    Linkable.setPermanentLink(this._image, SignalDispatcher, this, signal);
+    this._link = new Linkable(this._image, signal);
+    this._link.setAsButton(false);
 }
 
 //Changes cursor image on mouseover
@@ -722,23 +736,7 @@ Image.prototype.setVisible = function(isVisible) {
 }
 
 Image.prototype.fadeOut = function(game) {
-    Linkable.fadeOut(game, this._image, true);
-}
-
-function SignalDispatcher(signal, arg1, arg2) {
-    signal.dispatch(arg1, arg2);
-}
-
-function PauseScene(game) {
-    console.log(game.paused);
-    if(!game.paused) {
-        game.input.onDown.add(Unpause, self);
-    }
-    game.paused = true;;
-
-    function Unpause() {
-        game.paused = false;
-    }
+    Animation.fadeOut(game, this._image, true);
 }
 
 function DebugRect(x, y, width, height, game) {
@@ -758,7 +756,8 @@ module.exports = Image;
 "use strict";
 
 
-const Linkable = __webpack_require__(2);
+const Linkable = __webpack_require__(2),
+    Animation = __webpack_require__(28);
 
 const PADDING = 10;
 
@@ -806,16 +805,16 @@ Text.prototype.addToGame = function(game, group) {
 //arg1 can be: xTo, targetScene, endFilterSignal
 //arg2 can be: yTo, changeSceneSignal
 //arg3 can be: filter
-Text.prototype.changeText = function(game, arg1, arg2, arg3, arg4, arg5) {
+Text.prototype.changeText = function(game, arg1, arg2, arg3, arg4, arg5, arg6) {
     switch(this._type) {
         case TextTypeEnum.Thoughts:
             this.changeToThoughts(game, arg1, arg2, arg3);
             break;
         case TextTypeEnum.MeaningfulChoices:
-            this.changeToMeaningfulChoices(game, arg1, arg2, arg3, arg4, arg5);
+            this.changeToMeaningfulChoices(game, arg1, arg2, arg3, arg4, arg5, arg6);
             break;
         case TextTypeEnum.MeaninglessChoices:
-            this.changeToMeaninglessChoices(game, arg1, arg2, arg3, arg4);
+            this.changeToMeaninglessChoices(game, arg1, arg2, arg3, arg4, arg5);
             break;
         case TextTypeEnum.Subtitle:
             this.changeToSubtitle(game, arg1);
@@ -829,29 +828,41 @@ Text.prototype.changeToThoughts = function(game, xTo, yTo, filter) {
     this._text.anchor.setTo(0.5);
     this._text.alpha = 0;
     this.addInterpolationTween(game, xTo, yTo);
-    Linkable.fadeIn(game, this._text);
+    Animation.fadeIn(game, this._text);
 }
 
-Text.prototype.changeToMeaningfulChoices = function(game, targetScene, endInteractionSignal, boundsY, boundsWidth, boundsHeight) {
+Text.prototype.changeToMeaningfulChoices = function(game, targetScene, endInteractionSignal, boundsY, boundsWidth, boundsHeight, index) {
     this._text.anchor.x = 0.5
-    this._text.x = game.width/2;
+    if(index == 0)
+        this._text.x = game.width/4;
+    else if(index == 1)
+        this._text.x = game.width/4*3;
     this._text.alpha = 0;
     this._text.inputEnabled = true;
+    this._text.input.useHandCursor = true;
     this._text.boundsAlignV = "middle";
     this._text.setTextBounds(0, boundsY, boundsWidth, boundsHeight);
-    Linkable.fadeIn(game, this._text);
-    Linkable.setLink(this._text.events, EndInteraction, this, endInteractionSignal, this, targetScene);
+    this._linkable = new Linkable(this._text.events, endInteractionSignal, this, targetScene);
+    //this._linkable.addAnimation(Animation.fade(game, this._text, 0, false));
+    this._linkable.setAsButton(true);
+    Animation.fadeIn(game, this._text);
 }
 
-Text.prototype.changeToMeaninglessChoices = function(game, endInteractionSignal, boundsY, boundsWidth, boundsHeight) {
+Text.prototype.changeToMeaninglessChoices = function(game, endInteractionSignal, boundsY, boundsWidth, boundsHeight, index) {
     this._text.anchor.x = 0.5
-    this._text.x = game.width/2;
+    if(index == 0)
+        this._text.x = game.width/4;
+    else if(index == 1)
+        this._text.x = game.width/4*3;
     this._text.alpha = 0;
     this._text.inputEnabled = true;
+    this._text.input.useHandCursor = true;
     this._text.setTextBounds(0, boundsY, boundsWidth, boundsHeight);
     this._text.boundsAlignV = "middle";
-    Linkable.fadeIn(game, this._text);
-    Linkable.setLink(this._text.events, EndInteraction, this, endInteractionSignal, this);
+    this._linkable = new Linkable(this._text.events, endInteractionSignal, this);
+    //this._linkable.addAnimation(Animation.fade(game, this._text, 0, false));
+    this._linkable.setAsButton(true);    
+    Animation.fadeIn(game, this._text);
 }
 
 Text.prototype.changeToSubtitle = function(game, isVisible) {
@@ -868,7 +879,7 @@ Text.prototype.addInterpolationTween = function(game, xTo, yTo) {
 }
 
 Text.prototype.fadeOut = function(game, chainSignal, arg1) {
-    Linkable.fadeOut(game, this._text, true, chainSignal, arg1);
+    Animation.fadeOut(game, this._text, true, chainSignal, arg1);
 }
 
 Text.prototype.disableInput = function(game) {
@@ -1011,6 +1022,7 @@ const Filter = __webpack_require__(13),
 var _instance = null;
 var _game = null;
 var _icons = [];
+var _thoughts
 
 const buttonThoughtImageKeyEnum = 'IMAGE_BUTTON_THOUGHT';
 const sceneChangeImageKeyEnum = 'IMAGE_BUTTON_SCENECHANGE';
@@ -1018,15 +1030,8 @@ const sceneChangeImageKeyEnum = 'IMAGE_BUTTON_SCENECHANGE';
 function CreateThoughtIcon(iconKey, coords, thoughts, choices) {
     var button = new Image(coords[0], coords[1], iconKey, buttonThoughtImageKeyEnum);
     button.addImageToGame(_game, _game.mediaGroup);
-    button.changeImage(_game, ButtonPressed);
-
+    button.changeImage(_game, _game.global.gameManager.getCreateThoughtsAndChoicesSignal(), thoughts, coords, choices);
     _icons.push(button);
-
-    function ButtonPressed() {
-        console.log(thoughts);
-        Thoughts.create(thoughts, coords);
-        Choices.create(choices);
-    }
 }
 
 function CreateExploratoryIcons(key, coords, target, type, reference) {
@@ -1083,6 +1088,10 @@ module.exports = {
         if(hideSameType)
             HideIconType(_icons[index].getType());
         _icons[index].setVisible(true);
+    },
+    createThoughtsAndChoices: function(thoughts, coords, choices) {
+        _game.global.gameManager.getCreateThoughtsSignal().dispatch(thoughts, coords);
+        _game.global.gameManager.getCreateChoicesSignal().dispatch(choices);
     }
 }
 
@@ -1099,7 +1108,7 @@ const Text = __webpack_require__(7);
 var _instance = null;
 var _game = null;
 var _textSlots = [null, null];
-var _subtitleVisible = true;
+var _subtitleVisible = false;
 
 const subtitleTextKeyEnum = 'TEXT_SUBTITLE';
 
@@ -1341,11 +1350,12 @@ const meaningfulTextKeyEnum = 'TEXT_MEANINGFUL_CHOICES';
 const meaninglessTextKeyEnum = 'TEXT_MEANINGLESS_CHOICES';
 
 const FADE_DELAY = 1;
+const MAX_CHOICE = 2;
 
-function CreateBg(y, width, height) {
+function CreateBg(y, width, height, index) {
     var choiceBg = new Image(0, y, 'choiceBg', choiceBgKeyEnum);
     choiceBg.addImageToGame(_game, _game.mediaGroup);
-    choiceBg.changeImage(_game, width, height);
+    choiceBg.changeImage(_game, width, height, index);
     return choiceBg;
 }
 
@@ -1354,32 +1364,31 @@ function CreateChoices(choices) {
         CreateMeaningfulChoices(choices, _game.global.gameManager.getChangeSceneSignal());
     else
         CreateMeaninglessChoices(choices);
-    _game.global.gameManager.getToggleUISignal().dispatch();
 }
 
 function CreateMeaningfulChoices(info) {
     resetElements();
-    for(var i=0; i < info.size; i++) {
-        var bgImg = CreateBg(info.y[i], info.bounds[i][0], info.bounds[i][1]);
+    for(var i=0; i < MAX_CHOICE; i++) {
+        var bgImg = CreateBg(info.y[i], info.bounds[i][0], info.bounds[i][1], i);
         _choiceBg.push(bgImg);
         _text.push(new Text(info.content[i], 0, 0, meaningfulTextKeyEnum, _game.global.style.choicesTextProperties));
         _text[i].index = i;
         _text[i].addToGame(_game, _game.mediaGroup);
         _text[i].changeText(_game, info.targetScene[i], _game.global.gameManager.getEndInteractionSignal(),
-            bgImg.getPhaserImage().y, bgImg.getPhaserImage().width, bgImg.getPhaserImage().height);
+            bgImg.getPhaserImage().y, bgImg.getPhaserImage().width, bgImg.getPhaserImage().height, i);
     };
 }
 
 function CreateMeaninglessChoices(info) {
     resetElements();
-    for(var i=0; i < info.size; i++) {
-        var bgImg = CreateBg(info.y[i], info.bounds[i][0], info.bounds[i][1]);
+    for(var i=0; i < MAX_CHOICE; i++) {
+        var bgImg = CreateBg(info.y[i], info.bounds[i][0], info.bounds[i][1], i);
         _choiceBg.push(bgImg);
         _text.push(new Text(info.content[i], 0, 0, meaninglessTextKeyEnum, _game.global.style.choicesTextProperties));
         _text[i].index = i;
         _text[i].addToGame(_game, _game.mediaGroup);
         _text[i].changeText(_game, _game.global.gameManager.getEndInteractionSignal(),
-            bgImg.getPhaserImage().y, bgImg.getPhaserImage().width, bgImg.getPhaserImage().height);
+            bgImg.getPhaserImage().y, bgImg.getPhaserImage().width, bgImg.getPhaserImage().height, i);
     };
 }
 
@@ -1534,6 +1543,7 @@ module.exports = {
     },
     assignFollowIcons: function(icons) {
         _group = _game.add.group();
+        _game.mediaGroup.add(_group);
         icons.forEach(function(icon) {
             _group.add(icon.getPhaserImage());
         });
@@ -1560,7 +1570,7 @@ const Group = __webpack_require__(3),
     Icons = __webpack_require__(9),
     State = __webpack_require__(5),
     Choices = __webpack_require__(12);
-    
+
 var _stateInfo = null;
 var _instance = null;
 var _momentCount = null;
@@ -1586,6 +1596,10 @@ function CreateThought() {
 function EndInteraction(lingeringChoice, targetScene) {
     Icons.endInteraction();
     Choices.endInteraction(lingeringChoice, targetScene);
+    if(!targetScene) {
+        Video.play();
+        _instance.game.global.gameManager.getToggleUISignal().dispatch();
+    }
     Video.endFilter();
 }
 
@@ -1607,6 +1621,7 @@ module.exports = {
         }
         Video.init(this.game);
         Icons.init(this.game);
+
         if(_instance !== null)
             return _instance;
         _stateInfo = new State(scene);
@@ -1701,6 +1716,7 @@ WebFontConfig = {
 function delayedCreate() {
     createGlobalVars();
     initGameGroups();
+    _game.stage.disableVisibilityChange = true;
     _game.stage.backgroundColor = "#ffffff";
     _game.state.start("preload");
 }
@@ -1811,6 +1827,9 @@ module.exports = Input;
 const StateManager = __webpack_require__(11),
     InteractState = __webpack_require__(15),
     LocationState = __webpack_require__(16),
+    Icons = __webpack_require__(9),
+    Choices = __webpack_require__(12),
+    Thoughts = __webpack_require__(22),
     Transition = __webpack_require__(0),
     UI = __webpack_require__(1),
     Video = __webpack_require__(4);
@@ -1829,6 +1848,10 @@ var GameManager = function() {
 
     this._triggerInteractionSignal = null;
     this._endInteractionSignal = null;
+
+    this._createThoughtsSignal = null;
+    this._createChoicesSignal = null;
+    this._createThoughtsAndChoicesSignal = null;
 
     this._displayImageSignal = null;
 
@@ -1853,6 +1876,11 @@ GameManager.prototype.initSignals = function() {
     this._endInteractionSignal = new Phaser.Signal();
     this._endInteractionSignal.add(InteractState.endInteraction, this);
 
+    this._createThoughtsSignal = new Phaser.Signal();
+    this._createThoughtsSignal.add(Thoughts.create, this);
+    this._createChoicesSignal = new Phaser.Signal();
+    this._createChoicesSignal.add(Choices.create, this);
+
     this._displayImageSignal = new Phaser.Signal();
     this._displayImageSignal.add(LocationState.displayImage, this);
 
@@ -1862,6 +1890,9 @@ GameManager.prototype.initSignals = function() {
     this._pauseSignal.add(UI.pause, this);
     this._toggleSubtitleSignal = new Phaser.Signal();
     this._toggleSubtitleSignal.add(Video.toggleSubtitle, this);
+
+    this._createThoughtsAndChoicesSignal = new Phaser.Signal();
+    this._createThoughtsAndChoicesSignal.add(Icons.createThoughtsAndChoices, this);
 }
 
 GameManager.prototype.getChangeSceneSignal = function() {
@@ -1882,6 +1913,18 @@ GameManager.prototype.getTriggerInteractionSignal = function() {
 
 GameManager.prototype.getEndInteractionSignal = function() {
     return this._endInteractionSignal;
+}
+
+GameManager.prototype.getCreateThoughtsSignal = function() {
+    return this._createThoughtsSignal;
+}
+
+GameManager.prototype.getCreateChoicesSignal = function() {
+    return this._createChoicesSignal;
+}
+
+GameManager.prototype.getCreateThoughtsAndChoicesSignal = function() {
+    return this._createThoughtsAndChoicesSignal;
 }
 
 GameManager.prototype.getDisplayImageSignal = function() {
@@ -1985,7 +2028,8 @@ module.exports = {
 "use strict";
 
 
-const Linkable = __webpack_require__(2);
+const Linkable = __webpack_require__(2),
+    Animation = __webpack_require__(28);
 
 var _instance = null;
 var _game = null;
@@ -2012,14 +2056,20 @@ function InitializeBitmapOverlay(game) {
     _context = _bitmapCanvas.context;
 }
 
-function StartFilterFadeIn(signal) {
-    Linkable.fadeIn(_game, _bitmapSprite, FADE_IN_TIME_MS, signal);
-    Linkable.zoomIn(_game, _bitmapSprite, 1.05, _game.width, _game.height);
+function StartFilterFadeIn(signal) {    
+    var linkable = new Linkable(_game, signal);
+    linkable.addAnimation(Animation.fade(_game, _bitmapSprite, 1, false));
+    linkable.addAnimation(Animation.scale(_game, _bitmapSprite, false, _game.width, _game.height));
+    linkable.onTrigger();
     _video.stop();
 }
 
 function EndFilter() {
-    Linkable.fadeOut(_game, _bitmapSprite, false);
+    //var linkable = new Linkable(_game, _game.global.gameManager.getToggleUISignal());
+    //linkable.addAnimation(Animation.fade(_game, _bitmapSprite, 0, false));
+    Animation.fade(_game, _bitmapSprite, 0, true);
+    //linkable.onTrigger();
+    //linkable.triggerSignal(true);
 }
 
 function CreateVideoFilter() {
@@ -2098,6 +2148,9 @@ module.exports = {
     },
     stop: function() {
         _video.stop();
+    },
+    getPaused: function() {
+        return _video.paused;
     }
 }
 
@@ -2281,6 +2334,63 @@ function initGame(Boot, Preload, StateManager, ResourceLoader) {
 }
 
 initGame(Boot, Preload, StateManager, ResourceLoader);
+
+
+/***/ }),
+/* 28 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+const FADE_SPEED = 700;
+const SCALE_SIZE = 1.05;
+
+//Linkable constructor
+var Animation = function() {
+}
+
+Animation.fadeIn = function(game, object, signal) {    
+    var tween = this.fade(game, object, 1, true);
+    if(signal)
+        tween.onComplete.add(SignalDispatcher);
+
+    function SignalDispatcher(){
+        signal.dispatch();
+    }
+}
+
+Animation.fadeOut = function(game, object, destroy, signal, arg1) {
+    var tween = this.fade(game, object, 0, true);
+    tween.onComplete.add(Disable, this);
+
+    function Disable() {
+        if(destroy)
+            object.destroy();
+        if(signal)
+            signal.dispatch(arg1);
+    }
+}
+
+Animation.scale = function(game, object, autoStart, originalWidth, originalHeight) {
+    if(originalWidth && originalHeight) {
+        object.width = originalWidth;
+        object.height = originalHeight;
+    }
+    return game.add.tween(object).to({width:object.width*SCALE_SIZE, height:object.height*SCALE_SIZE}, FADE_SPEED, Phaser.Easing.Linear.None, autoStart, 0, 0, false);
+}
+
+
+Animation.fade = function(game, object, value, autoStart) {
+    return game.add.tween(object).to({alpha:value}, FADE_SPEED, Phaser.Easing.Linear.None, autoStart, 0, 0, false);
+}
+
+Animation.mouseOver = function(event, callbackFunc, scope, arg1, arg2, arg3) {
+    event.onInputOver.add();
+}
+
+
+module.exports = Animation;
 
 
 /***/ })

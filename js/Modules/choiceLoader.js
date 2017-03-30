@@ -14,11 +14,12 @@ const meaningfulTextKeyEnum = 'TEXT_MEANINGFUL_CHOICES';
 const meaninglessTextKeyEnum = 'TEXT_MEANINGLESS_CHOICES';
 
 const FADE_DELAY = 1;
+const MAX_CHOICE = 2;
 
-function CreateBg(y, width, height) {
+function CreateBg(y, width, height, index) {
     var choiceBg = new Image(0, y, 'choiceBg', choiceBgKeyEnum);
     choiceBg.addImageToGame(_game, _game.mediaGroup);
-    choiceBg.changeImage(_game, width, height);
+    choiceBg.changeImage(_game, width, height, index);
     return choiceBg;
 }
 
@@ -27,32 +28,31 @@ function CreateChoices(choices) {
         CreateMeaningfulChoices(choices, _game.global.gameManager.getChangeSceneSignal());
     else
         CreateMeaninglessChoices(choices);
-    _game.global.gameManager.getToggleUISignal().dispatch();
 }
 
 function CreateMeaningfulChoices(info) {
     resetElements();
-    for(var i=0; i < info.size; i++) {
-        var bgImg = CreateBg(info.y[i], info.bounds[i][0], info.bounds[i][1]);
+    for(var i=0; i < MAX_CHOICE; i++) {
+        var bgImg = CreateBg(info.y[i], info.bounds[i][0], info.bounds[i][1], i);
         _choiceBg.push(bgImg);
         _text.push(new Text(info.content[i], 0, 0, meaningfulTextKeyEnum, _game.global.style.choicesTextProperties));
         _text[i].index = i;
         _text[i].addToGame(_game, _game.mediaGroup);
         _text[i].changeText(_game, info.targetScene[i], _game.global.gameManager.getEndInteractionSignal(),
-            bgImg.getPhaserImage().y, bgImg.getPhaserImage().width, bgImg.getPhaserImage().height);
+            bgImg.getPhaserImage().y, bgImg.getPhaserImage().width, bgImg.getPhaserImage().height, i);
     };
 }
 
 function CreateMeaninglessChoices(info) {
     resetElements();
-    for(var i=0; i < info.size; i++) {
-        var bgImg = CreateBg(info.y[i], info.bounds[i][0], info.bounds[i][1]);
+    for(var i=0; i < MAX_CHOICE; i++) {
+        var bgImg = CreateBg(info.y[i], info.bounds[i][0], info.bounds[i][1], i);
         _choiceBg.push(bgImg);
         _text.push(new Text(info.content[i], 0, 0, meaninglessTextKeyEnum, _game.global.style.choicesTextProperties));
         _text[i].index = i;
         _text[i].addToGame(_game, _game.mediaGroup);
         _text[i].changeText(_game, _game.global.gameManager.getEndInteractionSignal(),
-            bgImg.getPhaserImage().y, bgImg.getPhaserImage().width, bgImg.getPhaserImage().height);
+            bgImg.getPhaserImage().y, bgImg.getPhaserImage().width, bgImg.getPhaserImage().height, i);
     };
 }
 

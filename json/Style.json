@@ -24,12 +24,9 @@
         "fontSize": 30,
         "align": "center",
         "font": "Kadwa",
-        "strokeThickness": 5,
         "fill": "#ffffff",
-        "stroke": "#000000",
         "boundsHeight": 100,
-        "lineSpacing": -5,
-        "shadow": [3, 3, "rgba(0,0,0,0.5)", 5]
+        "lineSpacing": -5
     },
     "choiceTextBgProperties": {
     }

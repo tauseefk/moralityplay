@@ -3,6 +3,9 @@
 const StateManager = require('../States/StateManager'),
     InteractState = require('../States/interactState'),
     LocationState = require('../States/locationState'),
+    Icons = require('./iconsLoader'),
+    Choices = require('./choiceLoader'),
+    Thoughts = require('./thoughtsLoader'),
     Transition = require('./transition'),
     UI = require('./uiLoader'),
     Video = require('./videoLoader');
@@ -21,6 +24,10 @@ var GameManager = function() {
 
     this._triggerInteractionSignal = null;
     this._endInteractionSignal = null;
+
+    this._createThoughtsSignal = null;
+    this._createChoicesSignal = null;
+    this._createThoughtsAndChoicesSignal = null;
 
     this._displayImageSignal = null;
 
@@ -45,6 +52,11 @@ GameManager.prototype.initSignals = function() {
     this._endInteractionSignal = new Phaser.Signal();
     this._endInteractionSignal.add(InteractState.endInteraction, this);
 
+    this._createThoughtsSignal = new Phaser.Signal();
+    this._createThoughtsSignal.add(Thoughts.create, this);
+    this._createChoicesSignal = new Phaser.Signal();
+    this._createChoicesSignal.add(Choices.create, this);
+
     this._displayImageSignal = new Phaser.Signal();
     this._displayImageSignal.add(LocationState.displayImage, this);
 
@@ -54,6 +66,9 @@ GameManager.prototype.initSignals = function() {
     this._pauseSignal.add(UI.pause, this);
     this._toggleSubtitleSignal = new Phaser.Signal();
     this._toggleSubtitleSignal.add(Video.toggleSubtitle, this);
+
+    this._createThoughtsAndChoicesSignal = new Phaser.Signal();
+    this._createThoughtsAndChoicesSignal.add(Icons.createThoughtsAndChoices, this);
 }
 
 GameManager.prototype.getChangeSceneSignal = function() {
@@ -74,6 +89,18 @@ GameManager.prototype.getTriggerInteractionSignal = function() {
 
 GameManager.prototype.getEndInteractionSignal = function() {
     return this._endInteractionSignal;
+}
+
+GameManager.prototype.getCreateThoughtsSignal = function() {
+    return this._createThoughtsSignal;
+}
+
+GameManager.prototype.getCreateChoicesSignal = function() {
+    return this._createChoicesSignal;
+}
+
+GameManager.prototype.getCreateThoughtsAndChoicesSignal = function() {
+    return this._createThoughtsAndChoicesSignal;
 }
 
 GameManager.prototype.getDisplayImageSignal = function() {

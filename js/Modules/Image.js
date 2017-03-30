@@ -1,8 +1,10 @@
 "use strict";
 
-const Linkable = require('./Linkable');
+const Linkable = require('./Linkable'),
+    Animation = require('./Animation');
 
 var ImageTypeEnum = {
+        Static: 'IMAGE_STATIC',
         SceneChange: 'IMAGE_BUTTON_SCENECHANGE',
         DisplayImage: 'IMAGE_BUTTON_DISPLAY_IMAGE',
         Thought: 'IMAGE_BUTTON_THOUGHT',
@@ -20,7 +22,8 @@ var Image = function(xPos, yPos, key, type, properties) {
     this._yPos = yPos;
     this._properties = properties;
     this._key = key;
-    this._image = null;
+    this._link = null;
+    this._image = this;
 }
 
 Image.prototype.addImageToGame = function(game, group) {
@@ -31,7 +34,9 @@ Image.prototype.addImageToGame = function(game, group) {
         case ImageTypeEnum.DisplayImage:
         case ImageTypeEnum.ToggleSubtitle:
             this._image = game.add.button(this._xPos, this._yPos, this._key);
+            this._image.inputEnabled = true;
             break;
+        case ImageTypeEnum.Static:
         case ImageTypeEnum.Background:
         case ImageTypeEnum.ChoiceBackground:
             this._image = game.add.image(this._xPos, this._yPos, this._key);
@@ -47,13 +52,16 @@ Image.prototype.setImage = function(key) {
 }
 
 //Assigns image change function depending on enum
-Image.prototype.changeImage = function (game, arg1, arg2, arg3) {
+Image.prototype.changeImage = function (game, arg1, arg2, arg3, arg4, arg5) {
     switch(this._type) {
+        case ImageTypeEnum.Static:            
+            this.changeToStaticImage(game);
+            break;
         case ImageTypeEnum.Background:
             this.changeToBgImage(game, arg1);
             break;
         case ImageTypeEnum.Thought:
-            this.changeToThoughtIcon(game, arg1);
+            this.changeToThoughtIcon(game, arg1, arg2, arg3, arg4, arg5);
             break;
         case ImageTypeEnum.SceneChange:
             this.changeToSceneChangeImage(game, arg1, arg2);
@@ -62,7 +70,7 @@ Image.prototype.changeImage = function (game, arg1, arg2, arg3) {
             this.changeToDisplayImage(game, arg1);
             break;
         case ImageTypeEnum.ChoiceBackground:
-            this.changeToChoiceBackgroundImage(game, arg1, arg2);
+            this.changeToChoiceBackgroundImage(game, arg1, arg2, arg3);
             break;
         case ImageTypeEnum.Pause:
             this.changeToPauseButton(game, arg1);
@@ -73,6 +81,10 @@ Image.prototype.changeImage = function (game, arg1, arg2, arg3) {
         default:
             console.warn("Invalid Image Type.");
     }
+}
+
+Image.prototype.changeToStaticImage = function(game) {
+    
 }
 
 //Changes image to a horizontally draggable image
@@ -90,34 +102,48 @@ Image.prototype.changeToBgImage = function(game, draggable) {
     }
 }
 
-Image.prototype.changeToThoughtIcon = function(game, callbackFunc) {
-    Linkable.setLink(this._image, callbackFunc);
+Image.prototype.changeToThoughtIcon = function(game, thoughtsAndChoicesSignal, thoughts, coords, choices) {
+    this._image.width = 100;
+    this._image.height = 100;
+    this._image.anchor.setTo(0.5, 0.5);
+    this._link = new Linkable(this._image, thoughtsAndChoicesSignal, thoughts, coords, choices);
+    this._link.addAnimation(Animation.fade(game, this._image, 0, false));
+    this._link.addAnimation(Animation.scale(game, this._image, false));
+    this._link.setAsButton(true);
 }
 
 Image.prototype.changeToSceneChangeImage = function(game, targetScene) {
-    Linkable.setLink(this._image, SignalDispatcher, this, game.global.gameManager.getChangeSceneSignal(), targetScene);
+    this._link = new Linkable(this._image, game.global.gameManager.getChangeSceneSignal(), targetScene);
+    this._link.setAsButton(true);
 }
 
 Image.prototype.changeToDisplayImage = function(game, target) {
-    Linkable.setPermanentLink(this._image, SignalDispatcher, this, game.global.gameManager.getDisplayImageSignal(), target, true);
+    this._link = new Linkable(this._image, game.global.gameManager.getDisplayImageSignal(), target, true);
+    this._link.setAsButton(false);
 }
 
-Image.prototype.changeToChoiceBackgroundImage = function(game, width, height) {
+Image.prototype.changeToChoiceBackgroundImage = function(game, width, height, index) {
     this._image.alpha = 0;
     this._image.anchor.x = 0.5;
-    this._image.x = game.width/2;
+    console.log(index);
+    if(index == 0)
+        this._image.x = game.width/4;
+    else if(index == 1)
+        this._image.x = game.width/4*3;
     this._image.width = width;
     this._image.height = height;
-    Linkable.fadeIn(game, this._image);
+    Animation.fadeIn(game, this._image);
     return this._image;
 }
 
 Image.prototype.changeToPauseButton = function(game, signal) {
-    Linkable.setPermanentLink(this._image, SignalDispatcher, this, signal);
+    this._link = new Linkable(this._image, signal);
+    this._link.setAsButton(false);
 }
 
 Image.prototype.changeToToggleSubtitleButton = function(game, signal) {
-    Linkable.setPermanentLink(this._image, SignalDispatcher, this, signal);
+    this._link = new Linkable(this._image, signal);
+    this._link.setAsButton(false);
 }
 
 //Changes cursor image on mouseover
@@ -160,23 +186,7 @@ Image.prototype.setVisible = function(isVisible) {
 }
 
 Image.prototype.fadeOut = function(game) {
-    Linkable.fadeOut(game, this._image, true);
-}
-
-function SignalDispatcher(signal, arg1, arg2) {
-    signal.dispatch(arg1, arg2);
-}
-
-function PauseScene(game) {
-    console.log(game.paused);
-    if(!game.paused) {
-        game.input.onDown.add(Unpause, self);
-    }
-    game.paused = true;;
-
-    function Unpause() {
-        game.paused = false;
-    }
+    Animation.fadeOut(game, this._image, true);
 }
 
 function DebugRect(x, y, width, height, game) {

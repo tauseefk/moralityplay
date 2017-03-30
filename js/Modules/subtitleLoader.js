@@ -5,7 +5,7 @@ const Text = require('./Text');
 var _instance = null;
 var _game = null;
 var _textSlots = [null, null];
-var _subtitleVisible = true;
+var _subtitleVisible = false;
 
 const subtitleTextKeyEnum = 'TEXT_SUBTITLE';
 

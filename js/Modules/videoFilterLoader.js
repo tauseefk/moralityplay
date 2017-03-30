@@ -1,6 +1,7 @@
 "use strict";
 
-const Linkable = require('./Linkable');
+const Linkable = require('./Linkable'),
+    Animation = require('./Animation');
 
 var _instance = null;
 var _game = null;
@@ -27,14 +28,20 @@ function InitializeBitmapOverlay(game) {
     _context = _bitmapCanvas.context;
 }
 
-function StartFilterFadeIn(signal) {
-    Linkable.fadeIn(_game, _bitmapSprite, FADE_IN_TIME_MS, signal);
-    Linkable.zoomIn(_game, _bitmapSprite, 1.05, _game.width, _game.height);
+function StartFilterFadeIn(signal) {    
+    var linkable = new Linkable(_game, signal);
+    linkable.addAnimation(Animation.fade(_game, _bitmapSprite, 1, false));
+    linkable.addAnimation(Animation.scale(_game, _bitmapSprite, false, _game.width, _game.height));
+    linkable.onTrigger();
     _video.stop();
 }
 
 function EndFilter() {
-    Linkable.fadeOut(_game, _bitmapSprite, false);
+    //var linkable = new Linkable(_game, _game.global.gameManager.getToggleUISignal());
+    //linkable.addAnimation(Animation.fade(_game, _bitmapSprite, 0, false));
+    Animation.fade(_game, _bitmapSprite, 0, true);
+    //linkable.onTrigger();
+    //linkable.triggerSignal(true);
 }
 
 function CreateVideoFilter() {
@@ -113,5 +120,8 @@ module.exports = {
     },
     stop: function() {
         _video.stop();
+    },
+    getPaused: function() {
+        return _video.paused;
     }
 }

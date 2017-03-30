@@ -8,8 +8,10 @@
     "middleOutline": "./Images/UI/outline_middle.png",
     "rightArrow": "./Images/UI/arrow_right.png",
     "rightOutline": "./Images/UI/outline_right.png",
-    "thoughtIcon": "./Images/Icons/icon.png",
-    "choiceBg": "./Images/UI/Option_bg.png"
+    "pauseButton": "./Images/UI/pause.png",
+    "subtitleButton": "./Images/UI/subtitle.png",
+    "thoughtIcon": "./Images/UI/thought_icon.png",
+    "choiceBg": "./Images/UI/choice_button_bg.png"
   },  
   "subtitles": {
     "sub1": "./Videos/Subtitles/test.srt"
@@ -64,16 +66,16 @@
                       {
                         "size": 2,
                         "content": [
-                          "Just a thought, but Li has worked so hard on this.\nI feel like we just ignoring her.",
-                          "I think we are set for getting a good grade and \nYou can probably participate more next time."
+                          "Just a thought, but Li has worked\n so hard on this. I feel like\n we are just ignoring her.",
+                          "I think we are set for getting\n a good grade and you can probably\n participate more next time."
                         ],
                         "y": [
-                          480,
-                          600
+                          500,
+                          500
                         ],
                         "bounds": [
-                          [ 1200, 100 ],
-                          [ 1200, 100 ]
+                          [ 600, 200 ],
+                          [ 600, 200 ]
                         ],
                         "targetScene": [
                           "asian2",
@@ -117,17 +119,17 @@
                 {
                   "size": 2,
                   "content": [
-                    "Hard working, perfectionist but not in a bad way",
-                    "Does not like star wars but likes artsy films."
+                    "Hard working, perfectionist\n but not in a bad way",
+                    "Does not like star wars\n but likes artsy films."
                   ],
-                  "y": [
-                    480,
-                    600
-                  ],
-                  "bounds": [
-                    [ 1200, 100 ],
-                    [ 1200, 100 ]
-                  ],
+                    "y": [
+                      500,
+                      500
+                    ],
+                    "bounds": [
+                      [ 600, 200 ],
+                      [ 600, 200 ]
+                    ],
                   "targetScene": [
                     "black2",
                     "black2"
@@ -158,17 +160,17 @@
                 {
                   "size": 2,
                   "content": [
-                    "If you practiced all day you must be ready",
-                    "Like Rebecca said, we believe in you."
+                    "If you practiced all day\n you must be ready",
+                    "Like Rebecca said,\n we believe in you."
                   ],
-                  "y": [
-                    480,
-                    600
-                  ],
-                  "bounds": [
-                    [ 1200, 100 ],
-                    [ 1200, 100 ]
-                  ]
+                    "y": [
+                      500,
+                      500
+                    ],
+                    "bounds": [
+                      [ 600, 200 ],
+                      [ 600, 200 ]
+                    ]
                 }
             },
             {
@@ -177,15 +179,15 @@
                 "size": 2,
                 "content": [
                   "Are you sure?",
-                  "If she is right then it is one less reason not to be nervous"
+                  "If she is right then it is\n one less reason not to be nervous"
                 ],
                 "y": [
-                  480,
-                  600
+                  500,
+                  500
                 ],
                 "bounds": [
-                  [ 1200, 100 ],
-                  [ 1200, 100 ]
+                  [ 600, 200 ],
+                  [ 600, 200 ]
                 ]
               }
             },
@@ -216,16 +218,16 @@
                   {
                     "size": 2,
                     "content": [
-                      "Relax, you know she did not mean anything by it.\n",
-                      "Why do you think that is an advantage?\n"
+                      "Relax, you know she did not\n mean anything by it.",
+                      "Why do you think that\n is an advantage?"
                     ],
                     "y": [
-                      480,
-                      600
+                      500,
+                      500
                     ],
                     "bounds": [
-                      [ 1200, 100 ],
-                      [ 1200, 100 ]
+                      [ 600, 200 ],
+                      [ 600, 200 ]
                     ],
                     "targetScene": [
                       "black3bad",
@@ -269,14 +271,15 @@
                 "fadeOut": true
             },
             "icons": {                
-                "size": 6,
+                "size": 7,
               "type": [
                 "IMAGE_BUTTON_DISPLAY_IMAGE",
                 "IMAGE_BUTTON_SCENECHANGE",
                 "IMAGE_BUTTON_DISPLAY_IMAGE",
                 "IMAGE_BUTTON_SCENECHANGE",
                 "IMAGE_BUTTON_DISPLAY_IMAGE",
-                "IMAGE_BUTTON_SCENECHANGE"
+                "IMAGE_BUTTON_SCENECHANGE",
+                "IMAGE_STATIC"
               ],
               "key": [
                 "leftArrow",
@@ -284,7 +287,8 @@
                 "middleArrow",
                 "middleOutline",
                 "rightArrow",
-                "rightOutline"
+                "rightOutline",
+                "mainTitle"
               ],
                 "coords": [
                   [ 995, 500 ],
@@ -292,7 +296,8 @@
                   [ 1907, 500 ],
                   [ 1731, 170 ],
                   [ 3300, 500 ],
-                  [ 3480, 230 ]
+                  [ 3480, 230 ],
+                  [ 2550, 200]
 
                 ],
                 "targetImageIndexOrScene": [                    
@@ -301,8 +306,8 @@
                   3,
                   "black1",
                   5,
-                  "asian1"
-
+                  "asian1",
+                  null
                 ]
             }
         },
