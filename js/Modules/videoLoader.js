@@ -123,6 +123,10 @@ module.exports = {
         if(_video)
             _video.play();
     },
+    paused: function() {
+        if(_video)
+            return _video.video.paused;
+    },
     endFilter() {
         VideoFilter.endFilter();
     },

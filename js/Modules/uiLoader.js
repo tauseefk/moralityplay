@@ -8,10 +8,13 @@ var _instance = null;
 var _game = null;
 var _graphics = null;
 var _pauseImage = null;
+var _playImage = null;
 var _toggleSubtitleImage = null;
+
 var _uiVisible = true;
 
 const pauseButtonImageKeyEnum = 'IMAGE_BUTTON_PAUSE';
+const playButtonImageKeyEnum = 'IMAGE_BUTTON_PLAY';
 const toggleSubtitleButtonImageKeyEnum = 'IMAGE_BUTTON_TOGGLE_SUBTITLE';
 
 function DrawPauseButton() {
@@ -19,7 +22,6 @@ function DrawPauseButton() {
         _pauseImage = new Image(10, 10, 'pauseButton', pauseButtonImageKeyEnum);
     _pauseImage.addImageToGame(_game, _game.uiGroup);
     _pauseImage.changeImage(_game, _game.global.gameManager.getPauseSignal());
-    DrawRect();
 }
 
 function DrawToggleSubtitleButton() {
@@ -29,21 +31,33 @@ function DrawToggleSubtitleButton() {
     _toggleSubtitleImage.changeImage(_game, _game.global.gameManager.getToggleSubtitleSignal());
 }
 
+function DrawPlayButton() {
+    if(!_playImage)
+        _playImage = new Image(_game.width/2, _game.height/2, 'playButton', playButtonImageKeyEnum);
+    _playImage.addImageToGame(_game, _game.uiGroup);
+    _playImage.changeImage(_game);
+    _playImage.setVisible(false);
+}
+
 function Pause() {
-    if(!_game.paused) {
-        _game.input.onDown.addOnce(Unpause, self);
+    if(!Video.paused()) {
         _game.paused = true;
         Video.stop();
         if(_graphics) {
             _graphics.visible = true;
         }
+        if(_playImage) {
+            _playImage.setVisible(true);
+        }
+        _game.input.onDown.addOnce(Play, self);
     }
+}
 
-    function Unpause() {
-        Video.play();
-        _game.paused = false;
-        _graphics.visible = false;;
-    }
+function Play() {
+    Video.play();
+    _game.paused = false;
+    _graphics.visible = false;
+    _playImage.setVisible(false);
 }
 
 function ToggleUI() {
@@ -52,7 +66,7 @@ function ToggleUI() {
     _toggleSubtitleImage.setVisible(_uiVisible);
 }
 
-function DrawRect() {
+function DrawPauseOverlay() {
     _graphics = _game.add.graphics(0, 0);
     _graphics.beginFill(0x000000, 0.8);
     _graphics.drawRect(0, 0, _game.width, _game.height);
@@ -85,11 +99,18 @@ module.exports = {
         _uiVisible = true;
         if(drawSubtitleToggle)
             DrawToggleSubtitleButton();
-        if(drawPause)
+        if(drawPause) {
             DrawPauseButton();
+            DrawPauseOverlay();
+            DrawPlayButton();
+        }
     },
     pause: function() {
         Pause();
+    },
+    play: function() {
+        console.log("pressed");
+        Play();
     },
     toggleUI: function() {
         ToggleUI();

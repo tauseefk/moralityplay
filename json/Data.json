@@ -9,6 +9,7 @@
     "rightArrow": "./Images/UI/arrow_right.png",
     "rightOutline": "./Images/UI/outline_right.png",
     "pauseButton": "./Images/UI/pause.png",
+    "playButton": "./Images/UI/start.png",
     "subtitleButton": "./Images/UI/subtitle.png",
     "thoughtIcon": "./Images/UI/thought_icon.png",
     "choiceBg": "./Images/UI/choice_button_bg.png"
@@ -70,8 +71,8 @@
                           "I think we are set for getting\n a good grade and you can probably\n participate more next time."
                         ],
                         "y": [
-                          500,
-                          500
+                          600,
+                          600
                         ],
                         "bounds": [
                           [ 600, 200 ],
@@ -123,8 +124,8 @@
                     "Does not like star wars\n but likes artsy films."
                   ],
                     "y": [
-                      500,
-                      500
+                      600,
+                      600
                     ],
                     "bounds": [
                       [ 600, 200 ],
@@ -164,8 +165,8 @@
                     "Like Rebecca said,\n we believe in you."
                   ],
                     "y": [
-                      500,
-                      500
+                      600,
+                      600
                     ],
                     "bounds": [
                       [ 600, 200 ],
@@ -182,8 +183,8 @@
                   "If she is right then it is\n one less reason not to be nervous"
                 ],
                 "y": [
-                  500,
-                  500
+                  600,
+                  600
                 ],
                 "bounds": [
                   [ 600, 200 ],
@@ -222,8 +223,8 @@
                       "Why do you think that\n is an advantage?"
                     ],
                     "y": [
-                      500,
-                      500
+                      600,
+                      600
                     ],
                     "bounds": [
                       [ 600, 200 ],

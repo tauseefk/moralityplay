@@ -7,28 +7,6 @@ const SCALE_SIZE = 1.05;
 var Animation = function() {
 }
 
-Animation.fadeIn = function(game, object, signal) {    
-    var tween = this.fade(game, object, 1, true);
-    if(signal)
-        tween.onComplete.add(SignalDispatcher);
-
-    function SignalDispatcher(){
-        signal.dispatch();
-    }
-}
-
-Animation.fadeOut = function(game, object, destroy, signal, arg1) {
-    var tween = this.fade(game, object, 0, true);
-    tween.onComplete.add(Disable, this);
-
-    function Disable() {
-        if(destroy)
-            object.destroy();
-        if(signal)
-            signal.dispatch(arg1);
-    }
-}
-
 Animation.scale = function(game, object, autoStart, targetWidth, targetHeight, speed, repeat, reset) {
     if(!repeat)
         repeat = 0;

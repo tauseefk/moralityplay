@@ -33,6 +33,7 @@ var GameManager = function() {
 
     this._toggleUISignal = null;
     this._pauseSignal = null;
+    this._playSignal = null;
     this._toggleSubtitleSignal = null;
 
     return _instance;
@@ -63,7 +64,9 @@ GameManager.prototype.initSignals = function() {
     this._toggleUISignal = new Phaser.Signal();
     this._toggleUISignal.add(UI.toggleUI, this);
     this._pauseSignal = new Phaser.Signal();
-    this._pauseSignal.add(UI.pause, this);
+    this._pauseSignal.add(UI.pause, this);    
+    this._playSignal = new Phaser.Signal();
+    this._playSignal.add(UI.play, this);
     this._toggleSubtitleSignal = new Phaser.Signal();
     this._toggleSubtitleSignal.add(Video.toggleSubtitle, this);
 
@@ -113,6 +116,10 @@ GameManager.prototype.getToggleUISignal = function() {
 
 GameManager.prototype.getPauseSignal = function() {
     return this._pauseSignal;
+}
+
+GameManager.prototype.getPlaySignal = function() {
+    return this._playSignal;
 }
 
 GameManager.prototype.getToggleSubtitleSignal = function() {

@@ -71,8 +71,8 @@ Text.prototype.changeText = function(game, arg1, arg2, arg3, arg4, arg5, arg6) {
 Text.prototype.changeToThoughts = function(game, xTo, yTo, filter) {
     this._text.anchor.setTo(0.5);
     this._text.alpha = 0;
-    this.addInterpolationTween(game, xTo, yTo);
-    Animation.fadeIn(game, this._text);
+    this.addInterpolationTween(game, xTo, yTo);    
+    Animation.fade(game, this._text, 1, true);
 }
 
 Text.prototype.changeToMeaningfulChoices = function(game, targetScene, endInteractionSignal, boundsY, index) {
@@ -90,7 +90,7 @@ Text.prototype.changeToMeaningfulChoices = function(game, targetScene, endIntera
     this._link = new Linkable(this._text.events, endInteractionSignal, this, targetScene);
     this._link.setAsButton(true);    
     this._link.addMouseOverScaleEffect(game, this._text);
-    Animation.fadeIn(game, this._text);
+    Animation.fade(game, this._text, 1, true);
 }
 
 Text.prototype.changeToMeaninglessChoices = function(game, endInteractionSignal, boundsY, index) {
@@ -108,7 +108,7 @@ Text.prototype.changeToMeaninglessChoices = function(game, endInteractionSignal,
     this._link = new Linkable(this._text.events, endInteractionSignal, this);
     this._link.setAsButton(true);
     this._link.addMouseOverScaleEffect(game, this._text);
-    Animation.fadeIn(game, this._text);
+    Animation.fade(game, this._text, 1, true);
 }
 
 Text.prototype.changeToSubtitle = function(game, isVisible) {
@@ -125,7 +125,13 @@ Text.prototype.addInterpolationTween = function(game, xTo, yTo) {
 }
 
 Text.prototype.fadeOut = function(game, chainSignal, arg1) {
-    Animation.fadeOut(game, this._text, true, chainSignal, arg1);
+    if(chainSignal) {
+        this._link = new Linkable(this._text.events, chainSignal, arg1);
+        this._link.addOnClickAnimation(Animation.fade(game, this._text, 0, true));
+        this._link.onTrigger();
+    }
+    else
+        Animation.fade(game, this._text, 0, true);
 }
 
 Text.prototype.disableInput = function(game) {

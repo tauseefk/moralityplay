@@ -30,7 +30,7 @@ module.exports = {
         var icons = Icons.createExploratoryIcons(_stateInfo.getIconsInfo());
         if(_stateInfo.getDraggable())
             MovingBackground.assignFollowIcons(icons);
-        UI.create(true, false);
+        //UI.create(true, false);
         if(_stateInfo.getTransitionInfo().fadeIn)
             this.game.global.gameManager.getFadeInTransitionSignal().dispatch();
     },

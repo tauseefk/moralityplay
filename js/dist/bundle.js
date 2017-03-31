@@ -137,10 +137,13 @@ var _instance = null;
 var _game = null;
 var _graphics = null;
 var _pauseImage = null;
+var _playImage = null;
 var _toggleSubtitleImage = null;
+
 var _uiVisible = true;
 
 const pauseButtonImageKeyEnum = 'IMAGE_BUTTON_PAUSE';
+const playButtonImageKeyEnum = 'IMAGE_BUTTON_PLAY';
 const toggleSubtitleButtonImageKeyEnum = 'IMAGE_BUTTON_TOGGLE_SUBTITLE';
 
 function DrawPauseButton() {
@@ -148,7 +151,6 @@ function DrawPauseButton() {
         _pauseImage = new Image(10, 10, 'pauseButton', pauseButtonImageKeyEnum);
     _pauseImage.addImageToGame(_game, _game.uiGroup);
     _pauseImage.changeImage(_game, _game.global.gameManager.getPauseSignal());
-    DrawRect();
 }
 
 function DrawToggleSubtitleButton() {
@@ -158,21 +160,33 @@ function DrawToggleSubtitleButton() {
     _toggleSubtitleImage.changeImage(_game, _game.global.gameManager.getToggleSubtitleSignal());
 }
 
+function DrawPlayButton() {
+    if(!_playImage)
+        _playImage = new Image(_game.width/2, _game.height/2, 'playButton', playButtonImageKeyEnum);
+    _playImage.addImageToGame(_game, _game.uiGroup);
+    _playImage.changeImage(_game);
+    _playImage.setVisible(false);
+}
+
 function Pause() {
-    if(!_game.paused) {
-        _game.input.onDown.addOnce(Unpause, self);
+    if(!Video.paused()) {
         _game.paused = true;
         Video.stop();
         if(_graphics) {
             _graphics.visible = true;
         }
+        if(_playImage) {
+            _playImage.setVisible(true);
+        }
+        _game.input.onDown.addOnce(Play, self);
     }
+}
 
-    function Unpause() {
-        Video.play();
-        _game.paused = false;
-        _graphics.visible = false;;
-    }
+function Play() {
+    Video.play();
+    _game.paused = false;
+    _graphics.visible = false;
+    _playImage.setVisible(false);
 }
 
 function ToggleUI() {
@@ -181,7 +195,7 @@ function ToggleUI() {
     _toggleSubtitleImage.setVisible(_uiVisible);
 }
 
-function DrawRect() {
+function DrawPauseOverlay() {
     _graphics = _game.add.graphics(0, 0);
     _graphics.beginFill(0x000000, 0.8);
     _graphics.drawRect(0, 0, _game.width, _game.height);
@@ -214,11 +228,18 @@ module.exports = {
         _uiVisible = true;
         if(drawSubtitleToggle)
             DrawToggleSubtitleButton();
-        if(drawPause)
+        if(drawPause) {
             DrawPauseButton();
+            DrawPauseOverlay();
+            DrawPlayButton();
+        }
     },
     pause: function() {
         Pause();
+    },
+    play: function() {
+        console.log("pressed");
+        Play();
     },
     toggleUI: function() {
         ToggleUI();
@@ -497,6 +518,10 @@ module.exports = {
         if(_video)
             _video.play();
     },
+    paused: function() {
+        if(_video)
+            return _video.video.paused;
+    },
     endFilter() {
         VideoFilter.endFilter();
     },
@@ -607,6 +632,7 @@ var ImageTypeEnum = {
         Background: 'IMAGE_BACKGROUND',
         ChoiceBackground: 'IMAGE_CHOICE_BACKGROUND',
         Pause: 'IMAGE_BUTTON_PAUSE',
+        Play: 'IMAGE_BUTTON_PLAY',
         ToggleSubtitle: 'IMAGE_BUTTON_TOGGLE_SUBTITLE'
     }
 
@@ -624,6 +650,7 @@ var Image = function(xPos, yPos, key, type, properties) {
 Image.prototype.addImageToGame = function(game, group) {
     switch(this._type) {
         case ImageTypeEnum.Pause:
+        case ImageTypeEnum.Play:
         case ImageTypeEnum.Thought:
         case ImageTypeEnum.SceneChange:
         case ImageTypeEnum.DisplayImage:
@@ -669,6 +696,9 @@ Image.prototype.changeImage = function (game, arg1, arg2, arg3, arg4, arg5) {
             break;
         case ImageTypeEnum.Pause:
             this.changeToPauseButton(game, arg1);
+            break;
+        case ImageTypeEnum.Play:
+            this.changeToPlayButton(game);
             break;
         case ImageTypeEnum.ToggleSubtitle:
             this.changeToPauseButton(game, arg1);
@@ -729,13 +759,21 @@ Image.prototype.changeToChoiceBackgroundImage = function(game, width, height, in
         this._image.x = game.width/4*3;
     this._image.width = width;
     this._image.height = height;
-    Animation.fadeIn(game, this._image);
+    Animation.fade(game, this._image, 1, true);
     return this._image;
 }
 
 Image.prototype.changeToPauseButton = function(game, signal) {
     this._link = new Linkable(this._image, signal);
     this._link.setAsButton(false);
+}
+
+Image.prototype.changeToPlayButton = function(game) {
+    this._image.anchor.setTo(0.5, 0.5);
+    this._image.height = 300;
+    this._image.width = 300;
+    //this._link = new Linkable(this._image, signal);
+    //this._link.setAsButton(false);
 }
 
 Image.prototype.changeToToggleSubtitleButton = function(game, signal) {
@@ -791,7 +829,7 @@ Image.prototype.setVisible = function(isVisible) {
 }
 
 Image.prototype.fadeOut = function(game) {
-    Animation.fadeOut(game, this._image, true);
+    Animation.fade(game, this._image, 0, true);
 }
 
 function DebugRect(x, y, width, height, game) {
@@ -882,8 +920,8 @@ Text.prototype.changeText = function(game, arg1, arg2, arg3, arg4, arg5, arg6) {
 Text.prototype.changeToThoughts = function(game, xTo, yTo, filter) {
     this._text.anchor.setTo(0.5);
     this._text.alpha = 0;
-    this.addInterpolationTween(game, xTo, yTo);
-    Animation.fadeIn(game, this._text);
+    this.addInterpolationTween(game, xTo, yTo);    
+    Animation.fade(game, this._text, 1, true);
 }
 
 Text.prototype.changeToMeaningfulChoices = function(game, targetScene, endInteractionSignal, boundsY, index) {
@@ -901,7 +939,7 @@ Text.prototype.changeToMeaningfulChoices = function(game, targetScene, endIntera
     this._link = new Linkable(this._text.events, endInteractionSignal, this, targetScene);
     this._link.setAsButton(true);    
     this._link.addMouseOverScaleEffect(game, this._text);
-    Animation.fadeIn(game, this._text);
+    Animation.fade(game, this._text, 1, true);
 }
 
 Text.prototype.changeToMeaninglessChoices = function(game, endInteractionSignal, boundsY, index) {
@@ -919,7 +957,7 @@ Text.prototype.changeToMeaninglessChoices = function(game, endInteractionSignal,
     this._link = new Linkable(this._text.events, endInteractionSignal, this);
     this._link.setAsButton(true);
     this._link.addMouseOverScaleEffect(game, this._text);
-    Animation.fadeIn(game, this._text);
+    Animation.fade(game, this._text, 1, true);
 }
 
 Text.prototype.changeToSubtitle = function(game, isVisible) {
@@ -936,7 +974,13 @@ Text.prototype.addInterpolationTween = function(game, xTo, yTo) {
 }
 
 Text.prototype.fadeOut = function(game, chainSignal, arg1) {
-    Animation.fadeOut(game, this._text, true, chainSignal, arg1);
+    if(chainSignal) {
+        this._link = new Linkable(this._text.events, chainSignal, arg1);
+        this._link.addOnClickAnimation(Animation.fade(game, this._text, 0, true));
+        this._link.onTrigger();
+    }
+    else
+        Animation.fade(game, this._text, 0, true);
 }
 
 Text.prototype.disableInput = function(game) {
@@ -1745,7 +1789,7 @@ module.exports = {
         var icons = Icons.createExploratoryIcons(_stateInfo.getIconsInfo());
         if(_stateInfo.getDraggable())
             MovingBackground.assignFollowIcons(icons);
-        UI.create(true, false);
+        //UI.create(true, false);
         if(_stateInfo.getTransitionInfo().fadeIn)
             this.game.global.gameManager.getFadeInTransitionSignal().dispatch();
     },
@@ -1919,6 +1963,7 @@ var GameManager = function() {
 
     this._toggleUISignal = null;
     this._pauseSignal = null;
+    this._playSignal = null;
     this._toggleSubtitleSignal = null;
 
     return _instance;
@@ -1949,7 +1994,9 @@ GameManager.prototype.initSignals = function() {
     this._toggleUISignal = new Phaser.Signal();
     this._toggleUISignal.add(UI.toggleUI, this);
     this._pauseSignal = new Phaser.Signal();
-    this._pauseSignal.add(UI.pause, this);
+    this._pauseSignal.add(UI.pause, this);    
+    this._playSignal = new Phaser.Signal();
+    this._playSignal.add(UI.play, this);
     this._toggleSubtitleSignal = new Phaser.Signal();
     this._toggleSubtitleSignal.add(Video.toggleSubtitle, this);
 
@@ -1999,6 +2046,10 @@ GameManager.prototype.getToggleUISignal = function() {
 
 GameManager.prototype.getPauseSignal = function() {
     return this._pauseSignal;
+}
+
+GameManager.prototype.getPlaySignal = function() {
+    return this._playSignal;
 }
 
 GameManager.prototype.getToggleSubtitleSignal = function() {
@@ -2410,28 +2461,6 @@ const SCALE_SIZE = 1.05;
 
 //Animation constructor
 var Animation = function() {
-}
-
-Animation.fadeIn = function(game, object, signal) {    
-    var tween = this.fade(game, object, 1, true);
-    if(signal)
-        tween.onComplete.add(SignalDispatcher);
-
-    function SignalDispatcher(){
-        signal.dispatch();
-    }
-}
-
-Animation.fadeOut = function(game, object, destroy, signal, arg1) {
-    var tween = this.fade(game, object, 0, true);
-    tween.onComplete.add(Disable, this);
-
-    function Disable() {
-        if(destroy)
-            object.destroy();
-        if(signal)
-            signal.dispatch(arg1);
-    }
 }
 
 Animation.scale = function(game, object, autoStart, targetWidth, targetHeight, speed, repeat, reset) {

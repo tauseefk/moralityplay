@@ -14,6 +14,7 @@ var ImageTypeEnum = {
         Background: 'IMAGE_BACKGROUND',
         ChoiceBackground: 'IMAGE_CHOICE_BACKGROUND',
         Pause: 'IMAGE_BUTTON_PAUSE',
+        Play: 'IMAGE_BUTTON_PLAY',
         ToggleSubtitle: 'IMAGE_BUTTON_TOGGLE_SUBTITLE'
     }
 
@@ -31,6 +32,7 @@ var Image = function(xPos, yPos, key, type, properties) {
 Image.prototype.addImageToGame = function(game, group) {
     switch(this._type) {
         case ImageTypeEnum.Pause:
+        case ImageTypeEnum.Play:
         case ImageTypeEnum.Thought:
         case ImageTypeEnum.SceneChange:
         case ImageTypeEnum.DisplayImage:
@@ -76,6 +78,9 @@ Image.prototype.changeImage = function (game, arg1, arg2, arg3, arg4, arg5) {
             break;
         case ImageTypeEnum.Pause:
             this.changeToPauseButton(game, arg1);
+            break;
+        case ImageTypeEnum.Play:
+            this.changeToPlayButton(game);
             break;
         case ImageTypeEnum.ToggleSubtitle:
             this.changeToPauseButton(game, arg1);
@@ -136,13 +141,21 @@ Image.prototype.changeToChoiceBackgroundImage = function(game, width, height, in
         this._image.x = game.width/4*3;
     this._image.width = width;
     this._image.height = height;
-    Animation.fadeIn(game, this._image);
+    Animation.fade(game, this._image, 1, true);
     return this._image;
 }
 
 Image.prototype.changeToPauseButton = function(game, signal) {
     this._link = new Linkable(this._image, signal);
     this._link.setAsButton(false);
+}
+
+Image.prototype.changeToPlayButton = function(game) {
+    this._image.anchor.setTo(0.5, 0.5);
+    this._image.height = 300;
+    this._image.width = 300;
+    //this._link = new Linkable(this._image, signal);
+    //this._link.setAsButton(false);
 }
 
 Image.prototype.changeToToggleSubtitleButton = function(game, signal) {
@@ -198,7 +211,7 @@ Image.prototype.setVisible = function(isVisible) {
 }
 
 Image.prototype.fadeOut = function(game) {
-    Animation.fadeOut(game, this._image, true);
+    Animation.fade(game, this._image, 0, true);
 }
 
 function DebugRect(x, y, width, height, game) {
