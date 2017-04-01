@@ -27,6 +27,7 @@ var GameManager = function() {
 
     this._createThoughtsSignal = null;
     this._createChoicesSignal = null;
+    this._revealChoicesSignal = null;
     this._createThoughtsAndChoicesSignal = null;
 
     this._displayImageSignal = null;
@@ -57,6 +58,8 @@ GameManager.prototype.initSignals = function() {
     this._createThoughtsSignal.add(Thoughts.create, this);
     this._createChoicesSignal = new Phaser.Signal();
     this._createChoicesSignal.add(Choices.create, this);
+    this._revealChoicesSignal = new Phaser.Signal();
+    this._revealChoicesSignal.add(Choices.revealChoices, this);
 
     this._displayImageSignal = new Phaser.Signal();
     this._displayImageSignal.add(LocationState.displayImage, this);
@@ -104,6 +107,10 @@ GameManager.prototype.getCreateChoicesSignal = function() {
 
 GameManager.prototype.getCreateThoughtsAndChoicesSignal = function() {
     return this._createThoughtsAndChoicesSignal;
+}
+
+GameManager.prototype.getRevealChoicesSignal = function() {
+    return this._revealChoicesSignal;
 }
 
 GameManager.prototype.getDisplayImageSignal = function() {

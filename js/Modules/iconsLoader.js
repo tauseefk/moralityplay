@@ -12,10 +12,10 @@ var _icons = [];
 const buttonThoughtImageKeyEnum = 'IMAGE_BUTTON_THOUGHT';
 const sceneChangeImageKeyEnum = 'IMAGE_BUTTON_SCENECHANGE';
 
-function CreateThoughtIcon(iconKey, coords, thoughts, choices) {
+function CreateThoughtIcon(iconKey, coords, thoughts) {
     var button = new Image(coords[0], coords[1], iconKey, buttonThoughtImageKeyEnum);
     button.addImageToGame(_game, _game.mediaGroup);
-    button.changeImage(_game, _game.global.gameManager.getCreateThoughtsAndChoicesSignal(), thoughts, coords, choices);
+    button.changeImage(_game, _game.global.gameManager.getCreateThoughtsAndChoicesSignal(), thoughts, coords);
     _icons.push(button);
 }
 
@@ -28,8 +28,7 @@ function CreateExploratoryIcons(key, coords, target, type, reference) {
 
 function EndInteraction() {
     _icons.forEach(function(icon) {
-        if(icon.getPhaserImage().alive)
-            icon.fadeOut(_game);
+        icon.fadeOut(_game);
     });
 }
 
@@ -43,22 +42,19 @@ function HideIconType(iconType) {
 
 module.exports = {
     init: function(game) {
+        _icons = [];
         if(_instance !== null)
             return _instance;
-        Thoughts.init(game);
-        Choices.init(game);
         _game = game;
         _instance = this;
         return _instance;
     },
     preload: function() {
     },
-    createThoughtIcon: function(iconKey, coords, thoughts, choices) {
-        _icons = [];
-        CreateThoughtIcon(iconKey, coords, thoughts, choices);
+    createThoughtIcon: function(iconKey, coords, thoughts) {
+        CreateThoughtIcon(iconKey, coords, thoughts);
     },
     createExploratoryIcons: function(icons) {
-        _icons = [];
         for(var i=0; i<icons.size; i++) {
             CreateExploratoryIcons(icons.key[i], icons.coords[i], icons.targetImageIndexOrScene[i], icons.type[i]);
         }        
@@ -67,16 +63,14 @@ module.exports = {
     },
     endInteraction: function() {
         EndInteraction();
-        Thoughts.endInteraction();
     },
     displayIcon: function(index, hideSameType) {
         if(hideSameType)
             HideIconType(_icons[index].getType());
         _icons[index].setVisible(true);
     },
-    createThoughtsAndChoices: function(thoughts, coords, choices) {
+    createThoughtsAndChoices: function(thoughts, coords) {
         _game.global.gameManager.getCreateThoughtsSignal().dispatch(thoughts, coords);
-        _game.global.gameManager.getCreateChoicesSignal().dispatch(choices);
     },
     destroy: function() {
         _icons.forEach(function(icon) {

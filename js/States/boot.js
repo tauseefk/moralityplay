@@ -21,7 +21,10 @@ function delayedCreate() {
 
 function createGlobalVars() {
     _game.global = {
-        playerName: null
+        playerName: null,
+        scenario1Decision: -1,
+        scenario2Decision: -1,
+        scenario3Decision: -1
     }
 }
 

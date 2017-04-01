@@ -63,7 +63,7 @@ function Play() {
 function ToggleUI() {
     _uiVisible = !_uiVisible;
     _pauseImage.setVisible(_uiVisible);
-    _toggleSubtitleImage.setVisible(_uiVisible);
+    //_toggleSubtitleImage.setVisible(_uiVisible);
 }
 
 function DrawPauseOverlay() {
@@ -97,8 +97,8 @@ module.exports = {
     },
     create: function(drawPause, drawSubtitleToggle) {
         _uiVisible = true;
-        if(drawSubtitleToggle)
-            DrawToggleSubtitleButton();
+        //if(drawSubtitleToggle)
+            //DrawToggleSubtitleButton();
         if(drawPause) {
             DrawPauseButton();
             DrawPauseOverlay();

@@ -6,33 +6,43 @@ const Group = require('../Modules/groupLoader'),
     Transition = require('../Modules/transition'),
     Icons = require('../Modules/iconsLoader'),
     State = require('./State'),
-    Choices = require('../Modules/choiceLoader');
+    Choices = require('../Modules/choiceLoader'),
+    Thoughts = require('../Modules/thoughtsLoader');
 
 var _stateInfo = null;
 var _instance = null;
+var _game = null;
 var _momentCount = null;
 
 function CreateThought() {
     Icons.endInteraction();
+
     var thoughtBubbles = _stateInfo.getThoughtBubble(_momentCount);
+    var choices = null;
+
     if(thoughtBubbles) {
         for(var i=0; i<thoughtBubbles.size; i++) {
             console.log("Thought bubble: ");
             console.log(thoughtBubbles.thoughts[i]);
-            Icons.createThoughtIcon(thoughtBubbles.thoughtIconKey[i], thoughtBubbles.coords[i], thoughtBubbles.thoughts[i], thoughtBubbles.choices[i]);
+            Icons.createThoughtIcon(thoughtBubbles.thoughtIconKey[i], thoughtBubbles.coords[i], thoughtBubbles.thoughts[i]);
         }
+
+        choices = _stateInfo.getChoicesFromThoughtMoment(_momentCount);
+        Choices.create(choices, thoughtBubbles.size);        
     }
     else {
         console.log("Choices: " + _momentCount);
-        var choices = _stateInfo.getChoices(_momentCount);
+        choices = _stateInfo.getChoices(_momentCount);
         Choices.create(choices);
     }
+    _game.global.gameManager.getRevealChoicesSignal().dispatch();
     _momentCount++;
 }
 
 function EndInteraction(lingeringChoice, targetScene) {
     Icons.endInteraction();
     Choices.endInteraction(lingeringChoice, targetScene);
+    Thoughts.endInteraction();
     if(!targetScene) {
         Video.play();
         _instance.game.global.gameManager.getToggleUISignal().dispatch();
@@ -57,10 +67,12 @@ module.exports = {
             _stateInfo.setStateScene(scene);
         }
         Video.init(this.game);
-        Icons.init(this.game);
-
+        Icons.init(this.game);        
+        Thoughts.init(this.game);
+        Choices.init(this.game);
         if(_instance !== null)
             return _instance;
+        _game = this.game;
         _stateInfo = new State(scene);
         _instance = this;
         return _instance;

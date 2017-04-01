@@ -15,9 +15,11 @@
     "choiceBg": "./Images/UI/choice_button_bg.png",
     "blackInfo": "./Images/UI/black.png",
     "asianInfo": "./Images/UI/asian.png"
-
-
   },  
+  "audio": {
+    "testSound": "./Audio/Sound/test.wav",
+    "littleRootMusic": "./Audio/Music/Pokemon Omega Ruby Alpha Sapphire - Littleroot Town Music (HQ).mp3"
+  },
   "subtitles": {
     "sub1": "./Videos/Subtitles/test.srt"
   },
@@ -39,21 +41,17 @@
           {
             "timeStamp": 1,
             "choices": {
-              "size": 2,
+              "size": 1,
               "content": [
-                "Start",
                 "Start"
               ],
               "y": [
-                600,
                 600
               ],
               "bounds": [
-                [ 600, 200 ],
                 [ 600, 200 ]
               ],
               "targetScene": [
-                "introScene",
                 "introScene"
               ]
             }
@@ -81,7 +79,7 @@
             "choices": {
               "size": 2,
               "content": [
-                "I wish. \nWhy not the weekend last forever?",
+                "I wish. Why doesn't\nthe weekend last forever?",
                 "I just need a cup of coffee \nand I am good to go!"
               ],
               "y": [
@@ -198,27 +196,36 @@
           {
             "timeStamp": 120,
             "thoughtBubbles": {
-              "size": 1,
+              "size": 2,
               "thoughtIconKey": [
+                "thoughtIcon",
                 "thoughtIcon"
               ],
               "coords": [
-                [ 640, 100 ]
+                [ 780, 100 ],
+                [ 460, 120 ]
               ],
               "thoughts": [
                 {
-                  "size": 2,
+                  "size": 1,
                   "content": [
-                    "I guess it is okay if not everyone participates",
+                    "I guess it is okay if not everyone participates"
+                  ],
+                  "destination": [
+                    [ 900, 25 ]
+                  ]
+                },
+                {
+                  "size": 1,
+                  "content": [
                     "I can do much more than nothing"
                   ],
                   "destination": [
-                    [ 900, 25 ],
                     [ 300, 50 ]
                   ]
                 }
               ],
-              "choices": [
+              "choices": 
                 {
                   "size": 2,
                   "content": [
@@ -238,7 +245,7 @@
                     "asian2bad"
                   ]
                 }
-              ]
+              
             }
           }
         ]
@@ -357,27 +364,36 @@
           {
             "timeStamp": 72,
             "thoughtBubbles": {
-              "size": 1,
+              "size": 2,
               "thoughtIconKey": [
+                "thoughtIcon",
                 "thoughtIcon"
               ],
               "coords": [
-                [ 600, 100 ]
+                [ 400, 100 ],
+                [ 750, 100 ]
               ],
               "thoughts": [
                 {
-                  "size": 2,
+                  "size": 1,
                   "content": [
-                    "I just wanted to calm him down...",
-                    "Why would she even say that...\ndoes he not understand what it actually means?"
+                    "I just wanted to calm him down..."
                   ],
                   "destination": [
-                    [ 300, 50 ],
+                    [ 300, 50 ]
+                  ]
+                },
+                {
+                    "size": 1,
+                  "content": [
+                    "Why would he even say that...\ndoes he not understand what it actually means?"
+                  ],
+                  "destination": [
                     [ 1000, 300 ]
                   ]
                 }
               ],
-              "choices": [
+              "choices": 
                 {
                   "size": 2,
                   "content": [
@@ -397,8 +413,7 @@
                     "black3good"
                   ]
                 }
-              ]
-
+              
             }
           }
         ]

@@ -17,6 +17,7 @@ const VIDEO_SLOW_PLAYBACK_RATE = 0.2;
 function CreateVideo(src, doFadeOut, nextScenes, sub, interactionTimeStamps) {
     _video = _video.changeSource(src, false);
     _video.play();
+
 //    _video.video.setAttribute('autoplay', 'autoplay');
     AddVideoAndFilter(doFadeOut, sub);
     if(_interactionTimeStamps)
@@ -30,6 +31,11 @@ function CreateVideo(src, doFadeOut, nextScenes, sub, interactionTimeStamps) {
         _video.onComplete.addOnce(ChangeScene(nextScenes), this);
 }
 
+function CheckProgress() {
+    var percentLoaded = parseInt(_video.video.buffered.end(0) / _video.video.duration * 100);
+    console.log(percentLoaded);
+}
+
 function AddInteractionEvents() {
     var timestamp = _interactionTimeStamps.shift();
     if(timestamp)
@@ -41,6 +47,8 @@ function AddVideoAndFilter(doFadeOut, sub) {
     _game.mediaGroup.add(_videoImage);
     _video.onChangeSource.addOnce(OnVideoLoad, this);
     function OnVideoLoad() {
+
+        //_video.video.addEventListener('progress', CheckProgress, false);
         if(doFadeOut) {
             //_game.time.events.add((_video.video.duration-FADEOUT_OFFSET_SECONDS)*Phaser.Timer.SECOND, FadeOut, this);
         }
@@ -67,7 +75,6 @@ function VideoZoom() {
 function checkVideoDuration(time) {
     _video.video.addEventListener("timeupdate", function trigger() {        
         if(_video.video.currentTime >= time){
-            //clearInterval(interval);
             _video.video.removeEventListener("timeupdate", trigger);
             TriggerMoment();
             AddInteractionEvents();

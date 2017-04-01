@@ -5,12 +5,15 @@ const Text = require('./Text');
 
 var _instance = null,
     _game = null,
-    _text = [];
+    _text = [],
+    _currentIndex = 0;
 
 const thoughtsTextKeyEnum = 'TEXT_THOUGHTS';
 
 module.exports = {
-    init: function(game) {
+    init: function(game) {        
+        _text = [];
+        _currentIndex = 0;
         if(_instance !== null)
             return _instance;
         _game = game;
@@ -20,11 +23,11 @@ module.exports = {
     preload: function() {
     },
     create: function(info, coords) {
-        _text = [];
         for(var i=0; i < info.size; i++) {
             _text.push(new Text(info.content[i], coords[0], coords[1], thoughtsTextKeyEnum, _game.global.style.thoughtsTextProperties));
-            _text[i].addToGame(_game, _game.mediaGroup);
-            _text[i].changeText(_game, info.destination[i][0], info.destination[i][1]);
+            _text[_currentIndex].addToGame(_game, _game.mediaGroup);
+            _text[_currentIndex].changeText(_game, info.destination[i][0], info.destination[i][1]);
+            _currentIndex++;
         };
     },
     endInteraction: function() {

@@ -5,6 +5,7 @@ var _game = null;
 var _startSceneKey = 'startScene';
 var _data = null;
 var _videos = null;
+var _audio = null;
 var _images = null;
 var _scenes = null;
 var _subs = null;
@@ -14,6 +15,13 @@ function loadVideos(videos) {
     console.log("Loading videos");
     for (var key in _videos) {
         _game.load.video(key, _videos[key]);
+    }
+}
+
+function loadAudio(audio) {
+    console.log("Loading audio");
+    for (var key in audio) {
+        _game.load.audio(key, _audio[key]);
     }
 }
 
@@ -42,6 +50,7 @@ module.exports = {
         _style = _game.cache.getJSON('style');
         _images = _data.images;
         _videos = _data.videos;
+        _audio = _data.audio;
         _scenes = _data.scenes;
         _subs = _data.subtitles;
         return _instance;
@@ -50,6 +59,7 @@ module.exports = {
     //    Filter.preload();
         console.log("Loading resources");
         loadImages(_images);
+        loadAudio(_audio);
         loadSubs(_subs);
     //    loadVideos(videos);
 

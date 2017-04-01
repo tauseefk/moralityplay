@@ -6,7 +6,8 @@ const FADE_SPEED = 700;
 const MOUSEOVER_SPEED = 300;
 
 //Linkable constructor
-var Linkable = function(event, signal, arg1, arg2, arg3) {
+var Linkable = function(game, event, signal, arg1, arg2, arg3) {
+    this._game = game;
     this._linkable = this;
     this._event = event;
     this._signal = signal;
@@ -16,6 +17,7 @@ var Linkable = function(event, signal, arg1, arg2, arg3) {
     this._onClickAnimations = [];
     this._onMouseOverAnimations = [];
     this._onMouseOutAnimations = [];
+    this._sound = [];
 }
 
 Linkable.prototype.setAsButton = function(once) {
@@ -26,10 +28,12 @@ Linkable.prototype.setAsButton = function(once) {
     else {        
         this._event.onInputUp.add(this.onTrigger, this);
     }
+    this._event.onInputUp.add(this.playSound, this);
 }
 
 Linkable.prototype.setMouseOver = function() {
     this._event.onInputOver.add(this.playOnMouseOverAnimations, this);
+    this._event.onInputOver.add(this.playSound, this);
 }
 
 Linkable.prototype.setMouseOut = function() {
@@ -46,6 +50,10 @@ Linkable.prototype.addMouseOverAnimation = function(tween) {
 
 Linkable.prototype.addMouseOutAnimation = function(tween) {
     this._onMouseOutAnimations.push(tween);
+}
+
+Linkable.prototype.addSound = function(soundKey) {
+    this._sound.push(soundKey);
 }
 
 Linkable.prototype.playOnClickAnimations = function() {    
@@ -71,6 +79,13 @@ Linkable.prototype.playOnMouseOutAnimations = function() {
         tween = animation.start();
     });
     return tween;
+}
+
+Linkable.prototype.playSound = function() {
+    var game = this._game;
+    this._sound.forEach(function(sound) {
+        game.global.soundManager.playSound(sound);
+    });
 }
 
 Linkable.prototype.removeInput = function() {

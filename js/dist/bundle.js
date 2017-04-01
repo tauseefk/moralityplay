@@ -63,7 +63,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 27);
+/******/ 	return __webpack_require__(__webpack_require__.s = 29);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -130,8 +130,8 @@ module.exports = {
 //Dependency: Nonde
 
 
-const Image = __webpack_require__(6),
-    Video = __webpack_require__(4);
+const Image = __webpack_require__(8),
+    Video = __webpack_require__(2);
 
 var _instance = null;
 var _game = null;
@@ -192,7 +192,7 @@ function Play() {
 function ToggleUI() {
     _uiVisible = !_uiVisible;
     _pauseImage.setVisible(_uiVisible);
-    _toggleSubtitleImage.setVisible(_uiVisible);
+    //_toggleSubtitleImage.setVisible(_uiVisible);
 }
 
 function DrawPauseOverlay() {
@@ -226,8 +226,8 @@ module.exports = {
     },
     create: function(drawPause, drawSubtitleToggle) {
         _uiVisible = true;
-        if(drawSubtitleToggle)
-            DrawToggleSubtitleButton();
+        //if(drawSubtitleToggle)
+            //DrawToggleSubtitleButton();
         if(drawPause) {
             DrawPauseButton();
             DrawPauseOverlay();
@@ -254,150 +254,9 @@ module.exports = {
 "use strict";
 
 
-const Animation = __webpack_require__(28);
-
-const FADE_SPEED = 700;
-const MOUSEOVER_SPEED = 300;
-
-//Linkable constructor
-var Linkable = function(event, signal, arg1, arg2, arg3) {
-    this._linkable = this;
-    this._event = event;
-    this._signal = signal;
-    this._arg1 = arg1;
-    this._arg2 = arg2;
-    this._arg3 = arg3;
-    this._onClickAnimations = [];
-    this._onMouseOverAnimations = [];
-    this._onMouseOutAnimations = [];
-}
-
-Linkable.prototype.setAsButton = function(once) {
-    if(once) {
-        this._event.onInputUp.addOnce(this.onTrigger, this);
-        this._event.onInputUp.addOnce(this.removeInput, this);
-    }
-    else {        
-        this._event.onInputUp.add(this.onTrigger, this);
-    }
-}
-
-Linkable.prototype.setMouseOver = function() {
-    this._event.onInputOver.add(this.playOnMouseOverAnimations, this);
-}
-
-Linkable.prototype.setMouseOut = function() {
-    this._event.onInputOut.add(this.playOnMouseOutAnimations, this);
-}
-
-Linkable.prototype.addOnClickAnimation = function(tween) {
-    this._onClickAnimations.push(tween);
-}
-
-Linkable.prototype.addMouseOverAnimation = function(tween) {
-    this._onMouseOverAnimations.push(tween);
-}
-
-Linkable.prototype.addMouseOutAnimation = function(tween) {
-    this._onMouseOutAnimations.push(tween);
-}
-
-Linkable.prototype.playOnClickAnimations = function() {    
-    var tween = null;
-    this._onClickAnimations.forEach(function(animation) {
-        tween = animation.start();
-    });
-    return tween;
-}
-
-Linkable.prototype.playOnMouseOverAnimations = function() {    
-    var tween = null;
-    this._onMouseOverAnimations.forEach(function(animation) {
-        animation.reverse = false;
-        tween = animation.start();
-    });
-    return tween;
-}
-
-Linkable.prototype.playOnMouseOutAnimations = function() {    
-    var tween = null;
-    this._onMouseOutAnimations.forEach(function(animation) {
-        tween = animation.start();
-    });
-    return tween;
-}
-
-Linkable.prototype.removeInput = function() {
-    this._event.inputEnabled = false;    
-}
-
-Linkable.prototype.onTrigger = function() {
-    var tween = this._linkable.playOnClickAnimations();
-    if(tween)
-        tween.onComplete.add(this.dispatchSignal, this);
-    else
-        this.dispatchSignal();
-}
-
-Linkable.prototype.addMouseOverScaleEffect = function(game, object) {
-    this._linkable.addMouseOverAnimation(Animation.scale(game, object, false, object.width *1.05, object.height *1.05, MOUSEOVER_SPEED));
-    this._linkable.setMouseOver();    
-    this._linkable.addMouseOutAnimation(Animation.scale(game, object, false, object.width, object.height, MOUSEOVER_SPEED));
-    this._linkable.setMouseOut();
-}
-
-Linkable.prototype.dispatchSignal = function() {
-    this._signal.dispatch(this._arg1, this._arg2, this._arg3);
-}
-
-
-module.exports = Linkable;
-
-
-/***/ }),
-/* 3 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [], __WEBPACK_AMD_DEFINE_RESULT__ = function() {
-    "use strict";
-
-    var _instance = null;
-    var _game = null;
-
-    function InitializeGroups() {        
-        _game.mediaGroup = _game.add.group();
-        _game.uiGroup = _game.add.group();
-    }
-
-    return {
-        init: function(game) {
-            if(_instance !== null)
-                return _instance;
-            _game = game;
-            _instance = this;
-            return _instance;
-        },
-        preload: function() {
-        },
-        initializeGroups: function() {
-            InitializeGroups();
-        }
-    }
-
-}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-
-/***/ }),
-/* 4 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-const VideoFilter = __webpack_require__(23),
-    Linkable = __webpack_require__(2),
-    Subtitle = __webpack_require__(10);
+const VideoFilter = __webpack_require__(25),
+    Linkable = __webpack_require__(3),
+    Subtitle = __webpack_require__(18);
 
 var _instance = null;
 var _game = null;
@@ -412,6 +271,7 @@ const VIDEO_SLOW_PLAYBACK_RATE = 0.2;
 function CreateVideo(src, doFadeOut, nextScenes, sub, interactionTimeStamps) {
     _video = _video.changeSource(src, false);
     _video.play();
+
 //    _video.video.setAttribute('autoplay', 'autoplay');
     AddVideoAndFilter(doFadeOut, sub);
     if(_interactionTimeStamps)
@@ -425,6 +285,11 @@ function CreateVideo(src, doFadeOut, nextScenes, sub, interactionTimeStamps) {
         _video.onComplete.addOnce(ChangeScene(nextScenes), this);
 }
 
+function CheckProgress() {
+    var percentLoaded = parseInt(_video.video.buffered.end(0) / _video.video.duration * 100);
+    console.log(percentLoaded);
+}
+
 function AddInteractionEvents() {
     var timestamp = _interactionTimeStamps.shift();
     if(timestamp)
@@ -436,6 +301,8 @@ function AddVideoAndFilter(doFadeOut, sub) {
     _game.mediaGroup.add(_videoImage);
     _video.onChangeSource.addOnce(OnVideoLoad, this);
     function OnVideoLoad() {
+
+        //_video.video.addEventListener('progress', CheckProgress, false);
         if(doFadeOut) {
             //_game.time.events.add((_video.video.duration-FADEOUT_OFFSET_SECONDS)*Phaser.Timer.SECOND, FadeOut, this);
         }
@@ -462,7 +329,6 @@ function VideoZoom() {
 function checkVideoDuration(time) {
     _video.video.addEventListener("timeupdate", function trigger() {        
         if(_video.video.currentTime >= time){
-            //clearInterval(interval);
             _video.video.removeEventListener("timeupdate", trigger);
             TriggerMoment();
             AddInteractionEvents();
@@ -532,7 +398,251 @@ module.exports = {
 
 
 /***/ }),
+/* 3 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+const Animation = __webpack_require__(7);
+
+const FADE_SPEED = 700;
+const MOUSEOVER_SPEED = 300;
+
+//Linkable constructor
+var Linkable = function(game, event, signal, arg1, arg2, arg3) {
+    this._game = game;
+    this._linkable = this;
+    this._event = event;
+    this._signal = signal;
+    this._arg1 = arg1;
+    this._arg2 = arg2;
+    this._arg3 = arg3;
+    this._onClickAnimations = [];
+    this._onMouseOverAnimations = [];
+    this._onMouseOutAnimations = [];
+    this._sound = [];
+}
+
+Linkable.prototype.setAsButton = function(once) {
+    if(once) {
+        this._event.onInputUp.addOnce(this.onTrigger, this);
+        this._event.onInputUp.addOnce(this.removeInput, this);
+    }
+    else {        
+        this._event.onInputUp.add(this.onTrigger, this);
+    }
+    this._event.onInputUp.add(this.playSound, this);
+}
+
+Linkable.prototype.setMouseOver = function() {
+    this._event.onInputOver.add(this.playOnMouseOverAnimations, this);
+    this._event.onInputOver.add(this.playSound, this);
+}
+
+Linkable.prototype.setMouseOut = function() {
+    this._event.onInputOut.add(this.playOnMouseOutAnimations, this);
+}
+
+Linkable.prototype.addOnClickAnimation = function(tween) {
+    this._onClickAnimations.push(tween);
+}
+
+Linkable.prototype.addMouseOverAnimation = function(tween) {
+    this._onMouseOverAnimations.push(tween);
+}
+
+Linkable.prototype.addMouseOutAnimation = function(tween) {
+    this._onMouseOutAnimations.push(tween);
+}
+
+Linkable.prototype.addSound = function(soundKey) {
+    this._sound.push(soundKey);
+}
+
+Linkable.prototype.playOnClickAnimations = function() {    
+    var tween = null;
+    this._onClickAnimations.forEach(function(animation) {
+        tween = animation.start();
+    });
+    return tween;
+}
+
+Linkable.prototype.playOnMouseOverAnimations = function() {    
+    var tween = null;
+    this._onMouseOverAnimations.forEach(function(animation) {
+        animation.reverse = false;
+        tween = animation.start();
+    });
+    return tween;
+}
+
+Linkable.prototype.playOnMouseOutAnimations = function() {    
+    var tween = null;
+    this._onMouseOutAnimations.forEach(function(animation) {
+        tween = animation.start();
+    });
+    return tween;
+}
+
+Linkable.prototype.playSound = function() {
+    var game = this._game;
+    this._sound.forEach(function(sound) {
+        game.global.soundManager.playSound(sound);
+    });
+}
+
+Linkable.prototype.removeInput = function() {
+    this._event.inputEnabled = false;    
+}
+
+Linkable.prototype.onTrigger = function() {
+    var tween = this._linkable.playOnClickAnimations();
+    if(tween)
+        tween.onComplete.add(this.dispatchSignal, this);
+    else
+        this.dispatchSignal();
+}
+
+Linkable.prototype.addMouseOverScaleEffect = function(game, object) {
+    this._linkable.addMouseOverAnimation(Animation.scale(game, object, false, object.width *1.05, object.height *1.05, MOUSEOVER_SPEED));
+    this._linkable.setMouseOver();    
+    this._linkable.addMouseOutAnimation(Animation.scale(game, object, false, object.width, object.height, MOUSEOVER_SPEED));
+    this._linkable.setMouseOut();
+}
+
+Linkable.prototype.dispatchSignal = function() {
+    this._signal.dispatch(this._arg1, this._arg2, this._arg3);
+}
+
+
+module.exports = Linkable;
+
+
+/***/ }),
+/* 4 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [], __WEBPACK_AMD_DEFINE_RESULT__ = function() {
+    "use strict";
+
+    var _instance = null;
+    var _game = null;
+
+    function InitializeGroups() {        
+        _game.mediaGroup = _game.add.group();
+        _game.uiGroup = _game.add.group();
+    }
+
+    return {
+        init: function(game) {
+            if(_instance !== null)
+                return _instance;
+            _game = game;
+            _instance = this;
+            return _instance;
+        },
+        preload: function() {
+        },
+        initializeGroups: function() {
+            InitializeGroups();
+        }
+    }
+
+}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
 /* 5 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+const Filter = __webpack_require__(16),
+    Thoughts = __webpack_require__(11),
+    Choices = __webpack_require__(10),
+    Image = __webpack_require__(8);
+
+var _instance = null;
+var _game = null;
+var _icons = [];
+
+const buttonThoughtImageKeyEnum = 'IMAGE_BUTTON_THOUGHT';
+const sceneChangeImageKeyEnum = 'IMAGE_BUTTON_SCENECHANGE';
+
+function CreateThoughtIcon(iconKey, coords, thoughts) {
+    var button = new Image(coords[0], coords[1], iconKey, buttonThoughtImageKeyEnum);
+    button.addImageToGame(_game, _game.mediaGroup);
+    button.changeImage(_game, _game.global.gameManager.getCreateThoughtsAndChoicesSignal(), thoughts, coords);
+    _icons.push(button);
+}
+
+function CreateExploratoryIcons(key, coords, target, type, reference) {
+    var button = new Image(coords[0], coords[1], key, type);
+    button.addImageToGame(_game, _game.mediaGroup);
+    button.changeImage(_game, target);
+    _icons.push(button);
+}
+
+function EndInteraction() {
+    _icons.forEach(function(icon) {
+        icon.fadeOut(_game);
+    });
+}
+
+function HideIconType(iconType) {
+    _icons.forEach(function(icon) {
+        if(icon.getType() == iconType) {
+            icon.setVisible(false);
+        }
+    });
+}
+
+module.exports = {
+    init: function(game) {
+        _icons = [];
+        if(_instance !== null)
+            return _instance;
+        _game = game;
+        _instance = this;
+        return _instance;
+    },
+    preload: function() {
+    },
+    createThoughtIcon: function(iconKey, coords, thoughts) {
+        CreateThoughtIcon(iconKey, coords, thoughts);
+    },
+    createExploratoryIcons: function(icons) {
+        for(var i=0; i<icons.size; i++) {
+            CreateExploratoryIcons(icons.key[i], icons.coords[i], icons.targetImageIndexOrScene[i], icons.type[i]);
+        }        
+        HideIconType(sceneChangeImageKeyEnum);
+        return _icons;
+    },
+    endInteraction: function() {
+        EndInteraction();
+    },
+    displayIcon: function(index, hideSameType) {
+        if(hideSameType)
+            HideIconType(_icons[index].getType());
+        _icons[index].setVisible(true);
+    },
+    createThoughtsAndChoices: function(thoughts, coords) {
+        _game.global.gameManager.getCreateThoughtsSignal().dispatch(thoughts, coords);
+    },
+    destroy: function() {
+        _icons.forEach(function(icon) {
+            icon.destroy();
+        });
+        _icons = [];
+    }
+}
+
+
+/***/ }),
+/* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -560,6 +670,10 @@ module.exports = {
 
     State.prototype.getChoices = function(index){
       return this._scene.choiceMoments.choiceMomentsProperties[index].choices;
+    }
+
+    State.prototype.getChoicesFromThoughtMoment = function(index){
+      return this._scene.choiceMoments.choiceMomentsProperties[index].thoughtBubbles.choices;
     }
     /*
     State.prototype.getThoughtsInfo = function() {
@@ -612,14 +726,57 @@ module.exports = {
 
 
 /***/ }),
-/* 6 */
+/* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-const Linkable = __webpack_require__(2),
-    Animation = __webpack_require__(28);
+const FADE_SPEED = 700;
+const SCALE_SIZE = 1.05;
+
+//Animation constructor
+var Animation = function() {
+}
+
+Animation.scale = function(game, object, autoStart, targetWidth, targetHeight, speed, repeat, reset) {
+    if(!repeat)
+        repeat = 0;
+    if(!speed)
+        speed = FADE_SPEED;
+
+    var tween = game.add.tween(object).to({width:targetWidth, height:targetHeight}, speed, Phaser.Easing.Linear.None, autoStart, 0, repeat);
+    if(reset)
+        tween.onComplete.add(Reset, this);
+
+    function Reset(width, height) {
+        object.width = width;
+        object.height = height;
+    }
+
+    return tween;
+}
+
+Animation.fade = function(game, object, value, autoStart, speed, repeat) {
+    var customSpeed = speed;
+    if(!speed)
+        customSpeed = FADE_SPEED;
+    return game.add.tween(object).to({alpha:value}, customSpeed, Phaser.Easing.Linear.None, autoStart, 0, 0, false);
+}
+
+
+module.exports = Animation;
+
+
+/***/ }),
+/* 8 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+const Linkable = __webpack_require__(3),
+    Animation = __webpack_require__(7);
 
 const MOUSEOVER_SPEED = 300;
 
@@ -723,7 +880,7 @@ Image.prototype.changeToBgImage = function(game, draggable) {
     //Initializes container for bg image to be dragged around
 
     if(draggable) {
-        this.makeDraggable(game, 'stub', false, true, -this._image.width+game.width, 0, this._image.width*2-game.width, this._image.height)
+        this.makeDraggable(game, 'stub', false, true, -this._image.width+game.width, 0, this._image.width*2-game.width, this._image.height);
     }
 }
 
@@ -731,40 +888,36 @@ Image.prototype.changeToThoughtIcon = function(game, thoughtsAndChoicesSignal, t
     this._image.width = 100;
     this._image.height = 100;
     this._image.anchor.setTo(0.5, 0.5);
-    this._link = new Linkable(this._image, thoughtsAndChoicesSignal, thoughts, coords, choices);
+    this._link = new Linkable(game, this._image, thoughtsAndChoicesSignal, thoughts, coords, choices);
     this._link.addOnClickAnimation(Animation.fade(game, this._image, 0, false));
     this._link.addOnClickAnimation(Animation.scale(game, this._image, false));
     this._link.setAsButton(true);
 }
 
 Image.prototype.changeToSceneChangeImage = function(game, targetScene) {
-    this._link = new Linkable(this._image, game.global.gameManager.getChangeSceneSignal(), targetScene);
+    this._link = new Linkable(game, this._image, game.global.gameManager.getChangeSceneSignal(), targetScene);
     this._link.setAsButton(true);
 }
 
 Image.prototype.changeToDisplayImage = function(game, target) {
     this._image.anchor.setTo(0.5, 0.5);
-    this._link = new Linkable(this._image, game.global.gameManager.getDisplayImageSignal(), target, true);
+    this._link = new Linkable(game, this._image, game.global.gameManager.getDisplayImageSignal(), target, true);
     this._link.setAsButton(false);
     this._link.addMouseOverScaleEffect(game, this._image);
+ //   this._link.addSound('testSound');
 }
 
-Image.prototype.changeToChoiceBackgroundImage = function(game, width, height, index) {
+Image.prototype.changeToChoiceBackgroundImage = function(game, width, height) {
     this._image.alpha = 0;
     this._image.anchor.set(0.5, 0.5);
-    console.log(index);
-    if(index == 0)
-        this._image.x = game.width/4;
-    else if(index == 1)
-        this._image.x = game.width/4*3;
     this._image.width = width;
     this._image.height = height;
-    Animation.fade(game, this._image, 1, true);
+    //Animation.fade(game, this._image, 1, true);
     return this._image;
 }
 
 Image.prototype.changeToPauseButton = function(game, signal) {
-    this._link = new Linkable(this._image, signal);
+    this._link = new Linkable(game, this._image, signal);
     this._link.setAsButton(false);
 }
 
@@ -777,7 +930,7 @@ Image.prototype.changeToPlayButton = function(game) {
 }
 
 Image.prototype.changeToToggleSubtitleButton = function(game, signal) {
-    this._link = new Linkable(this._image, signal);
+    this._link = new Linkable(game, this._image, signal);
     this._link.setAsButton(false);
 }
 
@@ -832,6 +985,10 @@ Image.prototype.fadeOut = function(game) {
     Animation.fade(game, this._image, 0, true);
 }
 
+Image.prototype.fadeIn = function(game) {    
+    Animation.fade(game, this._image, 1, true);
+}
+
 function DebugRect(x, y, width, height, game) {
     var bounds = new Phaser.Rectangle(x, y, width, height);
     var graphics = game.add.graphics(bounds.x, bounds.y);
@@ -843,14 +1000,14 @@ module.exports = Image;
 
 
 /***/ }),
-/* 7 */
+/* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-const Linkable = __webpack_require__(2),
-    Animation = __webpack_require__(28);
+const Linkable = __webpack_require__(3),
+    Animation = __webpack_require__(7);
 
 const PADDING = 10;
 
@@ -924,40 +1081,32 @@ Text.prototype.changeToThoughts = function(game, xTo, yTo, filter) {
     Animation.fade(game, this._text, 1, true);
 }
 
-Text.prototype.changeToMeaningfulChoices = function(game, targetScene, endInteractionSignal, boundsY, index) {
+Text.prototype.changeToMeaningfulChoices = function(game, targetScene, endInteractionSignal, boundsY) {
     this._text.anchor.set(0.5, 0.5);
-    if(index == 0)
-        this._text.x = game.width/4;
-    else if(index == 1)
-        this._text.x = game.width/4*3;
     this._text.y = boundsY;
     this._text.alpha = 0;
-    this._text.inputEnabled = true;
-    this._text.input.useHandCursor = true;
+    this._text.inputEnabled = false;
+    //this._text.input.useHandCursor = true;
     //this._text.boundsAlignV = "middle";
     //this._text.setTextBounds(0, boundsY, boundsWidth, boundsHeight);
-    this._link = new Linkable(this._text.events, endInteractionSignal, this, targetScene);
+    this._link = new Linkable(game, this._text.events, endInteractionSignal, this, targetScene);
     this._link.setAsButton(true);    
     this._link.addMouseOverScaleEffect(game, this._text);
-    Animation.fade(game, this._text, 1, true);
+    //Animation.fade(game, this._text, 1, true);
 }
 
-Text.prototype.changeToMeaninglessChoices = function(game, endInteractionSignal, boundsY, index) {
+Text.prototype.changeToMeaninglessChoices = function(game, endInteractionSignal, boundsY) {
     this._text.anchor.set(0.5, 0.5);
-    if(index == 0)
-        this._text.x = game.width/4;
-    else if(index == 1)
-        this._text.x = game.width/4*3;
     this._text.y = boundsY;
     this._text.alpha = 0;
-    this._text.inputEnabled = true;
-    this._text.input.useHandCursor = true;
+    this._text.inputEnabled = false;
+    //this._text.input.useHandCursor = true;
     //this._text.setTextBounds(0, boundsY, boundsWidth, boundsHeight);
     //this._text.boundsAlignV = "middle";
-    this._link = new Linkable(this._text.events, endInteractionSignal, this);
+    this._link = new Linkable(game, this._text.events, endInteractionSignal, this);
     this._link.setAsButton(true);
     this._link.addMouseOverScaleEffect(game, this._text);
-    Animation.fade(game, this._text, 1, true);
+    //Animation.fade(game, this._text, 1, true);
 }
 
 Text.prototype.changeToSubtitle = function(game, isVisible) {
@@ -975,12 +1124,21 @@ Text.prototype.addInterpolationTween = function(game, xTo, yTo) {
 
 Text.prototype.fadeOut = function(game, chainSignal, arg1) {
     if(chainSignal) {
-        this._link = new Linkable(this._text.events, chainSignal, arg1);
+        this._link = new Linkable(game, this._text.events, chainSignal, arg1);
         this._link.addOnClickAnimation(Animation.fade(game, this._text, 0, true));
         this._link.onTrigger();
     }
-    else
+    else {
         Animation.fade(game, this._text, 0, true);
+    }
+}
+
+Text.prototype.fadeIn = function(game, enableInput) {
+    if(enableInput) {
+        this._text.inputEnabled = true;
+        this._text.input.useHandCursor = true;
+    }
+    Animation.fade(game, this._text, 1, true);
 }
 
 Text.prototype.disableInput = function(game) {
@@ -1011,17 +1169,213 @@ module.exports = Text;
 
 
 /***/ }),
-/* 8 */
+/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
-var Filter = __webpack_require__(13);
+
+const Text = __webpack_require__(9),
+    Image = __webpack_require__(8);
+
+//initializes once
+var _instance = null;
+var _game = null;
+
+var _text = [];
+var _choiceBg = [];
+var _thoughtsTriggerNeeded = 0;
+var _thoughtsTriggeredCount = 0;
+
+const choiceBgKeyEnum = 'IMAGE_CHOICE_BACKGROUND';
+const meaningfulTextKeyEnum = 'TEXT_MEANINGFUL_CHOICES';
+const meaninglessTextKeyEnum = 'TEXT_MEANINGLESS_CHOICES';
+
+const FADE_DELAY = 1;
+const MAX_CHOICE = 2;
+
+function CreateBg(x, y, width, height) {
+    var choiceBg = new Image(x, y, 'choiceBg', choiceBgKeyEnum);
+    choiceBg.addImageToGame(_game, _game.mediaGroup);
+    choiceBg.changeImage(_game, width, height, x);
+    return choiceBg;
+}
+
+function CreateChoices(choices, thoughtsTriggerNeeded) {
+    //_thoughtsTriggerNeeded = thoughtsTriggerNeeded;
+    if(choices.targetScene)
+        CreateMeaningfulChoices(choices);
+    else
+        CreateMeaninglessChoices(choices);
+}
+
+function CreateMeaningfulChoices(info) {
+    resetElements();
+
+    for(var i=0; i < info.size; i++) {
+        var bgImg = CreateBg(GetXPos(info.size, i), info.y[i], info.bounds[i][0], info.bounds[i][1], i);
+        _choiceBg.push(bgImg);
+
+        _text.push(new Text(info.content[i], GetXPos(info.size, i), 0, meaningfulTextKeyEnum, _game.global.style.choicesTextProperties));
+        _text[i].index = i;
+        _text[i].addToGame(_game, _game.mediaGroup);
+        _text[i].changeText(_game, info.targetScene[i], _game.global.gameManager.getEndInteractionSignal(),
+            bgImg.getPhaserImage().y, i);
+    };
+}
+
+function CreateMeaninglessChoices(info) {
+    resetElements();
+    for(var i=0; i < info.size; i++) {
+        var bgImg = CreateBg(GetXPos(info.size, i), info.y[i], info.bounds[i][0], info.bounds[i][1]);
+        _choiceBg.push(bgImg);
+
+        _text.push(new Text(info.content[i], GetXPos(info.size, i), 0, meaninglessTextKeyEnum, _game.global.style.choicesTextProperties));
+        _text[i].index = i;
+        _text[i].addToGame(_game, _game.mediaGroup);
+        _text[i].changeText(_game, _game.global.gameManager.getEndInteractionSignal(),
+            bgImg.getPhaserImage().y, i);
+    }
+}
+
+function RevealChoices() {
+    console.log("revealed.");
+    _choiceBg.forEach(function(bg) {
+        bg.fadeIn(_game);
+    });
+    _text.forEach(function(text) {
+        text.fadeIn(_game, true);
+    });
+}
+
+function GetXPos(size, index) {
+    if(size == 1)
+        return _game.width/2;
+    if(size == MAX_CHOICE) {
+        if(index == 0)
+            return _game.width/4;
+        if(index == 1)
+            return _game.width/4*3;
+    }
+    console.warn("1 or 2 choices allowed.");
+    return null;
+}
+
+function FadeChoicesExcept(choiceText){
+    _text.forEach(function(text) {
+        if(text.index != choiceText.index) {
+            text.disableInput();
+            text.fadeOut(_game);
+        }
+    });
+
+    _choiceBg.forEach(function(choiceBg) {
+        choiceBg.fadeOut(_game);
+    });
+}
+
+function FadeChoiceAfterDelay(choiceText, targetScene) {
+    _game.time.events.add(Phaser.Timer.SECOND*FADE_DELAY, fadeChoice, this);
+
+    function fadeChoice(){
+        if(targetScene)
+            choiceText.fadeOut(_game, _game.global.gameManager.getChangeSceneSignal(), targetScene);
+        else
+            choiceText.fadeOut(_game);
+    }
+}
+
+function resetElements() {
+    _text = [];
+    _choiceBg = [];
+    _thoughtsTriggerNeeded = 0;
+    _thoughtsTriggeredCount = 0;
+}
+
+module.exports = {
+    init: function(game) {
+        if(_instance !== null)
+            return _instance;
+        _game = game;
+        _instance = this;
+        return _instance;
+    },
+    preload: function() {
+    },
+    create: function(choices, thoughtsTriggerNeeded) {
+        CreateChoices(choices, thoughtsTriggerNeeded);
+    },
+    endInteraction: function(lingeringChoice, targetScene) {
+        FadeChoicesExcept(lingeringChoice);
+        FadeChoiceAfterDelay(lingeringChoice, targetScene);
+    },
+    revealChoices: function() {
+        //_thoughtsTriggeredCount++;
+        //if(_thoughtsTriggeredCount >= _thoughtsTriggerNeeded) {
+            RevealChoices();
+        //}
+    }
+}
+
+
+/***/ }),
+/* 11 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+//Initialized once
+const Text = __webpack_require__(9);
+
+var _instance = null,
+    _game = null,
+    _text = [],
+    _currentIndex = 0;
+
+const thoughtsTextKeyEnum = 'TEXT_THOUGHTS';
+
+module.exports = {
+    init: function(game) {        
+        _text = [];
+        _currentIndex = 0;
+        if(_instance !== null)
+            return _instance;
+        _game = game;
+        _instance = this;
+        return _instance;
+    },
+    preload: function() {
+    },
+    create: function(info, coords) {
+        for(var i=0; i < info.size; i++) {
+            _text.push(new Text(info.content[i], coords[0], coords[1], thoughtsTextKeyEnum, _game.global.style.thoughtsTextProperties));
+            _text[_currentIndex].addToGame(_game, _game.mediaGroup);
+            _text[_currentIndex].changeText(_game, info.destination[i][0], info.destination[i][1]);
+            _currentIndex++;
+        };
+    },
+    endInteraction: function() {
+        _text.forEach(function(text) {
+            text.fadeOut(_game);
+        });
+    }
+}
+
+
+/***/ }),
+/* 12 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var Filter = __webpack_require__(16);
 var _instance = null;
 var _game = null;
 var _startSceneKey = 'startScene';
 var _data = null;
 var _videos = null;
+var _audio = null;
 var _images = null;
 var _scenes = null;
 var _subs = null;
@@ -1031,6 +1385,13 @@ function loadVideos(videos) {
     console.log("Loading videos");
     for (var key in _videos) {
         _game.load.video(key, _videos[key]);
+    }
+}
+
+function loadAudio(audio) {
+    console.log("Loading audio");
+    for (var key in audio) {
+        _game.load.audio(key, _audio[key]);
     }
 }
 
@@ -1059,6 +1420,7 @@ module.exports = {
         _style = _game.cache.getJSON('style');
         _images = _data.images;
         _videos = _data.videos;
+        _audio = _data.audio;
         _scenes = _data.scenes;
         _subs = _data.subtitles;
         return _instance;
@@ -1067,6 +1429,7 @@ module.exports = {
     //    Filter.preload();
         console.log("Loading resources");
         loadImages(_images);
+        loadAudio(_audio);
         loadSubs(_subs);
     //    loadVideos(videos);
 
@@ -1101,107 +1464,391 @@ module.exports = {
 
 
 /***/ }),
-/* 9 */
+/* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-const Filter = __webpack_require__(13),
-    Thoughts = __webpack_require__(22),
-    Choices = __webpack_require__(12),
-    Image = __webpack_require__(6);
+const Resources = __webpack_require__(12),
+    Group = __webpack_require__(4),
+    Transition = __webpack_require__(0),
+    UI = __webpack_require__(1),
+    Video = __webpack_require__(2),
+    MenuState = __webpack_require__(27),
+    LocationState = __webpack_require__(15),
+    InteractState = __webpack_require__(14),
+    FlashbackState = __webpack_require__(26),
+    MovieState = __webpack_require__(28),
+    Subtitle = __webpack_require__(18);
 
+var _stateManagerInstance = null;
+var _transitionSignal = null;
+var _game = null;
+
+var StateEnum = {
+    MenuState: 'MenuState',
+    InteractState: 'InteractState',
+    FlashbackState: 'FlashbackState',
+    MovieState: 'MovieState',
+    LocationState: 'LocationState'
+}
+
+function ChangeScene(scene) {
+    var nextScene = Resources.getScene(scene);
+    if(nextScene === null)
+        console.warn("Scene: " + scene + "is undefined.");
+    console.log("Changing scene to: " + nextScene.stateType);
+    switch(nextScene.stateType) {
+        case StateEnum.MenuState:
+            _stateManagerInstance.start(nextScene.stateType, true, false, nextScene);
+            break;
+        case StateEnum.InteractState:
+            _stateManagerInstance.start(nextScene.stateType, true, false, nextScene);
+            break;
+        case StateEnum.FlashbackState:
+            _stateManagerInstance.start(nextScene.stateType, true, false, nextScene);
+            break;
+        case StateEnum.MovieState:
+            _stateManagerInstance.start(nextScene.stateType, true, false, nextScene);
+            break;
+        case StateEnum.LocationState:
+            _stateManagerInstance.start(nextScene.stateType, true, false, nextScene);
+            break;
+        default:
+            console.warn("Invalid State.");
+    }
+}
+
+function AddAllStates() {
+    _stateManagerInstance.add(StateEnum.MenuState, MenuState);
+    _stateManagerInstance.add(StateEnum.LocationState, LocationState);
+    _stateManagerInstance.add(StateEnum.InteractState, InteractState);
+    _stateManagerInstance.add(StateEnum.FlashbackState, FlashbackState);
+    _stateManagerInstance.add(StateEnum.MovieState, MovieState);
+}
+
+function ChangePlayerName() {
+    return function() {
+        this.game.playerName = MenuState.getPlayerName();_input[0].getInput().text;
+        console.log("this.game.playerName");
+    };
+}
+
+module.exports = {
+    init: function() {
+        console.log("Initializing StateManager");
+        if(_stateManagerInstance !== null)
+            return _instance;
+        _stateManagerInstance = this.game.state;
+        _game = this.game;
+        Group.init(_game);        
+        Subtitle.init(this.game);
+        Transition.init(_game);
+        AddAllStates();
+        UI.init(_game);
+        return _stateManagerInstance;
+    },
+    preload: function() {
+    },
+    create: function() {
+        Video.stop();
+        _game.global.gameManager.getChangeSceneSignal().dispatch(Resources.getStartSceneKey());
+    },
+    changeScene: function(scene) {
+        _game.mediaGroup.removeAll();
+        ChangeScene(scene);
+    }
+}
+
+
+/***/ }),
+/* 14 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+const Group = __webpack_require__(4),
+    UI = __webpack_require__(1),
+    Video = __webpack_require__(2),
+    Transition = __webpack_require__(0),
+    Icons = __webpack_require__(5),
+    State = __webpack_require__(6),
+    Choices = __webpack_require__(10),
+    Thoughts = __webpack_require__(11);
+
+var _stateInfo = null;
 var _instance = null;
 var _game = null;
-var _icons = [];
+var _momentCount = null;
 
-const buttonThoughtImageKeyEnum = 'IMAGE_BUTTON_THOUGHT';
-const sceneChangeImageKeyEnum = 'IMAGE_BUTTON_SCENECHANGE';
+function CreateThought() {
+    Icons.endInteraction();
 
-function CreateThoughtIcon(iconKey, coords, thoughts, choices) {
-    var button = new Image(coords[0], coords[1], iconKey, buttonThoughtImageKeyEnum);
-    button.addImageToGame(_game, _game.mediaGroup);
-    button.changeImage(_game, _game.global.gameManager.getCreateThoughtsAndChoicesSignal(), thoughts, coords, choices);
-    _icons.push(button);
-}
+    var thoughtBubbles = _stateInfo.getThoughtBubble(_momentCount);
+    var choices = null;
 
-function CreateExploratoryIcons(key, coords, target, type, reference) {
-    var button = new Image(coords[0], coords[1], key, type);
-    button.addImageToGame(_game, _game.mediaGroup);
-    button.changeImage(_game, target);
-    _icons.push(button);
-}
-
-function EndInteraction() {
-    _icons.forEach(function(icon) {
-        if(icon.getPhaserImage().alive)
-            icon.fadeOut(_game);
-    });
-}
-
-function HideIconType(iconType) {
-    _icons.forEach(function(icon) {
-        if(icon.getType() == iconType) {
-            icon.setVisible(false);
+    if(thoughtBubbles) {
+        for(var i=0; i<thoughtBubbles.size; i++) {
+            console.log("Thought bubble: ");
+            console.log(thoughtBubbles.thoughts[i]);
+            Icons.createThoughtIcon(thoughtBubbles.thoughtIconKey[i], thoughtBubbles.coords[i], thoughtBubbles.thoughts[i]);
         }
-    });
+
+        choices = _stateInfo.getChoicesFromThoughtMoment(_momentCount);
+        Choices.create(choices, thoughtBubbles.size);        
+    }
+    else {
+        console.log("Choices: " + _momentCount);
+        choices = _stateInfo.getChoices(_momentCount);
+        Choices.create(choices);
+    }
+    _game.global.gameManager.getRevealChoicesSignal().dispatch();
+    _momentCount++;
+}
+
+function EndInteraction(lingeringChoice, targetScene) {
+    Icons.endInteraction();
+    Choices.endInteraction(lingeringChoice, targetScene);
+    Thoughts.endInteraction();
+    if(!targetScene) {
+        Video.play();
+        _instance.game.global.gameManager.getToggleUISignal().dispatch();
+    }
+    Video.endFilter();
+}
+
+function GetTimeStamps() {
+    var moments = _stateInfo.getChoiceMoments();
+    var timeStamps = [];
+    console.log("Interaction Times")
+    for(var i=0; i<moments.size; i++) {
+        timeStamps.push(moments.choiceMomentsProperties[i].timeStamp);
+        console.log(moments.choiceMomentsProperties[i].timeStamp);
+    }
+    return timeStamps;
+}
+
+module.exports = {
+    init: function(scene) {
+        if(_stateInfo) {
+            _stateInfo.setStateScene(scene);
+        }
+        Video.init(this.game);
+        Icons.init(this.game);        
+        Thoughts.init(this.game);
+        Choices.init(this.game);
+        if(_instance !== null)
+            return _instance;
+        _game = this.game;
+        _stateInfo = new State(scene);
+        _instance = this;
+        return _instance;
+    },
+    preload: function() {
+    },
+    create: function() {
+        Group.initializeGroups();
+        _momentCount = 0;
+        var timeStamps = GetTimeStamps();
+        Video.create(_stateInfo.getMovieSrc(), _stateInfo.getTransitionInfo().fadeOut,
+            _stateInfo.getVideoFilter(), _stateInfo.getNextScenes(), _stateInfo.getMovieSubKey(), timeStamps);
+        if(_stateInfo.getTransitionInfo().fadeIn)
+            this.game.global.gameManager.getFadeInTransitionSignal().dispatch();
+        UI.create(true, true);
+    },
+    createThought: function() {
+        CreateThought();
+    },
+    endInteraction: function(lingeringChoice, targetScene) {
+        EndInteraction(lingeringChoice, targetScene);
+    }
+}
+
+
+/***/ }),
+/* 15 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _instance = null;
+var _stateInfo = null;
+
+const Transition = __webpack_require__(0),
+    Group = __webpack_require__(4),
+    State = __webpack_require__(6),
+    UI = __webpack_require__(1),
+    MovingBackground = __webpack_require__(17),
+    Icons = __webpack_require__(5),
+    Text = __webpack_require__(9);
+
+module.exports = {
+    init: function(scene) {
+        this.game.global.soundManager.init();
+        Group.initializeGroups();        
+        MovingBackground.init(this.game);
+        Icons.init(this.game);
+        if(_stateInfo !== null)
+            _stateInfo.setStateScene(scene);
+        if(_instance !== null)
+            return _instance;
+        _stateInfo = new State(scene);
+        _instance = this;
+        return _instance;
+    },
+    preload: function() {
+    },
+    create: function() {
+    //    this.game.global.soundManager.playBackgroundMusic('littleRootMusic');
+    //    Video.create(_stateInfo.getMovieSrc(), _stateInfo.getTransition().fadeOut, Transition.getFadeOutSignal(), _stateInfo.getVideoFilter(), _stateInfo.getNextScenes());
+        MovingBackground.create(_stateInfo.getBgImageKey(), _stateInfo.getDraggable());
+        var icons = Icons.createExploratoryIcons(_stateInfo.getIconsInfo());
+        if(_stateInfo.getDraggable())
+            MovingBackground.assignFollowIcons(icons);
+        //UI.create(true, false);
+        var text = new Text('Click and drag to navigate', 430, 640, 'TEXT_MEANINGFUL_CHOICES', this.game.global.style.choicesTextProperties);
+        text.addToGame(this.game, this.game.mediaGroup);
+        text.fadeIn(this.game);
+        if(_stateInfo.getTransitionInfo().fadeIn)
+            this.game.global.gameManager.getFadeInTransitionSignal().dispatch();
+    },
+    shutdown: function() {
+        Icons.destroy();        
+        this.game.global.soundManager.stopBackgroundMusic();
+    },
+    displayImage: function(index, hideSameType) {
+        Icons.displayIcon(index, hideSameType);
+    }
+}
+
+
+/***/ }),
+/* 16 */
+/***/ (function(module, exports) {
+
+var _instance = null,
+    _game = null,
+    _blur = null,
+    _blurNone = null;
+
+
+function createBlurFilter(x_amt, y_amt) {
+    var blurX = _game.add.filter('BlurX');
+    var blurY = _game.add.filter('BlurY');
+    blurX.blur = x_amt;
+    blurY.blur = y_amt;
+    _blur = [blurX, blurY];
+    var blurX_none = _game.add.filter('BlurX');
+    var blurY_none = _game.add.filter('BlurY');
+    blurX_none.blur = 0;
+    blurY_none.blur = 0;
+    _blurNone = [blurX_none, blurY_none];
+}
+
+module.exports = {
+    init: function(game) {
+        if(_instance !== null) {
+            return _instance;
+        }
+        _game = game;
+        _instance = this;
+        return _instance;
+    },
+    preload: function() {
+        _game.load.script('filterX', 'js/Lib/BlurX.js');
+        _game.load.script('filterY', 'js/Lib/BlurY.js');
+    },
+    create: function() {
+        createBlurFilter(5, 5);
+    },
+    getBlur: function() {
+        return _blur;
+    },
+    getBlurNone: function() {
+        return _blurNone;
+    }
+}
+
+
+/***/ }),
+/* 17 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+//Dependency: choiceText
+
+
+//initializes once
+var _instance = null;
+var _game = null;
+var _text = [];
+var _choiceFont = null;
+var _bgImage = null;
+var _group = null;
+var Text = __webpack_require__(9),
+    Image = __webpack_require__(8);
+
+const bgImageKeyEnum = 'IMAGE_BACKGROUND';
+
+function createBgImage(key, draggable) {
+    _bgImage = new Image(0, 0, key, bgImageKeyEnum);
+    _bgImage.addImageToGame(_game, _game.mediaGroup);
+    _bgImage.changeImage(_game, draggable);
+}
+
+function dragStart() {
+}
+
+function dragUpdate() {
+    _group.x = _bgImage.getPhaserImage().x;
+    _group.y = _bgImage.getPhaserImage().y;
+}
+
+function dragStop() {
+
 }
 
 module.exports = {
     init: function(game) {
         if(_instance !== null)
             return _instance;
-        Thoughts.init(game);
-        Choices.init(game);
         _game = game;
         _instance = this;
         return _instance;
     },
     preload: function() {
     },
-    createThoughtIcon: function(iconKey, coords, thoughts, choices) {
-        _icons = [];
-        CreateThoughtIcon(iconKey, coords, thoughts, choices);
+    create: function(bgKey, draggable) {
+        createBgImage(bgKey, draggable);
+        return _bgImage.getPhaserImage();
+    //    createIcons(icons, draggable, _bgImage);
     },
-    createExploratoryIcons: function(icons) {
-        _icons = [];
-        for(var i=0; i<icons.size; i++) {
-            CreateExploratoryIcons(icons.key[i], icons.coords[i], icons.targetImageIndexOrScene[i], icons.type[i]);
-        }        
-        HideIconType(sceneChangeImageKeyEnum);
-        return _icons;
-    },
-    endInteraction: function() {
-        EndInteraction();
-        Thoughts.endInteraction();
-    },
-    displayIcon: function(index, hideSameType) {
-        if(hideSameType)
-            HideIconType(_icons[index].getType());
-        _icons[index].setVisible(true);
-    },
-    createThoughtsAndChoices: function(thoughts, coords, choices) {
-        _game.global.gameManager.getCreateThoughtsSignal().dispatch(thoughts, coords);
-        _game.global.gameManager.getCreateChoicesSignal().dispatch(choices);
-    },
-    destroy: function() {
-        _icons.forEach(function(icon) {
-            icon.destroy();
+    assignFollowIcons: function(icons) {
+        _group = _game.add.group();
+        _game.mediaGroup.add(_group);
+        icons.forEach(function(icon) {
+            _group.add(icon.getPhaserImage());
         });
-        _icons = [];
+
+        _bgImage.getPhaserImage().events.onDragStart.add(dragStart);
+        _bgImage.getPhaserImage().events.onDragUpdate.add(dragUpdate);
+        _group.x = _bgImage.getPhaserImage().x;
+        _group.y = _bgImage.getPhaserImage().y;
     }
 }
 
 
 /***/ }),
-/* 10 */
+/* 18 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-const Text = __webpack_require__(7);
+const Text = __webpack_require__(9);
 
 var _instance = null;
 var _game = null;
@@ -1329,481 +1976,7 @@ module.exports = {
 
 
 /***/ }),
-/* 11 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-const Resources = __webpack_require__(8),
-    Group = __webpack_require__(3),
-    Transition = __webpack_require__(0),
-    UI = __webpack_require__(1),
-    Video = __webpack_require__(4),
-    MenuState = __webpack_require__(25),
-    LocationState = __webpack_require__(16),
-    InteractState = __webpack_require__(15),
-    FlashbackState = __webpack_require__(24),
-    MovieState = __webpack_require__(26),
-    Subtitle = __webpack_require__(10);
-
-var _stateManagerInstance = null;
-var _transitionSignal = null;
-var _game = null;
-
-var StateEnum = {
-    MenuState: 'MenuState',
-    InteractState: 'InteractState',
-    FlashbackState: 'FlashbackState',
-    MovieState: 'MovieState',
-    LocationState: 'LocationState'
-}
-
-function ChangeScene(scene) {
-    var nextScene = Resources.getScene(scene);
-    if(nextScene === null)
-        console.warn("Scene: " + scene + "is undefined.");
-    console.log("Changing scene to: " + nextScene.stateType);
-    switch(nextScene.stateType) {
-        case StateEnum.MenuState:
-            _stateManagerInstance.start(nextScene.stateType, true, false, nextScene);
-            break;
-        case StateEnum.InteractState:
-            _stateManagerInstance.start(nextScene.stateType, true, false, nextScene);
-            break;
-        case StateEnum.FlashbackState:
-            _stateManagerInstance.start(nextScene.stateType, true, false, nextScene);
-            break;
-        case StateEnum.MovieState:
-            _stateManagerInstance.start(nextScene.stateType, true, false, nextScene);
-            break;
-        case StateEnum.LocationState:
-            _stateManagerInstance.start(nextScene.stateType, true, false, nextScene);
-            break;
-        default:
-            console.warn("Invalid State.");
-    }
-}
-
-function AddAllStates() {
-    _stateManagerInstance.add(StateEnum.MenuState, MenuState);
-    _stateManagerInstance.add(StateEnum.LocationState, LocationState);
-    _stateManagerInstance.add(StateEnum.InteractState, InteractState);
-    _stateManagerInstance.add(StateEnum.FlashbackState, FlashbackState);
-    _stateManagerInstance.add(StateEnum.MovieState, MovieState);
-}
-
-function ChangePlayerName() {
-    return function() {
-        this.game.playerName = MenuState.getPlayerName();_input[0].getInput().text;
-        console.log("this.game.playerName");
-    };
-}
-
-module.exports = {
-    init: function() {
-        console.log("Initializing StateManager");
-        if(_stateManagerInstance !== null)
-            return _instance;
-        _stateManagerInstance = this.game.state;
-        _game = this.game;
-        Group.init(_game);        
-        Subtitle.init(this.game);
-        Transition.init(_game);
-        AddAllStates();
-        UI.init(_game);
-        return _stateManagerInstance;
-    },
-    preload: function() {
-    },
-    create: function() {
-        Video.stop();
-        _game.global.gameManager.getChangeSceneSignal().dispatch(Resources.getStartSceneKey());
-    },
-    changeScene: function(scene) {
-        _game.mediaGroup.removeAll();
-        ChangeScene(scene);
-    }
-}
-
-
-/***/ }),
-/* 12 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-const Text = __webpack_require__(7),
-    Image = __webpack_require__(6);
-
-//initializes once
-var _instance = null;
-var _game = null;
-var _text = [];
-var _choiceBg = [];
-
-const choiceBgKeyEnum = 'IMAGE_CHOICE_BACKGROUND';
-const meaningfulTextKeyEnum = 'TEXT_MEANINGFUL_CHOICES';
-const meaninglessTextKeyEnum = 'TEXT_MEANINGLESS_CHOICES';
-
-const FADE_DELAY = 1;
-const MAX_CHOICE = 2;
-
-function CreateBg(y, width, height, index) {
-    var choiceBg = new Image(0, y, 'choiceBg', choiceBgKeyEnum);
-    choiceBg.addImageToGame(_game, _game.mediaGroup);
-    choiceBg.changeImage(_game, width, height, index);
-    return choiceBg;
-}
-
-function CreateChoices(choices) {
-    if(choices.targetScene)
-        CreateMeaningfulChoices(choices, _game.global.gameManager.getChangeSceneSignal());
-    else
-        CreateMeaninglessChoices(choices);
-}
-
-function CreateMeaningfulChoices(info) {
-    resetElements();
-
-    for(var i=0; i < MAX_CHOICE; i++) {
-        var bgImg = CreateBg(info.y[i], info.bounds[i][0], info.bounds[i][1], i);
-        _choiceBg.push(bgImg);
-
-        _text.push(new Text(info.content[i], 0, 0, meaningfulTextKeyEnum, _game.global.style.choicesTextProperties));
-        _text[i].index = i;
-        _text[i].addToGame(_game, _game.mediaGroup);
-        _text[i].changeText(_game, info.targetScene[i], _game.global.gameManager.getEndInteractionSignal(),
-            bgImg.getPhaserImage().y, i);
-    };
-}
-
-function CreateMeaninglessChoices(info) {
-    resetElements();
-
-    for(var i=0; i < MAX_CHOICE; i++) {
-        var bgImg = CreateBg(info.y[i], info.bounds[i][0], info.bounds[i][1], i);
-        _choiceBg.push(bgImg);
-
-        _text.push(new Text(info.content[i], 0, 0, meaninglessTextKeyEnum, _game.global.style.choicesTextProperties));
-        _text[i].index = i;
-        _text[i].addToGame(_game, _game.mediaGroup);
-        _text[i].changeText(_game, _game.global.gameManager.getEndInteractionSignal(),
-            bgImg.getPhaserImage().y, i);
-    };
-}
-
-function FadeChoicesExcept(choiceText){
-    _text.forEach(function(text) {
-        if(text.index != choiceText.index) {
-            text.disableInput();
-            text.fadeOut(_game);
-        }
-    });
-
-    _choiceBg.forEach(function(choiceBg) {
-        choiceBg.fadeOut(_game);
-    });
-}
-
-function FadeChoiceAfterDelay(choiceText, targetScene) {
-    _game.time.events.add(Phaser.Timer.SECOND*FADE_DELAY, fadeChoice, this);
-
-    function fadeChoice(){
-        if(targetScene)
-            choiceText.fadeOut(_game, _game.global.gameManager.getChangeSceneSignal(), targetScene);
-        else
-            choiceText.fadeOut(_game);
-    }
-}
-
-function resetElements() {
-    _text = [];
-    _choiceBg = [];
-}
-
-module.exports = {
-    init: function(game) {
-        if(_instance !== null)
-            return _instance;
-        _game = game;
-        _instance = this;
-        return _instance;
-    },
-    preload: function() {
-    },
-    create: function(choices) {
-        CreateChoices(choices);
-    },
-    endInteraction: function(lingeringChoice, targetScene) {
-        FadeChoicesExcept(lingeringChoice);
-        FadeChoiceAfterDelay(lingeringChoice, targetScene);
-    }
-}
-
-
-/***/ }),
-/* 13 */
-/***/ (function(module, exports) {
-
-var _instance = null,
-    _game = null,
-    _blur = null,
-    _blurNone = null;
-
-
-function createBlurFilter(x_amt, y_amt) {
-    var blurX = _game.add.filter('BlurX');
-    var blurY = _game.add.filter('BlurY');
-    blurX.blur = x_amt;
-    blurY.blur = y_amt;
-    _blur = [blurX, blurY];
-    var blurX_none = _game.add.filter('BlurX');
-    var blurY_none = _game.add.filter('BlurY');
-    blurX_none.blur = 0;
-    blurY_none.blur = 0;
-    _blurNone = [blurX_none, blurY_none];
-}
-
-module.exports = {
-    init: function(game) {
-        if(_instance !== null) {
-            return _instance;
-        }
-        _game = game;
-        _instance = this;
-        return _instance;
-    },
-    preload: function() {
-        _game.load.script('filterX', 'js/Lib/BlurX.js');
-        _game.load.script('filterY', 'js/Lib/BlurY.js');
-    },
-    create: function() {
-        createBlurFilter(5, 5);
-    },
-    getBlur: function() {
-        return _blur;
-    },
-    getBlurNone: function() {
-        return _blurNone;
-    }
-}
-
-
-/***/ }),
-/* 14 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-//Dependency: choiceText
-
-
-//initializes once
-var _instance = null;
-var _game = null;
-var _text = [];
-var _choiceFont = null;
-var _bgImage = null;
-var _group = null;
-var Text = __webpack_require__(7),
-    Image = __webpack_require__(6);
-
-const bgImageKeyEnum = 'IMAGE_BACKGROUND';
-
-function createBgImage(key, draggable) {
-    _bgImage = new Image(0, 0, key, bgImageKeyEnum);
-    _bgImage.addImageToGame(_game, _game.mediaGroup);
-    _bgImage.changeImage(_game, draggable);
-}
-
-function dragStart() {
-}
-
-function dragUpdate() {
-    _group.x = _bgImage.getPhaserImage().x;
-    _group.y = _bgImage.getPhaserImage().y;
-}
-
-function dragStop() {
-
-}
-
-module.exports = {
-    init: function(game) {
-        if(_instance !== null)
-            return _instance;
-        _game = game;
-        _instance = this;
-        return _instance;
-    },
-    preload: function() {
-    },
-    create: function(bgKey, draggable) {
-        createBgImage(bgKey, draggable);
-        return _bgImage.getPhaserImage();
-    //    createIcons(icons, draggable, _bgImage);
-    },
-    assignFollowIcons: function(icons) {
-        _group = _game.add.group();
-        _game.mediaGroup.add(_group);
-        icons.forEach(function(icon) {
-            _group.add(icon.getPhaserImage());
-        });
-
-        _bgImage.getPhaserImage().events.onDragStart.add(dragStart);
-        _bgImage.getPhaserImage().events.onDragUpdate.add(dragUpdate);
-        _group.x = _bgImage.getPhaserImage().x;
-        _group.y = _bgImage.getPhaserImage().y;
-    }
-}
-
-
-/***/ }),
-/* 15 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-const Group = __webpack_require__(3),
-    UI = __webpack_require__(1),
-    Video = __webpack_require__(4),
-    Transition = __webpack_require__(0),
-    Icons = __webpack_require__(9),
-    State = __webpack_require__(5),
-    Choices = __webpack_require__(12);
-
-var _stateInfo = null;
-var _instance = null;
-var _momentCount = null;
-
-function CreateThought() {
-    Icons.endInteraction();
-    var thoughtBubbles = _stateInfo.getThoughtBubble(_momentCount);
-    if(thoughtBubbles) {
-        for(var i=0; i<thoughtBubbles.size; i++) {
-            console.log("Thought bubble: ");
-            console.log(thoughtBubbles.thoughts[i]);
-            Icons.createThoughtIcon(thoughtBubbles.thoughtIconKey[i], thoughtBubbles.coords[i], thoughtBubbles.thoughts[i], thoughtBubbles.choices[i]);
-        }
-    }
-    else {
-        console.log("Choices: " + _momentCount);
-        var choices = _stateInfo.getChoices(_momentCount);
-        Choices.create(choices);
-    }
-    _momentCount++;
-}
-
-function EndInteraction(lingeringChoice, targetScene) {
-    Icons.endInteraction();
-    Choices.endInteraction(lingeringChoice, targetScene);
-    if(!targetScene) {
-        Video.play();
-        _instance.game.global.gameManager.getToggleUISignal().dispatch();
-    }
-    Video.endFilter();
-}
-
-function GetTimeStamps() {
-    var moments = _stateInfo.getChoiceMoments();
-    var timeStamps = [];
-    console.log("Interaction Times")
-    for(var i=0; i<moments.size; i++) {
-        timeStamps.push(moments.choiceMomentsProperties[i].timeStamp);
-        console.log(moments.choiceMomentsProperties[i].timeStamp);
-    }
-    return timeStamps;
-}
-
-module.exports = {
-    init: function(scene) {
-        if(_stateInfo) {
-            _stateInfo.setStateScene(scene);
-        }
-        Video.init(this.game);
-        Icons.init(this.game);
-
-        if(_instance !== null)
-            return _instance;
-        _stateInfo = new State(scene);
-        _instance = this;
-        return _instance;
-    },
-    preload: function() {
-    },
-    create: function() {
-        Group.initializeGroups();
-        _momentCount = 0;
-        var timeStamps = GetTimeStamps();
-        Video.create(_stateInfo.getMovieSrc(), _stateInfo.getTransitionInfo().fadeOut,
-            _stateInfo.getVideoFilter(), _stateInfo.getNextScenes(), _stateInfo.getMovieSubKey(), timeStamps);
-        if(_stateInfo.getTransitionInfo().fadeIn)
-            this.game.global.gameManager.getFadeInTransitionSignal().dispatch();
-        UI.create(true, true);
-    },
-    createThought: function() {
-        CreateThought();
-    },
-    endInteraction: function(lingeringChoice, targetScene) {
-        EndInteraction(lingeringChoice, targetScene);
-    }
-}
-
-
-/***/ }),
-/* 16 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var _instance = null;
-var _stateInfo = null;
-var Transition = __webpack_require__(0),
-    Group = __webpack_require__(3),
-    State = __webpack_require__(5),
-    UI = __webpack_require__(1),
-    MovingBackground = __webpack_require__(14),
-    Icons = __webpack_require__(9);
-
-module.exports = {
-    init: function(scene) {
-        Group.initializeGroups();
-        if(_stateInfo !== null)
-            _stateInfo.setStateScene(scene);
-        if(_instance !== null)
-            return _instance;
-        _stateInfo = new State(scene);
-        _instance = this;
-        MovingBackground.init(this.game);
-        Icons.init(this.game);
-        return _instance;
-    },
-    preload: function() {
-    },
-    create: function() {
-    //    Video.create(_stateInfo.getMovieSrc(), _stateInfo.getTransition().fadeOut, Transition.getFadeOutSignal(), _stateInfo.getVideoFilter(), _stateInfo.getNextScenes());
-        MovingBackground.create(_stateInfo.getBgImageKey(), _stateInfo.getDraggable());
-        var icons = Icons.createExploratoryIcons(_stateInfo.getIconsInfo());
-        if(_stateInfo.getDraggable())
-            MovingBackground.assignFollowIcons(icons);
-        //UI.create(true, false);
-        if(_stateInfo.getTransitionInfo().fadeIn)
-            this.game.global.gameManager.getFadeInTransitionSignal().dispatch();
-    },
-    shutdown: function() {
-        Icons.destroy();
-    },
-    displayImage: function(index, hideSameType) {
-        Icons.displayIcon(index, hideSameType);
-    }
-}
-
-
-/***/ }),
-/* 17 */
+/* 19 */
 /***/ (function(module, exports) {
 
 //Dependency: None
@@ -1829,7 +2002,10 @@ function delayedCreate() {
 
 function createGlobalVars() {
     _game.global = {
-        playerName: null
+        playerName: null,
+        scenario1Decision: -1,
+        scenario2Decision: -1,
+        scenario3Decision: -1
     }
 }
 
@@ -1856,12 +2032,14 @@ module.exports = {
 
 
 /***/ }),
-/* 18 */
+/* 20 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var Resources = __webpack_require__(8);
-var GameManager = __webpack_require__(20),
-    _instance = null,
+const Resources = __webpack_require__(12),
+    GameManager = __webpack_require__(22),
+    SoundManager = __webpack_require__(24);
+
+var _instance = null,
     _game = null;
 
 module.exports = {
@@ -1871,6 +2049,7 @@ module.exports = {
         _game = this.game;
         Resources.init(_game);
         _game.global.gameManager = new GameManager();
+        _game.global.soundManager = new SoundManager(this.game);
         return _instance;
     },
     preload: function() {
@@ -1886,7 +2065,7 @@ module.exports = {
 
 
 /***/ }),
-/* 19 */
+/* 21 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1896,7 +2075,7 @@ var InputTypeEnum = {
     NameInput: 'INPUT_TEXT',
     Choices: 'TEXT_CHOICES'
 }
-var Linkable = __webpack_require__(2);
+var Linkable = __webpack_require__(3);
 
 var Input = function(content, xPos, yPos, properties) {
     this._xPos = xPos;
@@ -1924,21 +2103,21 @@ module.exports = Input;
 
 
 /***/ }),
-/* 20 */
+/* 22 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-const StateManager = __webpack_require__(11),
-    InteractState = __webpack_require__(15),
-    LocationState = __webpack_require__(16),
-    Icons = __webpack_require__(9),
-    Choices = __webpack_require__(12),
-    Thoughts = __webpack_require__(22),
+const StateManager = __webpack_require__(13),
+    InteractState = __webpack_require__(14),
+    LocationState = __webpack_require__(15),
+    Icons = __webpack_require__(5),
+    Choices = __webpack_require__(10),
+    Thoughts = __webpack_require__(11),
     Transition = __webpack_require__(0),
     UI = __webpack_require__(1),
-    Video = __webpack_require__(4);
+    Video = __webpack_require__(2);
 
 var _instance = null;
 var _game = null;
@@ -1957,6 +2136,7 @@ var GameManager = function() {
 
     this._createThoughtsSignal = null;
     this._createChoicesSignal = null;
+    this._revealChoicesSignal = null;
     this._createThoughtsAndChoicesSignal = null;
 
     this._displayImageSignal = null;
@@ -1987,6 +2167,8 @@ GameManager.prototype.initSignals = function() {
     this._createThoughtsSignal.add(Thoughts.create, this);
     this._createChoicesSignal = new Phaser.Signal();
     this._createChoicesSignal.add(Choices.create, this);
+    this._revealChoicesSignal = new Phaser.Signal();
+    this._revealChoicesSignal.add(Choices.revealChoices, this);
 
     this._displayImageSignal = new Phaser.Signal();
     this._displayImageSignal.add(LocationState.displayImage, this);
@@ -2036,6 +2218,10 @@ GameManager.prototype.getCreateThoughtsAndChoicesSignal = function() {
     return this._createThoughtsAndChoicesSignal;
 }
 
+GameManager.prototype.getRevealChoicesSignal = function() {
+    return this._revealChoicesSignal;
+}
+
 GameManager.prototype.getDisplayImageSignal = function() {
     return this._displayImageSignal;
 }
@@ -2060,7 +2246,7 @@ module.exports = GameManager;
 
 
 /***/ }),
-/* 21 */
+/* 23 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2069,7 +2255,7 @@ module.exports = GameManager;
 var _instance = null;
 var _game = null;
 var _input = null;
-var Input = __webpack_require__(19);
+var Input = __webpack_require__(21);
 
 module.exports = {
     init: function(game) {
@@ -2093,56 +2279,72 @@ module.exports = {
 
 
 /***/ }),
-/* 22 */
+/* 24 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-//Initialized once
-const Text = __webpack_require__(7);
+const StateManager = __webpack_require__(13),
+    InteractState = __webpack_require__(14),
+    LocationState = __webpack_require__(15),
+    Icons = __webpack_require__(5),
+    Choices = __webpack_require__(10),
+    Thoughts = __webpack_require__(11),
+    Transition = __webpack_require__(0),
+    UI = __webpack_require__(1),
+    Video = __webpack_require__(2);
 
-var _instance = null,
-    _game = null,
-    _text = [];
+var _instance = null;
+var _game = null;
+var _bgMusic = null;
+var _soundHashSet = null;
 
-const thoughtsTextKeyEnum = 'TEXT_THOUGHTS';
 
-module.exports = {
-    init: function(game) {
-        if(_instance !== null)
-            return _instance;
-        _game = game;
+var SoundManager = function(game) {
+    if(_instance === null)
         _instance = this;
-        return _instance;
-    },
-    preload: function() {
-    },
-    create: function(info, coords) {
-        _text = [];
-        for(var i=0; i < info.size; i++) {
-            _text.push(new Text(info.content[i], coords[0], coords[1], thoughtsTextKeyEnum, _game.global.style.thoughtsTextProperties));
-            _text[i].addToGame(_game, _game.mediaGroup);
-            _text[i].changeText(_game, info.destination[i][0], info.destination[i][1]);
-        };
-    },
-    endInteraction: function() {
-        _text.forEach(function(text) {
-            text.fadeOut(_game);
-        });
-    }
+    _game = game;
+    return _instance;
 }
+
+SoundManager.prototype.init = function() {
+    _soundHashSet = {};
+}
+
+SoundManager.prototype.playSound = function(soundKey) {
+    if(!_soundHashSet[soundKey]) {
+        _soundHashSet[soundKey] = _game.add.audio(soundKey);
+    }
+    _soundHashSet[soundKey].play();
+}
+
+SoundManager.prototype.playBackgroundMusic = function(musicKey) {
+    if(_bgMusic)
+        _bgMusic.stop();
+    if(!_soundHashSet[musicKey]) 
+        _soundHashSet[musicKey] = _game.add.audio(musicKey);
+    _bgMusic =_soundHashSet[musicKey];
+    _bgMusic.play();
+}
+
+SoundManager.prototype.stopBackgroundMusic = function() {
+    if(_bgMusic)
+        _bgMusic.stop();
+}
+
+module.exports = SoundManager;
 
 
 /***/ }),
-/* 23 */
+/* 25 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-const Linkable = __webpack_require__(2),
-    Animation = __webpack_require__(28);
+const Linkable = __webpack_require__(3),
+    Animation = __webpack_require__(7);
 
 var _instance = null;
 var _game = null;
@@ -2170,7 +2372,7 @@ function InitializeBitmapOverlay(game) {
 }
 
 function StartFilterFadeIn(signal) {    
-    var linkable = new Linkable(_game, signal);
+    var linkable = new Linkable(_game, _bitmapSprite, signal);
     linkable.addOnClickAnimation(Animation.fade(_game, _bitmapSprite, 1, false));
     linkable.addOnClickAnimation(Animation.scale(_game, _bitmapSprite, false, _game.width, _game.height));
     linkable.onTrigger();
@@ -2269,7 +2471,7 @@ module.exports = {
 
 
 /***/ }),
-/* 24 */
+/* 26 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2277,11 +2479,11 @@ module.exports = {
 
 var _instance = null;
 var _stateInfo = null;
-var Group = __webpack_require__(3),
+var Group = __webpack_require__(4),
     UI = __webpack_require__(1),
-    Video = __webpack_require__(4),
+    Video = __webpack_require__(2),
     Transition = __webpack_require__(0),
-    State = __webpack_require__(5);
+    State = __webpack_require__(6);
 
 module.exports = {
     init: function(scene, signal) {
@@ -2307,7 +2509,7 @@ module.exports = {
 
 
 /***/ }),
-/* 25 */
+/* 27 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2317,11 +2519,11 @@ var _instance = null;
 var _stateInfo = null;
 var _changeSceneSignal = null;
 var _input = [];
-var Input = __webpack_require__(21);
+var Input = __webpack_require__(23);
 var Transition = __webpack_require__(0);
-var State = __webpack_require__(5);
-var MovingBackground = __webpack_require__(14);
-var Icons = __webpack_require__(9);
+var State = __webpack_require__(6);
+var MovingBackground = __webpack_require__(17);
+var Icons = __webpack_require__(5);
 
 
 function setPlayerName(game) {
@@ -2354,7 +2556,7 @@ module.exports = {
     },
     create: function() {
         _input = [];
-        updatePlayerNameCallback(this.game);
+        //updatePlayerNameCallback(this.game);
         //Video.create(_stateInfo.getMovieSrc(), _stateInfo.getTransition().fadeOut, Transition.getFadeOutSignal(), _stateInfo.getVideoFilter(), _stateInfo.getNextScenes());
         MovingBackground.create(_stateInfo.getBgImageKey(), _stateInfo.getDraggable());
         Icons.createExploratoryIcons(_stateInfo.getIconsInfo());
@@ -2371,7 +2573,7 @@ module.exports = {
 
 
 /***/ }),
-/* 26 */
+/* 28 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2379,11 +2581,11 @@ module.exports = {
 
 var _instance = null;
 var _stateInfo = null;
-var Group = __webpack_require__(3),
+var Group = __webpack_require__(4),
     UI = __webpack_require__(1),
-    Video = __webpack_require__(4),
+    Video = __webpack_require__(2),
     Transition = __webpack_require__(0),
-    State = __webpack_require__(5);
+    State = __webpack_require__(6);
 
 module.exports = {
     init: function(scene, signal) {
@@ -2409,16 +2611,16 @@ module.exports = {
 
 
 /***/ }),
-/* 27 */
+/* 29 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-const Boot = __webpack_require__(17),
-    Preload = __webpack_require__(18),
-    StateManager = __webpack_require__(11),
-    ResourceLoader = __webpack_require__(8);
+const Boot = __webpack_require__(19),
+    Preload = __webpack_require__(20),
+    StateManager = __webpack_require__(13),
+    ResourceLoader = __webpack_require__(12);
     
 function initGame(Boot, Preload, StateManager, ResourceLoader) {
     var game = new Phaser.Game(1280, 720, Phaser.CANVAS, '', { init: init, preload: preload, create: create, update: update });
@@ -2447,49 +2649,6 @@ function initGame(Boot, Preload, StateManager, ResourceLoader) {
 }
 
 initGame(Boot, Preload, StateManager, ResourceLoader);
-
-
-/***/ }),
-/* 28 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-const FADE_SPEED = 700;
-const SCALE_SIZE = 1.05;
-
-//Animation constructor
-var Animation = function() {
-}
-
-Animation.scale = function(game, object, autoStart, targetWidth, targetHeight, speed, repeat, reset) {
-    if(!repeat)
-        repeat = 0;
-    if(!speed)
-        speed = FADE_SPEED;
-
-    var tween = game.add.tween(object).to({width:targetWidth, height:targetHeight}, speed, Phaser.Easing.Linear.None, autoStart, 0, repeat);
-    if(reset)
-        tween.onComplete.add(Reset, this);
-
-    function Reset(width, height) {
-        object.width = width;
-        object.height = height;
-    }
-
-    return tween;
-}
-
-Animation.fade = function(game, object, value, autoStart, speed, repeat) {
-    var customSpeed = speed;
-    if(!speed)
-        customSpeed = FADE_SPEED;
-    return game.add.tween(object).to({alpha:value}, customSpeed, Phaser.Easing.Linear.None, autoStart, 0, 0, false);
-}
-
-
-module.exports = Animation;
 
 
 /***/ })

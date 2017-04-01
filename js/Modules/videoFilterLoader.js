@@ -29,7 +29,7 @@ function InitializeBitmapOverlay(game) {
 }
 
 function StartFilterFadeIn(signal) {    
-    var linkable = new Linkable(_game, signal);
+    var linkable = new Linkable(_game, _bitmapSprite, signal);
     linkable.addOnClickAnimation(Animation.fade(_game, _bitmapSprite, 1, false));
     linkable.addOnClickAnimation(Animation.scale(_game, _bitmapSprite, false, _game.width, _game.height));
     linkable.onTrigger();

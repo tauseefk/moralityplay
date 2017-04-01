@@ -105,7 +105,7 @@ Image.prototype.changeToBgImage = function(game, draggable) {
     //Initializes container for bg image to be dragged around
 
     if(draggable) {
-        this.makeDraggable(game, 'stub', false, true, -this._image.width+game.width, 0, this._image.width*2-game.width, this._image.height)
+        this.makeDraggable(game, 'stub', false, true, -this._image.width+game.width, 0, this._image.width*2-game.width, this._image.height);
     }
 }
 
@@ -113,40 +113,36 @@ Image.prototype.changeToThoughtIcon = function(game, thoughtsAndChoicesSignal, t
     this._image.width = 100;
     this._image.height = 100;
     this._image.anchor.setTo(0.5, 0.5);
-    this._link = new Linkable(this._image, thoughtsAndChoicesSignal, thoughts, coords, choices);
+    this._link = new Linkable(game, this._image, thoughtsAndChoicesSignal, thoughts, coords, choices);
     this._link.addOnClickAnimation(Animation.fade(game, this._image, 0, false));
     this._link.addOnClickAnimation(Animation.scale(game, this._image, false));
     this._link.setAsButton(true);
 }
 
 Image.prototype.changeToSceneChangeImage = function(game, targetScene) {
-    this._link = new Linkable(this._image, game.global.gameManager.getChangeSceneSignal(), targetScene);
+    this._link = new Linkable(game, this._image, game.global.gameManager.getChangeSceneSignal(), targetScene);
     this._link.setAsButton(true);
 }
 
 Image.prototype.changeToDisplayImage = function(game, target) {
     this._image.anchor.setTo(0.5, 0.5);
-    this._link = new Linkable(this._image, game.global.gameManager.getDisplayImageSignal(), target, true);
+    this._link = new Linkable(game, this._image, game.global.gameManager.getDisplayImageSignal(), target, true);
     this._link.setAsButton(false);
     this._link.addMouseOverScaleEffect(game, this._image);
+ //   this._link.addSound('testSound');
 }
 
-Image.prototype.changeToChoiceBackgroundImage = function(game, width, height, index) {
+Image.prototype.changeToChoiceBackgroundImage = function(game, width, height) {
     this._image.alpha = 0;
     this._image.anchor.set(0.5, 0.5);
-    console.log(index);
-    if(index == 0)
-        this._image.x = game.width/4;
-    else if(index == 1)
-        this._image.x = game.width/4*3;
     this._image.width = width;
     this._image.height = height;
-    Animation.fade(game, this._image, 1, true);
+    //Animation.fade(game, this._image, 1, true);
     return this._image;
 }
 
 Image.prototype.changeToPauseButton = function(game, signal) {
-    this._link = new Linkable(this._image, signal);
+    this._link = new Linkable(game, this._image, signal);
     this._link.setAsButton(false);
 }
 
@@ -159,7 +155,7 @@ Image.prototype.changeToPlayButton = function(game) {
 }
 
 Image.prototype.changeToToggleSubtitleButton = function(game, signal) {
-    this._link = new Linkable(this._image, signal);
+    this._link = new Linkable(game, this._image, signal);
     this._link.setAsButton(false);
 }
 
@@ -212,6 +208,10 @@ Image.prototype.setVisible = function(isVisible) {
 
 Image.prototype.fadeOut = function(game) {
     Animation.fade(game, this._image, 0, true);
+}
+
+Image.prototype.fadeIn = function(game) {    
+    Animation.fade(game, this._image, 1, true);
 }
 
 function DebugRect(x, y, width, height, game) {

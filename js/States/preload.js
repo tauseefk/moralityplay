@@ -1,6 +1,8 @@
-var Resources = require('../Modules/resourceLoader');
-var GameManager = require('../Modules/gameManager'),
-    _instance = null,
+const Resources = require('../Modules/resourceLoader'),
+    GameManager = require('../Modules/gameManager'),
+    SoundManager = require('../Modules/soundManager');
+
+var _instance = null,
     _game = null;
 
 module.exports = {
@@ -10,6 +12,7 @@ module.exports = {
         _game = this.game;
         Resources.init(_game);
         _game.global.gameManager = new GameManager();
+        _game.global.soundManager = new SoundManager(this.game);
         return _instance;
     },
     preload: function() {
