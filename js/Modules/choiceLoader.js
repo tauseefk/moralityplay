@@ -19,7 +19,7 @@ const meaninglessTextKeyEnum = 'TEXT_MEANINGLESS_CHOICES';
 const FADE_DELAY = 1;
 const MAX_CHOICE = 2;
 
-function CreateBg(x, y, width, height) {
+function CreateBg(x, y, width, height, target) {
     var choiceBg = new Image(x, y, 'choiceBg', choiceBgKeyEnum);
     choiceBg.addImageToGame(_game, _game.mediaGroup);
     choiceBg.changeImage(_game, width, height, x);
@@ -36,16 +36,15 @@ function CreateChoices(choices, thoughtsTriggerNeeded) {
 
 function CreateMeaningfulChoices(info) {
     resetElements();
-
     for(var i=0; i < info.size; i++) {
-        var bgImg = CreateBg(GetXPos(info.size, i), info.y[i], info.bounds[i][0], info.bounds[i][1], i);
+        var bgImg = CreateBg(GetXPos(info.size, i), info.y[i], info.bounds[i][0], info.bounds[i][1], info.targetScene[i]);
         _choiceBg.push(bgImg);
 
         _text.push(new Text(info.content[i], GetXPos(info.size, i), 0, meaningfulTextKeyEnum, _game.global.style.choicesTextProperties));
         _text[i].index = i;
         _text[i].addToGame(_game, _game.mediaGroup);
         _text[i].changeText(_game, info.targetScene[i], _game.global.gameManager.getEndInteractionSignal(),
-            bgImg.getPhaserImage().y, i);
+            bgImg.getPhaserImage().y);
     };
 }
 
@@ -59,7 +58,7 @@ function CreateMeaninglessChoices(info) {
         _text[i].index = i;
         _text[i].addToGame(_game, _game.mediaGroup);
         _text[i].changeText(_game, _game.global.gameManager.getEndInteractionSignal(),
-            bgImg.getPhaserImage().y, i);
+            bgImg.getPhaserImage().y);
     }
 }
 
