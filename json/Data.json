@@ -11,7 +11,8 @@
     "pauseButton": "./Images/UI/pause.png",
     "playButton": "./Images/UI/start.png",
     "subtitleButton": "./Images/UI/subtitle.png",
-    "thoughtIcon": "./Images/UI/thought_icon.png",
+    "thoughtLeft": "./Images/UI/ThoughBubble_Left.png",
+    "thoughtRight":"./Images/UI/ThoughBubble_Right.png",
     "choiceBg": "./Images/UI/choice_button_bg.png",
     "blackInfo": "./Images/UI/black.png",
     "asianInfo": "./Images/UI/asian.png"
@@ -198,8 +199,8 @@
             "thoughtBubbles": {
               "size": 2,
               "thoughtIconKey": [
-                "thoughtIcon",
-                "thoughtIcon"
+                "thoughtRight",
+                "thoughtLeft"
               ],
               "coords": [
                 [ 780, 100 ],
@@ -366,12 +367,12 @@
             "thoughtBubbles": {
               "size": 2,
               "thoughtIconKey": [
-                "thoughtIcon",
-                "thoughtIcon"
+                "thoughtLeft",
+                "thoughtRight"
               ],
               "coords": [
                 [ 400, 100 ],
-                [ 750, 100 ]
+                [ 900, 100 ]
               ],
               "thoughts": [
                 {
