@@ -98,7 +98,7 @@
             "choices": {
               "size": 2,
               "content": [
-                "You too!",
+                "Have a nice day!",
                 "See you later!"
               ],
               "y": [
@@ -130,20 +130,26 @@
         "fadeOut": true
       },
       "icons": {
-        "size": 4,
+        "size": 6,
         "type": [
+          "IMAGE_BUTTON_DISPLAY_IMAGE",
+          "IMAGE_BUTTON_SCENECHANGE",
           "IMAGE_BUTTON_DISPLAY_IMAGE",
           "IMAGE_BUTTON_SCENECHANGE",
           "IMAGE_BUTTON_DISPLAY_IMAGE",
           "IMAGE_BUTTON_SCENECHANGE"
         ],
         "key": [
+          "leftArrow",
+          "leftOutline", 
           "middleArrow",
           "middleOutline",
           "rightArrow",
           "rightOutline"
         ],
         "coords": [
+          [ 995, 500 ],
+          [ 825, 0 ],  
           [ 1907, 500 ],
           [ 1560, 0 ],
           [ 3500, 500 ],
@@ -152,8 +158,10 @@
         ],
         "targetImageIndexOrScene": [
           1,
-          "black1",
+          "indian1",
           3,
+          "black1",
+          5,
           "asian1",
           null
         ]
@@ -437,7 +445,88 @@
         "fadeOut": false
       },
       "nextScenes": "menuScene"
+    },
+
+    "indian1": {
+      "videoFilter": [
+        [ "grayscale", null ]
+      ],
+      "movieSrc": "./Videos/Indian1.mp4",
+      "stateType": "InteractState",
+      "transition": {
+        "fadeIn": true,
+        "fadeOut": false
+      },
+      "choiceMoments": {
+        "size": 2,
+        "choiceMomentsProperties": [
+          {
+            "timeStamp": 4,
+            "choices": {
+              "size": 2,
+              "content": [
+                "Yes!",
+                "No, thanks."
+              ],
+              "y": [
+                600,
+                600
+              ],
+              "bounds": [
+                [ 600, 200 ],
+                [ 600, 200 ]
+              ]
+            }
+          },
+          {
+            "timeStamp": 41,
+              "choices": 
+                {
+                  "size": 2,
+                  "content": [
+                    "I think she was just \ntrying to show interesting.",
+                    "Why would you assume \nhe is not from here?"
+                  ],
+                  "y": [
+                    600,
+                    600
+                  ],
+                  "bounds": [
+                    [ 600, 200 ],
+                    [ 600, 200 ]
+                  ],
+                  "targetScene": [
+                    "indian2bad",
+                    "indian2good"
+                  ]
+                }
+              
+            }
+          
+        ]
+      }
+    },
+    "indian2good": {
+      "stateType": "MovieState",
+      "movieSrc": "./Videos/Indian2_Good.mp4",
+      "transition": {
+        "fadeIn": true,
+        "fadeOut": false
+      },
+      "nextScenes": "menuScene"
+    },
+    "indian2bad": {
+      "stateType": "MovieState",
+      "movieSrc": "./Videos/Indian2_Bad.mp4",
+      "transition": {
+        "fadeIn": true,
+        "fadeOut": false
+      },
+      "nextScenes": "menuScene"
     }
+
+
+
 
   }
 }
