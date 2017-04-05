@@ -1,77 +1,85 @@
-    "use strict";
+"use strict";
 
-    var State = function(scene) {
-      this._scene = scene;
-    };
+var State = function(scene) {
+  this._scene = scene;
+};
 
-    State.prototype.setStateScene = function(scene) {
-      this._scene = scene;
-    };
+State.prototype.setStateScene = function(scene) {
+  this._scene = scene;
+};
 
-    State.prototype.getMovieKey = function() {
-      return this._scene.movieKey;
-    }
+State.prototype.getMovieKey = function() {
+  return this._scene.movieKey;
+}
 
-    State.prototype.getChoiceMoments = function() {
-      return this._scene.choiceMoments;
-    }
+State.prototype.getChoiceMoments = function() {
+  return this._scene.choiceMoments;
+}
 
-    State.prototype.getThoughtBubble = function(index) {
-      return this._scene.choiceMoments.choiceMomentsProperties[index].thoughtBubbles;
-    }
+State.prototype.getThoughtBubble = function(index) {
+  return this._scene.choiceMoments.choiceMomentsProperties[index].thoughtBubbles;
+}
 
-    State.prototype.getChoices = function(index){
-      return this._scene.choiceMoments.choiceMomentsProperties[index].choices;
-    }
+State.prototype.getChoices = function(index){
+  return this._scene.choiceMoments.choiceMomentsProperties[index].choices;
+}
 
-    State.prototype.getChoicesFromThoughtMoment = function(index){
-      return this._scene.choiceMoments.choiceMomentsProperties[index].thoughtBubbles.choices;
-    }
-    /*
-    State.prototype.getThoughtsInfo = function() {
-      return this._scene.thoughts;
-    }
-    State.prototype.getChoicesInfo = function() {
-      return this._scene.choices;
-    }
-    State.prototype.getThoughtIconKey = function() {
-      return this._scene.thoughtIconKey;
-    }*/
+State.prototype.getChoicesFromThoughtMoment = function(index){
+  return this._scene.choiceMoments.choiceMomentsProperties[index].thoughtBubbles.choices;
+}
+/*
+State.prototype.getThoughtsInfo = function() {
+  return this._scene.thoughts;
+}
+State.prototype.getChoicesInfo = function() {
+  return this._scene.choices;
+}
+State.prototype.getThoughtIconKey = function() {
+  return this._scene.thoughtIconKey;
+}*/
 
-    State.prototype.getBgImageKey = function() {
-      return this._scene.bgImageKey;
-    }
+State.prototype.getBgImageKey = function() {
+  return this._scene.bgImageKey;
+}
 
-    State.prototype.getIconsInfo = function() {
-      return this._scene.icons;
-    }
+State.prototype.getIconsInfo = function() {
+  return this._scene.icons;
+}
 
-    State.prototype.getInputInfo = function() {
-      return this._scene.input;
-    }
+State.prototype.getInputInfo = function() {
+  return this._scene.input;
+}
 
-    State.prototype.getMovieSrc = function() {
-      return this._scene.movieSrc;
-    }
+State.prototype.getMovieSrc = function(definition) {
+  console.log(definition);
+  if(definition == 'HD')
+    return this._scene.movieSrcHD;
+  else if(definition == 'SD')
+    return this._scene.movieSrcSD;
+  else {
+    console.warn('Deprecated: Must specify HD or SD in json.')    
+    return this._scene.movieSrc;
+  }
+}
 
-    State.prototype.getMovieSubKey = function() {
-      return this._scene.sub;
-    }
+State.prototype.getMovieSubKey = function() {
+  return this._scene.sub;
+}
 
-    State.prototype.getTransitionInfo = function() {
-      return this._scene.transition;
-    }
+State.prototype.getTransitionInfo = function() {
+  return this._scene.transition;
+}
 
-    State.prototype.getVideoFilter = function() {
-      return this._scene.videoFilter;
-    }
+State.prototype.getVideoFilter = function() {
+  return this._scene.videoFilter;
+}
 
-    State.prototype.getNextScenes = function() {
-      return this._scene.nextScenes;
-    }
+State.prototype.getNextScenes = function() {
+  return this._scene.nextScenes;
+}
 
-    State.prototype.getDraggable = function() {
-      return this._scene.draggable;
-    }
+State.prototype.getDraggable = function() {
+  return this._scene.draggable;
+}
 
-    module.exports = State;
+module.exports = State;

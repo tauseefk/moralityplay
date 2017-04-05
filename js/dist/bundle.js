@@ -63,7 +63,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 29);
+/******/ 	return __webpack_require__(__webpack_require__.s = 30);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -130,7 +130,7 @@ module.exports = {
 //Dependency: Nonde
 
 
-const Image = __webpack_require__(8),
+const Image = __webpack_require__(9),
     Video = __webpack_require__(2);
 
 var _instance = null;
@@ -139,6 +139,7 @@ var _graphics = null;
 var _pauseImage = null;
 var _playImage = null;
 var _toggleSubtitleImage = null;
+var _pausedByEngine = false;
 
 var _uiVisible = true;
 
@@ -183,16 +184,30 @@ function Pause() {
 }
 
 function Play() {
-    Video.play();
-    _game.paused = false;
-    _graphics.visible = false;
-    _playImage.setVisible(false);
+    if(!Video.isPausedByGame()) {
+        Video.play();
+        _game.paused = false;
+        _graphics.visible = false;
+        _playImage.setVisible(false);
+    }
 }
 
 function ToggleUI() {
     _uiVisible = !_uiVisible;
     _pauseImage.setVisible(_uiVisible);
-    //_toggleSubtitleImage.setVisible(_uiVisible);
+    _toggleSubtitleImage.setVisible(_uiVisible);
+}
+
+function HideUI() {
+    _uiVisible = false;
+    _pauseImage.setVisible(_uiVisible);
+    _toggleSubtitleImage.setVisible(_uiVisible);
+}
+
+function ShowUI() {
+    _uiVisible = true;
+    _pauseImage.setVisible(_uiVisible);
+    _toggleSubtitleImage.setVisible(_uiVisible);
 }
 
 function DrawPauseOverlay() {
@@ -226,23 +241,28 @@ module.exports = {
     },
     create: function(drawPause, drawSubtitleToggle) {
         _uiVisible = true;
-        //if(drawSubtitleToggle)
-            //DrawToggleSubtitleButton();
+        if(drawSubtitleToggle)
+            DrawToggleSubtitleButton();
         if(drawPause) {
             DrawPauseButton();
             DrawPauseOverlay();
             DrawPlayButton();
         }
     },
-    pause: function() {
-        Pause();
+    pause: function(byGame) {
+        Pause(byGame);
     },
     play: function() {
-        console.log("pressed");
         Play();
     },
     toggleUI: function() {
         ToggleUI();
+    },
+    showUI: function() {
+        ShowUI();
+    },
+    hideUI: function() {
+        HideUI();
     }
 }
 
@@ -254,9 +274,9 @@ module.exports = {
 "use strict";
 
 
-const VideoFilter = __webpack_require__(25),
+const VideoFilter = __webpack_require__(26),
     Linkable = __webpack_require__(3),
-    Subtitle = __webpack_require__(18);
+    Subtitle = __webpack_require__(19);
 
 var _instance = null;
 var _game = null;
@@ -265,12 +285,13 @@ var _videoImage = null;
 var _videoFilter = null;
 var _interactionTimeStamps = null;
 
+var _pausedByGame = false;
+
 const FADEOUT_OFFSET_SECONDS = 5;
 const VIDEO_SLOW_PLAYBACK_RATE = 0.2;
 
 function CreateVideo(src, doFadeOut, nextScenes, sub, interactionTimeStamps) {
     _video = _video.changeSource(src, false);
-    _video.play();
 
 //    _video.video.setAttribute('autoplay', 'autoplay');
     AddVideoAndFilter(doFadeOut, sub);
@@ -301,7 +322,7 @@ function AddVideoAndFilter(doFadeOut, sub) {
     _game.mediaGroup.add(_videoImage);
     _video.onChangeSource.addOnce(OnVideoLoad, this);
     function OnVideoLoad() {
-
+        _video.play();
         //_video.video.addEventListener('progress', CheckProgress, false);
         if(doFadeOut) {
             //_game.time.events.add((_video.video.duration-FADEOUT_OFFSET_SECONDS)*Phaser.Timer.SECOND, FadeOut, this);
@@ -317,8 +338,12 @@ function AddVideoAndFilter(doFadeOut, sub) {
 
 function TriggerMoment() {
     console.log(_video.video.duration);
-    console.log(_video.video.currentTime);    
-    _game.global.gameManager.getToggleUISignal().dispatch();
+    console.log(_video.video.currentTime);
+    //Ensure game is not paused to pause scenario properly
+    _game.global.gameManager.getPlaySignal().dispatch();
+    _video.video.pause();
+    _pausedByGame = true;
+    _game.global.gameManager.getHideUISignal().dispatch();
     VideoFilter.startFilterFade(_game.global.gameManager.getTriggerInteractionSignal());
 }
 
@@ -348,15 +373,11 @@ function ChangeScene(nextScenes) {
     }
 }
 
-function stopVideo() {
-    if(_video !== null)
-        _video.stop();
-}
-
 module.exports = {
     init: function(game) {
         console.log("Video initialized");
         _interactionTimeStamps = null;
+        _pausedByGame = false;
         //stopVideo();
         if(_instance !== null)
             return _instance;
@@ -380,7 +401,9 @@ module.exports = {
         if(_video)
             _video.stop();
     },
-    play: function() {
+    play: function(pausedByGame) {
+        if(pausedByGame == false)
+            _pausedByGame = pausedByGame;
         if(_video)
             _video.play();
     },
@@ -388,10 +411,13 @@ module.exports = {
         if(_video)
             return _video.video.paused;
     },
-    endFilter() {
+    isPausedByGame: function() {
+        return _pausedByGame;
+    },
+    endFilter: function() {
         VideoFilter.endFilter();
     },
-    toggleSubtitle() {
+    toggleSubtitle: function() {
         Subtitle.toggleSubtitle();
     }
 }
@@ -404,7 +430,7 @@ module.exports = {
 "use strict";
 
 
-const Animation = __webpack_require__(7);
+const Animation = __webpack_require__(8);
 
 const FADE_SPEED = 700;
 const MOUSEOVER_SPEED = 300;
@@ -493,7 +519,10 @@ Linkable.prototype.playSound = function() {
 }
 
 Linkable.prototype.removeInput = function() {
-    this._event.inputEnabled = false;    
+    this._event.inputEnabled = false;
+    if(this._event.input) {
+        this._event.input.useHandCursor = false;
+    } 
 }
 
 Linkable.prototype.onTrigger = function() {
@@ -523,491 +552,11 @@ module.exports = Linkable;
 /* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [], __WEBPACK_AMD_DEFINE_RESULT__ = function() {
-    "use strict";
-
-    var _instance = null;
-    var _game = null;
-
-    function InitializeGroups() {        
-        _game.mediaGroup = _game.add.group();
-        _game.uiGroup = _game.add.group();
-    }
-
-    return {
-        init: function(game) {
-            if(_instance !== null)
-                return _instance;
-            _game = game;
-            _instance = this;
-            return _instance;
-        },
-        preload: function() {
-        },
-        initializeGroups: function() {
-            InitializeGroups();
-        }
-    }
-
-}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-
-/***/ }),
-/* 5 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-const Filter = __webpack_require__(16),
-    Thoughts = __webpack_require__(11),
-    Choices = __webpack_require__(10),
-    Image = __webpack_require__(8);
-
-var _instance = null;
-var _game = null;
-var _icons = [];
-
-const buttonThoughtImageKeyEnum = 'IMAGE_BUTTON_THOUGHT';
-const sceneChangeImageKeyEnum = 'IMAGE_BUTTON_SCENECHANGE';
-
-function CreateThoughtIcon(iconKey, coords, thoughts) {
-    var button = new Image(coords[0], coords[1], iconKey, buttonThoughtImageKeyEnum);
-    button.addImageToGame(_game, _game.mediaGroup);
-    button.changeImage(_game, _game.global.gameManager.getCreateThoughtsAndChoicesSignal(), thoughts, coords);
-    _icons.push(button);
-}
-
-function CreateExploratoryIcons(key, coords, target, type, reference) {
-    var button = new Image(coords[0], coords[1], key, type);
-    button.addImageToGame(_game, _game.mediaGroup);
-    button.changeImage(_game, target);
-    _icons.push(button);
-}
-
-function EndInteraction() {
-    _icons.forEach(function(icon) {
-        icon.fadeOut(_game);
-    });
-}
-
-function HideIconType(iconType) {
-    _icons.forEach(function(icon) {
-        if(icon.getType() == iconType) {
-            icon.setVisible(false);
-        }
-    });
-}
-
-module.exports = {
-    init: function(game) {
-        _icons = [];
-        if(_instance !== null)
-            return _instance;
-        _game = game;
-        _instance = this;
-        return _instance;
-    },
-    preload: function() {
-    },
-    createThoughtIcon: function(iconKey, coords, thoughts) {
-        CreateThoughtIcon(iconKey, coords, thoughts);
-    },
-    createExploratoryIcons: function(icons) {
-        for(var i=0; i<icons.size; i++) {
-            CreateExploratoryIcons(icons.key[i], icons.coords[i], icons.targetImageIndexOrScene[i], icons.type[i]);
-        }        
-        HideIconType(sceneChangeImageKeyEnum);
-        return _icons;
-    },
-    endInteraction: function() {
-        EndInteraction();
-    },
-    displayIcon: function(index, hideSameType) {
-        if(hideSameType)
-            HideIconType(_icons[index].getType());
-        _icons[index].setVisible(true);
-    },
-    createThoughtsAndChoices: function(thoughts, coords) {
-        _game.global.gameManager.getCreateThoughtsSignal().dispatch(thoughts, coords);
-    },
-    destroy: function() {
-        _icons.forEach(function(icon) {
-            icon.destroy();
-        });
-        _icons = [];
-    }
-}
-
-
-/***/ }),
-/* 6 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-    
-
-    var State = function(scene) {
-      this._scene = scene;
-    };
-
-    State.prototype.setStateScene = function(scene) {
-      this._scene = scene;
-    };
-
-    State.prototype.getMovieKey = function() {
-      return this._scene.movieKey;
-    }
-
-    State.prototype.getChoiceMoments = function() {
-      return this._scene.choiceMoments;
-    }
-
-    State.prototype.getThoughtBubble = function(index) {
-      return this._scene.choiceMoments.choiceMomentsProperties[index].thoughtBubbles;
-    }
-
-    State.prototype.getChoices = function(index){
-      return this._scene.choiceMoments.choiceMomentsProperties[index].choices;
-    }
-
-    State.prototype.getChoicesFromThoughtMoment = function(index){
-      return this._scene.choiceMoments.choiceMomentsProperties[index].thoughtBubbles.choices;
-    }
-    /*
-    State.prototype.getThoughtsInfo = function() {
-      return this._scene.thoughts;
-    }
-    State.prototype.getChoicesInfo = function() {
-      return this._scene.choices;
-    }
-    State.prototype.getThoughtIconKey = function() {
-      return this._scene.thoughtIconKey;
-    }*/
-
-    State.prototype.getBgImageKey = function() {
-      return this._scene.bgImageKey;
-    }
-
-    State.prototype.getIconsInfo = function() {
-      return this._scene.icons;
-    }
-
-    State.prototype.getInputInfo = function() {
-      return this._scene.input;
-    }
-
-    State.prototype.getMovieSrc = function() {
-      return this._scene.movieSrc;
-    }
-
-    State.prototype.getMovieSubKey = function() {
-      return this._scene.sub;
-    }
-
-    State.prototype.getTransitionInfo = function() {
-      return this._scene.transition;
-    }
-
-    State.prototype.getVideoFilter = function() {
-      return this._scene.videoFilter;
-    }
-
-    State.prototype.getNextScenes = function() {
-      return this._scene.nextScenes;
-    }
-
-    State.prototype.getDraggable = function() {
-      return this._scene.draggable;
-    }
-
-    module.exports = State;
-
-
-/***/ }),
-/* 7 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-const FADE_SPEED = 700;
-const SCALE_SIZE = 1.05;
-
-//Animation constructor
-var Animation = function() {
-}
-
-Animation.scale = function(game, object, autoStart, targetWidth, targetHeight, speed, repeat, reset) {
-    if(!repeat)
-        repeat = 0;
-    if(!speed)
-        speed = FADE_SPEED;
-
-    var tween = game.add.tween(object).to({width:targetWidth, height:targetHeight}, speed, Phaser.Easing.Linear.None, autoStart, 0, repeat);
-    if(reset)
-        tween.onComplete.add(Reset, this);
-
-    function Reset(width, height) {
-        object.width = width;
-        object.height = height;
-    }
-
-    return tween;
-}
-
-Animation.fade = function(game, object, value, autoStart, speed, repeat) {
-    var customSpeed = speed;
-    if(!speed)
-        customSpeed = FADE_SPEED;
-    return game.add.tween(object).to({alpha:value}, customSpeed, Phaser.Easing.Linear.None, autoStart, 0, 0, false);
-}
-
-
-module.exports = Animation;
-
-
-/***/ }),
-/* 8 */
-/***/ (function(module, exports, __webpack_require__) {
-
 "use strict";
 
 
 const Linkable = __webpack_require__(3),
-    Animation = __webpack_require__(7);
-
-const MOUSEOVER_SPEED = 300;
-
-var ImageTypeEnum = {
-        Static: 'IMAGE_STATIC',
-        SceneChange: 'IMAGE_BUTTON_SCENECHANGE',
-        DisplayImage: 'IMAGE_BUTTON_DISPLAY_IMAGE',
-        Thought: 'IMAGE_BUTTON_THOUGHT',
-        Transition: 'IMAGE_TRANSITION',
-        Background: 'IMAGE_BACKGROUND',
-        ChoiceBackground: 'IMAGE_CHOICE_BACKGROUND',
-        Pause: 'IMAGE_BUTTON_PAUSE',
-        Play: 'IMAGE_BUTTON_PLAY',
-        ToggleSubtitle: 'IMAGE_BUTTON_TOGGLE_SUBTITLE'
-    }
-
-//Image constructor
-var Image = function(xPos, yPos, key, type, properties) {
-    this._type = type;
-    this._xPos = xPos;
-    this._yPos = yPos;
-    this._properties = properties;
-    this._key = key;
-    this._link = null;
-    this._image = this;
-}
-
-Image.prototype.addImageToGame = function(game, group) {
-    switch(this._type) {
-        case ImageTypeEnum.Pause:
-        case ImageTypeEnum.Play:
-        case ImageTypeEnum.Thought:
-        case ImageTypeEnum.SceneChange:
-        case ImageTypeEnum.DisplayImage:
-        case ImageTypeEnum.ToggleSubtitle:
-            this._image = game.add.button(this._xPos, this._yPos, this._key);
-            this._image.inputEnabled = true;
-            break;
-        case ImageTypeEnum.Static:
-        case ImageTypeEnum.Background:
-        case ImageTypeEnum.ChoiceBackground:
-            this._image = game.add.image(this._xPos, this._yPos, this._key);
-            break;
-        default:
-            console.warn("Invalid image type not added.");
-    }
-    group.add(this._image);
-}
-
-Image.prototype.setImage = function(key) {
-    this._key = key;
-}
-
-//Assigns image change function depending on enum
-Image.prototype.changeImage = function (game, arg1, arg2, arg3, arg4, arg5) {
-    switch(this._type) {
-        case ImageTypeEnum.Static:            
-            this.changeToStaticImage(game);
-            break;
-        case ImageTypeEnum.Background:
-            this.changeToBgImage(game, arg1);
-            break;
-        case ImageTypeEnum.Thought:
-            this.changeToThoughtIcon(game, arg1, arg2, arg3, arg4, arg5);
-            break;
-        case ImageTypeEnum.SceneChange:
-            this.changeToSceneChangeImage(game, arg1, arg2);
-            break;
-        case ImageTypeEnum.DisplayImage:
-            this.changeToDisplayImage(game, arg1);
-            break;
-        case ImageTypeEnum.ChoiceBackground:
-            this.changeToChoiceBackgroundImage(game, arg1, arg2, arg3);
-            break;
-        case ImageTypeEnum.Pause:
-            this.changeToPauseButton(game, arg1);
-            break;
-        case ImageTypeEnum.Play:
-            this.changeToPlayButton(game);
-            break;
-        case ImageTypeEnum.ToggleSubtitle:
-            this.changeToPauseButton(game, arg1);
-            break;
-        default:
-            console.warn("Invalid Image Type.");
-    }
-}
-
-Image.prototype.changeToStaticImage = function(game) {
-
-}
-
-//Changes image to a horizontally draggable image
-//Scales and sets a rectangle container for Bg image to pan around
-Image.prototype.changeToBgImage = function(game, draggable) {
-
-    //Scales Bg image to fit game height, maintains Bg image aspect ratio
-    var scale = game.height/this._image.height;
-    this._image.height = Math.floor(this._image.height*scale);
-    this._image.width = Math.floor(this._image.width*scale);
-    //Initializes container for bg image to be dragged around
-
-    if(draggable) {
-        this.makeDraggable(game, 'stub', false, true, -this._image.width+game.width, 0, this._image.width*2-game.width, this._image.height);
-    }
-}
-
-Image.prototype.changeToThoughtIcon = function(game, thoughtsAndChoicesSignal, thoughts, coords, choices) {
-    this._image.width = 100;
-    this._image.height = 100;
-    this._image.anchor.setTo(0.5, 0.5);
-    this._link = new Linkable(game, this._image, thoughtsAndChoicesSignal, thoughts, coords, choices);
-    this._link.addOnClickAnimation(Animation.fade(game, this._image, 0, false));
-    this._link.addOnClickAnimation(Animation.scale(game, this._image, false));
-    this._link.setAsButton(true);
-}
-
-Image.prototype.changeToSceneChangeImage = function(game, targetScene) {
-    this._link = new Linkable(game, this._image, game.global.gameManager.getChangeSceneSignal(), targetScene);
-    this._link.setAsButton(true);
-}
-
-Image.prototype.changeToDisplayImage = function(game, target) {
-    this._image.anchor.setTo(0.5, 0.5);
-    this._link = new Linkable(game, this._image, game.global.gameManager.getDisplayImageSignal(), target, true);
-    this._link.setAsButton(false);
-    this._link.addMouseOverScaleEffect(game, this._image);
- //   this._link.addSound('testSound');
-}
-
-Image.prototype.changeToChoiceBackgroundImage = function(game, width, height) {
-    this._image.alpha = 0;
-    this._image.anchor.set(0.5, 0.5);
-    this._image.width = width;
-    this._image.height = height;
-    //Animation.fade(game, this._image, 1, true);
-    return this._image;
-}
-
-Image.prototype.changeToPauseButton = function(game, signal) {
-    this._link = new Linkable(game, this._image, signal);
-    this._link.setAsButton(false);
-}
-
-Image.prototype.changeToPlayButton = function(game) {
-    this._image.anchor.setTo(0.5, 0.5);
-    this._image.height = 300;
-    this._image.width = 300;
-    //this._link = new Linkable(this._image, signal);
-    //this._link.setAsButton(false);
-}
-
-Image.prototype.changeToToggleSubtitleButton = function(game, signal) {
-    this._link = new Linkable(game, this._image, signal);
-    this._link.setAsButton(false);
-}
-
-//Changes cursor image on mouseover
-Image.prototype.changeCursorImage = function(game, cursorImageSrc) {
-    this._image.events.onInputOver.add(function(){
-    game.canvas.style.cursor = cursorImageSrc;
-    }, this);
-
-    this._image.events.onInputOut.add(function(){
-    game.canvas.style.cursor = "default";
-    }, this);
-}
-
-Image.prototype.makeDraggable = function(game, hoverImageSrc, lockHorizontal, lockVertical, boundsX, boundsY, boundsWidth, boundsHeight) {
-
-    //Enables drag interaction on the horizontal axis
-    this._image.inputEnabled = true;
-    if(boundsX !== undefined && boundsX !== undefined) {
-        var dragBounds = new Phaser.Rectangle(boundsX, boundsY, boundsWidth, boundsHeight);
-        this._image.input.boundsRect = dragBounds;
-    }
-    this._image.input.draggable = true;
-    this._image.input.allowVerticalDrag = !lockVertical;
-    this._image.input.allowHorizontalDrag = !lockHorizontal;
-    this._image.x = -this._image.width/2;
-    //Changes mouseover image
-    this.changeCursorImage(game, 'url("./Images/UI/hand_2.png"), auto');
-}
-
-Image.prototype.addMouseOverScaleEffect = function(game, link) {
-
-}
-
-Image.prototype.destroy = function() {
-    this._image.destroy();
-}
-
-Image.prototype.getPhaserImage = function() {
-    return this._image;
-}
-
-Image.prototype.getType = function() {
-    return this._type;
-}
-
-Image.prototype.setVisible = function(isVisible) {
-    this._image.visible = isVisible;
-}
-
-Image.prototype.fadeOut = function(game) {
-    Animation.fade(game, this._image, 0, true);
-}
-
-Image.prototype.fadeIn = function(game) {    
-    Animation.fade(game, this._image, 1, true);
-}
-
-function DebugRect(x, y, width, height, game) {
-    var bounds = new Phaser.Rectangle(x, y, width, height);
-    var graphics = game.add.graphics(bounds.x, bounds.y);
-    graphics.beginFill(0x000077);
-    graphics.drawRect(0, 0, bounds.width, bounds.height);
-}
-
-module.exports = Image;
-
-
-/***/ }),
-/* 9 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-const Linkable = __webpack_require__(3),
-    Animation = __webpack_require__(7);
+    Animation = __webpack_require__(8);
 
 const PADDING = 10;
 
@@ -1081,7 +630,11 @@ Text.prototype.changeToThoughts = function(game, xTo, yTo, filter) {
     Animation.fade(game, this._text, 1, true);
 }
 
-Text.prototype.changeToMeaningfulChoices = function(game, targetScene, endInteractionSignal, boundsY) {
+Text.prototype.changeToMeaningfulChoices = function(game, targetScene, endInteractionSignal, boundsY, totalChoices) {
+    if(totalChoices > 2)
+        this._text.fontSize -= 5;
+    if(totalChoices > 1)
+        this._text.fontSize -= 5;
     this._text.anchor.set(0.5, 0.5);
     this._text.y = boundsY;
     this._text.alpha = 0;
@@ -1095,7 +648,11 @@ Text.prototype.changeToMeaningfulChoices = function(game, targetScene, endIntera
     //Animation.fade(game, this._text, 1, true);
 }
 
-Text.prototype.changeToMeaninglessChoices = function(game, endInteractionSignal, boundsY) {
+Text.prototype.changeToMeaninglessChoices = function(game, endInteractionSignal, boundsY, totalChoices) {
+    if(totalChoices > 2)
+        this._text.fontSize -= 5;
+    if(totalChoices > 1)
+        this._text.fontSize -= 5;
     this._text.anchor.set(0.5, 0.5);
     this._text.y = boundsY;
     this._text.alpha = 0;
@@ -1169,14 +726,542 @@ module.exports = Text;
 
 
 /***/ }),
+/* 5 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _instance = null;
+var _game = null;
+
+function InitializeGroups() {        
+    _game.mediaGroup = _game.add.group();
+    _game.uiGroup = _game.add.group();
+}
+
+module.exports = {
+    init: function(game) {
+        if(_instance !== null)
+            return _instance;
+        _game = game;
+        _instance = this;
+        return _instance;
+    },
+    preload: function() {
+    },
+    initializeGroups: function() {
+        InitializeGroups();
+    }
+}
+
+
+
+
+/***/ }),
+/* 6 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+const Filter = __webpack_require__(17),
+    Thoughts = __webpack_require__(11),
+    Choices = __webpack_require__(10),
+    Image = __webpack_require__(9);
+
+var _instance = null;
+var _game = null;
+var _icons = [];
+
+const buttonThoughtImageKeyEnum = 'IMAGE_BUTTON_THOUGHT',
+    buttonThoughtSpriteKeyEnum = 'IMAGE_SPRITE_THOUGHT',
+    sceneChangeImageKeyEnum = 'IMAGE_BUTTON_SCENECHANGE';
+
+function CreateThoughtIcon(iconKey, coords, thoughts) {
+    var button = new Image(coords[0], coords[1], iconKey, buttonThoughtSpriteKeyEnum);
+    button.addImageToGame(_game, _game.mediaGroup);
+    button.changeImage(_game, _game.global.gameManager.getCreateThoughtsAndChoicesSignal(), thoughts, coords);
+    _icons.push(button);
+}
+
+function CreateExploratoryIcons(key, coords, target, type, reference) {
+    var button = new Image(coords[0], coords[1], key, type);
+    button.addImageToGame(_game, _game.mediaGroup);
+    button.changeImage(_game, target);
+    _icons.push(button);
+}
+
+function EndInteraction() {
+    _icons.forEach(function(icon) {
+        icon.fadeOut(_game);
+    });
+}
+
+function HideIconType(iconType) {
+    _icons.forEach(function(icon) {
+        if(icon.getType() == iconType) {
+            icon.setVisible(false);
+        }
+    });
+}
+
+module.exports = {
+    init: function(game) {
+        _icons = [];
+        if(_instance !== null)
+            return _instance;
+        _game = game;
+        _instance = this;
+        return _instance;
+    },
+    preload: function() {
+    },
+    createThoughtIcon: function(iconKey, coords, thoughts) {
+        CreateThoughtIcon(iconKey, coords, thoughts);
+    },
+    createExploratoryIcons: function(icons) {
+        for(var i=0; i<icons.size; i++) {
+            CreateExploratoryIcons(icons.key[i], icons.coords[i], icons.targetImageIndexOrScene[i], icons.type[i]);
+        }        
+        HideIconType(sceneChangeImageKeyEnum);
+        return _icons;
+    },
+    endInteraction: function() {
+        EndInteraction();
+    },
+    displayIcon: function(index, hideSameType) {
+        if(hideSameType)
+            HideIconType(_icons[index].getType());
+        _icons[index].setVisible(true);
+    },
+    createThoughtsAndChoices: function(thoughts, coords) {
+        _game.global.gameManager.getCreateThoughtsSignal().dispatch(thoughts, coords);
+    },
+    destroy: function() {
+        _icons.forEach(function(icon) {
+            icon.destroy();
+        });
+        _icons = [];
+    }
+}
+
+
+/***/ }),
+/* 7 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var State = function(scene) {
+  this._scene = scene;
+};
+
+State.prototype.setStateScene = function(scene) {
+  this._scene = scene;
+};
+
+State.prototype.getMovieKey = function() {
+  return this._scene.movieKey;
+}
+
+State.prototype.getChoiceMoments = function() {
+  return this._scene.choiceMoments;
+}
+
+State.prototype.getThoughtBubble = function(index) {
+  return this._scene.choiceMoments.choiceMomentsProperties[index].thoughtBubbles;
+}
+
+State.prototype.getChoices = function(index){
+  return this._scene.choiceMoments.choiceMomentsProperties[index].choices;
+}
+
+State.prototype.getChoicesFromThoughtMoment = function(index){
+  return this._scene.choiceMoments.choiceMomentsProperties[index].thoughtBubbles.choices;
+}
+/*
+State.prototype.getThoughtsInfo = function() {
+  return this._scene.thoughts;
+}
+State.prototype.getChoicesInfo = function() {
+  return this._scene.choices;
+}
+State.prototype.getThoughtIconKey = function() {
+  return this._scene.thoughtIconKey;
+}*/
+
+State.prototype.getBgImageKey = function() {
+  return this._scene.bgImageKey;
+}
+
+State.prototype.getIconsInfo = function() {
+  return this._scene.icons;
+}
+
+State.prototype.getInputInfo = function() {
+  return this._scene.input;
+}
+
+State.prototype.getMovieSrc = function(definition) {
+  console.log(definition);
+  if(definition == 'HD')
+    return this._scene.movieSrcHD;
+  else if(definition == 'SD')
+    return this._scene.movieSrcSD;
+  else {
+    console.warn('Deprecated: Must specify HD or SD in json.')    
+    return this._scene.movieSrc;
+  }
+}
+
+State.prototype.getMovieSubKey = function() {
+  return this._scene.sub;
+}
+
+State.prototype.getTransitionInfo = function() {
+  return this._scene.transition;
+}
+
+State.prototype.getVideoFilter = function() {
+  return this._scene.videoFilter;
+}
+
+State.prototype.getNextScenes = function() {
+  return this._scene.nextScenes;
+}
+
+State.prototype.getDraggable = function() {
+  return this._scene.draggable;
+}
+
+module.exports = State;
+
+
+/***/ }),
+/* 8 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+const FADE_SPEED = 700;
+const SCALE_SIZE = 1.05;
+
+//Animation constructor
+var Animation = function() {
+}
+
+Animation.scale = function(game, object, autoStart, targetWidth, targetHeight, speed, repeat, reset) {
+    if(!repeat)
+        repeat = 0;
+    if(!speed)
+        speed = FADE_SPEED;
+
+    var tween = game.add.tween(object).to({width:targetWidth, height:targetHeight}, speed, Phaser.Easing.Linear.None, autoStart, 0, repeat);
+    if(reset)
+        tween.onComplete.add(Reset, this);
+
+    function Reset(width, height) {
+        object.width = width;
+        object.height = height;
+    }
+
+    return tween;
+}
+
+Animation.fade = function(game, object, value, autoStart, speed, repeat) {
+    var customSpeed = speed;
+    if(!speed)
+        customSpeed = FADE_SPEED;
+    return game.add.tween(object).to({alpha:value}, customSpeed, Phaser.Easing.Linear.None, autoStart, 0, 0, false);
+}
+
+Animation.bob = function(game, object, autoStart) {
+    return game.add.tween(object).to({y:'+20'}, 400, Phaser.Easing.Linear.None, autoStart, 0, -1, true);
+}
+
+module.exports = Animation;
+
+
+/***/ }),
+/* 9 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+const Linkable = __webpack_require__(3),
+    Animation = __webpack_require__(8);
+
+var ImageTypeEnum = {
+        Static: 'IMAGE_STATIC',
+        ThoughtSprite: 'IMAGE_SPRITE_THOUGHT',
+        SceneChange: 'IMAGE_BUTTON_SCENECHANGE',
+        DisplayImage: 'IMAGE_BUTTON_DISPLAY_IMAGE',
+        Thought: 'IMAGE_BUTTON_THOUGHT',
+        Transition: 'IMAGE_TRANSITION',
+        Background: 'IMAGE_BACKGROUND',
+        ChoiceBackground: 'IMAGE_CHOICE_BACKGROUND',
+        Pause: 'IMAGE_BUTTON_PAUSE',
+        Play: 'IMAGE_BUTTON_PLAY',
+        ToggleSubtitle: 'IMAGE_BUTTON_TOGGLE_SUBTITLE'
+    }
+
+//Image constructor
+var Image = function(xPos, yPos, key, type, properties) {
+    this._type = type;
+    this._xPos = xPos;
+    this._yPos = yPos;
+    this._properties = properties;
+    this._key = key;
+    this._link = null;
+    this._image = this;
+}
+
+Image.prototype.addImageToGame = function(game, group) {
+    switch(this._type) {
+        case ImageTypeEnum.Pause:
+        case ImageTypeEnum.Play:
+        case ImageTypeEnum.Thought:
+        case ImageTypeEnum.SceneChange:
+        case ImageTypeEnum.DisplayImage:
+        case ImageTypeEnum.ToggleSubtitle:
+        case ImageTypeEnum.ChoiceBackground:
+            this._image = game.add.button(this._xPos, this._yPos, this._key);
+            this._image.inputEnabled = true;
+            break;
+        case ImageTypeEnum.Static:
+        case ImageTypeEnum.Background:
+            this._image = game.add.image(this._xPos, this._yPos, this._key);
+            break;
+        case ImageTypeEnum.ThoughtSprite:
+            this._image = game.add.sprite(this._xPos, this._yPos, this._key);
+            break;
+        default:
+            console.warn("Invalid image type not added.");
+    }
+    group.add(this._image);
+}
+
+//Assigns image change function depending on enum
+Image.prototype.changeImage = function (game, arg1, arg2, arg3, arg4, arg5) {
+    switch(this._type) {
+        case ImageTypeEnum.Static:            
+            this.changeToStaticImage(game);
+            break;
+        case ImageTypeEnum.Background:
+            this.changeToBgImage(game, arg1);
+            break;
+        case ImageTypeEnum.Thought:
+            this.changeToThoughtIcon(game, arg1, arg2, arg3, arg4, arg5);
+            break;
+        case ImageTypeEnum.SceneChange:
+            this.changeToSceneChangeImage(game, arg1, arg2);
+            break;
+        case ImageTypeEnum.DisplayImage:
+            this.changeToDisplayImage(game, arg1);
+            break;
+        case ImageTypeEnum.ChoiceBackground:
+            this.changeToChoiceBackgroundImage(game, arg1, arg2, arg3);
+            break;
+        case ImageTypeEnum.Pause:
+            this.changeToPauseButton(game, arg1);
+            break;
+        case ImageTypeEnum.Play:
+            this.changeToPlayButton(game);
+            break;
+        case ImageTypeEnum.ToggleSubtitle:
+            this.changeToPauseButton(game, arg1);
+            break;
+        case ImageTypeEnum.ThoughtSprite:
+            this.changeToThoughtSprite(game, arg1, arg2, arg3, arg4, arg5);
+            break;
+        default:
+            console.warn("Invalid Image Type.");
+    }
+}
+
+Image.prototype.changeToStaticImage = function(game) {
+
+}
+
+Image.prototype.changeToThoughtSprite = function(game, thoughtsAndChoicesSignal, thoughts, coords, choices) {
+    this._image.width = 100;
+    this._image.height = 100;
+    this._image.anchor.setTo(0.5, 0.5);
+    this._image.animations.add('think');
+    this._image.animations.play('think', 4, false);
+    this._image.inputEnabled = true;
+    this._image.input.useHandCursor = true;
+    this._link = new Linkable(game, this._image.events, thoughtsAndChoicesSignal, thoughts, coords, choices);
+    this._link.addOnClickAnimation(Animation.fade(game, this._image, 0, false));
+    this._link.addOnClickAnimation(Animation.scale(game, this._image, false));
+    this._link.setAsButton(true);
+    //Animation.bob(game, this._image, true);
+}
+
+//Changes image to a horizontally draggable image
+//Scales and sets a rectangle container for Bg image to pan around
+Image.prototype.changeToBgImage = function(game, draggable) {
+
+    //Scales Bg image to fit game height, maintains Bg image aspect ratio
+    var scale = game.height/this._image.height;
+    this._image.height = Math.floor(this._image.height*scale);
+    this._image.width = Math.floor(this._image.width*scale);
+    //Initializes container for bg image to be dragged around
+
+    if(draggable) {
+        this.makeDraggable(game, 'stub', false, true, -this._image.width+game.width, 0, this._image.width*2-game.width, this._image.height);
+    }
+}
+
+Image.prototype.changeToThoughtIcon = function(game, thoughtsAndChoicesSignal, thoughts, coords, choices) {
+    this._image.width = 100;
+    this._image.height = 100;
+    this._image.anchor.setTo(0.5, 0.5);
+    this._link = new Linkable(game, this._image, thoughtsAndChoicesSignal, thoughts, coords, choices);
+    this._link.addOnClickAnimation(Animation.fade(game, this._image, 0, false));
+    this._link.addOnClickAnimation(Animation.scale(game, this._image, false));
+    this._link.setAsButton(true);
+    Animation.bob(game, this._image, true);
+}
+
+Image.prototype.changeToSceneChangeImage = function(game, targetScene) {
+    this._link = new Linkable(game, this._image, game.global.gameManager.getChangeSceneSignal(), targetScene);
+    this._link.setAsButton(true);
+}
+
+Image.prototype.changeToDisplayImage = function(game, target) {
+    this._image.anchor.setTo(0.5, 0.5);
+    this._link = new Linkable(game, this._image, game.global.gameManager.getDisplayImageSignal(), target, true);
+    this._link.setAsButton(false);
+    this._link.addMouseOverScaleEffect(game, this._image);
+ //   this._link.addSound('testSound');
+}
+
+Image.prototype.changeToChoiceBackgroundImage = function(game, width, height, target) {
+    this._image.alpha = 0;
+    this._image.anchor.set(0.5, 0.5);
+    this._image.width = width;
+    this._image.height = height;
+
+    this._link = new Linkable(game, this._image, game.global.gameManager.getEndInteractionSignal(), this, target);
+    this._link.setAsButton(true);        
+    this._link.addMouseOverScaleEffect(game, this._image);
+    
+    //Animation.fade(game, this._image, 1, true);
+    return this._image;
+}
+
+Image.prototype.changeToPauseButton = function(game, signal) {
+    this._link = new Linkable(game, this._image, signal);
+    this._link.setAsButton(false);
+}
+
+Image.prototype.changeToPlayButton = function(game) {
+    this._image.anchor.setTo(0.5, 0.5);
+    this._image.height = 300;
+    this._image.width = 300;
+    //this._link = new Linkable(this._image, signal);
+    //this._link.setAsButton(false);
+}
+
+Image.prototype.changeToToggleSubtitleButton = function(game, signal) {
+    this._link = new Linkable(game, this._image, signal);
+    this._link.setAsButton(false);
+}
+
+//Changes cursor image on mouseover
+Image.prototype.changeCursorImage = function(game, cursorImageSrc) {
+    this._image.events.onInputOver.add(function(){
+    game.canvas.style.cursor = cursorImageSrc;
+    }, this);
+
+    this._image.events.onInputOut.add(function(){
+    game.canvas.style.cursor = "default";
+    }, this);
+}
+
+Image.prototype.makeDraggable = function(game, hoverImageSrc, lockHorizontal, lockVertical, boundsX, boundsY, boundsWidth, boundsHeight) {
+
+    //Enables drag interaction on the horizontal axis
+    this._image.inputEnabled = true;
+    if(boundsX !== undefined && boundsX !== undefined) {
+        var dragBounds = new Phaser.Rectangle(boundsX, boundsY, boundsWidth, boundsHeight);
+        this._image.input.boundsRect = dragBounds;
+    }
+    this._image.input.draggable = true;
+    this._image.input.allowVerticalDrag = !lockVertical;
+    this._image.input.allowHorizontalDrag = !lockHorizontal;
+    this._image.x = -this._image.width/2;
+    //Changes mouseover image
+    this.changeCursorImage(game, 'url("./Images/UI/hand_2.png"), auto');
+}
+
+Image.prototype.addMouseOverScaleEffect = function(game, link) {
+
+}
+
+Image.prototype.destroy = function() {
+    this._image.destroy();
+}
+
+Image.prototype.getPhaserImage = function() {
+    return this._image;
+}
+
+Image.prototype.getType = function() {
+    return this._type;
+}
+
+Image.prototype.disableInput = function() {
+    this._image.inputEnabled = false;
+}
+
+Image.prototype.setVisible = function(isVisible) {
+    this._image.visible = isVisible;
+}
+
+Image.prototype.setImage = function(key) {
+    this._key = key;
+}
+
+Image.prototype.fadeOut = function(game, chainSignal, arg1) {
+    if(chainSignal) {
+        this._link = new Linkable(game, this._image, chainSignal, arg1);
+        this._link.addOnClickAnimation(Animation.fade(game, this._image, 0, true));
+        this._link.onTrigger();
+    }
+    else {
+        Animation.fade(game, this._image, 0, true);
+    }
+}
+
+Image.prototype.fadeIn = function(game) {    
+    Animation.fade(game, this._image, 1, true);
+}
+
+function DebugRect(x, y, width, height, game) {
+    var bounds = new Phaser.Rectangle(x, y, width, height);
+    var graphics = game.add.graphics(bounds.x, bounds.y);
+    graphics.beginFill(0x000077);
+    graphics.drawRect(0, 0, bounds.width, bounds.height);
+}
+
+module.exports = Image;
+
+
+/***/ }),
 /* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-const Text = __webpack_require__(9),
-    Image = __webpack_require__(8);
+const Text = __webpack_require__(4),
+    Image = __webpack_require__(9);
 
 //initializes once
 var _instance = null;
@@ -1192,12 +1277,11 @@ const meaningfulTextKeyEnum = 'TEXT_MEANINGFUL_CHOICES';
 const meaninglessTextKeyEnum = 'TEXT_MEANINGLESS_CHOICES';
 
 const FADE_DELAY = 1;
-const MAX_CHOICE = 2;
 
 function CreateBg(x, y, width, height, target) {
     var choiceBg = new Image(x, y, 'choiceBg', choiceBgKeyEnum);
     choiceBg.addImageToGame(_game, _game.mediaGroup);
-    choiceBg.changeImage(_game, width, height, x);
+    choiceBg.changeImage(_game, width, height, target);
     return choiceBg;
 }
 
@@ -1213,13 +1297,14 @@ function CreateMeaningfulChoices(info) {
     resetElements();
     for(var i=0; i < info.size; i++) {
         var bgImg = CreateBg(GetXPos(info.size, i), info.y[i], info.bounds[i][0], info.bounds[i][1], info.targetScene[i]);
+
+        bgImg.index = i;
         _choiceBg.push(bgImg);
 
         _text.push(new Text(info.content[i], GetXPos(info.size, i), 0, meaningfulTextKeyEnum, _game.global.style.choicesTextProperties));
         _text[i].index = i;
         _text[i].addToGame(_game, _game.mediaGroup);
-        _text[i].changeText(_game, info.targetScene[i], _game.global.gameManager.getEndInteractionSignal(),
-            bgImg.getPhaserImage().y);
+        _text[i].changeText(_game, info.targetScene[i], _game.global.gameManager.getEndInteractionSignal(), bgImg.getPhaserImage().y, info.size);
     };
 }
 
@@ -1227,18 +1312,17 @@ function CreateMeaninglessChoices(info) {
     resetElements();
     for(var i=0; i < info.size; i++) {
         var bgImg = CreateBg(GetXPos(info.size, i), info.y[i], info.bounds[i][0], info.bounds[i][1]);
+        bgImg.index = i;
         _choiceBg.push(bgImg);
 
         _text.push(new Text(info.content[i], GetXPos(info.size, i), 0, meaninglessTextKeyEnum, _game.global.style.choicesTextProperties));
         _text[i].index = i;
         _text[i].addToGame(_game, _game.mediaGroup);
-        _text[i].changeText(_game, _game.global.gameManager.getEndInteractionSignal(),
-            bgImg.getPhaserImage().y);
+        _text[i].changeText(_game, _game.global.gameManager.getEndInteractionSignal(), bgImg.getPhaserImage().y, info.size);
     }
 }
 
 function RevealChoices() {
-    console.log("revealed.");
     _choiceBg.forEach(function(bg) {
         bg.fadeIn(_game);
     });
@@ -1250,37 +1334,49 @@ function RevealChoices() {
 function GetXPos(size, index) {
     if(size == 1)
         return _game.width/2;
-    if(size == MAX_CHOICE) {
+    if(size == 2) {
         if(index == 0)
             return _game.width/4;
         if(index == 1)
             return _game.width/4*3;
     }
-    console.warn("1 or 2 choices allowed.");
+    if(size == 3) {
+        if(index == 0)
+            return _game.width/6;
+        if(index == 1)
+            return _game.width/2;        
+        if(index == 2)
+            return _game.width/6*5;
+    }
+    console.warn("1, 2 or 3 choices allowed.");
     return null;
 }
 
-function FadeChoicesExcept(choiceText){
+function FadeChoicesExcept(index){
     _text.forEach(function(text) {
-        if(text.index != choiceText.index) {
+        if(text.index != index) {
             text.disableInput();
             text.fadeOut(_game);
         }
     });
 
     _choiceBg.forEach(function(choiceBg) {
-        choiceBg.fadeOut(_game);
+        if(choiceBg.index != index) {
+            choiceBg.disableInput();
+            choiceBg.fadeOut(_game);
+        }
     });
 }
 
-function FadeChoiceAfterDelay(choiceText, targetScene) {
+function FadeChoiceAfterDelay(index, targetScene) {
     _game.time.events.add(Phaser.Timer.SECOND*FADE_DELAY, fadeChoice, this);
 
     function fadeChoice(){
         if(targetScene)
-            choiceText.fadeOut(_game, _game.global.gameManager.getChangeSceneSignal(), targetScene);
+            _text[index].fadeOut(_game, _game.global.gameManager.getChangeSceneSignal(), targetScene);
         else
-            choiceText.fadeOut(_game);
+            _text[index].fadeOut(_game);
+        _choiceBg[index].fadeOut(_game);
     }
 }
 
@@ -1305,8 +1401,8 @@ module.exports = {
         CreateChoices(choices, thoughtsTriggerNeeded);
     },
     endInteraction: function(lingeringChoice, targetScene) {
-        FadeChoicesExcept(lingeringChoice);
-        FadeChoiceAfterDelay(lingeringChoice, targetScene);
+        FadeChoicesExcept(lingeringChoice.index);
+        FadeChoiceAfterDelay(lingeringChoice.index, targetScene);
     },
     revealChoices: function() {
         //_thoughtsTriggeredCount++;
@@ -1325,7 +1421,7 @@ module.exports = {
 
 
 //Initialized once
-const Text = __webpack_require__(9);
+const Text = __webpack_require__(4);
 
 var _instance = null,
     _game = null,
@@ -1368,7 +1464,7 @@ module.exports = {
 
 "use strict";
 
-var Filter = __webpack_require__(16);
+var Filter = __webpack_require__(17);
 var _instance = null;
 var _game = null;
 var _startSceneKey = 'startScene';
@@ -1376,6 +1472,7 @@ var _data = null;
 var _videos = null;
 var _audio = null;
 var _images = null;
+var _spritesheets = null;
 var _scenes = null;
 var _subs = null;
 var _style = null;
@@ -1401,6 +1498,13 @@ function loadImages(images) {
     }
 }
 
+function loadSpritesheets(spritesheet) {
+    console.log("Loading spritesheets");
+    for (var key in spritesheet) {
+        _game.load.spritesheet(key, spritesheet[key][0], spritesheet[key][1], spritesheet[key][2], spritesheet[key][3]);
+    }
+}
+
 function loadSubs(subs) {
     console.log("Loading subs");
     for (var key in subs) {
@@ -1418,6 +1522,7 @@ module.exports = {
         _data = _game.cache.getJSON('data');
         _style = _game.cache.getJSON('style');
         _images = _data.images;
+        _spritesheets = _data.spritesheets;
         _videos = _data.videos;
         _audio = _data.audio;
         _scenes = _data.scenes;
@@ -1428,25 +1533,12 @@ module.exports = {
     //    Filter.preload();
         console.log("Loading resources");
         loadImages(_images);
+        loadSpritesheets(_spritesheets);
         loadAudio(_audio);
         loadSubs(_subs);
     //    loadVideos(videos);
 
     },
-    create: function() {
-    //    Filter.create();
-    },
-    /*
-    getBlur: function() {
-        return Filter.getBlur();
-    },
-    getBlurNone: function() {
-        return Filter.getBlurNone();
-    },
-    getBlurFilter: function() {
-        return Filter;
-    },
-    */
     getScene: function(name) {
         return _scenes[name];
     },
@@ -1470,16 +1562,16 @@ module.exports = {
 
 
 const Resources = __webpack_require__(12),
-    Group = __webpack_require__(4),
+    Group = __webpack_require__(5),
     Transition = __webpack_require__(0),
     UI = __webpack_require__(1),
     Video = __webpack_require__(2),
-    MenuState = __webpack_require__(27),
+    MenuState = __webpack_require__(28),
     LocationState = __webpack_require__(15),
     InteractState = __webpack_require__(14),
-    FlashbackState = __webpack_require__(26),
-    MovieState = __webpack_require__(28),
-    Subtitle = __webpack_require__(18);
+    FlashbackState = __webpack_require__(27),
+    MovieState = __webpack_require__(29),
+    Subtitle = __webpack_require__(19);
 
 var _stateManagerInstance = null;
 var _transitionSignal = null;
@@ -1568,12 +1660,12 @@ module.exports = {
 "use strict";
 
 
-const Group = __webpack_require__(4),
+const Group = __webpack_require__(5),
     UI = __webpack_require__(1),
     Video = __webpack_require__(2),
     Transition = __webpack_require__(0),
-    Icons = __webpack_require__(5),
-    State = __webpack_require__(6),
+    Icons = __webpack_require__(6),
+    State = __webpack_require__(7),
     Choices = __webpack_require__(10),
     Thoughts = __webpack_require__(11);
 
@@ -1591,7 +1683,6 @@ function CreateThought() {
     if(thoughtBubbles) {
         for(var i=0; i<thoughtBubbles.size; i++) {
             console.log("Thought bubble: ");
-            console.log(thoughtBubbles.thoughts[i]);
             Icons.createThoughtIcon(thoughtBubbles.thoughtIconKey[i], thoughtBubbles.coords[i], thoughtBubbles.thoughts[i]);
         }
 
@@ -1611,9 +1702,9 @@ function EndInteraction(lingeringChoice, targetScene) {
     Icons.endInteraction();
     Choices.endInteraction(lingeringChoice, targetScene);
     Thoughts.endInteraction();
-    if(!targetScene) {
-        Video.play();
-        _instance.game.global.gameManager.getToggleUISignal().dispatch();
+    if(!targetScene) {        
+        Video.play(false);
+        _instance.game.global.gameManager.getShowUISignal().dispatch();
     }
     Video.endFilter();
 }
@@ -1651,7 +1742,7 @@ module.exports = {
         Group.initializeGroups();
         _momentCount = 0;
         var timeStamps = GetTimeStamps();
-        Video.create(_stateInfo.getMovieSrc(), _stateInfo.getTransitionInfo().fadeOut,
+        Video.create(_stateInfo.getMovieSrc(_game.global.quality), _stateInfo.getTransitionInfo().fadeOut,
             _stateInfo.getVideoFilter(), _stateInfo.getNextScenes(), _stateInfo.getMovieSubKey(), timeStamps);
         if(_stateInfo.getTransitionInfo().fadeIn)
             this.game.global.gameManager.getFadeInTransitionSignal().dispatch();
@@ -1677,12 +1768,12 @@ var _instance = null;
 var _stateInfo = null;
 
 const Transition = __webpack_require__(0),
-    Group = __webpack_require__(4),
-    State = __webpack_require__(6),
+    Group = __webpack_require__(5),
+    State = __webpack_require__(7),
     UI = __webpack_require__(1),
-    MovingBackground = __webpack_require__(17),
-    Icons = __webpack_require__(5),
-    Text = __webpack_require__(9);
+    MovingBackground = __webpack_require__(18),
+    Icons = __webpack_require__(6),
+    Text = __webpack_require__(4);
 
 module.exports = {
     init: function(scene) {
@@ -1726,6 +1817,107 @@ module.exports = {
 
 /***/ }),
 /* 16 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+//Dependency: choiceText
+
+
+//initializes once
+var _instance = null;
+var _game = null;
+var _file = null;
+var _bytes = null;
+var _timer = null;
+
+const SLOW_DOWNLOAD_THRESHOLD_MBPS = 0.36;
+
+var FileTypeEnum = {
+    Image: 'IMAGE',
+    Video: 'VIDEO',
+    Audio: 'AUDIO'
+}
+
+function CheckConnection() {    
+    _game.load.onFileComplete.add(LoadComplete, this);
+    _game.load.onLoadStart.add(StartLoading, this);    
+    _game.load.start();
+}
+
+function StartLoading() {
+    _timer = _game.time.create(true);
+    _timer.start();
+    console.log(_timer);
+}
+
+function LoadComplete() {    
+    _timer.stop();
+    var elapsedSeconds = (_timer._now - _timer._started)/1000;
+    elapsedSeconds += _timer.elapsed/1000;
+    var connectionSpeedMbps = _bytes/(elapsedSeconds)/ 1000000;
+    SetVideoQuality(connectionSpeedMbps);  
+    _game.load.onFileComplete.remove(LoadComplete, this);
+    _game.state.start("preload");
+}
+
+function SetVideoQuality(speed) {
+    if(speed > SLOW_DOWNLOAD_THRESHOLD_MBPS || speed < 0)
+        _game.global.quality = 'HD';
+    else
+        _game.global.quality = 'SD';
+    console.log('Connection speed: ' + speed + ' Mb/s. Quality: ' +  _game.global.quality);  
+}
+
+function Load(key, src, type) {
+    switch (type) {
+        case FileTypeEnum.Image:
+            _file = _game.load.image(key, src);
+            break;
+        case FileTypeEnum.Video:
+            _file = _game.load.text(key, src);
+            break;
+        case FileTypeEnum.Audio:
+            _file = _game.load.audio(key, src);
+            break;
+        default:
+            console.warn('Not a valid file type for loading check.');
+    }
+    return _file;
+}
+
+function StartPreloadState() {
+    _game.state.start("preload");
+}
+
+module.exports = {
+    init: function(game) {
+        _file = null;
+        if(_instance !== null)
+            return _instance;
+        _game = game;
+        _instance = this;
+        return _instance;
+    },
+    addToFiles: function(file) {
+        _files.push(file);
+    },
+    loadFile: function(key, src, type, bytes) {
+        _bytes = bytes;
+        if(!_bytes)
+            console.warn("Error, file bytes not specified for connection testing.")
+        Load(key, src, type);
+    },
+    checkConnection: function() {
+        CheckConnection();
+    },
+    startPreload() {
+        StartPreloadState();
+    }
+}
+
+
+/***/ }),
+/* 17 */
 /***/ (function(module, exports) {
 
 var _instance = null,
@@ -1773,7 +1965,7 @@ module.exports = {
 
 
 /***/ }),
-/* 17 */
+/* 18 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1787,8 +1979,8 @@ var _text = [];
 var _choiceFont = null;
 var _bgImage = null;
 var _group = null;
-var Text = __webpack_require__(9),
-    Image = __webpack_require__(8);
+var Text = __webpack_require__(4),
+    Image = __webpack_require__(9);
 
 const bgImageKeyEnum = 'IMAGE_BACKGROUND';
 
@@ -1841,13 +2033,13 @@ module.exports = {
 
 
 /***/ }),
-/* 18 */
+/* 19 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-const Text = __webpack_require__(9);
+const Text = __webpack_require__(4);
 
 var _instance = null;
 var _game = null;
@@ -1975,40 +2167,58 @@ module.exports = {
 
 
 /***/ }),
-/* 19 */
-/***/ (function(module, exports) {
+/* 20 */
+/***/ (function(module, exports, __webpack_require__) {
 
 //Dependency: None
+const ConnectionChecker = __webpack_require__(16), 
+    GameManager = __webpack_require__(23),
+    SoundManager = __webpack_require__(25);
+
 var _instance = null
 var _game = null;
 
+const connectionTestFileKey = 'littleRootMusic',
+    connectionTestFileSrc = './Audio/Music/Pokemon Omega Ruby Alpha Sapphire - Littleroot Town Music (HQ).mp3',
+    connectionTestFileType = 'AUDIO',
+    connectionTestFileBytes = 2886887;
+
+
 WebFontConfig = {
     //Load fonts before creation, timer delay. Can be improved  in implementation.
-    active: function() { _game.time.events.add(Phaser.Timer.SECOND, delayedCreate, this); },
+    active: function() { _game.time.events.add(Phaser.Timer.SECOND, DelayedCreate, this); },
 
     google: {
       families: ['Kadwa', 'Merienda One'],
     }
 };
 
-function delayedCreate() {
-    createGlobalVars();
-    initGameGroups();
+function DelayedCreate() {
+
+    CreateGlobalVars();
+    InitGameGroups();
     _game.stage.disableVisibilityChange = true;
     _game.stage.backgroundColor = "#ffffff";
-    _game.state.start("preload");
+    var text = _game.add.text(_game.world.centerX, _game.world.centerY, "Checking connection...");
+    text.anchor.setTo(0.5, 0.5);
+    ConnectionChecker.loadFile(connectionTestFileKey, connectionTestFileSrc, connectionTestFileType, connectionTestFileBytes);
+    ConnectionChecker.checkConnection();
 }
 
-function createGlobalVars() {
+function CreateGlobalVars() {
     _game.global = {
         playerName: null,
         scenario1Decision: -1,
         scenario2Decision: -1,
         scenario3Decision: -1
     }
+
+    _game.global.gameManager = new GameManager();
+    _game.global.gameManager.initSignals();
+    _game.global.soundManager = new SoundManager(_game);
 }
 
-function initGameGroups() {
+function InitGameGroups() {
     _game.mediaGroup = _game.add.group();
     _game.uiGroup = _game.add.group();
 }
@@ -2016,6 +2226,7 @@ function initGameGroups() {
 module.exports = {
     init: function() {
         console.log("Boot State");
+        ConnectionChecker.init(this.game);
         if( _instance !== null)
             return _instance;
         _game = this.game;
@@ -2031,12 +2242,10 @@ module.exports = {
 
 
 /***/ }),
-/* 20 */
+/* 21 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const Resources = __webpack_require__(12),
-    GameManager = __webpack_require__(22),
-    SoundManager = __webpack_require__(24);
+const Resources = __webpack_require__(12);
 
 var _instance = null,
     _game = null;
@@ -2047,16 +2256,15 @@ module.exports = {
             return _instance;
         _game = this.game;
         Resources.init(_game);
-        _game.global.gameManager = new GameManager();
-        _game.global.soundManager = new SoundManager(this.game);
         return _instance;
     },
     preload: function() {
+        var preloadImage = this.game.add.sprite(this.game.world.centerX, this.game.world.centerY, 'progressBar');
+        preloadImage.anchor.setTo(0.5, 0.5);
+        this.game.load.setPreloadSprite(preloadImage);
         Resources.preload();
     },
     create: function() {
-        Resources.create();
-        _game.global.gameManager.initSignals();
         _game.global.style = Resources.getStyle();
         _game.state.start("stateManager");
     }
@@ -2064,7 +2272,7 @@ module.exports = {
 
 
 /***/ }),
-/* 21 */
+/* 22 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2102,16 +2310,17 @@ module.exports = Input;
 
 
 /***/ }),
-/* 22 */
+/* 23 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-const StateManager = __webpack_require__(13),
+const ConnectionChecker = __webpack_require__(16),
+    StateManager = __webpack_require__(13),
     InteractState = __webpack_require__(14),
     LocationState = __webpack_require__(15),
-    Icons = __webpack_require__(5),
+    Icons = __webpack_require__(6),
     Choices = __webpack_require__(10),
     Thoughts = __webpack_require__(11),
     Transition = __webpack_require__(0),
@@ -2140,7 +2349,8 @@ var GameManager = function() {
 
     this._displayImageSignal = null;
 
-    this._toggleUISignal = null;
+    this._showUISignal = null;
+    this._hideUISignal = null;
     this._pauseSignal = null;
     this._playSignal = null;
     this._toggleSubtitleSignal = null;
@@ -2149,6 +2359,7 @@ var GameManager = function() {
 }
 
 GameManager.prototype.initSignals = function() {
+
     this._changeSceneSignal = new Phaser.Signal();
     this._changeSceneSignal.add(StateManager.changeScene, this);
 
@@ -2172,8 +2383,10 @@ GameManager.prototype.initSignals = function() {
     this._displayImageSignal = new Phaser.Signal();
     this._displayImageSignal.add(LocationState.displayImage, this);
 
-    this._toggleUISignal = new Phaser.Signal();
-    this._toggleUISignal.add(UI.toggleUI, this);
+    this._showUISignal = new Phaser.Signal();
+    this._showUISignal.add(UI.showUI, this);
+    this._hideUISignal = new Phaser.Signal();
+    this._hideUISignal.add(UI.hideUI, this);
     this._pauseSignal = new Phaser.Signal();
     this._pauseSignal.add(UI.pause, this);    
     this._playSignal = new Phaser.Signal();
@@ -2225,8 +2438,12 @@ GameManager.prototype.getDisplayImageSignal = function() {
     return this._displayImageSignal;
 }
 
-GameManager.prototype.getToggleUISignal = function() {
-    return this._toggleUISignal;
+GameManager.prototype.getShowUISignal = function() {
+    return this._showUISignal;
+}
+
+GameManager.prototype.getHideUISignal = function() {
+    return this._hideUISignal;
 }
 
 GameManager.prototype.getPauseSignal = function() {
@@ -2245,7 +2462,7 @@ module.exports = GameManager;
 
 
 /***/ }),
-/* 23 */
+/* 24 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2254,7 +2471,7 @@ module.exports = GameManager;
 var _instance = null;
 var _game = null;
 var _input = null;
-var Input = __webpack_require__(21);
+var Input = __webpack_require__(22);
 
 module.exports = {
     init: function(game) {
@@ -2278,7 +2495,7 @@ module.exports = {
 
 
 /***/ }),
-/* 24 */
+/* 25 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2287,7 +2504,7 @@ module.exports = {
 const StateManager = __webpack_require__(13),
     InteractState = __webpack_require__(14),
     LocationState = __webpack_require__(15),
-    Icons = __webpack_require__(5),
+    Icons = __webpack_require__(6),
     Choices = __webpack_require__(10),
     Thoughts = __webpack_require__(11),
     Transition = __webpack_require__(0),
@@ -2336,14 +2553,14 @@ module.exports = SoundManager;
 
 
 /***/ }),
-/* 25 */
+/* 26 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
 const Linkable = __webpack_require__(3),
-    Animation = __webpack_require__(7);
+    Animation = __webpack_require__(8);
 
 var _instance = null;
 var _game = null;
@@ -2470,7 +2687,7 @@ module.exports = {
 
 
 /***/ }),
-/* 26 */
+/* 27 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2478,11 +2695,11 @@ module.exports = {
 
 var _instance = null;
 var _stateInfo = null;
-var Group = __webpack_require__(4),
+var Group = __webpack_require__(5),
     UI = __webpack_require__(1),
     Video = __webpack_require__(2),
     Transition = __webpack_require__(0),
-    State = __webpack_require__(6);
+    State = __webpack_require__(7);
 
 module.exports = {
     init: function(scene, signal) {
@@ -2508,7 +2725,7 @@ module.exports = {
 
 
 /***/ }),
-/* 27 */
+/* 28 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2518,11 +2735,11 @@ var _instance = null;
 var _stateInfo = null;
 var _changeSceneSignal = null;
 var _input = [];
-var Input = __webpack_require__(23);
+var Input = __webpack_require__(24);
 var Transition = __webpack_require__(0);
-var State = __webpack_require__(6);
-var MovingBackground = __webpack_require__(17);
-var Icons = __webpack_require__(5);
+var State = __webpack_require__(7);
+var MovingBackground = __webpack_require__(18);
+var Icons = __webpack_require__(6);
 
 
 function setPlayerName(game) {
@@ -2572,19 +2789,21 @@ module.exports = {
 
 
 /***/ }),
-/* 28 */
+/* 29 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var _instance = null;
-var _stateInfo = null;
-var Group = __webpack_require__(4),
+const Group = __webpack_require__(5),
     UI = __webpack_require__(1),
     Video = __webpack_require__(2),
     Transition = __webpack_require__(0),
-    State = __webpack_require__(6);
+    State = __webpack_require__(7);
+
+var _instance = null;
+var _game = null;
+var _stateInfo = null;
 
 module.exports = {
     init: function(scene, signal) {
@@ -2594,6 +2813,7 @@ module.exports = {
         if(_instance !== null)
             return _instance;
         _stateInfo = new State(scene);
+        _game = this.game;
         _instance = this;
         return _instance;
     },
@@ -2601,7 +2821,7 @@ module.exports = {
     },
     create: function() {
         Group.initializeGroups();
-        Video.create(_stateInfo.getMovieSrc(), _stateInfo.getTransitionInfo().fadeOut, _stateInfo.getVideoFilter(), _stateInfo.getNextScenes(), _stateInfo.getMovieSubKey());
+        Video.create(_stateInfo.getMovieSrc(_game.global.quality), _stateInfo.getTransitionInfo().fadeOut, _stateInfo.getVideoFilter(), _stateInfo.getNextScenes(), _stateInfo.getMovieSubKey());
         if(_stateInfo.getTransitionInfo().fadeIn)
             this.game.global.gameManager.getFadeInTransitionSignal().dispatch();
         UI.create(true, true);
@@ -2610,14 +2830,14 @@ module.exports = {
 
 
 /***/ }),
-/* 29 */
+/* 30 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-const Boot = __webpack_require__(19),
-    Preload = __webpack_require__(20),
+const Boot = __webpack_require__(20),
+    Preload = __webpack_require__(21),
     StateManager = __webpack_require__(13),
     ResourceLoader = __webpack_require__(12);
     
@@ -2636,6 +2856,8 @@ function initGame(Boot, Preload, StateManager, ResourceLoader) {
     function preload () {
         game.load.json('data', 'json/Data.json');
         game.load.json('style', 'json/Style.json');
+        game.load.image('progressBar', './Images/Icons/StubIcon.png');
+        game.load.image('title', './Images/Icons/Title.png');
     }
 
     function create() {

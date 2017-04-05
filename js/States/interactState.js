@@ -23,7 +23,6 @@ function CreateThought() {
     if(thoughtBubbles) {
         for(var i=0; i<thoughtBubbles.size; i++) {
             console.log("Thought bubble: ");
-            console.log(thoughtBubbles.thoughts[i]);
             Icons.createThoughtIcon(thoughtBubbles.thoughtIconKey[i], thoughtBubbles.coords[i], thoughtBubbles.thoughts[i]);
         }
 
@@ -43,9 +42,9 @@ function EndInteraction(lingeringChoice, targetScene) {
     Icons.endInteraction();
     Choices.endInteraction(lingeringChoice, targetScene);
     Thoughts.endInteraction();
-    if(!targetScene) {
-        Video.play();
-        _instance.game.global.gameManager.getToggleUISignal().dispatch();
+    if(!targetScene) {        
+        Video.play(false);
+        _instance.game.global.gameManager.getShowUISignal().dispatch();
     }
     Video.endFilter();
 }
@@ -83,7 +82,7 @@ module.exports = {
         Group.initializeGroups();
         _momentCount = 0;
         var timeStamps = GetTimeStamps();
-        Video.create(_stateInfo.getMovieSrc(), _stateInfo.getTransitionInfo().fadeOut,
+        Video.create(_stateInfo.getMovieSrc(_game.global.quality), _stateInfo.getTransitionInfo().fadeOut,
             _stateInfo.getVideoFilter(), _stateInfo.getNextScenes(), _stateInfo.getMovieSubKey(), timeStamps);
         if(_stateInfo.getTransitionInfo().fadeIn)
             this.game.global.gameManager.getFadeInTransitionSignal().dispatch();

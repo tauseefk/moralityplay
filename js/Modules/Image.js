@@ -3,10 +3,9 @@
 const Linkable = require('./Linkable'),
     Animation = require('./Animation');
 
-const MOUSEOVER_SPEED = 300;
-
 var ImageTypeEnum = {
         Static: 'IMAGE_STATIC',
+        ThoughtSprite: 'IMAGE_SPRITE_THOUGHT',
         SceneChange: 'IMAGE_BUTTON_SCENECHANGE',
         DisplayImage: 'IMAGE_BUTTON_DISPLAY_IMAGE',
         Thought: 'IMAGE_BUTTON_THOUGHT',
@@ -37,22 +36,21 @@ Image.prototype.addImageToGame = function(game, group) {
         case ImageTypeEnum.SceneChange:
         case ImageTypeEnum.DisplayImage:
         case ImageTypeEnum.ToggleSubtitle:
+        case ImageTypeEnum.ChoiceBackground:
             this._image = game.add.button(this._xPos, this._yPos, this._key);
             this._image.inputEnabled = true;
             break;
         case ImageTypeEnum.Static:
         case ImageTypeEnum.Background:
-        case ImageTypeEnum.ChoiceBackground:
             this._image = game.add.image(this._xPos, this._yPos, this._key);
+            break;
+        case ImageTypeEnum.ThoughtSprite:
+            this._image = game.add.sprite(this._xPos, this._yPos, this._key);
             break;
         default:
             console.warn("Invalid image type not added.");
     }
     group.add(this._image);
-}
-
-Image.prototype.setImage = function(key) {
-    this._key = key;
 }
 
 //Assigns image change function depending on enum
@@ -85,6 +83,9 @@ Image.prototype.changeImage = function (game, arg1, arg2, arg3, arg4, arg5) {
         case ImageTypeEnum.ToggleSubtitle:
             this.changeToPauseButton(game, arg1);
             break;
+        case ImageTypeEnum.ThoughtSprite:
+            this.changeToThoughtSprite(game, arg1, arg2, arg3, arg4, arg5);
+            break;
         default:
             console.warn("Invalid Image Type.");
     }
@@ -92,6 +93,21 @@ Image.prototype.changeImage = function (game, arg1, arg2, arg3, arg4, arg5) {
 
 Image.prototype.changeToStaticImage = function(game) {
 
+}
+
+Image.prototype.changeToThoughtSprite = function(game, thoughtsAndChoicesSignal, thoughts, coords, choices) {
+    this._image.width = 100;
+    this._image.height = 100;
+    this._image.anchor.setTo(0.5, 0.5);
+    this._image.animations.add('think');
+    this._image.animations.play('think', 4, false);
+    this._image.inputEnabled = true;
+    this._image.input.useHandCursor = true;
+    this._link = new Linkable(game, this._image.events, thoughtsAndChoicesSignal, thoughts, coords, choices);
+    this._link.addOnClickAnimation(Animation.fade(game, this._image, 0, false));
+    this._link.addOnClickAnimation(Animation.scale(game, this._image, false));
+    this._link.setAsButton(true);
+    //Animation.bob(game, this._image, true);
 }
 
 //Changes image to a horizontally draggable image
@@ -117,6 +133,7 @@ Image.prototype.changeToThoughtIcon = function(game, thoughtsAndChoicesSignal, t
     this._link.addOnClickAnimation(Animation.fade(game, this._image, 0, false));
     this._link.addOnClickAnimation(Animation.scale(game, this._image, false));
     this._link.setAsButton(true);
+    Animation.bob(game, this._image, true);
 }
 
 Image.prototype.changeToSceneChangeImage = function(game, targetScene) {
@@ -132,11 +149,16 @@ Image.prototype.changeToDisplayImage = function(game, target) {
  //   this._link.addSound('testSound');
 }
 
-Image.prototype.changeToChoiceBackgroundImage = function(game, width, height) {
+Image.prototype.changeToChoiceBackgroundImage = function(game, width, height, target) {
     this._image.alpha = 0;
     this._image.anchor.set(0.5, 0.5);
     this._image.width = width;
     this._image.height = height;
+
+    this._link = new Linkable(game, this._image, game.global.gameManager.getEndInteractionSignal(), this, target);
+    this._link.setAsButton(true);        
+    this._link.addMouseOverScaleEffect(game, this._image);
+    
     //Animation.fade(game, this._image, 1, true);
     return this._image;
 }
@@ -202,12 +224,27 @@ Image.prototype.getType = function() {
     return this._type;
 }
 
+Image.prototype.disableInput = function() {
+    this._image.inputEnabled = false;
+}
+
 Image.prototype.setVisible = function(isVisible) {
     this._image.visible = isVisible;
 }
 
-Image.prototype.fadeOut = function(game) {
-    Animation.fade(game, this._image, 0, true);
+Image.prototype.setImage = function(key) {
+    this._key = key;
+}
+
+Image.prototype.fadeOut = function(game, chainSignal, arg1) {
+    if(chainSignal) {
+        this._link = new Linkable(game, this._image, chainSignal, arg1);
+        this._link.addOnClickAnimation(Animation.fade(game, this._image, 0, true));
+        this._link.onTrigger();
+    }
+    else {
+        Animation.fade(game, this._image, 0, true);
+    }
 }
 
 Image.prototype.fadeIn = function(game) {    

@@ -89,7 +89,10 @@ Linkable.prototype.playSound = function() {
 }
 
 Linkable.prototype.removeInput = function() {
-    this._event.inputEnabled = false;    
+    this._event.inputEnabled = false;
+    if(this._event.input) {
+        this._event.input.useHandCursor = false;
+    } 
 }
 
 Linkable.prototype.onTrigger = function() {

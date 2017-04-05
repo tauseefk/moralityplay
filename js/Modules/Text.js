@@ -75,7 +75,11 @@ Text.prototype.changeToThoughts = function(game, xTo, yTo, filter) {
     Animation.fade(game, this._text, 1, true);
 }
 
-Text.prototype.changeToMeaningfulChoices = function(game, targetScene, endInteractionSignal, boundsY) {
+Text.prototype.changeToMeaningfulChoices = function(game, targetScene, endInteractionSignal, boundsY, totalChoices) {
+    if(totalChoices > 2)
+        this._text.fontSize -= 5;
+    if(totalChoices > 1)
+        this._text.fontSize -= 5;
     this._text.anchor.set(0.5, 0.5);
     this._text.y = boundsY;
     this._text.alpha = 0;
@@ -89,7 +93,11 @@ Text.prototype.changeToMeaningfulChoices = function(game, targetScene, endIntera
     //Animation.fade(game, this._text, 1, true);
 }
 
-Text.prototype.changeToMeaninglessChoices = function(game, endInteractionSignal, boundsY) {
+Text.prototype.changeToMeaninglessChoices = function(game, endInteractionSignal, boundsY, totalChoices) {
+    if(totalChoices > 2)
+        this._text.fontSize -= 5;
+    if(totalChoices > 1)
+        this._text.fontSize -= 5;
     this._text.anchor.set(0.5, 0.5);
     this._text.y = boundsY;
     this._text.alpha = 0;

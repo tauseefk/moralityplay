@@ -18,8 +18,6 @@
     "asianInfo": "./Images/UI/asian.png"
   },  
   "audio": {
-    "testSound": "./Audio/Sound/test.wav",
-    "littleRootMusic": "./Audio/Music/Pokemon Omega Ruby Alpha Sapphire - Littleroot Town Music (HQ).mp3"
   },
   "subtitles": {
     "sub1": "./Videos/Subtitles/test.srt"
@@ -30,7 +28,8 @@
       "videoFilter": [
         [ "grayscale", null ]
       ],
-      "movieSrc": "./Videos/TitleBG.mp4",
+      "movieSrcHD": "./Videos/Titlebg_optimized.mp4",
+      "movieSrcSD": "./Videos/Titlebg_optimized_lo.mp4",
       "stateType": "InteractState",
       "transition": {
         "fadeIn": true,
@@ -66,7 +65,8 @@
       "videoFilter": [
         [ "grayscale", null ]
       ],
-      "movieSrc": "./Videos/Intro.mp4",
+      "movieSrcHD": "./Videos/Intro_optimized.mp4",
+      "movieSrcSD": "./Videos/Intro_optimized_lo.mp4",
       "stateType": "InteractState",
       "transition": {
         "fadeIn": true,
@@ -96,20 +96,24 @@
           {
             "timeStamp": 15,
             "choices": {
-              "size": 2,
+              "size": 3,
               "content": [
                 "Have a nice day!",
-                "See you later!"
+                "See you later!",
+                "..."
               ],
               "y": [
+                600,
                 600,
                 600
               ],
               "bounds": [
-                [ 600, 200 ],
-                [ 600, 200 ]
+                [ 400, 150 ],
+                [ 400, 150 ],
+                [ 400, 150 ]
               ],
               "targetScene": [
+                "menuScene",
                 "menuScene",
                 "menuScene"
               ]
@@ -172,7 +176,8 @@
       "videoFilter": [
         [ "grayscale", null ]
       ],
-      "movieSrc": "./Videos/Asian1.mp4",
+      "movieSrcHD": "./Videos/Asian1_optimized.mp4",
+      "movieSrcSD": "./Videos/Asian1_optimized_lo.mp4",
       "sub": "sub1",
 
       "stateType": "InteractState",
@@ -263,7 +268,8 @@
     },
     "asian2good": {
       "stateType": "MovieState",
-      "movieSrc": "./Videos/Asian2_Good.mp4",
+      "movieSrcHD": "./Videos/Asian2 Good_optimized.mp4",
+      "movieSrcSD": "./Videos/Asian2 Good_optimized_lo.mp4",
       "transition": {
         "fadeIn": true,
         "fadeOut": false
@@ -273,7 +279,8 @@
     },
     "asian2bad": {
       "stateType": "MovieState",
-      "movieSrc": "./Videos/Asian2_Bad.mp4",
+      "movieSrcHD": "./Videos/Asian2_Bad_optimized.mp4",
+      "movieSrcSD": "./Videos/Asian2 Bad_optimized_lo.mp4",
       "transition": {
         "fadeIn": true,
         "fadeOut": false
@@ -286,7 +293,8 @@
       "videoFilter": [
         [ "grayscale", null ]
       ],
-      "movieSrc": "./Videos/Black1.mp4",
+      "movieSrcHD": "./Videos/Black1_optimized.mp4",
+      "movieSrcSD": "./Videos/Black1_optimized_lo.mp4",
       "stateType": "InteractState",
       "transition": {
         "fadeIn": true,
@@ -325,7 +333,8 @@
       "videoFilter": [
         [ "grayscale", null ]
       ],
-      "movieSrc": "./Videos/Black2.mp4",
+      "movieSrcHD": "./Videos/Black2_optimized.mp4",
+      "movieSrcSD": "./Videos/Black2_optimized_lo.mp4",
       "stateType": "InteractState",
       "transition": {
         "fadeIn": true,
@@ -430,7 +439,8 @@
     },
     "black3bad": {
       "stateType": "MovieState",
-      "movieSrc": "./Videos/Black3_Bad.mp4",
+      "movieSrcHD": "./Videos/Black3 Bad_optimized.mp4",
+      "movieSrcSD": "./Videos/Black3 Bad_optimized_lo.mp4",
       "transition": {
         "fadeIn": true,
         "fadeOut": false
@@ -439,7 +449,8 @@
     },
     "black3good": {
       "stateType": "MovieState",
-      "movieSrc": "./Videos/Black3_Good.mp4",
+      "movieSrcHD": "./Videos/Black3 Good_optimized.mp4",
+      "movieSrcSD": "./Videos/Black3 Good_optimized_lo.mp4",
       "transition": {
         "fadeIn": true,
         "fadeOut": false
@@ -451,7 +462,8 @@
       "videoFilter": [
         [ "grayscale", null ]
       ],
-      "movieSrc": "./Videos/Indian1.mp4",
+      "movieSrcHD": "./Videos/Indian1_optimized.mp4",
+      "movieSrcSD": "./Videos/Indian1_optimized_lo.mp4",
       "stateType": "InteractState",
       "transition": {
         "fadeIn": true,
@@ -508,7 +520,8 @@
     },
     "indian2good": {
       "stateType": "MovieState",
-      "movieSrc": "./Videos/Indian2_Good.mp4",
+      "movieSrcHD": "./Videos/Indian2 Good_optimized.mp4",
+      "movieSrcSD": "./Videos/Indian2 Good_optimized_lo.mp4",
       "transition": {
         "fadeIn": true,
         "fadeOut": false
@@ -517,7 +530,8 @@
     },
     "indian2bad": {
       "stateType": "MovieState",
-      "movieSrc": "./Videos/Indian2_Bad.mp4",
+      "movieSrcHD": "./Videos/Indian2 Bad_optimized.mp4",
+      "movieSrcSD": "./Videos/Indian2 Bad_optimized_lo.mp4",
       "transition": {
         "fadeIn": true,
         "fadeOut": false

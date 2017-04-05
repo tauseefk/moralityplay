@@ -32,5 +32,8 @@ Animation.fade = function(game, object, value, autoStart, speed, repeat) {
     return game.add.tween(object).to({alpha:value}, customSpeed, Phaser.Easing.Linear.None, autoStart, 0, 0, false);
 }
 
+Animation.bob = function(game, object, autoStart) {
+    return game.add.tween(object).to({y:'+20'}, 400, Phaser.Easing.Linear.None, autoStart, 0, -1, true);
+}
 
 module.exports = Animation;

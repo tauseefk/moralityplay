@@ -9,11 +9,12 @@ var _instance = null;
 var _game = null;
 var _icons = [];
 
-const buttonThoughtImageKeyEnum = 'IMAGE_BUTTON_THOUGHT';
-const sceneChangeImageKeyEnum = 'IMAGE_BUTTON_SCENECHANGE';
+const buttonThoughtImageKeyEnum = 'IMAGE_BUTTON_THOUGHT',
+    buttonThoughtSpriteKeyEnum = 'IMAGE_SPRITE_THOUGHT',
+    sceneChangeImageKeyEnum = 'IMAGE_BUTTON_SCENECHANGE';
 
 function CreateThoughtIcon(iconKey, coords, thoughts) {
-    var button = new Image(coords[0], coords[1], iconKey, buttonThoughtImageKeyEnum);
+    var button = new Image(coords[0], coords[1], iconKey, buttonThoughtSpriteKeyEnum);
     button.addImageToGame(_game, _game.mediaGroup);
     button.changeImage(_game, _game.global.gameManager.getCreateThoughtsAndChoicesSignal(), thoughts, coords);
     _icons.push(button);

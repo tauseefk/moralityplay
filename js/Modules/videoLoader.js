@@ -11,12 +11,13 @@ var _videoImage = null;
 var _videoFilter = null;
 var _interactionTimeStamps = null;
 
+var _pausedByGame = false;
+
 const FADEOUT_OFFSET_SECONDS = 5;
 const VIDEO_SLOW_PLAYBACK_RATE = 0.2;
 
 function CreateVideo(src, doFadeOut, nextScenes, sub, interactionTimeStamps) {
     _video = _video.changeSource(src, false);
-    _video.play();
 
 //    _video.video.setAttribute('autoplay', 'autoplay');
     AddVideoAndFilter(doFadeOut, sub);
@@ -47,7 +48,7 @@ function AddVideoAndFilter(doFadeOut, sub) {
     _game.mediaGroup.add(_videoImage);
     _video.onChangeSource.addOnce(OnVideoLoad, this);
     function OnVideoLoad() {
-
+        _video.play();
         //_video.video.addEventListener('progress', CheckProgress, false);
         if(doFadeOut) {
             //_game.time.events.add((_video.video.duration-FADEOUT_OFFSET_SECONDS)*Phaser.Timer.SECOND, FadeOut, this);
@@ -63,8 +64,12 @@ function AddVideoAndFilter(doFadeOut, sub) {
 
 function TriggerMoment() {
     console.log(_video.video.duration);
-    console.log(_video.video.currentTime);    
-    _game.global.gameManager.getToggleUISignal().dispatch();
+    console.log(_video.video.currentTime);
+    //Ensure game is not paused to pause scenario properly
+    _game.global.gameManager.getPlaySignal().dispatch();
+    _video.video.pause();
+    _pausedByGame = true;
+    _game.global.gameManager.getHideUISignal().dispatch();
     VideoFilter.startFilterFade(_game.global.gameManager.getTriggerInteractionSignal());
 }
 
@@ -94,15 +99,11 @@ function ChangeScene(nextScenes) {
     }
 }
 
-function stopVideo() {
-    if(_video !== null)
-        _video.stop();
-}
-
 module.exports = {
     init: function(game) {
         console.log("Video initialized");
         _interactionTimeStamps = null;
+        _pausedByGame = false;
         //stopVideo();
         if(_instance !== null)
             return _instance;
@@ -126,7 +127,9 @@ module.exports = {
         if(_video)
             _video.stop();
     },
-    play: function() {
+    play: function(pausedByGame) {
+        if(pausedByGame == false)
+            _pausedByGame = pausedByGame;
         if(_video)
             _video.play();
     },
@@ -134,10 +137,13 @@ module.exports = {
         if(_video)
             return _video.video.paused;
     },
-    endFilter() {
+    isPausedByGame: function() {
+        return _pausedByGame;
+    },
+    endFilter: function() {
         VideoFilter.endFilter();
     },
-    toggleSubtitle() {
+    toggleSubtitle: function() {
         Subtitle.toggleSubtitle();
     }
 }

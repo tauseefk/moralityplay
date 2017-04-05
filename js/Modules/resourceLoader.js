@@ -7,6 +7,7 @@ var _data = null;
 var _videos = null;
 var _audio = null;
 var _images = null;
+var _spritesheets = null;
 var _scenes = null;
 var _subs = null;
 var _style = null;
@@ -32,6 +33,13 @@ function loadImages(images) {
     }
 }
 
+function loadSpritesheets(spritesheet) {
+    console.log("Loading spritesheets");
+    for (var key in spritesheet) {
+        _game.load.spritesheet(key, spritesheet[key][0], spritesheet[key][1], spritesheet[key][2], spritesheet[key][3]);
+    }
+}
+
 function loadSubs(subs) {
     console.log("Loading subs");
     for (var key in subs) {
@@ -49,6 +57,7 @@ module.exports = {
         _data = _game.cache.getJSON('data');
         _style = _game.cache.getJSON('style');
         _images = _data.images;
+        _spritesheets = _data.spritesheets;
         _videos = _data.videos;
         _audio = _data.audio;
         _scenes = _data.scenes;
@@ -59,25 +68,12 @@ module.exports = {
     //    Filter.preload();
         console.log("Loading resources");
         loadImages(_images);
+        loadSpritesheets(_spritesheets);
         loadAudio(_audio);
         loadSubs(_subs);
     //    loadVideos(videos);
 
     },
-    create: function() {
-    //    Filter.create();
-    },
-    /*
-    getBlur: function() {
-        return Filter.getBlur();
-    },
-    getBlurNone: function() {
-        return Filter.getBlurNone();
-    },
-    getBlurFilter: function() {
-        return Filter;
-    },
-    */
     getScene: function(name) {
         return _scenes[name];
     },

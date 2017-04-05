@@ -10,6 +10,7 @@ var _graphics = null;
 var _pauseImage = null;
 var _playImage = null;
 var _toggleSubtitleImage = null;
+var _pausedByEngine = false;
 
 var _uiVisible = true;
 
@@ -54,16 +55,30 @@ function Pause() {
 }
 
 function Play() {
-    Video.play();
-    _game.paused = false;
-    _graphics.visible = false;
-    _playImage.setVisible(false);
+    if(!Video.isPausedByGame()) {
+        Video.play();
+        _game.paused = false;
+        _graphics.visible = false;
+        _playImage.setVisible(false);
+    }
 }
 
 function ToggleUI() {
     _uiVisible = !_uiVisible;
     _pauseImage.setVisible(_uiVisible);
-    //_toggleSubtitleImage.setVisible(_uiVisible);
+    _toggleSubtitleImage.setVisible(_uiVisible);
+}
+
+function HideUI() {
+    _uiVisible = false;
+    _pauseImage.setVisible(_uiVisible);
+    _toggleSubtitleImage.setVisible(_uiVisible);
+}
+
+function ShowUI() {
+    _uiVisible = true;
+    _pauseImage.setVisible(_uiVisible);
+    _toggleSubtitleImage.setVisible(_uiVisible);
 }
 
 function DrawPauseOverlay() {
@@ -97,22 +112,27 @@ module.exports = {
     },
     create: function(drawPause, drawSubtitleToggle) {
         _uiVisible = true;
-        //if(drawSubtitleToggle)
-            //DrawToggleSubtitleButton();
+        if(drawSubtitleToggle)
+            DrawToggleSubtitleButton();
         if(drawPause) {
             DrawPauseButton();
             DrawPauseOverlay();
             DrawPlayButton();
         }
     },
-    pause: function() {
-        Pause();
+    pause: function(byGame) {
+        Pause(byGame);
     },
     play: function() {
-        console.log("pressed");
         Play();
     },
     toggleUI: function() {
         ToggleUI();
+    },
+    showUI: function() {
+        ShowUI();
+    },
+    hideUI: function() {
+        HideUI();
     }
 }

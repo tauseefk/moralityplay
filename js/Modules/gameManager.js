@@ -1,6 +1,7 @@
 "use strict";
 
-const StateManager = require('../States/StateManager'),
+const ConnectionChecker = require('./connectionChecker'),
+    StateManager = require('../States/StateManager'),
     InteractState = require('../States/interactState'),
     LocationState = require('../States/locationState'),
     Icons = require('./iconsLoader'),
@@ -32,7 +33,8 @@ var GameManager = function() {
 
     this._displayImageSignal = null;
 
-    this._toggleUISignal = null;
+    this._showUISignal = null;
+    this._hideUISignal = null;
     this._pauseSignal = null;
     this._playSignal = null;
     this._toggleSubtitleSignal = null;
@@ -41,6 +43,7 @@ var GameManager = function() {
 }
 
 GameManager.prototype.initSignals = function() {
+
     this._changeSceneSignal = new Phaser.Signal();
     this._changeSceneSignal.add(StateManager.changeScene, this);
 
@@ -64,8 +67,10 @@ GameManager.prototype.initSignals = function() {
     this._displayImageSignal = new Phaser.Signal();
     this._displayImageSignal.add(LocationState.displayImage, this);
 
-    this._toggleUISignal = new Phaser.Signal();
-    this._toggleUISignal.add(UI.toggleUI, this);
+    this._showUISignal = new Phaser.Signal();
+    this._showUISignal.add(UI.showUI, this);
+    this._hideUISignal = new Phaser.Signal();
+    this._hideUISignal.add(UI.hideUI, this);
     this._pauseSignal = new Phaser.Signal();
     this._pauseSignal.add(UI.pause, this);    
     this._playSignal = new Phaser.Signal();
@@ -117,8 +122,12 @@ GameManager.prototype.getDisplayImageSignal = function() {
     return this._displayImageSignal;
 }
 
-GameManager.prototype.getToggleUISignal = function() {
-    return this._toggleUISignal;
+GameManager.prototype.getShowUISignal = function() {
+    return this._showUISignal;
+}
+
+GameManager.prototype.getHideUISignal = function() {
+    return this._hideUISignal;
 }
 
 GameManager.prototype.getPauseSignal = function() {

@@ -1,34 +1,52 @@
 //Dependency: None
+const ConnectionChecker = require('../Modules/connectionChecker'), 
+    GameManager = require('../Modules/gameManager'),
+    SoundManager = require('../Modules/soundManager');
+
 var _instance = null
 var _game = null;
 
+const connectionTestFileKey = 'littleRootMusic',
+    connectionTestFileSrc = './Audio/Music/Pokemon Omega Ruby Alpha Sapphire - Littleroot Town Music (HQ).mp3',
+    connectionTestFileType = 'AUDIO',
+    connectionTestFileBytes = 2886887;
+
+
 WebFontConfig = {
     //Load fonts before creation, timer delay. Can be improved  in implementation.
-    active: function() { _game.time.events.add(Phaser.Timer.SECOND, delayedCreate, this); },
+    active: function() { _game.time.events.add(Phaser.Timer.SECOND, DelayedCreate, this); },
 
     google: {
       families: ['Kadwa', 'Merienda One'],
     }
 };
 
-function delayedCreate() {
-    createGlobalVars();
-    initGameGroups();
+function DelayedCreate() {
+
+    CreateGlobalVars();
+    InitGameGroups();
     _game.stage.disableVisibilityChange = true;
     _game.stage.backgroundColor = "#ffffff";
-    _game.state.start("preload");
+    var text = _game.add.text(_game.world.centerX, _game.world.centerY, "Checking connection...");
+    text.anchor.setTo(0.5, 0.5);
+    ConnectionChecker.loadFile(connectionTestFileKey, connectionTestFileSrc, connectionTestFileType, connectionTestFileBytes);
+    ConnectionChecker.checkConnection();
 }
 
-function createGlobalVars() {
+function CreateGlobalVars() {
     _game.global = {
         playerName: null,
         scenario1Decision: -1,
         scenario2Decision: -1,
         scenario3Decision: -1
     }
+
+    _game.global.gameManager = new GameManager();
+    _game.global.gameManager.initSignals();
+    _game.global.soundManager = new SoundManager(_game);
 }
 
-function initGameGroups() {
+function InitGameGroups() {
     _game.mediaGroup = _game.add.group();
     _game.uiGroup = _game.add.group();
 }
@@ -36,6 +54,7 @@ function initGameGroups() {
 module.exports = {
     init: function() {
         console.log("Boot State");
+        ConnectionChecker.init(this.game);
         if( _instance !== null)
             return _instance;
         _game = this.game;

@@ -20,6 +20,8 @@ function initGame(Boot, Preload, StateManager, ResourceLoader) {
     function preload () {
         game.load.json('data', 'json/Data.json');
         game.load.json('style', 'json/Style.json');
+        game.load.image('progressBar', './Images/Icons/StubIcon.png');
+        game.load.image('title', './Images/Icons/Title.png');
     }
 
     function create() {
