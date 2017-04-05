@@ -785,7 +785,7 @@ function CreateThoughtIcon(iconKey, coords, thoughts) {
     _icons.push(button);
 }
 
-function CreateExploratoryIcons(key, coords, target, type, reference) {
+function CreateExploratoryIcons(key, coords, target, type) {
     var button = new Image(coords[0], coords[1], key, type);
     button.addImageToGame(_game, _game.mediaGroup);
     button.changeImage(_game, target);
@@ -820,11 +820,12 @@ module.exports = {
     createThoughtIcon: function(iconKey, coords, thoughts) {
         CreateThoughtIcon(iconKey, coords, thoughts);
     },
-    createExploratoryIcons: function(icons) {
+    createExploratoryIcons: function(icons, hideSceneChangeIcons) {
         for(var i=0; i<icons.size; i++) {
             CreateExploratoryIcons(icons.key[i], icons.coords[i], icons.targetImageIndexOrScene[i], icons.type[i]);
-        }        
-        HideIconType(sceneChangeImageKeyEnum);
+        } 
+        if(hideSceneChangeIcons)
+            HideIconType(sceneChangeImageKeyEnum);
         return _icons;
     },
     endInteraction: function() {
@@ -947,6 +948,7 @@ module.exports = State;
 
 
 const FADE_SPEED = 700;
+const SCALE_SPEED = 300;
 const SCALE_SIZE = 1.05;
 
 //Animation constructor
@@ -957,7 +959,7 @@ Animation.scale = function(game, object, autoStart, targetWidth, targetHeight, s
     if(!repeat)
         repeat = 0;
     if(!speed)
-        speed = FADE_SPEED;
+        speed = SCALE_SPEED;
 
     var tween = game.add.tween(object).to({width:targetWidth, height:targetHeight}, speed, Phaser.Easing.Linear.None, autoStart, 0, repeat);
     if(reset)
@@ -975,11 +977,14 @@ Animation.fade = function(game, object, value, autoStart, speed, repeat) {
     var customSpeed = speed;
     if(!speed)
         customSpeed = FADE_SPEED;
+    
     return game.add.tween(object).to({alpha:value}, customSpeed, Phaser.Easing.Linear.None, autoStart, 0, 0, false);
 }
 
 Animation.bob = function(game, object, autoStart) {
-    return game.add.tween(object).to({y:'+20'}, 400, Phaser.Easing.Linear.None, autoStart, 0, -1, true);
+    var tween = game.add.tween(object).to({y:'-5'}, 400, Phaser.Easing.Quadratic.InOut, autoStart, 0, -1, true);
+    tween.repeatDelay(700);
+    return tween;
 }
 
 module.exports = Animation;
@@ -1049,7 +1054,7 @@ Image.prototype.addImageToGame = function(game, group) {
 Image.prototype.changeImage = function (game, arg1, arg2, arg3, arg4, arg5) {
     switch(this._type) {
         case ImageTypeEnum.Static:            
-            this.changeToStaticImage(game);
+            this.changeToStaticImage(game, arg1);
             break;
         case ImageTypeEnum.Background:
             this.changeToBgImage(game, arg1);
@@ -1084,7 +1089,7 @@ Image.prototype.changeImage = function (game, arg1, arg2, arg3, arg4, arg5) {
 }
 
 Image.prototype.changeToStaticImage = function(game) {
-
+    this._image.anchor.setTo(0.5, 0.5);
 }
 
 Image.prototype.changeToThoughtSprite = function(game, thoughtsAndChoicesSignal, thoughts, coords, choices) {
@@ -1129,8 +1134,11 @@ Image.prototype.changeToThoughtIcon = function(game, thoughtsAndChoicesSignal, t
 }
 
 Image.prototype.changeToSceneChangeImage = function(game, targetScene) {
+    this._image.anchor.setTo(0.5, 0.5);
     this._link = new Linkable(game, this._image, game.global.gameManager.getChangeSceneSignal(), targetScene);
-    this._link.setAsButton(true);
+    this._link.setAsButton(true);    
+    this._link.addMouseOverScaleEffect(game, this._image);
+    Animation.bob(game, this._image, true);
 }
 
 Image.prototype.changeToDisplayImage = function(game, target) {
@@ -1795,7 +1803,7 @@ module.exports = {
     //    this.game.global.soundManager.playBackgroundMusic('littleRootMusic');
     //    Video.create(_stateInfo.getMovieSrc(), _stateInfo.getTransition().fadeOut, Transition.getFadeOutSignal(), _stateInfo.getVideoFilter(), _stateInfo.getNextScenes());
         MovingBackground.create(_stateInfo.getBgImageKey(), _stateInfo.getDraggable());
-        var icons = Icons.createExploratoryIcons(_stateInfo.getIconsInfo());
+        var icons = Icons.createExploratoryIcons(_stateInfo.getIconsInfo(), true);
         if(_stateInfo.getDraggable())
             MovingBackground.assignFollowIcons(icons);
         //UI.create(true, false);
@@ -1847,7 +1855,6 @@ function CheckConnection() {
 function StartLoading() {
     _timer = _game.time.create(true);
     _timer.start();
-    console.log(_timer);
 }
 
 function LoadComplete() {    
@@ -2197,12 +2204,20 @@ function DelayedCreate() {
 
     CreateGlobalVars();
     InitGameGroups();
-    _game.stage.disableVisibilityChange = true;
-    _game.stage.backgroundColor = "#ffffff";
-    var text = _game.add.text(_game.world.centerX, _game.world.centerY, "Checking connection...");
-    text.anchor.setTo(0.5, 0.5);
+    SetGameProperties();
+    CreateLoadingVisuals();
     ConnectionChecker.loadFile(connectionTestFileKey, connectionTestFileSrc, connectionTestFileType, connectionTestFileBytes);
     ConnectionChecker.checkConnection();
+}
+
+function CreateLoadingVisuals() {
+    var text = _game.add.text(_game.world.centerX, _game.world.centerY, "Checking connection...");
+    text.anchor.setTo(0.5, 0.5);
+}
+
+function SetGameProperties() {
+    _game.stage.disableVisibilityChange = true;
+    _game.stage.backgroundColor = "#ffffff";
 }
 
 function CreateGlobalVars() {
@@ -2250,6 +2265,15 @@ const Resources = __webpack_require__(12);
 var _instance = null,
     _game = null;
 
+function CreateLoadingVisuals() {
+    var text = _game.add.text(_game.world.centerX, _game.world.centerY - 50, "Loading assets...");
+    text.anchor.setTo(0.5, 0.5);
+
+    var preloadImage = _game.add.sprite(_game.world.centerX, _game.world.centerY, 'progressBar');
+    preloadImage.anchor.setTo(0.5, 0.5);
+    _game.load.setPreloadSprite(preloadImage);
+}
+
 module.exports = {
     init: function() {
         if( _instance !== null)
@@ -2259,9 +2283,7 @@ module.exports = {
         return _instance;
     },
     preload: function() {
-        var preloadImage = this.game.add.sprite(this.game.world.centerX, this.game.world.centerY, 'progressBar');
-        preloadImage.anchor.setTo(0.5, 0.5);
-        this.game.load.setPreloadSprite(preloadImage);
+        CreateLoadingVisuals();
         Resources.preload();
     },
     create: function() {
@@ -2733,13 +2755,13 @@ module.exports = {
 
 var _instance = null;
 var _stateInfo = null;
-var _changeSceneSignal = null;
 var _input = [];
-var Input = __webpack_require__(24);
-var Transition = __webpack_require__(0);
-var State = __webpack_require__(7);
-var MovingBackground = __webpack_require__(18);
-var Icons = __webpack_require__(6);
+const Group = __webpack_require__(5), 
+    Input = __webpack_require__(24),
+    Transition = __webpack_require__(0),
+    State = __webpack_require__(7),
+    MovingBackground = __webpack_require__(18),
+    Icons = __webpack_require__(6);
 
 
 function setPlayerName(game) {
@@ -2755,27 +2777,27 @@ function updatePlayerNameCallback(game) {
 }
 
 module.exports = {
-    init: function(scene, signal) {
+    init: function(scene) {
         if(_stateInfo !== null)
             _stateInfo.setStateScene(scene);
+        MovingBackground.init(this.game);
+        Icons.init(this.game);
+        Input.init(this.game);
         if(_instance !== null)
             return _instance;
         _instance = this;
         _stateInfo = new State(scene);
-        _changeSceneSignal = signal;
-        MovingBackground.init(this.game);
-        Icons.init(this.game, _changeSceneSignal);
-        Input.init(this.game);
         return _instance;
     },
     preload: function() {
     },
     create: function() {
         _input = [];
+        Group.initializeGroups();
         //updatePlayerNameCallback(this.game);
         //Video.create(_stateInfo.getMovieSrc(), _stateInfo.getTransition().fadeOut, Transition.getFadeOutSignal(), _stateInfo.getVideoFilter(), _stateInfo.getNextScenes());
         MovingBackground.create(_stateInfo.getBgImageKey(), _stateInfo.getDraggable());
-        Icons.createExploratoryIcons(_stateInfo.getIconsInfo());
+        Icons.createExploratoryIcons(_stateInfo.getIconsInfo(), false);
         //_input = Input.create(_stateInfo.getInputInfo());
         if(_stateInfo.getTransitionInfo().fadeIn)
             this.game.global.gameManager.getFadeInTransitionSignal().dispatch();

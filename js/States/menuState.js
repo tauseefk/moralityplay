@@ -2,13 +2,13 @@
 
 var _instance = null;
 var _stateInfo = null;
-var _changeSceneSignal = null;
 var _input = [];
-var Input = require('../Modules/inputLoader');
-var Transition = require('../Modules/transition');
-var State = require('./State');
-var MovingBackground = require('../Modules/movingObjectLoader');
-var Icons = require('../Modules/iconsLoader');
+const Group = require('../Modules/groupLoader'), 
+    Input = require('../Modules/inputLoader'),
+    Transition = require('../Modules/transition'),
+    State = require('./State'),
+    MovingBackground = require('../Modules/movingObjectLoader'),
+    Icons = require('../Modules/iconsLoader');
 
 
 function setPlayerName(game) {
@@ -24,27 +24,27 @@ function updatePlayerNameCallback(game) {
 }
 
 module.exports = {
-    init: function(scene, signal) {
+    init: function(scene) {
         if(_stateInfo !== null)
             _stateInfo.setStateScene(scene);
+        MovingBackground.init(this.game);
+        Icons.init(this.game);
+        Input.init(this.game);
         if(_instance !== null)
             return _instance;
         _instance = this;
         _stateInfo = new State(scene);
-        _changeSceneSignal = signal;
-        MovingBackground.init(this.game);
-        Icons.init(this.game, _changeSceneSignal);
-        Input.init(this.game);
         return _instance;
     },
     preload: function() {
     },
     create: function() {
         _input = [];
+        Group.initializeGroups();
         //updatePlayerNameCallback(this.game);
         //Video.create(_stateInfo.getMovieSrc(), _stateInfo.getTransition().fadeOut, Transition.getFadeOutSignal(), _stateInfo.getVideoFilter(), _stateInfo.getNextScenes());
         MovingBackground.create(_stateInfo.getBgImageKey(), _stateInfo.getDraggable());
-        Icons.createExploratoryIcons(_stateInfo.getIconsInfo());
+        Icons.createExploratoryIcons(_stateInfo.getIconsInfo(), false);
         //_input = Input.create(_stateInfo.getInputInfo());
         if(_stateInfo.getTransitionInfo().fadeIn)
             this.game.global.gameManager.getFadeInTransitionSignal().dispatch();

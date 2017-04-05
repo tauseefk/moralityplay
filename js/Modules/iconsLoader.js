@@ -20,7 +20,7 @@ function CreateThoughtIcon(iconKey, coords, thoughts) {
     _icons.push(button);
 }
 
-function CreateExploratoryIcons(key, coords, target, type, reference) {
+function CreateExploratoryIcons(key, coords, target, type) {
     var button = new Image(coords[0], coords[1], key, type);
     button.addImageToGame(_game, _game.mediaGroup);
     button.changeImage(_game, target);
@@ -55,11 +55,12 @@ module.exports = {
     createThoughtIcon: function(iconKey, coords, thoughts) {
         CreateThoughtIcon(iconKey, coords, thoughts);
     },
-    createExploratoryIcons: function(icons) {
+    createExploratoryIcons: function(icons, hideSceneChangeIcons) {
         for(var i=0; i<icons.size; i++) {
             CreateExploratoryIcons(icons.key[i], icons.coords[i], icons.targetImageIndexOrScene[i], icons.type[i]);
-        }        
-        HideIconType(sceneChangeImageKeyEnum);
+        } 
+        if(hideSceneChangeIcons)
+            HideIconType(sceneChangeImageKeyEnum);
         return _icons;
     },
     endInteraction: function() {

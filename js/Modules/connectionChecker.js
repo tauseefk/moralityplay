@@ -25,7 +25,6 @@ function CheckConnection() {
 function StartLoading() {
     _timer = _game.time.create(true);
     _timer.start();
-    console.log(_timer);
 }
 
 function LoadComplete() {    

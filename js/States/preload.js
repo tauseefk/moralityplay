@@ -3,6 +3,15 @@ const Resources = require('../Modules/resourceLoader');
 var _instance = null,
     _game = null;
 
+function CreateLoadingVisuals() {
+    var text = _game.add.text(_game.world.centerX, _game.world.centerY - 50, "Loading assets...");
+    text.anchor.setTo(0.5, 0.5);
+
+    var preloadImage = _game.add.sprite(_game.world.centerX, _game.world.centerY, 'progressBar');
+    preloadImage.anchor.setTo(0.5, 0.5);
+    _game.load.setPreloadSprite(preloadImage);
+}
+
 module.exports = {
     init: function() {
         if( _instance !== null)
@@ -12,9 +21,7 @@ module.exports = {
         return _instance;
     },
     preload: function() {
-        var preloadImage = this.game.add.sprite(this.game.world.centerX, this.game.world.centerY, 'progressBar');
-        preloadImage.anchor.setTo(0.5, 0.5);
-        this.game.load.setPreloadSprite(preloadImage);
+        CreateLoadingVisuals();
         Resources.preload();
     },
     create: function() {

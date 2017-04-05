@@ -57,7 +57,7 @@ Image.prototype.addImageToGame = function(game, group) {
 Image.prototype.changeImage = function (game, arg1, arg2, arg3, arg4, arg5) {
     switch(this._type) {
         case ImageTypeEnum.Static:            
-            this.changeToStaticImage(game);
+            this.changeToStaticImage(game, arg1);
             break;
         case ImageTypeEnum.Background:
             this.changeToBgImage(game, arg1);
@@ -92,7 +92,7 @@ Image.prototype.changeImage = function (game, arg1, arg2, arg3, arg4, arg5) {
 }
 
 Image.prototype.changeToStaticImage = function(game) {
-
+    this._image.anchor.setTo(0.5, 0.5);
 }
 
 Image.prototype.changeToThoughtSprite = function(game, thoughtsAndChoicesSignal, thoughts, coords, choices) {
@@ -137,8 +137,11 @@ Image.prototype.changeToThoughtIcon = function(game, thoughtsAndChoicesSignal, t
 }
 
 Image.prototype.changeToSceneChangeImage = function(game, targetScene) {
+    this._image.anchor.setTo(0.5, 0.5);
     this._link = new Linkable(game, this._image, game.global.gameManager.getChangeSceneSignal(), targetScene);
-    this._link.setAsButton(true);
+    this._link.setAsButton(true);    
+    this._link.addMouseOverScaleEffect(game, this._image);
+    Animation.bob(game, this._image, true);
 }
 
 Image.prototype.changeToDisplayImage = function(game, target) {

@@ -31,7 +31,7 @@ module.exports = {
     //    this.game.global.soundManager.playBackgroundMusic('littleRootMusic');
     //    Video.create(_stateInfo.getMovieSrc(), _stateInfo.getTransition().fadeOut, Transition.getFadeOutSignal(), _stateInfo.getVideoFilter(), _stateInfo.getNextScenes());
         MovingBackground.create(_stateInfo.getBgImageKey(), _stateInfo.getDraggable());
-        var icons = Icons.createExploratoryIcons(_stateInfo.getIconsInfo());
+        var icons = Icons.createExploratoryIcons(_stateInfo.getIconsInfo(), true);
         if(_stateInfo.getDraggable())
             MovingBackground.assignFollowIcons(icons);
         //UI.create(true, false);

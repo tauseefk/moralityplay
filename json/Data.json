@@ -1,6 +1,7 @@
 {
   "images": {
-    "cmu1": "./Images/Locations/LocationBG.jpg",
+    "cmu1": "./Images/Locations/LocationBG.jpg",    
+    "background": "./Images/Splash/bg.jpg",
     "leftArrow": "./Images/UI/arrow_left.png",
     "leftOutline": "./Images/UI/outline_left.png",
     "mainTitle": "./Images/UI/Title.png",
@@ -10,6 +11,7 @@
     "rightOutline": "./Images/UI/outline_right.png",
     "pauseButton": "./Images/UI/pause.png",
     "playButton": "./Images/UI/start.png",
+    "startButton": "./Images/UI/play.png",
     "subtitleButton": "./Images/UI/subtitle.png",
     "thoughtLeft": "./Images/UI/ThoughBubble_Left.png",
     "thoughtRight":"./Images/UI/ThoughBubble_Right.png",
@@ -25,42 +27,33 @@
 
   "scenes": {
     "startScene": {
-      "videoFilter": [
-        [ "grayscale", null ]
-      ],
-      "movieSrcHD": "./Videos/Titlebg_optimized.mp4",
-      "movieSrcSD": "./Videos/Titlebg_optimized_lo.mp4",
-      "stateType": "InteractState",
+      "stateType": "MenuState",
+      "draggable": false,
+      "bgImageKey": "background",
       "transition": {
         "fadeIn": true,
-        "fadeOut": false
+        "fadeOut": true
       },
-      "choiceMoments": {
-        "size": 1,
-        "choiceMomentsProperties": [
-          {
-            "timeStamp": 1,
-            "choices": {
-              "size": 1,
-              "content": [
-                "Start"
-              ],
-              "y": [
-                600
-              ],
-              "bounds": [
-                [ 600, 200 ]
-              ],
-              "targetScene": [
-                "introScene"
-              ]
-            }
-          }
+      "icons": {
+        "size": 2,
+        "type": [
+          "IMAGE_STATIC",
+          "IMAGE_BUTTON_SCENECHANGE"
+        ],
+        "key": [
+          "mainTitle",
+          "startButton"
+        ],
+        "coords": [
+          [ 640, 250 ],
+          [ 640, 560 ]
+        ],
+        "targetImageIndexOrScene": [
+          null,
+          "introScene"
         ]
-
       }
     },
-
     "introScene": {
       "videoFilter": [
         [ "grayscale", null ]

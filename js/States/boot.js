@@ -25,12 +25,20 @@ function DelayedCreate() {
 
     CreateGlobalVars();
     InitGameGroups();
-    _game.stage.disableVisibilityChange = true;
-    _game.stage.backgroundColor = "#ffffff";
-    var text = _game.add.text(_game.world.centerX, _game.world.centerY, "Checking connection...");
-    text.anchor.setTo(0.5, 0.5);
+    SetGameProperties();
+    CreateLoadingVisuals();
     ConnectionChecker.loadFile(connectionTestFileKey, connectionTestFileSrc, connectionTestFileType, connectionTestFileBytes);
     ConnectionChecker.checkConnection();
+}
+
+function CreateLoadingVisuals() {
+    var text = _game.add.text(_game.world.centerX, _game.world.centerY, "Checking connection...");
+    text.anchor.setTo(0.5, 0.5);
+}
+
+function SetGameProperties() {
+    _game.stage.disableVisibilityChange = true;
+    _game.stage.backgroundColor = "#ffffff";
 }
 
 function CreateGlobalVars() {
