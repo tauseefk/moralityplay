@@ -563,7 +563,8 @@ const PADDING = 10;
 var TextTypeEnum = {
     Thoughts: 'TEXT_THOUGHTS',
     MeaningfulChoices: 'TEXT_MEANINGFUL_CHOICES',
-    MeaninglessChoices: 'TEXT_MEANINGLESS_CHOICES',
+    MeaninglessChoices: 'TEXT_MEANINGLESS_CHOICES',    
+    Question: 'TEXT_QUESTION',
     Subtitle: 'TEXT_SUBTITLE'
 }
 
@@ -615,6 +616,9 @@ Text.prototype.changeText = function(game, arg1, arg2, arg3, arg4, arg5, arg6) {
         case TextTypeEnum.MeaninglessChoices:
             this.changeToMeaninglessChoices(game, arg1, arg2, arg3, arg4, arg5);
             break;
+        case TextTypeEnum.Question:
+            this.changeToQuestion(game, arg1, arg2);
+            break;
         case TextTypeEnum.Subtitle:
             this.changeToSubtitle(game, arg1);
             break;
@@ -664,6 +668,13 @@ Text.prototype.changeToMeaninglessChoices = function(game, endInteractionSignal,
     this._link.setAsButton(true);
     this._link.addMouseOverScaleEffect(game, this._text);
     //Animation.fade(game, this._text, 1, true);
+}
+
+Text.prototype.changeToQuestion = function(game) {
+    this._text.anchor.set(0.5, 0.5);
+    this._text.x = game.width/2;    
+    this._text.alpha = 0;
+    Animation.fade(game, this._text, 1, true);
 }
 
 Text.prototype.changeToSubtitle = function(game, isVisible) {
@@ -1276,6 +1287,7 @@ var _instance = null;
 var _game = null;
 
 var _text = [];
+var _question = null;
 var _choiceBg = [];
 var _thoughtsTriggerNeeded = 0;
 var _thoughtsTriggeredCount = 0;
@@ -1283,6 +1295,7 @@ var _thoughtsTriggeredCount = 0;
 const choiceBgKeyEnum = 'IMAGE_CHOICE_BACKGROUND';
 const meaningfulTextKeyEnum = 'TEXT_MEANINGFUL_CHOICES';
 const meaninglessTextKeyEnum = 'TEXT_MEANINGLESS_CHOICES';
+const questionTextKeyEnum = 'TEXT_QUESTION';
 
 const FADE_DELAY = 1;
 
@@ -1291,6 +1304,12 @@ function CreateBg(x, y, width, height, target) {
     choiceBg.addImageToGame(_game, _game.mediaGroup);
     choiceBg.changeImage(_game, width, height, target);
     return choiceBg;
+}
+
+function CreateChoiceQuestion(question, y) {
+    _question = new Text(question, 0, y, questionTextKeyEnum, _game.global.style.questionTextProperties);
+    _question.addToGame(_game, _game.mediaGroup);
+    _question.changeText(_game, questionTextKeyEnum);
 }
 
 function CreateChoices(choices, thoughtsTriggerNeeded) {
@@ -1303,6 +1322,8 @@ function CreateChoices(choices, thoughtsTriggerNeeded) {
 
 function CreateMeaningfulChoices(info) {
     resetElements();
+    CreateChoiceQuestion(info.question, info.y[0] - info.bounds[0][1]/2 - 30);
+    
     for(var i=0; i < info.size; i++) {
         var bgImg = CreateBg(GetXPos(info.size, i), info.y[i], info.bounds[i][0], info.bounds[i][1], info.targetScene[i]);
 
@@ -1318,8 +1339,11 @@ function CreateMeaningfulChoices(info) {
 
 function CreateMeaninglessChoices(info) {
     resetElements();
+    CreateChoiceQuestion(info.question, info.y[0] - info.bounds[0][1]/2 - 30);
+
     for(var i=0; i < info.size; i++) {
         var bgImg = CreateBg(GetXPos(info.size, i), info.y[i], info.bounds[i][0], info.bounds[i][1]);
+
         bgImg.index = i;
         _choiceBg.push(bgImg);
 
@@ -1374,6 +1398,7 @@ function FadeChoicesExcept(index){
             choiceBg.fadeOut(_game);
         }
     });
+    _question.fadeOut(_game);
 }
 
 function FadeChoiceAfterDelay(index, targetScene) {
@@ -1391,6 +1416,7 @@ function FadeChoiceAfterDelay(index, targetScene) {
 function resetElements() {
     _text = [];
     _choiceBg = [];
+    _question = null;
     _thoughtsTriggerNeeded = 0;
     _thoughtsTriggeredCount = 0;
 }

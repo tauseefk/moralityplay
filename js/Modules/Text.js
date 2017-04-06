@@ -8,7 +8,8 @@ const PADDING = 10;
 var TextTypeEnum = {
     Thoughts: 'TEXT_THOUGHTS',
     MeaningfulChoices: 'TEXT_MEANINGFUL_CHOICES',
-    MeaninglessChoices: 'TEXT_MEANINGLESS_CHOICES',
+    MeaninglessChoices: 'TEXT_MEANINGLESS_CHOICES',    
+    Question: 'TEXT_QUESTION',
     Subtitle: 'TEXT_SUBTITLE'
 }
 
@@ -60,6 +61,9 @@ Text.prototype.changeText = function(game, arg1, arg2, arg3, arg4, arg5, arg6) {
         case TextTypeEnum.MeaninglessChoices:
             this.changeToMeaninglessChoices(game, arg1, arg2, arg3, arg4, arg5);
             break;
+        case TextTypeEnum.Question:
+            this.changeToQuestion(game, arg1, arg2);
+            break;
         case TextTypeEnum.Subtitle:
             this.changeToSubtitle(game, arg1);
             break;
@@ -109,6 +113,13 @@ Text.prototype.changeToMeaninglessChoices = function(game, endInteractionSignal,
     this._link.setAsButton(true);
     this._link.addMouseOverScaleEffect(game, this._text);
     //Animation.fade(game, this._text, 1, true);
+}
+
+Text.prototype.changeToQuestion = function(game) {
+    this._text.anchor.set(0.5, 0.5);
+    this._text.x = game.width/2;    
+    this._text.alpha = 0;
+    Animation.fade(game, this._text, 1, true);
 }
 
 Text.prototype.changeToSubtitle = function(game, isVisible) {

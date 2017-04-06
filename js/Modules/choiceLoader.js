@@ -8,6 +8,7 @@ var _instance = null;
 var _game = null;
 
 var _text = [];
+var _question = null;
 var _choiceBg = [];
 var _thoughtsTriggerNeeded = 0;
 var _thoughtsTriggeredCount = 0;
@@ -15,6 +16,7 @@ var _thoughtsTriggeredCount = 0;
 const choiceBgKeyEnum = 'IMAGE_CHOICE_BACKGROUND';
 const meaningfulTextKeyEnum = 'TEXT_MEANINGFUL_CHOICES';
 const meaninglessTextKeyEnum = 'TEXT_MEANINGLESS_CHOICES';
+const questionTextKeyEnum = 'TEXT_QUESTION';
 
 const FADE_DELAY = 1;
 
@@ -23,6 +25,12 @@ function CreateBg(x, y, width, height, target) {
     choiceBg.addImageToGame(_game, _game.mediaGroup);
     choiceBg.changeImage(_game, width, height, target);
     return choiceBg;
+}
+
+function CreateChoiceQuestion(question, y) {
+    _question = new Text(question, 0, y, questionTextKeyEnum, _game.global.style.questionTextProperties);
+    _question.addToGame(_game, _game.mediaGroup);
+    _question.changeText(_game, questionTextKeyEnum);
 }
 
 function CreateChoices(choices, thoughtsTriggerNeeded) {
@@ -35,6 +43,8 @@ function CreateChoices(choices, thoughtsTriggerNeeded) {
 
 function CreateMeaningfulChoices(info) {
     resetElements();
+    CreateChoiceQuestion(info.question, info.y[0] - info.bounds[0][1]/2 - 30);
+    
     for(var i=0; i < info.size; i++) {
         var bgImg = CreateBg(GetXPos(info.size, i), info.y[i], info.bounds[i][0], info.bounds[i][1], info.targetScene[i]);
 
@@ -50,8 +60,11 @@ function CreateMeaningfulChoices(info) {
 
 function CreateMeaninglessChoices(info) {
     resetElements();
+    CreateChoiceQuestion(info.question, info.y[0] - info.bounds[0][1]/2 - 30);
+
     for(var i=0; i < info.size; i++) {
         var bgImg = CreateBg(GetXPos(info.size, i), info.y[i], info.bounds[i][0], info.bounds[i][1]);
+
         bgImg.index = i;
         _choiceBg.push(bgImg);
 
@@ -106,6 +119,7 @@ function FadeChoicesExcept(index){
             choiceBg.fadeOut(_game);
         }
     });
+    _question.fadeOut(_game);
 }
 
 function FadeChoiceAfterDelay(index, targetScene) {
@@ -123,6 +137,7 @@ function FadeChoiceAfterDelay(index, targetScene) {
 function resetElements() {
     _text = [];
     _choiceBg = [];
+    _question = null;
     _thoughtsTriggerNeeded = 0;
     _thoughtsTriggeredCount = 0;
 }

@@ -23,7 +23,7 @@
 
         "shadow": [10, 0, "rgba(0,0,0,0.8)", 25]
     },
-    "choicesTextProperties": {
+    "questionTextProperties": {
         "fontSize": 35,
         "align": "center",
         "font": "Kadwa",
@@ -31,6 +31,12 @@
         "boundsHeight": 100,
         "lineSpacing": -5
     },
-    "choiceTextBgProperties": {
+    "choicesTextProperties": {
+        "fontSize": 35,
+        "align": "center",
+        "font": "Kadwa",
+        "fill": "#000000",
+        "boundsHeight": 100,
+        "lineSpacing": -5
     }
 }

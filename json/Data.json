@@ -71,6 +71,7 @@
           {
             "timeStamp": 8,
             "choices": {
+                "question": "\"Ready to start the day?\"",
               "size": 2,
               "content": [
                 "I wish. Why doesn't\nthe weekend last forever?",
@@ -89,6 +90,7 @@
           {
             "timeStamp": 15,
             "choices": {
+                "question": "\"See you later!\"",
               "size": 3,
               "content": [
                 "Have a nice day!",
@@ -184,6 +186,7 @@
           {
             "timeStamp": 12,
             "choices": {
+                "question": "How are you?",
               "size": 2,
               "content": [
                 "Nothing much. You?",
@@ -234,6 +237,7 @@
               ],
               "choices": 
                 {
+                "question": "How are you?",
                   "size": 2,
                   "content": [
                     "I feel that we are ignoring Li.\n She IS part of the group.",
@@ -299,6 +303,7 @@
           {
             "timeStamp": 9,
             "choices": {
+                "question": "How are you?",
               "size": 2,
               "content": [
                 "Hard working, perfectionist\n but not in a bad way",
@@ -339,6 +344,7 @@
           {
             "timeStamp": 37,
             "choices": {
+                "question": "How are you?",
               "size": 2,
               "content": [
                 "If you practiced all day\n you must be ready",
@@ -357,6 +363,7 @@
           {
             "timeStamp": 53,
             "choices": {
+                "question": "How are you?",
               "size": 2,
               "content": [
                 "Are you sure?",
@@ -406,6 +413,7 @@
               ],
               "choices": 
                 {
+                "question": "How are you?",
                   "size": 2,
                   "content": [
                     "Relax, you know he did not\n mean anything by it.",
@@ -468,6 +476,7 @@
           {
             "timeStamp": 4,
             "choices": {
+                "question": "How are you?",
               "size": 2,
               "content": [
                 "Yes!",
@@ -487,6 +496,7 @@
             "timeStamp": 41,
               "choices": 
                 {
+                "question": "How are you?",
                   "size": 2,
                   "content": [
                     "I think she was just \ntrying to show interesting.",
