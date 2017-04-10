@@ -26,6 +26,7 @@
   },
 
   "scenes": {
+
     "startScene": {
       "stateType": "MenuState",
       "draggable": false,
@@ -54,6 +55,7 @@
         ]
       }
     },
+
     "introScene": {
       "videoFilter": [
         [ "grayscale", null ]
@@ -66,15 +68,15 @@
         "fadeOut": false
       },
       "choiceMoments": {
-        "size": 2,
+        "size": 3,
         "choiceMomentsProperties": [
           {
-            "timeStamp": 8,
+            "timeStamp": 6,
             "choices": {
-                "question": "\"Ready to start the day?\"",
+                "question": "\"How's going?\"",
               "size": 2,
               "content": [
-                "I wish. Why doesn't\nthe weekend last forever?",
+                "Monday seems to come too fast.",
                 "I just need a cup of coffee \nand I am good to go!"
               ],
               "y": [
@@ -93,8 +95,31 @@
                 "question": "\"See you later!\"",
               "size": 3,
               "content": [
-                "Have a nice day!",
-                "See you later!",
+                "Yep, we have\n a project meeting.",
+                "Oh, the meeting. \nYes, it's in the library.",
+                "Sure, in the library."
+              ],
+              "y": [
+                600,
+                600,
+                600
+              ],
+              "bounds": [
+                [ 400, 150 ],
+                [ 400, 150 ],
+                [ 400, 150 ]
+              ]
+
+            }
+          },
+          {
+            "timeStamp": 16.5,
+            "choices": {
+                "question": "\"See you then!\"",
+              "size": 3,
+              "content": [
+                "See you!",
+                "Byebye",
                 "..."
               ],
               "y": [
@@ -114,7 +139,6 @@
               ]
             }
           }
-
         ]
       }
     },
@@ -286,6 +310,7 @@
 
     },
 
+
     "black1": {
       "videoFilter": [
         [ "grayscale", null ]
@@ -298,57 +323,15 @@
         "fadeOut": false
       },
       "choiceMoments": {
-        "size": 1,
+        "size": 5,
         "choiceMomentsProperties": [
           {
-            "timeStamp": 9,
+            "timeStamp": 5,
             "choices": {
-                "question": "How are you?",
               "size": 2,
               "content": [
-                "Hard working, perfectionist\n but not in a bad way",
-                "Does not like star wars\n but likes artsy films."
-              ],
-              "y": [
-                600,
-                600
-              ],
-              "bounds": [
-                [ 600, 200 ],
-                [ 600, 200 ]
-              ],
-              "targetScene": [
-                "black2",
-                "black2"
-              ]
-            }
-
-          }
-        ]
-      }
-    },
-    "black2": {
-      "videoFilter": [
-        [ "grayscale", null ]
-      ],
-      "movieSrcHD": "./Videos/Black2_optimized.mp4",
-      "movieSrcSD": "./Videos/Black2_optimized_lo.mp4",
-      "stateType": "InteractState",
-      "transition": {
-        "fadeIn": true,
-        "fadeOut": false
-      },
-      "choiceMoments": {
-        "size": 3,
-        "choiceMomentsProperties": [
-          {
-            "timeStamp": 37,
-            "choices": {
-                "question": "How are you?",
-              "size": 2,
-              "content": [
-                "If you practiced all day\n you must be ready",
-                "Like Aron said,\n we believe in you."
+                "Hey, can I join you for lunch?",
+                "Hey, what are you guys doing?"
               ],
               "y": [
                 600,
@@ -361,13 +344,13 @@
             }
           },
           {
-            "timeStamp": 53,
+            "timeStamp": 15,
             "choices": {
-                "question": "How are you?",
+                "question": "Three positive and negative things about Micheal.",
               "size": 2,
               "content": [
-                "Are you sure?",
-                "If he is right then it is\n one less reason not to be nervous"
+                "I don't know....",
+                "Don’t like star wars \nbut likes artsy films."
               ],
               "y": [
                 600,
@@ -380,7 +363,43 @@
             }
           },
           {
-            "timeStamp": 72,
+            "timeStamp": 63,
+            "choices": {
+              "size": 2,
+              "content": [
+                "If you practiced it you will be fine.",
+                "Good luck!"
+              ],
+              "y": [
+                600,
+                600
+              ],
+              "bounds": [
+                [ 600, 200 ],
+                [ 600, 200 ]
+              ]
+            }
+          },
+          {
+            "timeStamp": 85,
+            "choices": {
+              "size": 2,
+              "content": [
+                "What are you talking about?",
+                "Are you sure?"
+              ],
+              "y": [
+                600,
+                600
+              ],
+              "bounds": [
+                [ 600, 200 ],
+                [ 600, 200 ]
+              ]
+            }
+          },
+          {
+            "timeStamp": 128,
             "thoughtBubbles": {
               "size": 2,
               "thoughtIconKey": [
@@ -404,32 +423,36 @@
                 {
                     "size": 1,
                   "content": [
-                    "Why would he even say that...\ndoes he not understand what it actually means?"
+                    "I wish she didn't mention that."
                   ],
                   "destination": [
-                    [ 1000, 300 ]
+                    [ 1000, 50 ]
                   ]
                 }
               ],
               "choices": 
                 {
-                "question": "How are you?",
-                  "size": 2,
+                "question": "You know I am just trying to help.",
+                  "size": 3,
                   "content": [
-                    "Relax, you know he did not\n mean anything by it.",
-                    "Why do you think that\n is an advantage?"
+                    "Michael, don't overthink it.\nShe means well.",
+                    "Why do you think \nthat would help?",
+                    "I am not sure that\nsaying that is helping."
                   ],
                   "y": [
+                    600,
                     600,
                     600
                   ],
                   "bounds": [
-                    [ 600, 200 ],
-                    [ 600, 200 ]
+                    [ 400, 150 ],
+                    [ 400, 150 ],
+                    [ 400, 150 ]
                   ],
                   "targetScene": [
-                    "black3bad",
-                    "black3good"
+                    "black2bad",
+                    "black2good",
+                    "black2good"
                   ]
                 }
               
@@ -438,20 +461,20 @@
         ]
       }
     },
-    "black3bad": {
+    "black2bad": {
       "stateType": "MovieState",
-      "movieSrcHD": "./Videos/Black3 Bad_optimized.mp4",
-      "movieSrcSD": "./Videos/Black3 Bad_optimized_lo.mp4",
+      "movieSrcHD": "./Videos/Black2_Bad_optimized.mp4",
+      "movieSrcSD": "./Videos/Black2_Bad_optimized_lo.mp4",
       "transition": {
         "fadeIn": true,
         "fadeOut": false
       },
       "nextScenes": "menuScene"
     },
-    "black3good": {
+    "black2good": {
       "stateType": "MovieState",
-      "movieSrcHD": "./Videos/Black3 Good_optimized.mp4",
-      "movieSrcSD": "./Videos/Black3 Good_optimized_lo.mp4",
+      "movieSrcHD": "./Videos/Black2_Good_optimized.mp4",
+      "movieSrcSD": "./Videos/Black2_Good_optimized_lo.mp4",
       "transition": {
         "fadeIn": true,
         "fadeOut": false
