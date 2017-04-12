@@ -65,7 +65,7 @@
             "fadeOut": false
         },
         "choiceMoments": {
-            "size": 3,
+            "size": 2,
             "choiceMomentsProperties": [
             {
                 "timeStamp": 6,
@@ -95,28 +95,6 @@
                         "Yep, we have\n a project meeting.",
                         "Oh, the meeting. \nYes, it's in the library.",
                         "Sure, in the library."
-                    ],
-                    "y": [
-                        600,
-                        600,
-                        600
-                    ],
-                    "bounds": [
-                        [ 400, 150 ],
-                        [ 400, 150 ],
-                        [ 400, 150 ]
-                    ]
-                }
-            },
-            {
-                "timeStamp": 17,
-                "choices": {
-                    "question": "\"See you then!\"",
-                    "size": 3,
-                    "content": [
-                        "See you!",
-                        "Bye!",
-                        "..."
                     ],
                     "y": [
                         600,
