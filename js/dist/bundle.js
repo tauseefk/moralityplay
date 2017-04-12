@@ -127,11 +127,172 @@ module.exports = {
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
+
+
+const VideoFilter = __webpack_require__(26),
+    Linkable = __webpack_require__(4),
+    Subtitle = __webpack_require__(19);
+
+var _instance = null;
+var _game = null;
+var _video = null
+var _videoImage = null;
+var _videoFilter = null;
+var _interactionTimeStamps = null;
+
+var _pausedByGame = false;
+
+const FADEOUT_OFFSET_SECONDS = 5;
+const VIDEO_SLOW_PLAYBACK_RATE = 0.2;
+
+function CreateVideo(src, doFadeOut, nextScene, sub, interactionTimeStamps) {
+    _video = _video.changeSource(src, false);
+
+//    _video.video.setAttribute('autoplay', 'autoplay');
+    AddVideoAndFilter(doFadeOut, sub, nextScene);
+    if(_interactionTimeStamps)
+        AddInteractionEvents(_interactionTimeStamps);
+    //console.log(_video.video.currentTime);
+    /*
+    if(doFadeOut)
+        _game.time.events.add((_video.video.duration-FADEOUT_OFFSET_SECONDS)*1000, fadeOut, this, signal);
+    */
+    if(nextScene)
+        _video.onComplete.addOnce(ChangeScene(nextScene), this);
+}
+
+function CheckProgress() {
+    var percentLoaded = parseInt(_video.video.buffered.end(0) / _video.video.duration * 100);
+    console.log(percentLoaded);
+}
+
+function AddInteractionEvents() {
+    var timestamp = _interactionTimeStamps.shift();
+    if(timestamp)
+        checkVideoDuration(timestamp);
+}
+
+function AddVideoAndFilter(doFadeOut, sub, nextScene) {
+    _videoImage = _video.addToWorld(0, 0, 0, 0);
+    _game.mediaGroup.add(_videoImage);
+    _video.onChangeSource.addOnce(OnVideoLoad, this);
+
+    function OnVideoLoad() {
+        _video.play();
+        if(!nextScene)
+            _video.loop = true;
+        else
+            _video.loop = false;
+        //_video.video.addEventListener('progress', CheckProgress, false);
+        if(doFadeOut) {
+            //_game.time.events.add((_video.video.duration-FADEOUT_OFFSET_SECONDS)*Phaser.Timer.SECOND, FadeOut, this);
+        }
+        if(sub)
+            Subtitle.create(_video.video, sub);
+        if(_videoFilter != null && _videoFilter != 'none') {
+            VideoFilter.init(_game, _video);
+            VideoFilter.create(_videoFilter);
+        }
+    }
+}
+
+function TriggerMoment() {
+    console.log(_video.video.duration);
+    console.log(_video.video.currentTime);
+    //Ensure game is not paused to pause scenario properly
+    _game.global.gameManager.getPlaySignal().dispatch();
+    _video.video.pause();
+    _pausedByGame = true;
+    _game.global.gameManager.getHideUISignal().dispatch();
+    VideoFilter.startFilterFade(_game.global.gameManager.getTriggerInteractionSignal());
+}
+
+function VideoZoom() {
+    Linkable.zoomIn(_game, _video, 1.5);
+}
+
+function checkVideoDuration(time) {
+    _video.video.addEventListener("timeupdate", function trigger() {        
+        if(_video.video.currentTime >= time){
+            _video.video.removeEventListener("timeupdate", trigger);
+            TriggerMoment();
+            AddInteractionEvents();
+        }
+    }, false);
+}
+
+function FadeOut(signal) {
+    _game.global.gameManager.getFadeOutTransitionSignal().dispatch();
+}
+
+function ChangeScene(nextScenes) {
+   return function() {
+        if(typeof(nextScenes) === 'string'); {
+            _game.global.gameManager.getChangeSceneSignal().dispatch(nextScenes);
+        }
+    }
+}
+
+module.exports = {
+    init: function(game) {
+        console.log("Video initialized");
+        _interactionTimeStamps = null;
+        _pausedByGame = false;
+        //stopVideo();
+        if(_instance !== null)
+            return _instance;
+        _game = game;
+        _instance = this;
+        _video = _game.add.video('start', 'emptyVideo');
+        _video.video.setAttribute('playsinline', 'playsinline');
+        return _instance;
+    },
+    /*
+    preload: function(videos) {
+        load(videos);
+    },
+    */
+    create: function(src, doFadeOut, videoFilter, nextScene, sub, interactionTimeStamps) {
+        _videoFilter = videoFilter;
+        _interactionTimeStamps = interactionTimeStamps;
+        CreateVideo(src, doFadeOut, nextScene, sub, interactionTimeStamps);
+    },
+    stop: function() {
+        if(_video)
+            _video.stop();
+    },
+    play: function(pausedByGame) {
+        if(pausedByGame == false)
+            _pausedByGame = pausedByGame;
+        if(_video)
+            _video.play();
+    },
+    paused: function() {
+        if(_video)
+            return _video.video.paused;
+    },
+    isPausedByGame: function() {
+        return _pausedByGame;
+    },
+    endFilter: function() {
+        VideoFilter.endFilter();
+    },
+    toggleSubtitle: function() {
+        Subtitle.toggleSubtitle();
+    }
+}
+
+
+/***/ }),
+/* 2 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
 //Dependency: Nonde
 
 
 const Image = __webpack_require__(9),
-    Video = __webpack_require__(2);
+    Video = __webpack_require__(1);
 
 var _instance = null;
 var _game = null;
@@ -268,163 +429,40 @@ module.exports = {
 
 
 /***/ }),
-/* 2 */
+/* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-const VideoFilter = __webpack_require__(26),
-    Linkable = __webpack_require__(3),
-    Subtitle = __webpack_require__(19);
-
 var _instance = null;
 var _game = null;
-var _video = null
-var _videoImage = null;
-var _videoFilter = null;
-var _interactionTimeStamps = null;
 
-var _pausedByGame = false;
-
-const FADEOUT_OFFSET_SECONDS = 5;
-const VIDEO_SLOW_PLAYBACK_RATE = 0.2;
-
-function CreateVideo(src, doFadeOut, nextScenes, sub, interactionTimeStamps) {
-    _video = _video.changeSource(src, false);
-
-//    _video.video.setAttribute('autoplay', 'autoplay');
-    AddVideoAndFilter(doFadeOut, sub);
-    if(_interactionTimeStamps)
-        AddInteractionEvents(_interactionTimeStamps);
-    //console.log(_video.video.currentTime);
-    /*
-    if(doFadeOut)
-        _game.time.events.add((_video.video.duration-FADEOUT_OFFSET_SECONDS)*1000, fadeOut, this, signal);
-    */
-    if(nextScenes)
-        _video.onComplete.addOnce(ChangeScene(nextScenes), this);
-}
-
-function CheckProgress() {
-    var percentLoaded = parseInt(_video.video.buffered.end(0) / _video.video.duration * 100);
-    console.log(percentLoaded);
-}
-
-function AddInteractionEvents() {
-    var timestamp = _interactionTimeStamps.shift();
-    if(timestamp)
-        checkVideoDuration(timestamp);
-}
-
-function AddVideoAndFilter(doFadeOut, sub) {
-    _videoImage = _video.addToWorld(0, 0, 0, 0);
-    _game.mediaGroup.add(_videoImage);
-    _video.onChangeSource.addOnce(OnVideoLoad, this);
-    function OnVideoLoad() {
-        _video.play();
-        //_video.video.addEventListener('progress', CheckProgress, false);
-        if(doFadeOut) {
-            //_game.time.events.add((_video.video.duration-FADEOUT_OFFSET_SECONDS)*Phaser.Timer.SECOND, FadeOut, this);
-        }
-        if(sub)
-            Subtitle.create(_video.video, sub);
-        if(_videoFilter != null && _videoFilter != 'none') {
-            VideoFilter.init(_game, _video);
-            VideoFilter.create(_videoFilter);
-        }
-    }
-}
-
-function TriggerMoment() {
-    console.log(_video.video.duration);
-    console.log(_video.video.currentTime);
-    //Ensure game is not paused to pause scenario properly
-    _game.global.gameManager.getPlaySignal().dispatch();
-    _video.video.pause();
-    _pausedByGame = true;
-    _game.global.gameManager.getHideUISignal().dispatch();
-    VideoFilter.startFilterFade(_game.global.gameManager.getTriggerInteractionSignal());
-}
-
-function VideoZoom() {
-    Linkable.zoomIn(_game, _video, 1.5);
-}
-
-function checkVideoDuration(time) {
-    _video.video.addEventListener("timeupdate", function trigger() {        
-        if(_video.video.currentTime >= time){
-            _video.video.removeEventListener("timeupdate", trigger);
-            TriggerMoment();
-            AddInteractionEvents();
-        }
-    }, false);
-}
-
-function FadeOut(signal) {
-    _game.global.gameManager.getFadeOutTransitionSignal().dispatch();
-}
-
-function ChangeScene(nextScenes) {
-   return function() {
-        if(typeof(nextScenes) === 'string'); {
-            _game.global.gameManager.getChangeSceneSignal().dispatch(nextScenes);
-        }
-    }
+function InitializeGroups() {        
+    _game.mediaGroup = _game.add.group();
+    _game.uiGroup = _game.add.group();
 }
 
 module.exports = {
     init: function(game) {
-        console.log("Video initialized");
-        _interactionTimeStamps = null;
-        _pausedByGame = false;
-        //stopVideo();
         if(_instance !== null)
             return _instance;
         _game = game;
         _instance = this;
-        _video = _game.add.video('start', 'emptyVideo');
-        _video.video.setAttribute('playsinline', 'playsinline');
         return _instance;
     },
-    /*
-    preload: function(videos) {
-        load(videos);
+    preload: function() {
     },
-    */
-    create: function(src, doFadeOut, videoFilter, scenes, sub, interactionTimeStamps) {
-        _videoFilter = videoFilter;
-        _interactionTimeStamps = interactionTimeStamps;
-        CreateVideo(src, doFadeOut, scenes, sub, interactionTimeStamps);
-    },
-    stop: function() {
-        if(_video)
-            _video.stop();
-    },
-    play: function(pausedByGame) {
-        if(pausedByGame == false)
-            _pausedByGame = pausedByGame;
-        if(_video)
-            _video.play();
-    },
-    paused: function() {
-        if(_video)
-            return _video.video.paused;
-    },
-    isPausedByGame: function() {
-        return _pausedByGame;
-    },
-    endFilter: function() {
-        VideoFilter.endFilter();
-    },
-    toggleSubtitle: function() {
-        Subtitle.toggleSubtitle();
+    initializeGroups: function() {
+        InitializeGroups();
     }
 }
 
 
+
+
 /***/ }),
-/* 3 */
+/* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -549,13 +587,13 @@ module.exports = Linkable;
 
 
 /***/ }),
-/* 4 */
+/* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-const Linkable = __webpack_require__(3),
+const Linkable = __webpack_require__(4),
     Animation = __webpack_require__(8);
 
 const PADDING = 10;
@@ -737,39 +775,6 @@ module.exports = Text;
 
 
 /***/ }),
-/* 5 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var _instance = null;
-var _game = null;
-
-function InitializeGroups() {        
-    _game.mediaGroup = _game.add.group();
-    _game.uiGroup = _game.add.group();
-}
-
-module.exports = {
-    init: function(game) {
-        if(_instance !== null)
-            return _instance;
-        _game = game;
-        _instance = this;
-        return _instance;
-    },
-    preload: function() {
-    },
-    initializeGroups: function() {
-        InitializeGroups();
-    }
-}
-
-
-
-
-/***/ }),
 /* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -784,6 +789,7 @@ const Filter = __webpack_require__(17),
 var _instance = null;
 var _game = null;
 var _icons = [];
+var _linkedIcons = [];
 
 const buttonThoughtImageKeyEnum = 'IMAGE_BUTTON_THOUGHT',
     buttonThoughtSpriteKeyEnum = 'IMAGE_SPRITE_THOUGHT',
@@ -796,11 +802,81 @@ function CreateThoughtIcon(iconKey, coords, thoughts) {
     _icons.push(button);
 }
 
-function CreateExploratoryIcons(key, coords, target, type) {
+function CreateExploratoryIcons(icons, hideSceneChangeIcons) {
+    for(var i=0; i<icons.size; i++) {
+        CreateExploratoryIcon(icons.key[i], icons.coords[i], icons.targetImageIndexOrScene[i], icons.type[i]);
+    }
+    HideLockedIcons(icons.lockedByScenes);
+    ShowUnlockedIcons(icons.unlockedByScenes);
+}
+
+function CreateExploratoryIcon(key, coords, target, type) {
     var button = new Image(coords[0], coords[1], key, type);
     button.addImageToGame(_game, _game.mediaGroup);
     button.changeImage(_game, target);
     _icons.push(button);
+}
+
+function CreateLinkedIcons(linkedIcons) {
+    for(var i=0; i<linkedIcons.size; i++) {
+        CreateLinkedIcon(linkedIcons.key[i], linkedIcons.coords[i], linkedIcons.targetImageIndexOrScene[i], linkedIcons.type[i]);
+    } 
+    HideIconType(sceneChangeImageKeyEnum);
+}
+
+function CreateLinkedIcon(key, coords, target, type) {
+    var button = new Image(coords[0], coords[1], key, type);
+    button.addImageToGame(_game, _game.mediaGroup);
+    button.changeImage(_game, target);
+    _linkedIcons.push(button);
+}
+
+function HideLockedIcons(locked) {
+    if(locked) {
+        for(var i=0; i<locked.length; i++){
+            var scenesArr = locked[i];
+            if(OneSceneVisited(scenesArr)) {
+                _icons[i].setVisible(false);
+            }
+        };
+    }
+    else 
+        console.log("No locked buttons in this scene.")
+}
+
+function ShowUnlockedIcons(conditionsForIconIndexArr) {
+    if(conditionsForIconIndexArr) {
+        for(var i=0; i<conditionsForIconIndexArr.length; i++) {
+            var currIconUnlockConditions = conditionsForIconIndexArr[i];
+            if(currIconUnlockConditions) {
+                if(VisitAtLeastOnceOfEach(currIconUnlockConditions)) {
+                    _icons[i].setVisible(true);
+                }
+                else {
+                    _icons[i].setVisible(false);
+                }
+            }
+        }
+    }
+}
+
+function VisitAtLeastOnceOfEach(sceneSetArray) {
+    var unlocked = true;
+    for(var j=0; j<sceneSetArray.length; j++) {
+        unlocked &= OneSceneVisited(sceneSetArray[j]);
+    }
+    return unlocked;
+}
+
+function OneSceneVisited(sceneArr) {
+    if(sceneArr){
+        for(var i=0; i<sceneArr.length; i++) {
+            if(_game.global.visitedScenes[sceneArr[i]]) {
+                return true;
+            }
+        }
+    }
+    return false;
 }
 
 function EndInteraction() {
@@ -810,10 +886,8 @@ function EndInteraction() {
 }
 
 function HideIconType(iconType) {
-    _icons.forEach(function(icon) {
-        if(icon.getType() == iconType) {
-            icon.setVisible(false);
-        }
+    _linkedIcons.forEach(function(icon) {
+        icon.setVisible(false);
     });
 }
 
@@ -832,20 +906,21 @@ module.exports = {
         CreateThoughtIcon(iconKey, coords, thoughts);
     },
     createExploratoryIcons: function(icons, hideSceneChangeIcons) {
-        for(var i=0; i<icons.size; i++) {
-            CreateExploratoryIcons(icons.key[i], icons.coords[i], icons.targetImageIndexOrScene[i], icons.type[i]);
-        } 
-        if(hideSceneChangeIcons)
-            HideIconType(sceneChangeImageKeyEnum);
+        CreateExploratoryIcons(icons, hideSceneChangeIcons);
         return _icons;
+    },
+    createNavigationIcons: function(icons, linkedIcons) {  
+        if(linkedIcons)  
+            CreateLinkedIcons(linkedIcons);  
+        CreateExploratoryIcons(icons);
     },
     endInteraction: function() {
         EndInteraction();
     },
     displayIcon: function(index, hideSameType) {
         if(hideSameType)
-            HideIconType(_icons[index].getType());
-        _icons[index].setVisible(true);
+            HideIconType(_linkedIcons[index].getType());
+        _linkedIcons[index].setVisible(true);
     },
     createThoughtsAndChoices: function(thoughts, coords) {
         _game.global.gameManager.getCreateThoughtsSignal().dispatch(thoughts, coords);
@@ -855,6 +930,10 @@ module.exports = {
             icon.destroy();
         });
         _icons = [];
+        _linkedIcons.forEach(function(icon) {
+            icon.destroy();
+        });
+        _linkedIcons = [];
     }
 }
 
@@ -912,6 +991,10 @@ State.prototype.getIconsInfo = function() {
   return this._scene.icons;
 }
 
+State.prototype.getLinkedIconsInfo = function() {
+  return this._scene.linkedIcons;
+}
+
 State.prototype.getInputInfo = function() {
   return this._scene.input;
 }
@@ -941,7 +1024,7 @@ State.prototype.getVideoFilter = function() {
 }
 
 State.prototype.getNextScenes = function() {
-  return this._scene.nextScenes;
+  return this._scene.nextScene;
 }
 
 State.prototype.getDraggable = function() {
@@ -984,12 +1067,21 @@ Animation.scale = function(game, object, autoStart, targetWidth, targetHeight, s
     return tween;
 }
 
-Animation.fade = function(game, object, value, autoStart, speed, repeat) {
+Animation.fade = function(game, object, value, autoStart, speed, repeat, destroy) {
     var customSpeed = speed;
     if(!speed)
         customSpeed = FADE_SPEED;
+    var tween = game.add.tween(object).to({alpha:value}, customSpeed, Phaser.Easing.Linear.None, autoStart, 0, 0, false);
+
+    if(destroy) {
+        tween.onComplete.add(Destroy, this);
+    }
+
+    function Destroy() {
+        object.destroy();
+    }
     
-    return game.add.tween(object).to({alpha:value}, customSpeed, Phaser.Easing.Linear.None, autoStart, 0, 0, false);
+    return tween;
 }
 
 Animation.bob = function(game, object, autoStart) {
@@ -1008,7 +1100,7 @@ module.exports = Animation;
 "use strict";
 
 
-const Linkable = __webpack_require__(3),
+const Linkable = __webpack_require__(4),
     Animation = __webpack_require__(8);
 
 var ImageTypeEnum = {
@@ -1145,6 +1237,7 @@ Image.prototype.changeToThoughtIcon = function(game, thoughtsAndChoicesSignal, t
 }
 
 Image.prototype.changeToSceneChangeImage = function(game, targetScene) {
+    this._target = targetScene;
     this._image.anchor.setTo(0.5, 0.5);
     this._link = new Linkable(game, this._image, game.global.gameManager.getChangeSceneSignal(), targetScene);
     this._link.setAsButton(true);    
@@ -1153,6 +1246,7 @@ Image.prototype.changeToSceneChangeImage = function(game, targetScene) {
 }
 
 Image.prototype.changeToDisplayImage = function(game, target) {
+    this._target = target;
     this._image.anchor.setTo(0.5, 0.5);
     this._link = new Linkable(game, this._image, game.global.gameManager.getDisplayImageSignal(), target, true);
     this._link.setAsButton(false);
@@ -1219,10 +1313,6 @@ Image.prototype.makeDraggable = function(game, hoverImageSrc, lockHorizontal, lo
     this.changeCursorImage(game, 'url("./Images/UI/hand_2.png"), auto');
 }
 
-Image.prototype.addMouseOverScaleEffect = function(game, link) {
-
-}
-
 Image.prototype.destroy = function() {
     this._image.destroy();
 }
@@ -1233,6 +1323,10 @@ Image.prototype.getPhaserImage = function() {
 
 Image.prototype.getType = function() {
     return this._type;
+}
+
+Image.prototype.getTarget = function() {
+    return this._target;
 }
 
 Image.prototype.disableInput = function() {
@@ -1279,7 +1373,7 @@ module.exports = Image;
 "use strict";
 
 
-const Text = __webpack_require__(4),
+const Text = __webpack_require__(5),
     Image = __webpack_require__(9);
 
 //initializes once
@@ -1323,7 +1417,7 @@ function CreateChoices(choices, thoughtsTriggerNeeded) {
 function CreateMeaningfulChoices(info) {
     resetElements();
     CreateChoiceQuestion(info.question, info.y[0] - info.bounds[0][1]/2 - 30);
-    
+
     for(var i=0; i < info.size; i++) {
         var bgImg = CreateBg(GetXPos(info.size, i), info.y[i], info.bounds[i][0], info.bounds[i][1], info.targetScene[i]);
 
@@ -1405,6 +1499,8 @@ function FadeChoiceAfterDelay(index, targetScene) {
     _game.time.events.add(Phaser.Timer.SECOND*FADE_DELAY, fadeChoice, this);
 
     function fadeChoice(){
+        _text[index].disableInput();
+        _choiceBg[index].disableInput();
         if(targetScene)
             _text[index].fadeOut(_game, _game.global.gameManager.getChangeSceneSignal(), targetScene);
         else
@@ -1455,7 +1551,7 @@ module.exports = {
 
 
 //Initialized once
-const Text = __webpack_require__(4);
+const Text = __webpack_require__(5);
 
 var _instance = null,
     _game = null,
@@ -1584,6 +1680,9 @@ module.exports = {
     },
     getStartSceneKey: function() {
         return _startSceneKey;
+    },
+    setVisitedScene: function(name) {
+        _scenes[name].visited = true;
     }
 }
 
@@ -1596,10 +1695,10 @@ module.exports = {
 
 
 const Resources = __webpack_require__(12),
-    Group = __webpack_require__(5),
+    Group = __webpack_require__(3),
     Transition = __webpack_require__(0),
-    UI = __webpack_require__(1),
-    Video = __webpack_require__(2),
+    UI = __webpack_require__(2),
+    Video = __webpack_require__(1),
     MenuState = __webpack_require__(28),
     LocationState = __webpack_require__(15),
     InteractState = __webpack_require__(14),
@@ -1619,10 +1718,11 @@ var StateEnum = {
     LocationState: 'LocationState'
 }
 
-function ChangeScene(scene) {
-    var nextScene = Resources.getScene(scene);
+function ChangeScene(sceneName) {
+    var nextScene = Resources.getScene(sceneName);
     if(nextScene === null)
-        console.warn("Scene: " + scene + "is undefined.");
+        console.warn("Scene: " + sceneName + "is undefined.");
+    if(nextScene)
     console.log("Changing scene to: " + nextScene.stateType);
     switch(nextScene.stateType) {
         case StateEnum.MenuState:
@@ -1643,6 +1743,16 @@ function ChangeScene(scene) {
         default:
             console.warn("Invalid State.");
     }
+}
+
+function CheckVisited(sceneName) {
+    console.log(sceneName);
+    var scene = Resources.getScene(sceneName);
+    if(scene.visited && scene.alternateSceneName) {
+        Resources.setVisitedScene(sceneName);
+        scene = Resources.getScene(scene.alternateSceneName);
+    }
+    return scene;
 }
 
 function AddAllStates() {
@@ -1680,9 +1790,10 @@ module.exports = {
         Video.stop();
         _game.global.gameManager.getChangeSceneSignal().dispatch(Resources.getStartSceneKey());
     },
-    changeScene: function(scene) {
+    changeScene: function(sceneName) {
         _game.mediaGroup.removeAll();
-        ChangeScene(scene);
+        _game.global.visitedScenes[sceneName] = true;
+        ChangeScene(sceneName);
     }
 }
 
@@ -1694,9 +1805,9 @@ module.exports = {
 "use strict";
 
 
-const Group = __webpack_require__(5),
-    UI = __webpack_require__(1),
-    Video = __webpack_require__(2),
+const Group = __webpack_require__(3),
+    UI = __webpack_require__(2),
+    Video = __webpack_require__(1),
     Transition = __webpack_require__(0),
     Icons = __webpack_require__(6),
     State = __webpack_require__(7),
@@ -1798,27 +1909,30 @@ module.exports = {
 "use strict";
 
 
-var _instance = null;
-var _stateInfo = null;
-
 const Transition = __webpack_require__(0),
-    Group = __webpack_require__(5),
+    Group = __webpack_require__(3),
     State = __webpack_require__(7),
-    UI = __webpack_require__(1),
+    UI = __webpack_require__(2),
     MovingBackground = __webpack_require__(18),
     Icons = __webpack_require__(6),
-    Text = __webpack_require__(4);
+    Video = __webpack_require__(1),
+    Text = __webpack_require__(5);
+
+var _instance = null;
+var _stateInfo = null;
+var _game = null;
 
 module.exports = {
     init: function(scene) {
-        this.game.global.soundManager.init();
         Group.initializeGroups();        
         MovingBackground.init(this.game);
         Icons.init(this.game);
+        Video.init(this.game);
         if(_stateInfo !== null)
             _stateInfo.setStateScene(scene);
         if(_instance !== null)
             return _instance;
+        _game = this.game;
         _stateInfo = new State(scene);
         _instance = this;
         return _instance;
@@ -1827,21 +1941,25 @@ module.exports = {
     },
     create: function() {
     //    this.game.global.soundManager.playBackgroundMusic('littleRootMusic');
-    //    Video.create(_stateInfo.getMovieSrc(), _stateInfo.getTransition().fadeOut, Transition.getFadeOutSignal(), _stateInfo.getVideoFilter(), _stateInfo.getNextScenes());
-        MovingBackground.create(_stateInfo.getBgImageKey(), _stateInfo.getDraggable());
-        var icons = Icons.createExploratoryIcons(_stateInfo.getIconsInfo(), true);
+        if(_stateInfo.getMovieSrc(_game.global.quality)) {
+            Video.create(_stateInfo.getMovieSrc(_game.global.quality), _stateInfo.getTransitionInfo().fadeOut, _stateInfo.getVideoFilter(), _stateInfo.getNextScenes());
+        }
+        else {
+            MovingBackground.create(_stateInfo.getBgImageKey(), _stateInfo.getDraggable());
+        }
+        var icons = Icons.createNavigationIcons(_stateInfo.getIconsInfo(), _stateInfo.getLinkedIconsInfo());
         if(_stateInfo.getDraggable())
             MovingBackground.assignFollowIcons(icons);
         //UI.create(true, false);
-        var text = new Text('Click and drag to navigate', 430, 640, 'TEXT_MEANINGFUL_CHOICES', this.game.global.style.choicesTextProperties);
-        text.addToGame(this.game, this.game.mediaGroup);
-        text.fadeIn(this.game);
+        //var text = new Text('Click and drag to navigate', 430, 640, 'TEXT_MEANINGFUL_CHOICES', this.game.global.style.choicesTextProperties);
+        //text.addToGame(this.game, this.game.mediaGroup);
+        //text.fadeIn(this.game);
         if(_stateInfo.getTransitionInfo().fadeIn)
             this.game.global.gameManager.getFadeInTransitionSignal().dispatch();
     },
     shutdown: function() {
         Icons.destroy();        
-        this.game.global.soundManager.stopBackgroundMusic();
+        _game.global.soundManager.stopBackgroundMusic();
     },
     displayImage: function(index, hideSameType) {
         Icons.displayIcon(index, hideSameType);
@@ -2012,7 +2130,7 @@ var _text = [];
 var _choiceFont = null;
 var _bgImage = null;
 var _group = null;
-var Text = __webpack_require__(4),
+var Text = __webpack_require__(5),
     Image = __webpack_require__(9);
 
 const bgImageKeyEnum = 'IMAGE_BACKGROUND';
@@ -2072,7 +2190,7 @@ module.exports = {
 "use strict";
 
 
-const Text = __webpack_require__(4);
+const Text = __webpack_require__(5);
 
 var _instance = null;
 var _game = null;
@@ -2249,9 +2367,7 @@ function SetGameProperties() {
 function CreateGlobalVars() {
     _game.global = {
         playerName: null,
-        scenario1Decision: -1,
-        scenario2Decision: -1,
-        scenario3Decision: -1
+        visitedScenes: {}
     }
 
     _game.global.gameManager = new GameManager();
@@ -2330,7 +2446,7 @@ var InputTypeEnum = {
     NameInput: 'INPUT_TEXT',
     Choices: 'TEXT_CHOICES'
 }
-var Linkable = __webpack_require__(3);
+var Linkable = __webpack_require__(4);
 
 var Input = function(content, xPos, yPos, properties) {
     this._xPos = xPos;
@@ -2372,8 +2488,8 @@ const ConnectionChecker = __webpack_require__(16),
     Choices = __webpack_require__(10),
     Thoughts = __webpack_require__(11),
     Transition = __webpack_require__(0),
-    UI = __webpack_require__(1),
-    Video = __webpack_require__(2);
+    UI = __webpack_require__(2),
+    Video = __webpack_require__(1);
 
 var _instance = null;
 var _game = null;
@@ -2556,8 +2672,8 @@ const StateManager = __webpack_require__(13),
     Choices = __webpack_require__(10),
     Thoughts = __webpack_require__(11),
     Transition = __webpack_require__(0),
-    UI = __webpack_require__(1),
-    Video = __webpack_require__(2);
+    UI = __webpack_require__(2),
+    Video = __webpack_require__(1);
 
 var _instance = null;
 var _game = null;
@@ -2607,7 +2723,7 @@ module.exports = SoundManager;
 "use strict";
 
 
-const Linkable = __webpack_require__(3),
+const Linkable = __webpack_require__(4),
     Animation = __webpack_require__(8);
 
 var _instance = null;
@@ -2743,9 +2859,9 @@ module.exports = {
 
 var _instance = null;
 var _stateInfo = null;
-var Group = __webpack_require__(5),
-    UI = __webpack_require__(1),
-    Video = __webpack_require__(2),
+var Group = __webpack_require__(3),
+    UI = __webpack_require__(2),
+    Video = __webpack_require__(1),
     Transition = __webpack_require__(0),
     State = __webpack_require__(7);
 
@@ -2782,7 +2898,7 @@ module.exports = {
 var _instance = null;
 var _stateInfo = null;
 var _input = [];
-const Group = __webpack_require__(5), 
+const Group = __webpack_require__(3), 
     Input = __webpack_require__(24),
     Transition = __webpack_require__(0),
     State = __webpack_require__(7),
@@ -2805,7 +2921,8 @@ function updatePlayerNameCallback(game) {
 module.exports = {
     init: function(scene) {
         if(_stateInfo !== null)
-            _stateInfo.setStateScene(scene);
+            _stateInfo.setStateScene(scene);        
+        this.game.global.soundManager.init();
         MovingBackground.init(this.game);
         Icons.init(this.game);
         Input.init(this.game);
@@ -2843,9 +2960,9 @@ module.exports = {
 "use strict";
 
 
-const Group = __webpack_require__(5),
-    UI = __webpack_require__(1),
-    Video = __webpack_require__(2),
+const Group = __webpack_require__(3),
+    UI = __webpack_require__(2),
+    Video = __webpack_require__(1),
     Transition = __webpack_require__(0),
     State = __webpack_require__(7);
 
@@ -2905,7 +3022,7 @@ function initGame(Boot, Preload, StateManager, ResourceLoader) {
         game.load.json('data', 'json/Data.json');
         game.load.json('style', 'json/Style.json');
         game.load.image('progressBar', './Images/Icons/StubIcon.png');
-        game.load.image('title', './Images/Icons/Title.png');
+        game.load.image('title', './Images/UI/Title.png');
     }
 
     function create() {

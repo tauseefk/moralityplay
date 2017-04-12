@@ -137,6 +137,7 @@ Image.prototype.changeToThoughtIcon = function(game, thoughtsAndChoicesSignal, t
 }
 
 Image.prototype.changeToSceneChangeImage = function(game, targetScene) {
+    this._target = targetScene;
     this._image.anchor.setTo(0.5, 0.5);
     this._link = new Linkable(game, this._image, game.global.gameManager.getChangeSceneSignal(), targetScene);
     this._link.setAsButton(true);    
@@ -145,6 +146,7 @@ Image.prototype.changeToSceneChangeImage = function(game, targetScene) {
 }
 
 Image.prototype.changeToDisplayImage = function(game, target) {
+    this._target = target;
     this._image.anchor.setTo(0.5, 0.5);
     this._link = new Linkable(game, this._image, game.global.gameManager.getDisplayImageSignal(), target, true);
     this._link.setAsButton(false);
@@ -211,10 +213,6 @@ Image.prototype.makeDraggable = function(game, hoverImageSrc, lockHorizontal, lo
     this.changeCursorImage(game, 'url("./Images/UI/hand_2.png"), auto');
 }
 
-Image.prototype.addMouseOverScaleEffect = function(game, link) {
-
-}
-
 Image.prototype.destroy = function() {
     this._image.destroy();
 }
@@ -225,6 +223,10 @@ Image.prototype.getPhaserImage = function() {
 
 Image.prototype.getType = function() {
     return this._type;
+}
+
+Image.prototype.getTarget = function() {
+    return this._target;
 }
 
 Image.prototype.disableInput = function() {

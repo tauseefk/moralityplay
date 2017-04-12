@@ -85,5 +85,8 @@ module.exports = {
     },
     getStartSceneKey: function() {
         return _startSceneKey;
+    },
+    setVisitedScene: function(name) {
+        _scenes[name].visited = true;
     }
 }

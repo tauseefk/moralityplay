@@ -24,10 +24,11 @@ var StateEnum = {
     LocationState: 'LocationState'
 }
 
-function ChangeScene(scene) {
-    var nextScene = Resources.getScene(scene);
+function ChangeScene(sceneName) {
+    var nextScene = Resources.getScene(sceneName);
     if(nextScene === null)
-        console.warn("Scene: " + scene + "is undefined.");
+        console.warn("Scene: " + sceneName + "is undefined.");
+    if(nextScene)
     console.log("Changing scene to: " + nextScene.stateType);
     switch(nextScene.stateType) {
         case StateEnum.MenuState:
@@ -48,6 +49,16 @@ function ChangeScene(scene) {
         default:
             console.warn("Invalid State.");
     }
+}
+
+function CheckVisited(sceneName) {
+    console.log(sceneName);
+    var scene = Resources.getScene(sceneName);
+    if(scene.visited && scene.alternateSceneName) {
+        Resources.setVisitedScene(sceneName);
+        scene = Resources.getScene(scene.alternateSceneName);
+    }
+    return scene;
 }
 
 function AddAllStates() {
@@ -85,8 +96,9 @@ module.exports = {
         Video.stop();
         _game.global.gameManager.getChangeSceneSignal().dispatch(Resources.getStartSceneKey());
     },
-    changeScene: function(scene) {
+    changeScene: function(sceneName) {
         _game.mediaGroup.removeAll();
-        ChangeScene(scene);
+        _game.global.visitedScenes[sceneName] = true;
+        ChangeScene(sceneName);
     }
 }

@@ -8,6 +8,7 @@ const Filter = require('./filter'),
 var _instance = null;
 var _game = null;
 var _icons = [];
+var _linkedIcons = [];
 
 const buttonThoughtImageKeyEnum = 'IMAGE_BUTTON_THOUGHT',
     buttonThoughtSpriteKeyEnum = 'IMAGE_SPRITE_THOUGHT',
@@ -20,11 +21,81 @@ function CreateThoughtIcon(iconKey, coords, thoughts) {
     _icons.push(button);
 }
 
-function CreateExploratoryIcons(key, coords, target, type) {
+function CreateExploratoryIcons(icons, hideSceneChangeIcons) {
+    for(var i=0; i<icons.size; i++) {
+        CreateExploratoryIcon(icons.key[i], icons.coords[i], icons.targetImageIndexOrScene[i], icons.type[i]);
+    }
+    HideLockedIcons(icons.lockedByScenes);
+    ShowUnlockedIcons(icons.unlockedByScenes);
+}
+
+function CreateExploratoryIcon(key, coords, target, type) {
     var button = new Image(coords[0], coords[1], key, type);
     button.addImageToGame(_game, _game.mediaGroup);
     button.changeImage(_game, target);
     _icons.push(button);
+}
+
+function CreateLinkedIcons(linkedIcons) {
+    for(var i=0; i<linkedIcons.size; i++) {
+        CreateLinkedIcon(linkedIcons.key[i], linkedIcons.coords[i], linkedIcons.targetImageIndexOrScene[i], linkedIcons.type[i]);
+    } 
+    HideIconType(sceneChangeImageKeyEnum);
+}
+
+function CreateLinkedIcon(key, coords, target, type) {
+    var button = new Image(coords[0], coords[1], key, type);
+    button.addImageToGame(_game, _game.mediaGroup);
+    button.changeImage(_game, target);
+    _linkedIcons.push(button);
+}
+
+function HideLockedIcons(locked) {
+    if(locked) {
+        for(var i=0; i<locked.length; i++){
+            var scenesArr = locked[i];
+            if(OneSceneVisited(scenesArr)) {
+                _icons[i].setVisible(false);
+            }
+        };
+    }
+    else 
+        console.log("No locked buttons in this scene.")
+}
+
+function ShowUnlockedIcons(conditionsForIconIndexArr) {
+    if(conditionsForIconIndexArr) {
+        for(var i=0; i<conditionsForIconIndexArr.length; i++) {
+            var currIconUnlockConditions = conditionsForIconIndexArr[i];
+            if(currIconUnlockConditions) {
+                if(VisitAtLeastOnceOfEach(currIconUnlockConditions)) {
+                    _icons[i].setVisible(true);
+                }
+                else {
+                    _icons[i].setVisible(false);
+                }
+            }
+        }
+    }
+}
+
+function VisitAtLeastOnceOfEach(sceneSetArray) {
+    var unlocked = true;
+    for(var j=0; j<sceneSetArray.length; j++) {
+        unlocked &= OneSceneVisited(sceneSetArray[j]);
+    }
+    return unlocked;
+}
+
+function OneSceneVisited(sceneArr) {
+    if(sceneArr){
+        for(var i=0; i<sceneArr.length; i++) {
+            if(_game.global.visitedScenes[sceneArr[i]]) {
+                return true;
+            }
+        }
+    }
+    return false;
 }
 
 function EndInteraction() {
@@ -34,10 +105,8 @@ function EndInteraction() {
 }
 
 function HideIconType(iconType) {
-    _icons.forEach(function(icon) {
-        if(icon.getType() == iconType) {
-            icon.setVisible(false);
-        }
+    _linkedIcons.forEach(function(icon) {
+        icon.setVisible(false);
     });
 }
 
@@ -56,20 +125,21 @@ module.exports = {
         CreateThoughtIcon(iconKey, coords, thoughts);
     },
     createExploratoryIcons: function(icons, hideSceneChangeIcons) {
-        for(var i=0; i<icons.size; i++) {
-            CreateExploratoryIcons(icons.key[i], icons.coords[i], icons.targetImageIndexOrScene[i], icons.type[i]);
-        } 
-        if(hideSceneChangeIcons)
-            HideIconType(sceneChangeImageKeyEnum);
+        CreateExploratoryIcons(icons, hideSceneChangeIcons);
         return _icons;
+    },
+    createNavigationIcons: function(icons, linkedIcons) {  
+        if(linkedIcons)  
+            CreateLinkedIcons(linkedIcons);  
+        CreateExploratoryIcons(icons);
     },
     endInteraction: function() {
         EndInteraction();
     },
     displayIcon: function(index, hideSameType) {
         if(hideSameType)
-            HideIconType(_icons[index].getType());
-        _icons[index].setVisible(true);
+            HideIconType(_linkedIcons[index].getType());
+        _linkedIcons[index].setVisible(true);
     },
     createThoughtsAndChoices: function(thoughts, coords) {
         _game.global.gameManager.getCreateThoughtsSignal().dispatch(thoughts, coords);
@@ -79,5 +149,9 @@ module.exports = {
             icon.destroy();
         });
         _icons = [];
+        _linkedIcons.forEach(function(icon) {
+            icon.destroy();
+        });
+        _linkedIcons = [];
     }
 }

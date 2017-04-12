@@ -26,12 +26,21 @@ Animation.scale = function(game, object, autoStart, targetWidth, targetHeight, s
     return tween;
 }
 
-Animation.fade = function(game, object, value, autoStart, speed, repeat) {
+Animation.fade = function(game, object, value, autoStart, speed, repeat, destroy) {
     var customSpeed = speed;
     if(!speed)
         customSpeed = FADE_SPEED;
+    var tween = game.add.tween(object).to({alpha:value}, customSpeed, Phaser.Easing.Linear.None, autoStart, 0, 0, false);
+
+    if(destroy) {
+        tween.onComplete.add(Destroy, this);
+    }
+
+    function Destroy() {
+        object.destroy();
+    }
     
-    return game.add.tween(object).to({alpha:value}, customSpeed, Phaser.Easing.Linear.None, autoStart, 0, 0, false);
+    return tween;
 }
 
 Animation.bob = function(game, object, autoStart) {

@@ -16,11 +16,11 @@ var _pausedByGame = false;
 const FADEOUT_OFFSET_SECONDS = 5;
 const VIDEO_SLOW_PLAYBACK_RATE = 0.2;
 
-function CreateVideo(src, doFadeOut, nextScenes, sub, interactionTimeStamps) {
+function CreateVideo(src, doFadeOut, nextScene, sub, interactionTimeStamps) {
     _video = _video.changeSource(src, false);
 
 //    _video.video.setAttribute('autoplay', 'autoplay');
-    AddVideoAndFilter(doFadeOut, sub);
+    AddVideoAndFilter(doFadeOut, sub, nextScene);
     if(_interactionTimeStamps)
         AddInteractionEvents(_interactionTimeStamps);
     //console.log(_video.video.currentTime);
@@ -28,8 +28,8 @@ function CreateVideo(src, doFadeOut, nextScenes, sub, interactionTimeStamps) {
     if(doFadeOut)
         _game.time.events.add((_video.video.duration-FADEOUT_OFFSET_SECONDS)*1000, fadeOut, this, signal);
     */
-    if(nextScenes)
-        _video.onComplete.addOnce(ChangeScene(nextScenes), this);
+    if(nextScene)
+        _video.onComplete.addOnce(ChangeScene(nextScene), this);
 }
 
 function CheckProgress() {
@@ -43,12 +43,17 @@ function AddInteractionEvents() {
         checkVideoDuration(timestamp);
 }
 
-function AddVideoAndFilter(doFadeOut, sub) {
+function AddVideoAndFilter(doFadeOut, sub, nextScene) {
     _videoImage = _video.addToWorld(0, 0, 0, 0);
     _game.mediaGroup.add(_videoImage);
     _video.onChangeSource.addOnce(OnVideoLoad, this);
+
     function OnVideoLoad() {
         _video.play();
+        if(!nextScene)
+            _video.loop = true;
+        else
+            _video.loop = false;
         //_video.video.addEventListener('progress', CheckProgress, false);
         if(doFadeOut) {
             //_game.time.events.add((_video.video.duration-FADEOUT_OFFSET_SECONDS)*Phaser.Timer.SECOND, FadeOut, this);
@@ -118,10 +123,10 @@ module.exports = {
         load(videos);
     },
     */
-    create: function(src, doFadeOut, videoFilter, scenes, sub, interactionTimeStamps) {
+    create: function(src, doFadeOut, videoFilter, nextScene, sub, interactionTimeStamps) {
         _videoFilter = videoFilter;
         _interactionTimeStamps = interactionTimeStamps;
-        CreateVideo(src, doFadeOut, scenes, sub, interactionTimeStamps);
+        CreateVideo(src, doFadeOut, nextScene, sub, interactionTimeStamps);
     },
     stop: function() {
         if(_video)

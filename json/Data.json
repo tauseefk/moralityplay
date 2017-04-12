@@ -1,5 +1,5 @@
 {
-  "images": {
+"images": {
     "cmu1": "./Images/Locations/LocationBG.jpg",    
     "background": "./Images/Splash/bg.jpg",
     "leftArrow": "./Images/UI/arrow_left.png",
@@ -18,555 +18,736 @@
     "choiceBg": "./Images/UI/choice_button_bg.png",
     "blackInfo": "./Images/UI/black.png",
     "asianInfo": "./Images/UI/asian.png"
-  },  
-  "audio": {
-  },
-  "subtitles": {
+},  
+"audio": {
+},
+"subtitles": {
     "sub1": "./Videos/Subtitles/test.srt"
-  },
-
-  "scenes": {
-
+},
+"scenes": {
     "startScene": {
-      "stateType": "MenuState",
-      "draggable": false,
-      "bgImageKey": "background",
-      "transition": {
-        "fadeIn": true,
-        "fadeOut": true
-      },
-      "icons": {
-        "size": 2,
-        "type": [
-          "IMAGE_STATIC",
-          "IMAGE_BUTTON_SCENECHANGE"
-        ],
-        "key": [
-          "mainTitle",
-          "startButton"
-        ],
-        "coords": [
-          [ 640, 250 ],
-          [ 640, 560 ]
-        ],
-        "targetImageIndexOrScene": [
-          null,
-          "introScene"
-        ]
-      }
+        "stateType": "MenuState",
+        "draggable": false,
+        "bgImageKey": "background",
+        "transition": {
+            "fadeIn": true,
+            "fadeOut": true
+        },
+        "icons": {
+            "size": 2,
+            "type": [
+                "IMAGE_STATIC",
+                "IMAGE_BUTTON_SCENECHANGE"
+            ],
+            "key": [
+                "mainTitle",
+                "startButton"
+            ],
+            "coords": [
+                [ 640, 250 ],
+                [ 640, 560 ]
+            ],
+            "targetImageIndexOrScene": [
+                null,
+                "introScene"
+            ]
+        }
     },
-
     "introScene": {
-      "videoFilter": [
-        [ "grayscale", null ]
-      ],
-      "movieSrcHD": "./Videos/Intro_optimized.mp4",
-      "movieSrcSD": "./Videos/Intro_optimized_lo.mp4",
-      "stateType": "InteractState",
-      "transition": {
-        "fadeIn": true,
-        "fadeOut": false
-      },
-      "choiceMoments": {
-        "size": 3,
-        "choiceMomentsProperties": [
-          {
-            "timeStamp": 6,
-            "choices": {
-                "question": "\"How's going?\"",
-              "size": 2,
-              "content": [
-                "Monday seems to come too fast.",
-                "I just need a cup of coffee \nand I am good to go!"
-              ],
-              "y": [
-                600,
-                600
-              ],
-              "bounds": [
-                [ 600, 200 ],
-                [ 600, 200 ]
-              ]
+        "videoFilter": [
+            ["grayscale", null ]
+        ],
+        "movieSrcHD": "./Videos/Intro_optimized.mp4",
+        "movieSrcSD": "./Videos/Intro_optimized_lo.mp4",
+        "stateType": "InteractState",
+        "transition": {
+            "fadeIn": true,
+            "fadeOut": false
+        },
+        "choiceMoments": {
+            "size": 3,
+            "choiceMomentsProperties": [
+            {
+                "timeStamp": 6,
+                "choices": {
+                    "question": "\"How's it going?\"",
+                    "size": 2,
+                    "content": [
+                        "Monday comes way too fast.",
+                        "I just need a cup of coffee \nand I am good to go!"
+                    ],
+                    "y": [
+                        600,
+                        600
+                    ],
+                    "bounds": [
+                        [ 600, 200 ],
+                        [ 600, 200 ]
+                    ]
+                }
+            },
+            {
+                "timeStamp": 15,
+                "choices": {
+                    "question": "\"See you later!\"",
+                    "size": 3,
+                    "content": [
+                        "Yep, we have\n a project meeting.",
+                        "Oh, the meeting. \nYes, it's in the library.",
+                        "Sure, in the library."
+                    ],
+                    "y": [
+                        600,
+                        600,
+                        600
+                    ],
+                    "bounds": [
+                        [ 400, 150 ],
+                        [ 400, 150 ],
+                        [ 400, 150 ]
+                    ]
+                }
+            },
+            {
+                "timeStamp": 17,
+                "choices": {
+                    "question": "\"See you then!\"",
+                    "size": 3,
+                    "content": [
+                        "See you!",
+                        "Bye!",
+                        "..."
+                    ],
+                    "y": [
+                        600,
+                        600,
+                        600
+                    ],
+                    "bounds": [
+                        [ 400, 150 ],
+                        [ 400, 150 ],
+                        [ 400, 150 ]
+                    ]
+                }
             }
-          },
-          {
-            "timeStamp": 15,
-            "choices": {
-                "question": "\"See you later!\"",
-              "size": 3,
-              "content": [
-                "Yep, we have\n a project meeting.",
-                "Oh, the meeting. \nYes, it's in the library.",
-                "Sure, in the library."
-              ],
-              "y": [
-                600,
-                600,
-                600
-              ],
-              "bounds": [
-                [ 400, 150 ],
-                [ 400, 150 ],
-                [ 400, 150 ]
-              ]
-
-            }
-          },
-          {
-            "timeStamp": 16.5,
-            "choices": {
-                "question": "\"See you then!\"",
-              "size": 3,
-              "content": [
-                "See you!",
-                "Byebye",
-                "..."
-              ],
-              "y": [
-                600,
-                600,
-                600
-              ],
-              "bounds": [
-                [ 400, 150 ],
-                [ 400, 150 ],
-                [ 400, 150 ]
-              ],
-              "targetScene": [
-                "menuScene",
-                "menuScene",
-                "menuScene"
-              ]
-            }
-          }
-        ]
-      }
+            ]
+        },
+        "nextScene": "cmuCutLocation"
     },
-
-    "menuScene": {
-      "stateType": "LocationState",
-      "draggable": true,
-      "bgImageKey": "cmu1",
-      "videoFilter": "none",
-      "transition": {
-        "fadeIn": true,
-        "fadeOut": true
-      },
-      "icons": {
-        "size": 6,
-        "type": [
-          "IMAGE_BUTTON_DISPLAY_IMAGE",
-          "IMAGE_BUTTON_SCENECHANGE",
-          "IMAGE_BUTTON_DISPLAY_IMAGE",
-          "IMAGE_BUTTON_SCENECHANGE",
-          "IMAGE_BUTTON_DISPLAY_IMAGE",
-          "IMAGE_BUTTON_SCENECHANGE"
-        ],
-        "key": [
-          "leftArrow",
-          "leftOutline", 
-          "middleArrow",
-          "middleOutline",
-          "rightArrow",
-          "rightOutline"
-        ],
-        "coords": [
-          [ 995, 500 ],
-          [ 1180, 225 ],  
-          [ 1907, 500 ],
-          [ 1960, 255 ],
-          [ 3500, 500 ],
-          [ 3640, 220 ]
-
-        ],
-        "targetImageIndexOrScene": [
-          1,
-          "indian1",
-          3,
-          "black1",
-          5,
-          "asian1",
-          null
-        ]
-      }
+    "cmuCutLocation": {
+        "stateType": "LocationState",
+        "draggable": false,
+        "movieSrcHD": "./Videos/cmu_cut_optimized.mp4",
+        "movieSrcSD": "./Videos/cmu_cut_optimized_lo.mp4",
+        "videoFilter": "none",
+        "transition": {
+            "fadeIn": true,
+            "fadeOut": true
+        },
+        "icons": {
+            "size": 4,
+            "type": [
+                "IMAGE_BUTTON_SCENECHANGE",
+                "IMAGE_BUTTON_SCENECHANGE",
+                "IMAGE_BUTTON_DISPLAY_IMAGE",
+                "IMAGE_BUTTON_SCENECHANGE"
+            ],
+            "key": [
+                "rightArrow",
+                "middleArrow",
+                "rightArrow",
+                "rightArrow"
+            ],
+            "coords": [
+                [ 1100, 600 ],
+                [ 600, 600 ],
+                [ 100, 600 ],
+                [ 500, 600 ]
+            ],
+            "targetImageIndexOrScene": [
+                "cmuGatesLocation",
+                "cmuHuntLocation",
+                0,
+                "asian1"
+            ],
+            "lockedByScenes": [
+                null,
+                null,
+                ["indian2good", "indian2bad"],
+                null
+            ],
+            "unlockedByScenes": [
+                null,
+                null,
+                null,
+                [["asian2good","asian2bad"], ["indian2good","indian2good"]]
+            ]
+        },
+        "linkedIcons": {
+            "size": 1,
+            "type": [
+                "IMAGE_BUTTON_SCENECHANGE"
+            ],
+            "key": [
+                "leftOutline"
+            ],
+            "coords": [
+                [ 200, 325 ]
+            ],
+            "targetImageIndexOrScene": [
+                "indian1"
+            ]
+        }
     },
-
+    "cmuGatesLocation": {
+        "stateType": "LocationState",
+        "draggable": false,
+        "movieSrcHD": "./Videos/cmu_gates_optimized.mp4",
+        "movieSrcSD": "./Videos/cmu_gates_optimized_lo.mp4",
+        "videoFilter": "none",
+        "transition": {
+            "fadeIn": true,
+            "fadeOut": true
+        },
+        "icons": {
+            "size": 3,
+            "type": [
+                "IMAGE_BUTTON_SCENECHANGE",
+                "IMAGE_BUTTON_SCENECHANGE",
+                "IMAGE_BUTTON_SCENECHANGE"
+            ],
+            "key": [
+                "leftArrow",
+                "rightArrow",
+                "rightArrow"
+            ],
+            "coords": [
+                [ 640, 100 ],
+                [ 100, 600 ],
+                [ 800, 600 ]
+            ],
+            "targetImageIndexOrScene": [
+                "cmuGatesInsideLocation",
+                "cmuHuntLocation",
+                "cmuCutLocation"
+            ]
+        }
+    },
+    "cmuGatesInsideLocation": {
+        "stateType": "LocationState",
+        "draggable": false,
+        "movieSrcHD": "./Videos/cmu_gates_inside_optimized.mp4",
+        "movieSrcSD": "./Videos/cmu_gates_inside_optimized_lo.mp4",
+        "videoFilter": "none",
+        "transition": {
+            "fadeIn": true,
+            "fadeOut": true
+        },
+        "icons": {
+            "size": 2,
+            "type": [
+                "IMAGE_BUTTON_SCENECHANGE",
+                "IMAGE_BUTTON_DISPLAY_IMAGE"
+            ],
+            "key": [
+                "rightArrow",
+                "middleArrow"
+            ],
+            "coords": [
+                [ 800, 600 ],
+                [ 600, 100 ]
+            ],
+            "targetImageIndexOrScene": [
+                "cmuGatesLocation",
+                0
+            ],
+            "lockedByScenes": [
+                null,
+                ["black2good","black2bad"]
+            ]
+        },
+        "linkedIcons": {
+            "size": 1,
+            "type": [
+                "IMAGE_BUTTON_SCENECHANGE"
+            ],
+            "key": [
+                "leftOutline"
+            ],
+            "coords": [
+                [ 200, 325 ]
+            ],
+            "targetImageIndexOrScene": [
+                "black1"
+            ]
+        }
+    },
+    "cmuHuntLocation": {
+        "stateType": "LocationState",
+        "draggable": false,
+        "movieSrcHD": "./Videos/cmu_hunt_optimized.mp4",
+        "movieSrcSD": "./Videos/cmu_hunt_optimized_lo.mp4",
+        "videoFilter": "none",
+        "transition": {
+            "fadeIn": true,
+            "fadeOut": true
+        },
+        "icons": {
+            "size": 3,
+            "type": [
+                "IMAGE_BUTTON_SCENECHANGE",
+                "IMAGE_BUTTON_SCENECHANGE",
+                "IMAGE_BUTTON_SCENECHANGE"
+            ],
+            "key": [
+                "leftArrow",
+                "rightArrow",
+                "rightArrow"
+            ],
+            "coords": [
+                [ 1140, 500 ],
+                [ 600, 100 ],
+                [ 500, 600 ]
+            ],
+            "targetImageIndexOrScene": [
+                "cmuGatesLocation",
+                "cmuHuntInsideLocation",
+                "cmuCutLocation"
+            ]
+        }
+    },    
+    "cmuHuntInsideLocation": {
+        "stateType": "LocationState",
+        "draggable": false,
+        "movieSrcHD": "./Videos/cmu_hunt_inside_optimized.mp4",
+        "movieSrcSD": "./Videos/cmu_hunt_inside_optimized_lo.mp4",
+        "videoFilter": "none",
+        "transition": {
+            "fadeIn": true,
+            "fadeOut": true
+        },
+        "icons": {
+            "size": 2,
+            "type": [
+                "IMAGE_BUTTON_SCENECHANGE",
+                "IMAGE_BUTTON_DISPLAY_IMAGE"
+            ],
+            "key": [
+                "rightArrow",
+                "middleArrow"
+            ],
+            "coords": [
+                [ 800, 600 ],
+                [ 600, 100 ]
+            ],
+            "targetImageIndexOrScene": [
+                "cmuHuntLocation",
+                0
+            ],
+            "lockedByScenes": [
+                null,
+                ["asian2good","asian2bad"]
+            ]
+        },
+        "linkedIcons": {
+            "size": 1,
+            "type": [
+                "IMAGE_BUTTON_SCENECHANGE"
+            ],
+            "key": [
+                "leftOutline"
+            ],
+            "coords": [
+                [ 200, 325 ]
+            ],
+            "targetImageIndexOrScene": [
+                "asian1"
+            ]
+        }
+    },
     "asian1": {
-      "videoFilter": [
-        [ "grayscale", null ]
-      ],
-      "movieSrcHD": "./Videos/Asian1_optimized.mp4",
-      "movieSrcSD": "./Videos/Asian1_optimized_lo.mp4",
-      "sub": "sub1",
-
-      "stateType": "InteractState",
-      "transition": {
-        "fadeIn": true,
-        "fadeOut": false
-      },
-      "choiceMoments": {
-        "size": 2,
-        "choiceMomentsProperties": [
-          {
-            "timeStamp": 12,
-            "choices": {
-                "question": "How are you?",
-              "size": 2,
-              "content": [
-                "Nothing much. You?",
-                "Good. What are you doing?"
-              ],
-              "y": [
-                600,
-                600
-              ],
-              "bounds": [
-                [ 600, 200 ],
-                [ 600, 200 ]
-              ]
-            }
-
-          },
-          {
-            "timeStamp": 120,
-            "thoughtBubbles": {
-              "size": 2,
-              "thoughtIconKey": [
-                "thoughtRight",
-                "thoughtLeft"
-              ],
-              "coords": [
-                [ 780, 100 ],
-                [ 460, 120 ]
-              ],
-              "thoughts": [
-                {
-                  "size": 1,
-                  "content": [
-                    "I guess it is okay if not everyone participates"
-                  ],
-                  "destination": [
-                    [ 900, 25 ]
-                  ]
-                },
-                {
-                  "size": 1,
-                  "content": [
-                    "I can do much more than nothing"
-                  ],
-                  "destination": [
-                    [ 300, 50 ]
-                  ]
+        "videoFilter": [
+            [ "grayscale", null ]
+        ],
+        "movieSrcHD": "./Videos/Asian1_optimized.mp4",
+        "movieSrcSD": "./Videos/Asian1_optimized_lo.mp4",
+        "sub": "sub1",
+        "stateType": "InteractState",
+        "transition": {
+            "fadeIn": true,
+            "fadeOut": false
+        },
+        "choiceMoments": {
+            "size": 2,
+            "choiceMomentsProperties": [
+            {
+                "timeStamp": 12,
+                "choices": {
+                    "question": "How are you?",
+                    "size": 2,
+                    "content": [
+                        "Nothing much. You?",
+                        "Good. What are you doing?"
+                     ],
+                    "y": [
+                        600,
+                        600
+                    ],
+                    "bounds": [
+                        [ 600, 200 ],
+                        [ 600, 200 ]
+                    ]
                 }
-              ],
-              "choices": 
-                {
-                "question": "How are you?",
-                  "size": 2,
-                  "content": [
-                    "I feel that we are ignoring Li.\n She IS part of the group.",
-                    "Don't worry about it, Li.\n We will get a good grade\n You are still part of the group."
-                  ],
-                  "y": [
-                    600,
-                    600
-                  ],
-                  "bounds": [
-                    [ 600, 200 ],
-                    [ 600, 200 ]
-                  ],
-                  "targetScene": [
-                    "asian2good",
-                    "asian2bad"
-                  ]
-                }
-              
+            },
+            {
+                "timeStamp": 120,
+                "thoughtBubbles": {
+                    "size": 2,
+                    "thoughtIconKey": [
+                        "thoughtRight",
+                        "thoughtLeft"
+                    ],
+                    "coords": [
+                        [ 780, 100 ],
+                        [ 460, 120 ]
+                    ],
+                    "thoughts": [
+                    {
+                        "size": 1,
+                        "content": [
+                            "I guess it is okay if not everyone participates"
+                        ],
+                        "destination": [
+                            [ 900, 25 ]
+                        ]
+                    },
+                    {
+                        "size": 1,
+                        "content": [
+                            "I can do much more than nothing"
+                        ],
+                        "destination": [
+                            [ 300, 50 ]
+                        ]
+                    }
+                    ],
+                    "choices": 
+                    {
+                        "question": "How are you?",
+                        "size": 2,
+                        "content": [
+                            "I feel that we are ignoring Li.\n She IS part of the group.",
+                            "Don't worry about it, Li.\n We will get a good grade\n You are still part of the group."
+                        ],
+                        "y": [
+                            600,
+                            600
+                        ],
+                        "bounds": [
+                            [ 600, 200 ],
+                            [ 600, 200 ]
+                        ],
+                        "targetScene": [
+                            "asian2good",
+                            "asian2bad"
+                        ]
+                    }
+                }   
             }
-          }
-        ]
-
-      }
+            ]
+        }
     },
     "asian2good": {
-      "stateType": "MovieState",
-      "movieSrcHD": "./Videos/Asian2 Good_optimized.mp4",
-      "movieSrcSD": "./Videos/Asian2 Good_optimized_lo.mp4",
-      "transition": {
-        "fadeIn": true,
-        "fadeOut": false
-      },
-      "nextScenes": "menuScene"
-
+        "stateType": "MovieState",
+        "movieSrcHD": "./Videos/Asian2 Good_optimized.mp4",
+        "movieSrcSD": "./Videos/Asian2 Good_optimized_lo.mp4",
+        "transition": {
+            "fadeIn": true,
+            "fadeOut": false
+        },
+        "nextScene": "cmuCutLocation"
     },
     "asian2bad": {
-      "stateType": "MovieState",
-      "movieSrcHD": "./Videos/Asian2_Bad_optimized.mp4",
-      "movieSrcSD": "./Videos/Asian2 Bad_optimized_lo.mp4",
-      "transition": {
-        "fadeIn": true,
-        "fadeOut": false
-      },
-      "nextScenes": "menuScene"
-
+        "stateType": "MovieState",
+        "movieSrcHD": "./Videos/Asian2 Bad_optimized.mp4",
+        "movieSrcSD": "./Videos/Asian2 Bad_optimized_lo.mp4",
+        "transition": {
+            "fadeIn": true,
+            "fadeOut": false
+        },
+        "nextScene": "cmuCutLocation"
     },
-
-
     "black1": {
-      "videoFilter": [
-        [ "grayscale", null ]
-      ],
-      "movieSrcHD": "./Videos/Black1_optimized.mp4",
-      "movieSrcSD": "./Videos/Black1_optimized_lo.mp4",
-      "stateType": "InteractState",
-      "transition": {
-        "fadeIn": true,
-        "fadeOut": false
-      },
-      "choiceMoments": {
-        "size": 5,
-        "choiceMomentsProperties": [
-          {
-            "timeStamp": 5,
-            "choices": {
-              "size": 2,
-              "content": [
-                "Hey, can I join you for lunch?",
-                "Hey, what are you guys doing?"
-              ],
-              "y": [
-                600,
-                600
-              ],
-              "bounds": [
-                [ 600, 200 ],
-                [ 600, 200 ]
-              ]
-            }
-          },
-          {
-            "timeStamp": 15,
-            "choices": {
-                "question": "Three positive and negative things about Micheal.",
-              "size": 2,
-              "content": [
-                "I don't know....",
-                "Don’t like star wars \nbut likes artsy films."
-              ],
-              "y": [
-                600,
-                600
-              ],
-              "bounds": [
-                [ 600, 200 ],
-                [ 600, 200 ]
-              ]
-            }
-          },
-          {
-            "timeStamp": 63,
-            "choices": {
-              "size": 2,
-              "content": [
-                "If you practiced it you will be fine.",
-                "Good luck!"
-              ],
-              "y": [
-                600,
-                600
-              ],
-              "bounds": [
-                [ 600, 200 ],
-                [ 600, 200 ]
-              ]
-            }
-          },
-          {
-            "timeStamp": 85,
-            "choices": {
-              "size": 2,
-              "content": [
-                "What are you talking about?",
-                "Are you sure?"
-              ],
-              "y": [
-                600,
-                600
-              ],
-              "bounds": [
-                [ 600, 200 ],
-                [ 600, 200 ]
-              ]
-            }
-          },
-          {
-            "timeStamp": 128,
-            "thoughtBubbles": {
-              "size": 2,
-              "thoughtIconKey": [
-                "thoughtLeft",
-                "thoughtRight"
-              ],
-              "coords": [
-                [ 400, 100 ],
-                [ 900, 100 ]
-              ],
-              "thoughts": [
-                {
-                  "size": 1,
-                  "content": [
-                    "I just wanted to calm him down..."
-                  ],
-                  "destination": [
-                    [ 300, 50 ]
-                  ]
-                },
-                {
-                    "size": 1,
-                  "content": [
-                    "I wish she didn't mention that."
-                  ],
-                  "destination": [
-                    [ 1000, 50 ]
-                  ]
+        "videoFilter": [
+            [ "grayscale", null ]
+        ],
+        "movieSrcHD": "./Videos/black1_optimized.mp4",
+        "movieSrcSD": "./Videos/black1_optimized_lo.mp4",
+        "stateType": "InteractState",
+        "transition": {
+            "fadeIn": true,
+            "fadeOut": false
+        },
+        "choiceMoments": {
+            "size": 5,
+            "choiceMomentsProperties": [
+            {
+                "timeStamp": 5,
+                "choices": {
+                    "question": "Choose what to say.",
+                    "size": 3,
+                    "content": [
+                        "Hey, can I join you \nguys for lunch?",
+                        "Hey, what are you guys doing?",
+                        "..."
+                    ],
+                    "y": [
+                        600,
+                        600,
+                        600
+                    ],
+                    "bounds": [
+                        [ 400, 150 ],
+                        [ 400, 150 ],
+                        [ 400, 150 ]
+                    ]
                 }
-              ],
-              "choices": 
-                {
-                "question": "You know I am just trying to help.",
-                  "size": 3,
-                  "content": [
-                    "Michael, don't overthink it.\nShe means well.",
-                    "Why do you think \nthat would help?",
-                    "I am not sure that\nsaying that is helping."
-                  ],
-                  "y": [
-                    600,
-                    600,
-                    600
-                  ],
-                  "bounds": [
-                    [ 400, 150 ],
-                    [ 400, 150 ],
-                    [ 400, 150 ]
-                  ],
-                  "targetScene": [
-                    "black2bad",
-                    "black2good",
-                    "black2good"
-                  ]
+            },
+            {
+                "timeStamp": 15,
+                "choices": {
+                    "question": "Three positive and negative things about Michael.",
+                    "size": 2,
+                    "content": [
+                        "I don't know....",
+                        "You don't like Star Wars \nbut you like artsy films."
+                    ],
+                    "y": [
+                        600,
+                        600
+                    ],
+                    "bounds": [
+                        [ 600, 200 ],
+                        [ 600, 200 ]
+                    ]
                 }
-              
+            },
+            {
+                "timeStamp": 63,
+                "choices": {
+                    "question": "Choose what to say.",
+                    "size": 3,
+                    "content": [
+                        "Michael, if you practiced\nyou'll be fine.",
+                        "Good luck!",
+                        "..."
+                    ],
+                    "y": [
+                        600,
+                        600,
+                        600
+                    ],
+                    "bounds": [
+                        [ 400, 150 ],
+                        [ 400, 150 ],
+                        [ 400, 150 ]
+                    ]
+                }
+            },
+            {
+                "timeStamp": 85,
+                "choices": {
+                    "size": 2,
+                    "content": [
+                        "What are you talking about?",
+                        "Are you sure about that?"
+                    ],
+                    "y": [
+                        600,
+                        600
+                    ],
+                    "bounds": [
+                        [ 600, 200 ],
+                        [ 600, 200 ]
+                    ]
+                }
+            },
+            {
+                "timeStamp": 128,
+                "thoughtBubbles": {
+                    "size": 2,
+                    "thoughtIconKey": [
+                        "thoughtLeft",
+                        "thoughtRight"
+                    ],
+                    "coords": [
+                        [ 400, 100 ],
+                        [ 900, 100 ]
+                    ],
+                    "thoughts": [
+                    {
+                        "size": 1,
+                        "content": [
+                            "I just wanted to calm him down..."
+                        ],
+                        "destination": [
+                            [ 300, 50 ]
+                        ]
+                    },
+                    {
+                        "size": 1,
+                        "content": [
+                            "I wish she didn't mention that."
+                        ],
+                        "destination": [
+                            [ 1000, 50 ]
+                        ]
+                    }
+                    ],
+                    "choices": 
+                    {
+                        "question": "You know I am just trying to help.",
+                        "size": 3,
+                        "content": [
+                            "Michael, don't overthink it.\nShe means well.",
+                            "Why do you think \nthat would help?",
+                            "..."
+                        ],
+                        "y": [
+                            600,
+                            600,
+                            600
+                        ],
+                        "bounds": [
+                            [ 400, 150 ],
+                            [ 400, 150 ],
+                            [ 400, 150 ]
+                        ],
+                        "targetScene": [
+                            "black2bad",
+                            "black2good",
+                            "black2good"
+                        ]
+                    }                  
+                }
             }
-          }
-        ]
-      }
+            ]
+        }
     },
     "black2bad": {
-      "stateType": "MovieState",
-      "movieSrcHD": "./Videos/Black2_Bad_optimized.mp4",
-      "movieSrcSD": "./Videos/Black2_Bad_optimized_lo.mp4",
-      "transition": {
-        "fadeIn": true,
-        "fadeOut": false
-      },
-      "nextScenes": "menuScene"
+        "stateType": "MovieState",
+        "movieSrcHD": "./Videos/black2_bad_optimized.mp4",
+        "movieSrcSD": "./Videos/black2_bad_optimized_lo.mp4",
+        "transition": {
+            "fadeIn": true,
+            "fadeOut": false
+        },
+        "nextScene": "cmuGatesInsideLocation"
     },
     "black2good": {
-      "stateType": "MovieState",
-      "movieSrcHD": "./Videos/Black2_Good_optimized.mp4",
-      "movieSrcSD": "./Videos/Black2_Good_optimized_lo.mp4",
-      "transition": {
-        "fadeIn": true,
-        "fadeOut": false
-      },
-      "nextScenes": "menuScene"
+        "stateType": "MovieState",
+        "movieSrcHD": "./Videos/black2_good_optimized.mp4",
+        "movieSrcSD": "./Videos/black2_good_optimized_lo.mp4",
+        "transition": {
+            "fadeIn": true,
+            "fadeOut": false
+        },
+        "nextScene": "menuScene"
     },
-
     "indian1": {
-      "videoFilter": [
-        [ "grayscale", null ]
-      ],
-      "movieSrcHD": "./Videos/Indian1_optimized.mp4",
-      "movieSrcSD": "./Videos/Indian1_optimized_lo.mp4",
-      "stateType": "InteractState",
-      "transition": {
-        "fadeIn": true,
-        "fadeOut": false
-      },
-      "choiceMoments": {
-        "size": 2,
-        "choiceMomentsProperties": [
-          {
-            "timeStamp": 4,
-            "choices": {
-                "question": "How are you?",
-              "size": 2,
-              "content": [
-                "Yes!",
-                "No, thanks."
-              ],
-              "y": [
-                600,
-                600
-              ],
-              "bounds": [
-                [ 600, 200 ],
-                [ 600, 200 ]
-              ]
-            }
-          },
-          {
-            "timeStamp": 41,
-              "choices": 
-                {
-                "question": "How are you?",
-                  "size": 2,
-                  "content": [
-                    "I think she was just \ntrying to show interesting.",
-                    "Why would you assume \nhe is not from here?"
-                  ],
-                  "y": [
-                    600,
-                    600
-                  ],
-                  "bounds": [
-                    [ 600, 200 ],
-                    [ 600, 200 ]
-                  ],
-                  "targetScene": [
-                    "indian2bad",
-                    "indian2good"
-                  ]
+        "videoFilter": [
+            [ "grayscale", null ]
+        ],
+        "movieSrcHD": "./Videos/Indian1_optimized.mp4",
+        "movieSrcSD": "./Videos/Indian1_optimized_lo.mp4",
+        "stateType": "InteractState",
+        "transition": {
+            "fadeIn": true,
+            "fadeOut": false
+        },
+        "choiceMoments": {
+            "size": 2,
+            "choiceMomentsProperties": [
+            {
+                "timeStamp": 4,
+                "choices": {
+                    "question": "How are you?",
+                    "size": 2,
+                    "content": [
+                        "Yes!",
+                        "No, thanks."
+                    ],
+                    "y": [
+                        600,
+                        600
+                    ],
+                    "bounds": [
+                        [ 600, 200 ],
+                        [ 600, 200 ]
+                    ]
                 }
-              
+            },
+            {
+                "timeStamp": 41,
+                "choices":  {
+                    "question": "How are you?",
+                    "size": 2,
+                    "content": [
+                        "I think she was just \ntrying to show interesting.",
+                        "Why would you assume \nhe is not from here?"
+                    ],
+                    "y": [
+                        600,
+                        600
+                    ],
+                    "bounds": [
+                        [ 600, 200 ],
+                        [ 600, 200 ]
+                    ],
+                    "targetScene": [
+                        "indian2bad",
+                        "indian2good"
+                    ]
+                }
             }
-          
-        ]
-      }
+            ]
+        }
     },
     "indian2good": {
-      "stateType": "MovieState",
-      "movieSrcHD": "./Videos/Indian2 Good_optimized.mp4",
-      "movieSrcSD": "./Videos/Indian2 Good_optimized_lo.mp4",
-      "transition": {
-        "fadeIn": true,
-        "fadeOut": false
-      },
-      "nextScenes": "menuScene"
+        "stateType": "MovieState",
+        "movieSrcHD": "./Videos/Indian2 Good_optimized.mp4",
+        "movieSrcSD": "./Videos/Indian2 Good_optimized_lo.mp4",
+        "transition": {
+            "fadeIn": true,
+            "fadeOut": false
+        },
+        "nextScene": "cmuCutLocation"
     },
     "indian2bad": {
-      "stateType": "MovieState",
-      "movieSrcHD": "./Videos/Indian2 Bad_optimized.mp4",
-      "movieSrcSD": "./Videos/Indian2 Bad_optimized_lo.mp4",
-      "transition": {
-        "fadeIn": true,
-        "fadeOut": false
-      },
-      "nextScenes": "menuScene"
+        "stateType": "MovieState",
+        "movieSrcHD": "./Videos/Indian2 Bad_optimized.mp4",
+        "movieSrcSD": "./Videos/Indian2 Bad_optimized_lo.mp4",
+        "transition": {
+            "fadeIn": true,
+            "fadeOut": false
+        },
+        "nextScene": "cmuCutLocation"
+    },
+    "ending": {
+        "stateType": "EndingState",
+        "endingRequirements": [
+            ["indian2good", "black3good"]
+        ],
+        "endingScenes": [
+            ["./Videos/Indian2 Bad_optimized.mp4", "./Videos/Indian2 Bad_optimized.mp4"]
+        ],
+        "movieSrcHD": "./Videos/Indian2 Bad_optimized.mp4",
+        "movieSrcSD": "./Videos/Indian2 Bad_optimized.mp4",
+        "transition": {
+            "fadeIn": true,
+            "fadeOut": false
+        },
+        "nextScene": "cmuCutLocation"
     }
-
-
-
-
-  }
+}
 }

@@ -46,6 +46,10 @@ State.prototype.getIconsInfo = function() {
   return this._scene.icons;
 }
 
+State.prototype.getLinkedIconsInfo = function() {
+  return this._scene.linkedIcons;
+}
+
 State.prototype.getInputInfo = function() {
   return this._scene.input;
 }
@@ -75,7 +79,7 @@ State.prototype.getVideoFilter = function() {
 }
 
 State.prototype.getNextScenes = function() {
-  return this._scene.nextScenes;
+  return this._scene.nextScene;
 }
 
 State.prototype.getDraggable = function() {

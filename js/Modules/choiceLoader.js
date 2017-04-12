@@ -44,7 +44,7 @@ function CreateChoices(choices, thoughtsTriggerNeeded) {
 function CreateMeaningfulChoices(info) {
     resetElements();
     CreateChoiceQuestion(info.question, info.y[0] - info.bounds[0][1]/2 - 30);
-    
+
     for(var i=0; i < info.size; i++) {
         var bgImg = CreateBg(GetXPos(info.size, i), info.y[i], info.bounds[i][0], info.bounds[i][1], info.targetScene[i]);
 
@@ -126,6 +126,8 @@ function FadeChoiceAfterDelay(index, targetScene) {
     _game.time.events.add(Phaser.Timer.SECOND*FADE_DELAY, fadeChoice, this);
 
     function fadeChoice(){
+        _text[index].disableInput();
+        _choiceBg[index].disableInput();
         if(targetScene)
             _text[index].fadeOut(_game, _game.global.gameManager.getChangeSceneSignal(), targetScene);
         else

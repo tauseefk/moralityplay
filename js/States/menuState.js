@@ -26,7 +26,8 @@ function updatePlayerNameCallback(game) {
 module.exports = {
     init: function(scene) {
         if(_stateInfo !== null)
-            _stateInfo.setStateScene(scene);
+            _stateInfo.setStateScene(scene);        
+        this.game.global.soundManager.init();
         MovingBackground.init(this.game);
         Icons.init(this.game);
         Input.init(this.game);

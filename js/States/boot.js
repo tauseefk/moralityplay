@@ -44,9 +44,7 @@ function SetGameProperties() {
 function CreateGlobalVars() {
     _game.global = {
         playerName: null,
-        scenario1Decision: -1,
-        scenario2Decision: -1,
-        scenario3Decision: -1
+        visitedScenes: {}
     }
 
     _game.global.gameManager = new GameManager();
