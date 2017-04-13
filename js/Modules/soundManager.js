@@ -40,6 +40,7 @@ SoundManager.prototype.playBackgroundMusic = function(musicKey) {
     if(!_soundHashSet[musicKey]) 
         _soundHashSet[musicKey] = _game.add.audio(musicKey);
     _bgMusic =_soundHashSet[musicKey];
+    _bgMusic.loop = true;
     _bgMusic.play();
 }
 

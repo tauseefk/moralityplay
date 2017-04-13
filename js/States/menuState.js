@@ -1,8 +1,5 @@
 "use strict";
 
-var _instance = null;
-var _stateInfo = null;
-var _input = [];
 const Group = require('../Modules/groupLoader'), 
     Input = require('../Modules/inputLoader'),
     Transition = require('../Modules/transition'),
@@ -10,6 +7,9 @@ const Group = require('../Modules/groupLoader'),
     MovingBackground = require('../Modules/movingObjectLoader'),
     Icons = require('../Modules/iconsLoader');
 
+var _instance = null;
+var _stateInfo = null;
+var _input = [];
 
 function setPlayerName(game) {
     if(_input[0])

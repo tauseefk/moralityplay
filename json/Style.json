@@ -8,34 +8,33 @@
         }
     },
     "subtitleTextProperties": {
-        "fontSize": 25,
+        "fontSize": 30,
         "align": "center",
         "font": "Merienda One",
         "backgroundColor": "rgba(0, 255, 0, 0.25)"
     },
     "thoughtsTextProperties": {
-        "fontSize": 25,
+        "fontSize": 30,
         "align": "center",
-        "font": "Merienda One",
+        "font": "Kadwa",
         "fill": "#ffffff",
-        "stroke": "#000000",
-        "strokeThickness": 5,
-
-        "shadow": [10, 0, "rgba(0,0,0,0.8)", 25]
+        "shadow": [10, 0, "rgba(79,105,120,0.7)", 25]
     },
     "questionTextProperties": {
         "fontSize": 35,
         "align": "center",
-        "font": "Kadwa",
-        "fill": "#000000",
+        "font": "Noto Sans",
+        "fill": "#d1e1e9",
         "boundsHeight": 100,
-        "lineSpacing": -5
+        "lineSpacing": -5,
+
+        "shadow": [10, 0, "rgba(79,105,120,0.7)", 25]
     },
     "choicesTextProperties": {
         "fontSize": 35,
         "align": "center",
-        "font": "Kadwa",
-        "fill": "#ffffff",
+        "font": "Noto Sans",
+        "fill": "#7fd3d0",
         "boundsHeight": 100,
         "lineSpacing": -5
     }

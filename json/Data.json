@@ -1,6 +1,6 @@
 {
 "images": {
-    "cmu1": "./Images/Locations/LocationBG.jpg",    
+    "cmu_cut": "./Images/Locations/cmu_cut.jpg",    
     "background": "./Images/Splash/bg.jpg",
     "leftArrow": "./Images/UI/arrow_left.png",
     "leftOutline": "./Images/UI/outline_left.png",
@@ -18,8 +18,14 @@
     "choiceBg": "./Images/UI/choice_button_bg.png",
     "blackInfo": "./Images/UI/black.png",
     "asianInfo": "./Images/UI/asian.png"
-},  
+},
+"spritesheets": {
+
+    "leftThoughtBubble": ["./Images/Sprites/ThoughBubble_Left_spritesheet.png", 200, 117, 6],
+    "rightThoughtBubble": ["./Images/Sprites/ThoughBubble_Right_spritesheet.png", 200, 117, 6]
+},
 "audio": {
+    "cmuCutLocationSound": "./Audio/Sound/Main Campus Sounds.wav"
 },
 "subtitles": {
     "sub1": "./Videos/Subtitles/test.srt"
@@ -77,12 +83,12 @@
                         "I just need a cup of coffee \nand I am good to go!"
                     ],
                     "y": [
-                        600,
-                        600
+                        615,
+                        615
                     ],
                     "bounds": [
-                        [ 600, 200 ],
-                        [ 600, 200 ]
+                        [ 590, 200 ],
+                        [ 590, 200 ]
                     ]
                 }
             },
@@ -97,14 +103,14 @@
                         "Sure, in the library."
                     ],
                     "y": [
-                        600,
-                        600,
-                        600
+                        615,
+                        615,
+                        615
                     ],
                     "bounds": [
-                        [ 400, 150 ],
-                        [ 400, 150 ],
-                        [ 400, 150 ]
+                        [ 420, 200 ],
+                        [ 420, 200 ],
+                        [ 420, 200 ]
                     ]
                 }
             }
@@ -117,11 +123,13 @@
         "draggable": false,
         "movieSrcHD": "./Videos/cmu_cut_optimized.mp4",
         "movieSrcSD": "./Videos/cmu_cut_optimized_lo.mp4",
+        "bgImageKey": "cmu_cut",
         "videoFilter": "none",
         "transition": {
             "fadeIn": true,
             "fadeOut": true
         },
+        "backgroundMusic": "cmuCutLocationSound",
         "icons": {
             "size": 4,
             "type": [
@@ -187,61 +195,44 @@
             "fadeIn": true,
             "fadeOut": true
         },
+        "backgroundMusic": "cmuCutLocationSound",
         "icons": {
-            "size": 3,
+            "size": 4,
             "type": [
+                "IMAGE_BUTTON_DISPLAY_IMAGE",
                 "IMAGE_BUTTON_SCENECHANGE",
                 "IMAGE_BUTTON_SCENECHANGE",
                 "IMAGE_BUTTON_SCENECHANGE"
             ],
             "key": [
+                "rightArrow",
                 "leftArrow",
                 "rightArrow",
                 "rightArrow"
             ],
             "coords": [
+                [ 640, 100 ],                
                 [ 640, 100 ],
                 [ 100, 600 ],
                 [ 800, 600 ]
             ],
             "targetImageIndexOrScene": [
+                0,
                 "cmuGatesInsideLocation",
                 "cmuHuntLocation",
                 "cmuCutLocation"
-            ]
-        }
-    },
-    "cmuGatesInsideLocation": {
-        "stateType": "LocationState",
-        "draggable": false,
-        "movieSrcHD": "./Videos/cmu_gates_inside_optimized.mp4",
-        "movieSrcSD": "./Videos/cmu_gates_inside_optimized_lo.mp4",
-        "videoFilter": "none",
-        "transition": {
-            "fadeIn": true,
-            "fadeOut": true
-        },
-        "icons": {
-            "size": 2,
-            "type": [
-                "IMAGE_BUTTON_SCENECHANGE",
-                "IMAGE_BUTTON_DISPLAY_IMAGE"
-            ],
-            "key": [
-                "rightArrow",
-                "middleArrow"
-            ],
-            "coords": [
-                [ 800, 600 ],
-                [ 600, 100 ]
-            ],
-            "targetImageIndexOrScene": [
-                "cmuGatesLocation",
-                0
             ],
             "lockedByScenes": [
+                ["black2good","black2bad"],
                 null,
-                ["black2good","black2bad"]
+                null,
+                null
+            ],
+            "unlockedByScenes": [
+                null,
+                [["black2good","black2bad"]],
+                null,
+                null
             ]
         },
         "linkedIcons": {
@@ -260,6 +251,34 @@
             ]
         }
     },
+    "cmuGatesInsideLocation": {
+        "stateType": "LocationState",
+        "draggable": false,
+        "movieSrcHD": "./Videos/cmu_gates_inside_optimized.mp4",
+        "movieSrcSD": "./Videos/cmu_gates_inside_optimized_lo.mp4",
+        "videoFilter": "none",
+        "transition": {
+            "fadeIn": true,
+            "fadeOut": true
+        },
+        "backgroundMusic": "cmuCutLocationSound",
+        "icons": {
+            "size": 1,
+            "type": [
+                "IMAGE_BUTTON_SCENECHANGE"
+            ],
+            "key": [
+                "rightArrow",
+                "middleArrow"
+            ],
+            "coords": [
+                [ 800, 600 ]
+            ],
+            "targetImageIndexOrScene": [
+                "cmuGatesLocation"
+            ]
+        }
+    },
     "cmuHuntLocation": {
         "stateType": "LocationState",
         "draggable": false,
@@ -270,6 +289,7 @@
             "fadeIn": true,
             "fadeOut": true
         },
+        "backgroundMusic": "cmuCutLocationSound",
         "icons": {
             "size": 3,
             "type": [
@@ -304,6 +324,7 @@
             "fadeIn": true,
             "fadeOut": true
         },
+        "backgroundMusic": "cmuCutLocationSound",
         "icons": {
             "size": 2,
             "type": [
@@ -368,12 +389,12 @@
                         "Good. What are you doing?"
                      ],
                     "y": [
-                        600,
-                        600
+                        615,
+                        615
                     ],
                     "bounds": [
-                        [ 600, 200 ],
-                        [ 600, 200 ]
+                        [ 590, 200 ],
+                        [ 590, 200 ]
                     ]
                 }
             },
@@ -382,8 +403,8 @@
                 "thoughtBubbles": {
                     "size": 2,
                     "thoughtIconKey": [
-                        "thoughtRight",
-                        "thoughtLeft"
+                        "rightThoughtBubble",
+                        "leftThoughtBubble"
                     ],
                     "coords": [
                         [ 780, 100 ],
@@ -418,12 +439,12 @@
                             "Don't worry about it, Li.\n We will get a good grade\n You are still part of the group."
                         ],
                         "y": [
-                            600,
-                            600
+                            615,
+                            615
                         ],
                         "bounds": [
-                            [ 600, 200 ],
-                            [ 600, 200 ]
+                            [ 590, 200 ],
+                            [ 590, 200 ]
                         ],
                         "targetScene": [
                             "asian2good",
@@ -476,18 +497,18 @@
                     "size": 3,
                     "content": [
                         "Hey, can I join you \nguys for lunch?",
-                        "Hey, what are you guys doing?",
+                        "Hey, what are \nyou guys doing?",
                         "..."
                     ],
                     "y": [
-                        600,
-                        600,
-                        600
+                        615,
+                        615,
+                        615
                     ],
                     "bounds": [
-                        [ 400, 150 ],
-                        [ 400, 150 ],
-                        [ 400, 150 ]
+                        [ 420, 200 ],
+                        [ 420, 200 ],
+                        [ 420, 200 ]
                     ]
                 }
             },
@@ -501,12 +522,12 @@
                         "You don't like Star Wars \nbut you like artsy films."
                     ],
                     "y": [
-                        600,
-                        600
+                        615,
+                        615
                     ],
                     "bounds": [
-                        [ 600, 200 ],
-                        [ 600, 200 ]
+                        [ 590, 200 ],
+                        [ 590, 200 ]
                     ]
                 }
             },
@@ -521,14 +542,14 @@
                         "..."
                     ],
                     "y": [
-                        600,
-                        600,
-                        600
+                        615,
+                        615,
+                        615
                     ],
                     "bounds": [
-                        [ 400, 150 ],
-                        [ 400, 150 ],
-                        [ 400, 150 ]
+                        [ 420, 200 ],
+                        [ 420, 200 ],
+                        [ 420, 200 ]
                     ]
                 }
             },
@@ -541,12 +562,12 @@
                         "Are you sure about that?"
                     ],
                     "y": [
-                        600,
-                        600
+                        615,
+                        615
                     ],
                     "bounds": [
-                        [ 600, 200 ],
-                        [ 600, 200 ]
+                        [ 590, 200 ],
+                        [ 590, 200 ]
                     ]
                 }
             },
@@ -555,8 +576,8 @@
                 "thoughtBubbles": {
                     "size": 2,
                     "thoughtIconKey": [
-                        "thoughtLeft",
-                        "thoughtRight"
+                        "leftThoughtBubble",
+                        "rightThoughtBubble"
                     ],
                     "coords": [
                         [ 400, 100 ],
@@ -592,14 +613,14 @@
                             "..."
                         ],
                         "y": [
-                            600,
-                            600,
-                            600
+                            615,
+                            615,
+                            615
                         ],
                         "bounds": [
-                            [ 400, 150 ],
-                            [ 400, 150 ],
-                            [ 400, 150 ]
+                            [ 420, 200 ],
+                            [ 420, 200 ],
+                            [ 420, 200 ]
                         ],
                         "targetScene": [
                             "black2bad",
@@ -630,7 +651,7 @@
             "fadeIn": true,
             "fadeOut": false
         },
-        "nextScene": "menuScene"
+        "nextScene": "cmuGatesInsideLocation"
     },
     "indian1": {
         "videoFilter": [
@@ -656,12 +677,12 @@
                         "No, thanks."
                     ],
                     "y": [
-                        600,
-                        600
+                        615,
+                        615
                     ],
                     "bounds": [
-                        [ 600, 200 ],
-                        [ 600, 200 ]
+                        [ 590, 200 ],
+                        [ 590, 200 ]
                     ]
                 }
             },
@@ -675,12 +696,12 @@
                         "Why would you assume \nhe is not from here?"
                     ],
                     "y": [
-                        600,
-                        600
+                        615,
+                        615
                     ],
                     "bounds": [
-                        [ 600, 200 ],
-                        [ 600, 200 ]
+                        [ 590, 200 ],
+                        [ 590, 200 ]
                     ],
                     "targetScene": [
                         "indian2bad",
@@ -712,7 +733,10 @@
         "nextScene": "cmuCutLocation"
     },
     "ending": {
-        "stateType": "EndingState",
+        "stateType": "movieState",
+        "endingScenes": [
+            []
+        ],
         "endingRequirements": [
             ["indian2good", "black3good"]
         ],

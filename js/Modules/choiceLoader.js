@@ -20,10 +20,10 @@ const questionTextKeyEnum = 'TEXT_QUESTION';
 
 const FADE_DELAY = 1;
 
-function CreateBg(x, y, width, height, target) {
+function CreateBg(x, y, width, height, phaserText, target) {
     var choiceBg = new Image(x, y, 'choiceBg', choiceBgKeyEnum);
     choiceBg.addImageToGame(_game, _game.mediaGroup);
-    choiceBg.changeImage(_game, width, height, target);
+    choiceBg.changeImage(_game, width, height, target, phaserText);
     return choiceBg;
 }
 
@@ -45,15 +45,15 @@ function CreateMeaningfulChoices(info) {
     resetElements();
     CreateChoiceQuestion(info.question, info.y[0] - info.bounds[0][1]/2 - 30);
 
-    for(var i=0; i < info.size; i++) {
-        var bgImg = CreateBg(GetXPos(info.size, i), info.y[i], info.bounds[i][0], info.bounds[i][1], info.targetScene[i]);
-
-        bgImg.index = i;
-        _choiceBg.push(bgImg);
-
+    for(var i=0; i < info.size; i++) {        
         _text.push(new Text(info.content[i], GetXPos(info.size, i), 0, meaningfulTextKeyEnum, _game.global.style.choicesTextProperties));
         _text[i].index = i;
         _text[i].addToGame(_game, _game.mediaGroup);
+
+        var bgImg = CreateBg(GetXPos(info.size, i), info.y[i], info.bounds[i][0], info.bounds[i][1], _text[i].getPhaserText(), info.targetScene[i]);
+        bgImg.index = i;
+        _choiceBg.push(bgImg);
+
         _text[i].changeText(_game, info.targetScene[i], _game.global.gameManager.getEndInteractionSignal(), bgImg.getPhaserImage().y, info.size);
     };
 }
@@ -63,14 +63,14 @@ function CreateMeaninglessChoices(info) {
     CreateChoiceQuestion(info.question, info.y[0] - info.bounds[0][1]/2 - 30);
 
     for(var i=0; i < info.size; i++) {
-        var bgImg = CreateBg(GetXPos(info.size, i), info.y[i], info.bounds[i][0], info.bounds[i][1]);
-
-        bgImg.index = i;
-        _choiceBg.push(bgImg);
-
         _text.push(new Text(info.content[i], GetXPos(info.size, i), 0, meaninglessTextKeyEnum, _game.global.style.choicesTextProperties));
         _text[i].index = i;
         _text[i].addToGame(_game, _game.mediaGroup);
+
+        var bgImg = CreateBg(GetXPos(info.size, i), info.y[i], info.bounds[i][0], info.bounds[i][1], _text[i].getPhaserText());
+        bgImg.index = i;
+        _choiceBg.push(bgImg);
+
         _text[i].changeText(_game, _game.global.gameManager.getEndInteractionSignal(), bgImg.getPhaserImage().y, info.size);
     }
 }

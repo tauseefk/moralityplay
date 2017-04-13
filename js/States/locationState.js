@@ -31,12 +31,10 @@ module.exports = {
     preload: function() {
     },
     create: function() {
-    //    this.game.global.soundManager.playBackgroundMusic('littleRootMusic');
+        _game.global.soundManager.playBackgroundMusic(_stateInfo.getBackgroundMusic());        
+        MovingBackground.create(_stateInfo.getBgImageKey(), _stateInfo.getDraggable());
         if(_stateInfo.getMovieSrc(_game.global.quality)) {
             Video.create(_stateInfo.getMovieSrc(_game.global.quality), _stateInfo.getTransitionInfo().fadeOut, _stateInfo.getVideoFilter(), _stateInfo.getNextScenes());
-        }
-        else {
-            MovingBackground.create(_stateInfo.getBgImageKey(), _stateInfo.getDraggable());
         }
         var icons = Icons.createNavigationIcons(_stateInfo.getIconsInfo(), _stateInfo.getLinkedIconsInfo());
         if(_stateInfo.getDraggable())

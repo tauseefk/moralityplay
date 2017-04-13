@@ -70,6 +70,10 @@ State.prototype.getMovieSubKey = function() {
   return this._scene.sub;
 }
 
+State.prototype.getBackgroundMusic = function() {
+  return this._scene.backgroundMusic;
+}
+
 State.prototype.getTransitionInfo = function() {
   return this._scene.transition;
 }
@@ -85,5 +89,14 @@ State.prototype.getNextScenes = function() {
 State.prototype.getDraggable = function() {
   return this._scene.draggable;
 }
+/*
+State.prototype.getEndingScene = function(visitedScenes) {
+  if(!this._scene.endingScenes)
+    return false;
+  else {
 
+  }
+  return this._scene.
+}
+*/
 module.exports = State;

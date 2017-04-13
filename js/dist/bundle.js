@@ -140,6 +140,7 @@ var _videoImage = null;
 var _videoFilter = null;
 var _interactionTimeStamps = null;
 
+var _loopEventEnabled = false;
 var _pausedByGame = false;
 
 const FADEOUT_OFFSET_SECONDS = 5;
@@ -157,8 +158,20 @@ function CreateVideo(src, doFadeOut, nextScene, sub, interactionTimeStamps) {
     if(doFadeOut)
         _game.time.events.add((_video.video.duration-FADEOUT_OFFSET_SECONDS)*1000, fadeOut, this, signal);
     */
-    if(nextScene)
+    if(nextScene) 
         _video.onComplete.addOnce(ChangeScene(nextScene), this);
+    /*
+    if(nextScene) {
+        _video.onComplete.addOnce(ChangeScene(nextScene), this);
+        if(_loopEventEnabled) {
+            _video.video.removeEventListener("timeupdate", loop);
+            _loopEventEnabled = false;
+        }
+    }
+    else if(!_loopEventEnabled) {
+        LoopVideo();
+    }
+    */
 }
 
 function CheckProgress() {
@@ -179,10 +192,12 @@ function AddVideoAndFilter(doFadeOut, sub, nextScene) {
 
     function OnVideoLoad() {
         _video.play();
+        
         if(!nextScene)
             _video.loop = true;
         else
             _video.loop = false;
+        console.log("hiiii");
         //_video.video.addEventListener('progress', CheckProgress, false);
         if(doFadeOut) {
             //_game.time.events.add((_video.video.duration-FADEOUT_OFFSET_SECONDS)*Phaser.Timer.SECOND, FadeOut, this);
@@ -231,6 +246,16 @@ function ChangeScene(nextScenes) {
             _game.global.gameManager.getChangeSceneSignal().dispatch(nextScenes);
         }
     }
+}
+
+function LoopVideo() {
+    _loopEventEnabled = true;
+    _video.video.addEventListener("timeupdate", function loop() {        
+        if(_video.video.currentTime >= _video.video.duration - 0.5){
+            _video.video.currentTime = 0.5;
+            console.log('looped');
+        }
+    }, false);
 }
 
 module.exports = {
@@ -673,38 +698,46 @@ Text.prototype.changeToThoughts = function(game, xTo, yTo, filter) {
 }
 
 Text.prototype.changeToMeaningfulChoices = function(game, targetScene, endInteractionSignal, boundsY, totalChoices) {
+    /*
     if(totalChoices > 2)
         this._text.fontSize -= 5;
     if(totalChoices > 1)
         this._text.fontSize -= 5;
+    */
     this._text.anchor.set(0.5, 0.5);
     this._text.y = boundsY;
     this._text.alpha = 0;
-    this._text.inputEnabled = false;
+    //this._text.inputEnabled = false;
     //this._text.input.useHandCursor = true;
     //this._text.boundsAlignV = "middle";
     //this._text.setTextBounds(0, boundsY, boundsWidth, boundsHeight);
+    /*
     this._link = new Linkable(game, this._text.events, endInteractionSignal, this, targetScene);
     this._link.setAsButton(true);    
     this._link.addMouseOverScaleEffect(game, this._text);
+    */
     //Animation.fade(game, this._text, 1, true);
 }
 
 Text.prototype.changeToMeaninglessChoices = function(game, endInteractionSignal, boundsY, totalChoices) {
+    /*
     if(totalChoices > 2)
         this._text.fontSize -= 5;
     if(totalChoices > 1)
         this._text.fontSize -= 5;
+    */
     this._text.anchor.set(0.5, 0.5);
     this._text.y = boundsY;
     this._text.alpha = 0;
-    this._text.inputEnabled = false;
+    //this._text.inputEnabled = false;
     //this._text.input.useHandCursor = true;
     //this._text.setTextBounds(0, boundsY, boundsWidth, boundsHeight);
     //this._text.boundsAlignV = "middle";
+    /*
     this._link = new Linkable(game, this._text.events, endInteractionSignal, this);
     this._link.setAsButton(true);
     this._link.addMouseOverScaleEffect(game, this._text);
+    */
     //Animation.fade(game, this._text, 1, true);
 }
 
@@ -1015,6 +1048,10 @@ State.prototype.getMovieSubKey = function() {
   return this._scene.sub;
 }
 
+State.prototype.getBackgroundMusic = function() {
+  return this._scene.backgroundMusic;
+}
+
 State.prototype.getTransitionInfo = function() {
   return this._scene.transition;
 }
@@ -1030,7 +1067,16 @@ State.prototype.getNextScenes = function() {
 State.prototype.getDraggable = function() {
   return this._scene.draggable;
 }
+/*
+State.prototype.getEndingScene = function(visitedScenes) {
+  if(!this._scene.endingScenes)
+    return false;
+  else {
 
+  }
+  return this._scene.
+}
+*/
 module.exports = State;
 
 
@@ -1172,7 +1218,7 @@ Image.prototype.changeImage = function (game, arg1, arg2, arg3, arg4, arg5) {
             this.changeToDisplayImage(game, arg1);
             break;
         case ImageTypeEnum.ChoiceBackground:
-            this.changeToChoiceBackgroundImage(game, arg1, arg2, arg3);
+            this.changeToChoiceBackgroundImage(game, arg1, arg2, arg3, arg4);
             break;
         case ImageTypeEnum.Pause:
             this.changeToPauseButton(game, arg1);
@@ -1196,8 +1242,8 @@ Image.prototype.changeToStaticImage = function(game) {
 }
 
 Image.prototype.changeToThoughtSprite = function(game, thoughtsAndChoicesSignal, thoughts, coords, choices) {
-    this._image.width = 100;
-    this._image.height = 100;
+    //this._image.width = 100;
+    //this._image.height = 100;
     this._image.anchor.setTo(0.5, 0.5);
     this._image.animations.add('think');
     this._image.animations.play('think', 4, false);
@@ -1254,7 +1300,7 @@ Image.prototype.changeToDisplayImage = function(game, target) {
  //   this._link.addSound('testSound');
 }
 
-Image.prototype.changeToChoiceBackgroundImage = function(game, width, height, target) {
+Image.prototype.changeToChoiceBackgroundImage = function(game, width, height, target, phaserText) {
     this._image.alpha = 0;
     this._image.anchor.set(0.5, 0.5);
     this._image.width = width;
@@ -1263,6 +1309,10 @@ Image.prototype.changeToChoiceBackgroundImage = function(game, width, height, ta
     this._link = new Linkable(game, this._image, game.global.gameManager.getEndInteractionSignal(), this, target);
     this._link.setAsButton(true);        
     this._link.addMouseOverScaleEffect(game, this._image);
+    this._link.addMouseOverScaleEffect(game, phaserText);
+
+    phaserText.bringToTop();
+    this._image.input.priorityID = 1;
     
     //Animation.fade(game, this._image, 1, true);
     return this._image;
@@ -1393,10 +1443,10 @@ const questionTextKeyEnum = 'TEXT_QUESTION';
 
 const FADE_DELAY = 1;
 
-function CreateBg(x, y, width, height, target) {
+function CreateBg(x, y, width, height, phaserText, target) {
     var choiceBg = new Image(x, y, 'choiceBg', choiceBgKeyEnum);
     choiceBg.addImageToGame(_game, _game.mediaGroup);
-    choiceBg.changeImage(_game, width, height, target);
+    choiceBg.changeImage(_game, width, height, target, phaserText);
     return choiceBg;
 }
 
@@ -1418,15 +1468,15 @@ function CreateMeaningfulChoices(info) {
     resetElements();
     CreateChoiceQuestion(info.question, info.y[0] - info.bounds[0][1]/2 - 30);
 
-    for(var i=0; i < info.size; i++) {
-        var bgImg = CreateBg(GetXPos(info.size, i), info.y[i], info.bounds[i][0], info.bounds[i][1], info.targetScene[i]);
-
-        bgImg.index = i;
-        _choiceBg.push(bgImg);
-
+    for(var i=0; i < info.size; i++) {        
         _text.push(new Text(info.content[i], GetXPos(info.size, i), 0, meaningfulTextKeyEnum, _game.global.style.choicesTextProperties));
         _text[i].index = i;
         _text[i].addToGame(_game, _game.mediaGroup);
+
+        var bgImg = CreateBg(GetXPos(info.size, i), info.y[i], info.bounds[i][0], info.bounds[i][1], _text[i].getPhaserText(), info.targetScene[i]);
+        bgImg.index = i;
+        _choiceBg.push(bgImg);
+
         _text[i].changeText(_game, info.targetScene[i], _game.global.gameManager.getEndInteractionSignal(), bgImg.getPhaserImage().y, info.size);
     };
 }
@@ -1436,14 +1486,14 @@ function CreateMeaninglessChoices(info) {
     CreateChoiceQuestion(info.question, info.y[0] - info.bounds[0][1]/2 - 30);
 
     for(var i=0; i < info.size; i++) {
-        var bgImg = CreateBg(GetXPos(info.size, i), info.y[i], info.bounds[i][0], info.bounds[i][1]);
-
-        bgImg.index = i;
-        _choiceBg.push(bgImg);
-
         _text.push(new Text(info.content[i], GetXPos(info.size, i), 0, meaninglessTextKeyEnum, _game.global.style.choicesTextProperties));
         _text[i].index = i;
         _text[i].addToGame(_game, _game.mediaGroup);
+
+        var bgImg = CreateBg(GetXPos(info.size, i), info.y[i], info.bounds[i][0], info.bounds[i][1], _text[i].getPhaserText());
+        bgImg.index = i;
+        _choiceBg.push(bgImg);
+
         _text[i].changeText(_game, _game.global.gameManager.getEndInteractionSignal(), bgImg.getPhaserImage().y, info.size);
     }
 }
@@ -1940,12 +1990,10 @@ module.exports = {
     preload: function() {
     },
     create: function() {
-    //    this.game.global.soundManager.playBackgroundMusic('littleRootMusic');
+        _game.global.soundManager.playBackgroundMusic(_stateInfo.getBackgroundMusic());        
+        MovingBackground.create(_stateInfo.getBgImageKey(), _stateInfo.getDraggable());
         if(_stateInfo.getMovieSrc(_game.global.quality)) {
             Video.create(_stateInfo.getMovieSrc(_game.global.quality), _stateInfo.getTransitionInfo().fadeOut, _stateInfo.getVideoFilter(), _stateInfo.getNextScenes());
-        }
-        else {
-            MovingBackground.create(_stateInfo.getBgImageKey(), _stateInfo.getDraggable());
         }
         var icons = Icons.createNavigationIcons(_stateInfo.getIconsInfo(), _stateInfo.getLinkedIconsInfo());
         if(_stateInfo.getDraggable())
@@ -2340,7 +2388,7 @@ WebFontConfig = {
     active: function() { _game.time.events.add(Phaser.Timer.SECOND, DelayedCreate, this); },
 
     google: {
-      families: ['Kadwa', 'Merienda One'],
+      families: ['Kadwa', 'Merienda One', 'Noto Sans'],
     }
 };
 
@@ -2650,6 +2698,7 @@ module.exports = {
     create: function(input) {
         _input = [];
         for(var i=0; i<input.size; i++) {
+            console.log("added");
             _input.push(new Input(input.name[i], input.coords[i][0], input.coords[i][1], input.properties[i]));
             _input[i].addToGame(_game);
         }
@@ -2705,6 +2754,7 @@ SoundManager.prototype.playBackgroundMusic = function(musicKey) {
     if(!_soundHashSet[musicKey]) 
         _soundHashSet[musicKey] = _game.add.audio(musicKey);
     _bgMusic =_soundHashSet[musicKey];
+    _bgMusic.loop = true;
     _bgMusic.play();
 }
 
@@ -2895,9 +2945,6 @@ module.exports = {
 "use strict";
 
 
-var _instance = null;
-var _stateInfo = null;
-var _input = [];
 const Group = __webpack_require__(3), 
     Input = __webpack_require__(24),
     Transition = __webpack_require__(0),
@@ -2905,6 +2952,9 @@ const Group = __webpack_require__(3),
     MovingBackground = __webpack_require__(18),
     Icons = __webpack_require__(6);
 
+var _instance = null;
+var _stateInfo = null;
+var _input = [];
 
 function setPlayerName(game) {
     if(_input[0])
@@ -2986,7 +3036,8 @@ module.exports = {
     },
     create: function() {
         Group.initializeGroups();
-        Video.create(_stateInfo.getMovieSrc(_game.global.quality), _stateInfo.getTransitionInfo().fadeOut, _stateInfo.getVideoFilter(), _stateInfo.getNextScenes(), _stateInfo.getMovieSubKey());
+        var movieSrc = _stateInfo.getMovieSrc(_game.global.quality);
+        Video.create(movieSrc, _stateInfo.getTransitionInfo().fadeOut, _stateInfo.getVideoFilter(), _stateInfo.getNextScenes(), _stateInfo.getMovieSubKey());
         if(_stateInfo.getTransitionInfo().fadeIn)
             this.game.global.gameManager.getFadeInTransitionSignal().dispatch();
         UI.create(true, true);
@@ -3012,7 +3063,7 @@ function initGame(Boot, Preload, StateManager, ResourceLoader) {
     function init() {
         console.log("Game initialized.");
         game.canvas.className += "center";
-        // game.add.plugin(PhaserInput.Plugin);
+        game.add.plugin(PhaserInput.Plugin);
         game.state.add("boot", Boot);
         game.state.add("preload", Preload);
         game.state.add("stateManager", StateManager);

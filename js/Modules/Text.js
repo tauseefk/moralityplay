@@ -80,38 +80,46 @@ Text.prototype.changeToThoughts = function(game, xTo, yTo, filter) {
 }
 
 Text.prototype.changeToMeaningfulChoices = function(game, targetScene, endInteractionSignal, boundsY, totalChoices) {
+    /*
     if(totalChoices > 2)
         this._text.fontSize -= 5;
     if(totalChoices > 1)
         this._text.fontSize -= 5;
+    */
     this._text.anchor.set(0.5, 0.5);
     this._text.y = boundsY;
     this._text.alpha = 0;
-    this._text.inputEnabled = false;
+    //this._text.inputEnabled = false;
     //this._text.input.useHandCursor = true;
     //this._text.boundsAlignV = "middle";
     //this._text.setTextBounds(0, boundsY, boundsWidth, boundsHeight);
+    /*
     this._link = new Linkable(game, this._text.events, endInteractionSignal, this, targetScene);
     this._link.setAsButton(true);    
     this._link.addMouseOverScaleEffect(game, this._text);
+    */
     //Animation.fade(game, this._text, 1, true);
 }
 
 Text.prototype.changeToMeaninglessChoices = function(game, endInteractionSignal, boundsY, totalChoices) {
+    /*
     if(totalChoices > 2)
         this._text.fontSize -= 5;
     if(totalChoices > 1)
         this._text.fontSize -= 5;
+    */
     this._text.anchor.set(0.5, 0.5);
     this._text.y = boundsY;
     this._text.alpha = 0;
-    this._text.inputEnabled = false;
+    //this._text.inputEnabled = false;
     //this._text.input.useHandCursor = true;
     //this._text.setTextBounds(0, boundsY, boundsWidth, boundsHeight);
     //this._text.boundsAlignV = "middle";
+    /*
     this._link = new Linkable(game, this._text.events, endInteractionSignal, this);
     this._link.setAsButton(true);
     this._link.addMouseOverScaleEffect(game, this._text);
+    */
     //Animation.fade(game, this._text, 1, true);
 }
 

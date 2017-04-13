@@ -26,7 +26,8 @@ module.exports = {
     },
     create: function() {
         Group.initializeGroups();
-        Video.create(_stateInfo.getMovieSrc(_game.global.quality), _stateInfo.getTransitionInfo().fadeOut, _stateInfo.getVideoFilter(), _stateInfo.getNextScenes(), _stateInfo.getMovieSubKey());
+        var movieSrc = _stateInfo.getMovieSrc(_game.global.quality);
+        Video.create(movieSrc, _stateInfo.getTransitionInfo().fadeOut, _stateInfo.getVideoFilter(), _stateInfo.getNextScenes(), _stateInfo.getMovieSubKey());
         if(_stateInfo.getTransitionInfo().fadeIn)
             this.game.global.gameManager.getFadeInTransitionSignal().dispatch();
         UI.create(true, true);

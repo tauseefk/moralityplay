@@ -17,7 +17,7 @@ WebFontConfig = {
     active: function() { _game.time.events.add(Phaser.Timer.SECOND, DelayedCreate, this); },
 
     google: {
-      families: ['Kadwa', 'Merienda One'],
+      families: ['Kadwa', 'Merienda One', 'Noto Sans'],
     }
 };
 

@@ -11,6 +11,7 @@ var _videoImage = null;
 var _videoFilter = null;
 var _interactionTimeStamps = null;
 
+var _loopEventEnabled = false;
 var _pausedByGame = false;
 
 const FADEOUT_OFFSET_SECONDS = 5;
@@ -28,8 +29,20 @@ function CreateVideo(src, doFadeOut, nextScene, sub, interactionTimeStamps) {
     if(doFadeOut)
         _game.time.events.add((_video.video.duration-FADEOUT_OFFSET_SECONDS)*1000, fadeOut, this, signal);
     */
-    if(nextScene)
+    if(nextScene) 
         _video.onComplete.addOnce(ChangeScene(nextScene), this);
+    /*
+    if(nextScene) {
+        _video.onComplete.addOnce(ChangeScene(nextScene), this);
+        if(_loopEventEnabled) {
+            _video.video.removeEventListener("timeupdate", loop);
+            _loopEventEnabled = false;
+        }
+    }
+    else if(!_loopEventEnabled) {
+        LoopVideo();
+    }
+    */
 }
 
 function CheckProgress() {
@@ -50,10 +63,12 @@ function AddVideoAndFilter(doFadeOut, sub, nextScene) {
 
     function OnVideoLoad() {
         _video.play();
+        
         if(!nextScene)
             _video.loop = true;
         else
             _video.loop = false;
+        console.log("hiiii");
         //_video.video.addEventListener('progress', CheckProgress, false);
         if(doFadeOut) {
             //_game.time.events.add((_video.video.duration-FADEOUT_OFFSET_SECONDS)*Phaser.Timer.SECOND, FadeOut, this);
@@ -102,6 +117,16 @@ function ChangeScene(nextScenes) {
             _game.global.gameManager.getChangeSceneSignal().dispatch(nextScenes);
         }
     }
+}
+
+function LoopVideo() {
+    _loopEventEnabled = true;
+    _video.video.addEventListener("timeupdate", function loop() {        
+        if(_video.video.currentTime >= _video.video.duration - 0.5){
+            _video.video.currentTime = 0.5;
+            console.log('looped');
+        }
+    }, false);
 }
 
 module.exports = {

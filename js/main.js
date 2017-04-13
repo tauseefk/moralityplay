@@ -11,7 +11,7 @@ function initGame(Boot, Preload, StateManager, ResourceLoader) {
     function init() {
         console.log("Game initialized.");
         game.canvas.className += "center";
-        // game.add.plugin(PhaserInput.Plugin);
+        game.add.plugin(PhaserInput.Plugin);
         game.state.add("boot", Boot);
         game.state.add("preload", Preload);
         game.state.add("stateManager", StateManager);

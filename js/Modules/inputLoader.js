@@ -18,6 +18,7 @@ module.exports = {
     create: function(input) {
         _input = [];
         for(var i=0; i<input.size; i++) {
+            console.log("added");
             _input.push(new Input(input.name[i], input.coords[i][0], input.coords[i][1], input.properties[i]));
             _input[i].addToGame(_game);
         }

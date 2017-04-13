@@ -72,7 +72,7 @@ Image.prototype.changeImage = function (game, arg1, arg2, arg3, arg4, arg5) {
             this.changeToDisplayImage(game, arg1);
             break;
         case ImageTypeEnum.ChoiceBackground:
-            this.changeToChoiceBackgroundImage(game, arg1, arg2, arg3);
+            this.changeToChoiceBackgroundImage(game, arg1, arg2, arg3, arg4);
             break;
         case ImageTypeEnum.Pause:
             this.changeToPauseButton(game, arg1);
@@ -96,8 +96,8 @@ Image.prototype.changeToStaticImage = function(game) {
 }
 
 Image.prototype.changeToThoughtSprite = function(game, thoughtsAndChoicesSignal, thoughts, coords, choices) {
-    this._image.width = 100;
-    this._image.height = 100;
+    //this._image.width = 100;
+    //this._image.height = 100;
     this._image.anchor.setTo(0.5, 0.5);
     this._image.animations.add('think');
     this._image.animations.play('think', 4, false);
@@ -154,7 +154,7 @@ Image.prototype.changeToDisplayImage = function(game, target) {
  //   this._link.addSound('testSound');
 }
 
-Image.prototype.changeToChoiceBackgroundImage = function(game, width, height, target) {
+Image.prototype.changeToChoiceBackgroundImage = function(game, width, height, target, phaserText) {
     this._image.alpha = 0;
     this._image.anchor.set(0.5, 0.5);
     this._image.width = width;
@@ -163,6 +163,10 @@ Image.prototype.changeToChoiceBackgroundImage = function(game, width, height, ta
     this._link = new Linkable(game, this._image, game.global.gameManager.getEndInteractionSignal(), this, target);
     this._link.setAsButton(true);        
     this._link.addMouseOverScaleEffect(game, this._image);
+    this._link.addMouseOverScaleEffect(game, phaserText);
+
+    phaserText.bringToTop();
+    this._image.input.priorityID = 1;
     
     //Animation.fade(game, this._image, 1, true);
     return this._image;
