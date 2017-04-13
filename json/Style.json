@@ -31,7 +31,7 @@
         "shadow": [10, 0, "rgba(79,105,120,0.7)", 25]
     },
     "choicesTextProperties": {
-        "fontSize": 35,
+        "fontSize": 30,
         "align": "center",
         "font": "Noto Sans",
         "fill": "#7fd3d0",

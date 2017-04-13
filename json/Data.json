@@ -1,6 +1,6 @@
 {
 "images": {
-    "cmu_cut": "./Images/Locations/cmu_cut.jpg",    
+    "cmu1": "./Images/Locations/LocationBG.jpg",    
     "background": "./Images/Splash/bg.jpg",
     "leftArrow": "./Images/UI/arrow_left.png",
     "leftOutline": "./Images/UI/outline_left.png",
@@ -18,14 +18,8 @@
     "choiceBg": "./Images/UI/choice_button_bg.png",
     "blackInfo": "./Images/UI/black.png",
     "asianInfo": "./Images/UI/asian.png"
-},
-"spritesheets": {
-
-    "leftThoughtBubble": ["./Images/Sprites/ThoughBubble_Left_spritesheet.png", 200, 117, 6],
-    "rightThoughtBubble": ["./Images/Sprites/ThoughBubble_Right_spritesheet.png", 200, 117, 6]
-},
+},  
 "audio": {
-    "cmuCutLocationSound": "./Audio/Sound/Main Campus Sounds.wav"
 },
 "subtitles": {
     "sub1": "./Videos/Subtitles/test.srt"
@@ -83,19 +77,19 @@
                         "I just need a cup of coffee \nand I am good to go!"
                     ],
                     "y": [
-                        615,
-                        615
+                        600,
+                        600
                     ],
                     "bounds": [
-                        [ 590, 200 ],
-                        [ 590, 200 ]
+                        [ 600, 200 ],
+                        [ 600, 200 ]
                     ]
                 }
             },
             {
                 "timeStamp": 15,
                 "choices": {
-                    "question": "\"See you later!\"",
+                    "question": "\"We are meeting later, right?\"",
                     "size": 3,
                     "content": [
                         "Yep, we have\n a project meeting.",
@@ -103,14 +97,14 @@
                         "Sure, in the library."
                     ],
                     "y": [
-                        615,
-                        615,
-                        615
+                        600,
+                        600,
+                        600
                     ],
                     "bounds": [
-                        [ 420, 200 ],
-                        [ 420, 200 ],
-                        [ 420, 200 ]
+                        [ 400, 150 ],
+                        [ 400, 150 ],
+                        [ 400, 150 ]
                     ]
                 }
             }
@@ -123,13 +117,11 @@
         "draggable": false,
         "movieSrcHD": "./Videos/cmu_cut_optimized.mp4",
         "movieSrcSD": "./Videos/cmu_cut_optimized_lo.mp4",
-        "bgImageKey": "cmu_cut",
         "videoFilter": "none",
         "transition": {
             "fadeIn": true,
             "fadeOut": true
         },
-        "backgroundMusic": "cmuCutLocationSound",
         "icons": {
             "size": 4,
             "type": [
@@ -166,7 +158,7 @@
                 null,
                 null,
                 null,
-                [["asian2good","asian2bad"], ["indian2good","indian2good"]]
+                [["asian2good","asian2bad"], ["indian2good","indian2bad"]]
             ]
         },
         "linkedIcons": {
@@ -195,44 +187,61 @@
             "fadeIn": true,
             "fadeOut": true
         },
-        "backgroundMusic": "cmuCutLocationSound",
         "icons": {
-            "size": 4,
+            "size": 3,
             "type": [
-                "IMAGE_BUTTON_DISPLAY_IMAGE",
                 "IMAGE_BUTTON_SCENECHANGE",
                 "IMAGE_BUTTON_SCENECHANGE",
                 "IMAGE_BUTTON_SCENECHANGE"
             ],
             "key": [
-                "rightArrow",
                 "leftArrow",
                 "rightArrow",
                 "rightArrow"
             ],
             "coords": [
-                [ 640, 100 ],                
                 [ 640, 100 ],
                 [ 100, 600 ],
                 [ 800, 600 ]
             ],
             "targetImageIndexOrScene": [
-                0,
                 "cmuGatesInsideLocation",
                 "cmuHuntLocation",
                 "cmuCutLocation"
+            ]
+        }
+    },
+    "cmuGatesInsideLocation": {
+        "stateType": "LocationState",
+        "draggable": false,
+        "movieSrcHD": "./Videos/cmu_gates_inside_optimized.mp4",
+        "movieSrcSD": "./Videos/cmu_gates_inside_optimized_lo.mp4",
+        "videoFilter": "none",
+        "transition": {
+            "fadeIn": true,
+            "fadeOut": true
+        },
+        "icons": {
+            "size": 2,
+            "type": [
+                "IMAGE_BUTTON_SCENECHANGE",
+                "IMAGE_BUTTON_DISPLAY_IMAGE"
+            ],
+            "key": [
+                "rightArrow",
+                "middleArrow"
+            ],
+            "coords": [
+                [ 800, 600 ],
+                [ 600, 100 ]
+            ],
+            "targetImageIndexOrScene": [
+                "cmuGatesLocation",
+                0
             ],
             "lockedByScenes": [
-                ["black2good","black2bad"],
                 null,
-                null,
-                null
-            ],
-            "unlockedByScenes": [
-                null,
-                [["black2good","black2bad"]],
-                null,
-                null
+                ["black2good","black2bad"]
             ]
         },
         "linkedIcons": {
@@ -251,34 +260,6 @@
             ]
         }
     },
-    "cmuGatesInsideLocation": {
-        "stateType": "LocationState",
-        "draggable": false,
-        "movieSrcHD": "./Videos/cmu_gates_inside_optimized.mp4",
-        "movieSrcSD": "./Videos/cmu_gates_inside_optimized_lo.mp4",
-        "videoFilter": "none",
-        "transition": {
-            "fadeIn": true,
-            "fadeOut": true
-        },
-        "backgroundMusic": "cmuCutLocationSound",
-        "icons": {
-            "size": 1,
-            "type": [
-                "IMAGE_BUTTON_SCENECHANGE"
-            ],
-            "key": [
-                "rightArrow",
-                "middleArrow"
-            ],
-            "coords": [
-                [ 800, 600 ]
-            ],
-            "targetImageIndexOrScene": [
-                "cmuGatesLocation"
-            ]
-        }
-    },
     "cmuHuntLocation": {
         "stateType": "LocationState",
         "draggable": false,
@@ -289,7 +270,6 @@
             "fadeIn": true,
             "fadeOut": true
         },
-        "backgroundMusic": "cmuCutLocationSound",
         "icons": {
             "size": 3,
             "type": [
@@ -324,7 +304,6 @@
             "fadeIn": true,
             "fadeOut": true
         },
-        "backgroundMusic": "cmuCutLocationSound",
         "icons": {
             "size": 2,
             "type": [
@@ -389,12 +368,12 @@
                         "Good. What are you doing?"
                      ],
                     "y": [
-                        615,
-                        615
+                        600,
+                        600
                     ],
                     "bounds": [
-                        [ 590, 200 ],
-                        [ 590, 200 ]
+                        [ 600, 200 ],
+                        [ 600, 200 ]
                     ]
                 }
             },
@@ -403,8 +382,8 @@
                 "thoughtBubbles": {
                     "size": 2,
                     "thoughtIconKey": [
-                        "rightThoughtBubble",
-                        "leftThoughtBubble"
+                        "thoughtRight",
+                        "thoughtLeft"
                     ],
                     "coords": [
                         [ 780, 100 ],
@@ -439,12 +418,12 @@
                             "Don't worry about it, Li.\n We will get a good grade\n You are still part of the group."
                         ],
                         "y": [
-                            615,
-                            615
+                            600,
+                            600
                         ],
                         "bounds": [
-                            [ 590, 200 ],
-                            [ 590, 200 ]
+                            [ 600, 200 ],
+                            [ 600, 200 ]
                         ],
                         "targetScene": [
                             "asian2good",
@@ -498,17 +477,17 @@
                     "content": [
                         "Hey, can I join you \nguys for lunch?",
                         "Hey, what are \nyou guys doing?",
-                        "..."
+                        "Hi!"
                     ],
                     "y": [
-                        615,
-                        615,
-                        615
+                        600,
+                        600,
+                        600
                     ],
                     "bounds": [
-                        [ 420, 200 ],
-                        [ 420, 200 ],
-                        [ 420, 200 ]
+                        [ 400, 150 ],
+                        [ 400, 150 ],
+                        [ 400, 150 ]
                     ]
                 }
             },
@@ -522,12 +501,12 @@
                         "You don't like Star Wars \nbut you like artsy films."
                     ],
                     "y": [
-                        615,
-                        615
+                        600,
+                        600
                     ],
                     "bounds": [
-                        [ 590, 200 ],
-                        [ 590, 200 ]
+                        [ 600, 200 ],
+                        [ 600, 200 ]
                     ]
                 }
             },
@@ -539,17 +518,17 @@
                     "content": [
                         "Michael, if you practiced\nyou'll be fine.",
                         "Good luck!",
-                        "..."
+                        "She's right. Just relax."
                     ],
                     "y": [
-                        615,
-                        615,
-                        615
+                        600,
+                        600,
+                        600
                     ],
                     "bounds": [
-                        [ 420, 200 ],
-                        [ 420, 200 ],
-                        [ 420, 200 ]
+                        [ 400, 150 ],
+                        [ 400, 150 ],
+                        [ 400, 150 ]
                     ]
                 }
             },
@@ -562,12 +541,12 @@
                         "Are you sure about that?"
                     ],
                     "y": [
-                        615,
-                        615
+                        600,
+                        600
                     ],
                     "bounds": [
-                        [ 590, 200 ],
-                        [ 590, 200 ]
+                        [ 600, 200 ],
+                        [ 600, 200 ]
                     ]
                 }
             },
@@ -576,11 +555,11 @@
                 "thoughtBubbles": {
                     "size": 2,
                     "thoughtIconKey": [
-                        "leftThoughtBubble",
-                        "rightThoughtBubble"
+                        "thoughtLeft",
+                        "thoughtRight"
                     ],
                     "coords": [
-                        [ 400, 100 ],
+                        [ 500, 100 ],
                         [ 900, 100 ]
                     ],
                     "thoughts": [
@@ -610,17 +589,17 @@
                         "content": [
                             "Michael, don't overthink it.\nShe means well.",
                             "Why do you think \nthat would help?",
-                            "..."
+                            "I am not sure \nwhat to say."
                         ],
                         "y": [
-                            615,
-                            615,
-                            615
+                            600,
+                            600,
+                            600
                         ],
                         "bounds": [
-                            [ 420, 200 ],
-                            [ 420, 200 ],
-                            [ 420, 200 ]
+                            [ 400, 150 ],
+                            [ 400, 150 ],
+                            [ 400, 150 ]
                         ],
                         "targetScene": [
                             "black2bad",
@@ -641,7 +620,7 @@
             "fadeIn": true,
             "fadeOut": false
         },
-        "nextScene": "cmuGatesInsideLocation"
+        "nextScene": "menueScene"
     },
     "black2good": {
         "stateType": "MovieState",
@@ -651,7 +630,7 @@
             "fadeIn": true,
             "fadeOut": false
         },
-        "nextScene": "cmuGatesInsideLocation"
+        "nextScene": "menuScene"
     },
     "indian1": {
         "videoFilter": [
@@ -677,12 +656,12 @@
                         "No, thanks."
                     ],
                     "y": [
-                        615,
-                        615
+                        600,
+                        600
                     ],
                     "bounds": [
-                        [ 590, 200 ],
-                        [ 590, 200 ]
+                        [ 600, 200 ],
+                        [ 600, 200 ]
                     ]
                 }
             },
@@ -696,12 +675,12 @@
                         "Why would you assume \nhe is not from here?"
                     ],
                     "y": [
-                        615,
-                        615
+                        600,
+                        600
                     ],
                     "bounds": [
-                        [ 590, 200 ],
-                        [ 590, 200 ]
+                        [ 600, 200 ],
+                        [ 600, 200 ]
                     ],
                     "targetScene": [
                         "indian2bad",
@@ -733,10 +712,7 @@
         "nextScene": "cmuCutLocation"
     },
     "ending": {
-        "stateType": "movieState",
-        "endingScenes": [
-            []
-        ],
+        "stateType": "EndingState",
         "endingRequirements": [
             ["indian2good", "black3good"]
         ],
