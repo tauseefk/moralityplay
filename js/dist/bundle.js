@@ -186,6 +186,7 @@ function AddInteractionEvents() {
 }
 
 function AddVideoAndFilter(doFadeOut, sub, nextScene) {
+
     _videoImage = _video.addToWorld(0, 0, 0, 0);
     _game.mediaGroup.add(_videoImage);
     _video.onChangeSource.addOnce(OnVideoLoad, this);
@@ -206,7 +207,7 @@ function AddVideoAndFilter(doFadeOut, sub, nextScene) {
             Subtitle.create(_video.video, sub);
         if(_videoFilter != null && _videoFilter != 'none') {
             VideoFilter.init(_game, _video);
-            VideoFilter.create(_videoFilter);
+            VideoFilter.createOverlay(_videoFilter);
         }
     }
 }
@@ -248,6 +249,12 @@ function ChangeScene(nextScenes) {
     }
 }
 
+function SeekTo(time) {    
+    _video.video.currentTime = time;
+    _game.global.gameManager.getShowUISignal().dispatch();
+    _instance.play(false);
+}
+
 function LoopVideo() {
     _loopEventEnabled = true;
     _video.video.addEventListener("timeupdate", function loop() {        
@@ -270,6 +277,7 @@ module.exports = {
         _instance = this;
         _video = _game.add.video('start', 'emptyVideo');
         _video.video.setAttribute('playsinline', 'playsinline');
+        VideoFilter.init(game, _video);
         return _instance;
     },
     /*
@@ -292,6 +300,9 @@ module.exports = {
         if(_video)
             _video.play();
     },
+    seekTo: function(time) {
+        SeekTo(time);
+    },
     paused: function() {
         if(_video)
             return _video.video.paused;
@@ -301,6 +312,9 @@ module.exports = {
     },
     endFilter: function(targetScene) {
         VideoFilter.endFilter(targetScene);
+    },
+    clearFilterBg:function() {
+        VideoFilter.clearBg();
     },
     toggleSubtitle: function() {
         Subtitle.toggleSubtitle();
@@ -1089,7 +1103,7 @@ module.exports = State;
 
 const FADE_SPEED = 700;
 const SCALE_SPEED = 300;
-const SCALE_SIZE = 1.05;
+const SCALE_SIZE = 1.2;
 
 //Animation constructor
 var Animation = function() {
@@ -1131,7 +1145,7 @@ Animation.fade = function(game, object, value, autoStart, speed, repeat, destroy
 }
 
 Animation.bob = function(game, object, autoStart) {
-    var tween = game.add.tween(object).to({y:'-5'}, 400, Phaser.Easing.Quadratic.InOut, autoStart, 0, -1, true);
+    var tween = game.add.tween(object).to({y:'-1'}, 200, Phaser.Easing.Quadratic.InOut, autoStart, 0, -1, true);
     tween.repeatDelay(700);
     return tween;
 }
@@ -1552,8 +1566,9 @@ function FadeChoiceAfterDelay(index, targetScene) {
     function fadeChoice(){
         _text[index].disableInput();
         _choiceBg[index].disableInput();
-        if(targetScene)
+        if(targetScene) {
             _text[index].fadeOut(_game, _game.global.gameManager.getChangeSceneSignal(), targetScene);
+        }
         else
             _text[index].fadeOut(_game);
         _choiceBg[index].fadeOut(_game);
@@ -1995,6 +2010,7 @@ module.exports = {
     preload: function() {
     },
     create: function() {
+        Video.clearFilterBg();
         _game.global.soundManager.playBackgroundMusic(_stateInfo.getBackgroundMusic());
         MovingBackground.create(_stateInfo.getBgImageKey(), _stateInfo.getDraggable());
         if(_stateInfo.getMovieSrc(_game.global.quality)) {
@@ -2560,6 +2576,8 @@ var GameManager = function() {
     this._triggerInteractionSignal = null;
     this._endInteractionSignal = null;
 
+    this._videoSeekSignal = null;
+
     this._createThoughtsSignal = null;
     this._createChoicesSignal = null;
     this._revealChoicesSignal = null;
@@ -2590,6 +2608,9 @@ GameManager.prototype.initSignals = function() {
     this._triggerInteractionSignal.add(InteractState.createThought, this);
     this._endInteractionSignal = new Phaser.Signal();
     this._endInteractionSignal.add(InteractState.endInteraction, this);
+
+    this._videoSeekSignal = new Phaser.Signal();
+    this._videoSeekSignal.add(Video.seekTo, this);
 
     this._createThoughtsSignal = new Phaser.Signal();
     this._createThoughtsSignal.add(Thoughts.create, this);
@@ -2634,6 +2655,10 @@ GameManager.prototype.getTriggerInteractionSignal = function() {
 
 GameManager.prototype.getEndInteractionSignal = function() {
     return this._endInteractionSignal;
+}
+
+GameManager.prototype.getVideoSeekSignal = function() {
+    return this._videoSeekSignal;
 }
 
 GameManager.prototype.getCreateThoughtsSignal = function() {
@@ -2784,13 +2809,18 @@ const Linkable = __webpack_require__(4),
 
 var _instance = null;
 var _game = null;
+
 var _video = null;
 var _videoHTML = null;
 var _bitmapCanvas = null;
 var _bitmapSprite = null;
-var _canvas = null;
 var _context = null;
+var _frameHolderBitmapCanvas = null;
+var _frameHolderBitmapSprite = null;
+var _contextBitmap = null;
+var _canvas = null;
 var _framebuffer = null;
+
 var _effect = null;
 var _filter = null;
 var _fadeOutSignal = null;
@@ -2808,7 +2838,20 @@ function InitializeBitmapOverlay(game) {
     _context = _bitmapCanvas.context;
 }
 
+function InitializeBitmapBg(game){    
+    _frameHolderBitmapCanvas = game.add.bitmapData(game.width, game.height);
+    _frameHolderBitmapSprite = game.add.sprite(game.width/2, game.height/2, _frameHolderBitmapCanvas);
+    _frameHolderBitmapSprite = game.stage.addChildAt(_frameHolderBitmapSprite, 0);  
+    //console.log(game.stage); 
+    //_frameHolderBitmapSprite = _frameHolderBitmapCanvas.addToWorld(0, 0);
+    //game.mediaGroup.add(_frameHolderBitmapSprite);    
+    //_frameHolderBitmapSprite.alpha = 0;    
+    _frameHolderBitmapSprite.anchor.setTo(0.5, 0.5);
+    _contextBitmap = _frameHolderBitmapCanvas.context;
+}
+
 function StartFilterFadeIn(signal) {    
+    //RenderFrame();  
     var linkable = new Linkable(_game, _bitmapSprite, signal);
     linkable.addOnClickAnimation(Animation.fade(_game, _bitmapSprite, 1, false));
     linkable.addOnClickAnimation(Animation.scale(_game, _bitmapSprite, false, _game.width, _game.height));
@@ -2818,6 +2861,8 @@ function StartFilterFadeIn(signal) {
 function EndFilter(targetScene) {
     //var linkable = new Linkable(_game, _game.global.gameManager.getToggleUISignal());
     //linkable.addAnimation(Animation.fade(_game, _bitmapSprite, 0, false));
+    //if(targetScene)
+    //    _frameHolderBitmapSprite.alpha = 0;
     Animation.fade(_game, _bitmapSprite, 0, true);
     //linkable.onTrigger();
     //linkable.triggerSignal(true);
@@ -2825,16 +2870,18 @@ function EndFilter(targetScene) {
 
 function CreateVideoFilter() {
      //   _game.time.reset();
-        Render();
-    //_game.time.events.repeat(10, 1, render, this);
+    Render();
 
+    //_contextBitmap.drawImage(_videoHTML, 0, 0, _video.width,
+      //  _video.height, 0, 0, _game.width, _game.height);
+    //_game.time.events.repeat(10, 1, render, this);
 };
 
 function Render() {
-    if(!_video.playing)
-        return;
-    RenderFrame();
     _game.time.events.repeat(REFRESH_TIME_MS, 1, Render, this);
+    if(_video.video.paused || _bitmapSprite.alpha > 0) {
+        RenderFrame();
+    }
     /*
     setTimeout(function() {
         render();
@@ -2843,11 +2890,12 @@ function Render() {
 };
 
 function RenderFrame() {
-    if(_bitmapSprite.alpha == 0)
-        return;
+    //if(_bitmapSprite.alpha == 0)
+     //   return;
     _context.drawImage(_videoHTML, 0, 0, _video.width,
         _video.height, 0, 0, _game.width, _game.height);
     var data = _context.getImageData(0, 0, _game.width, _game.height);
+    _contextBitmap.putImageData(data, 0, 0);
     var effect;
     _filter.forEach(function(filter) {
         if(filter[0] in JSManipulate) {
@@ -2862,11 +2910,6 @@ function RenderFrame() {
     return;
 };
 
-function stopVideo() {
-    if(_video !== null)
-        _video.stop();
-}
-
 module.exports = {
     init: function(game, video) {
         console.log("Filter initialized");
@@ -2880,16 +2923,22 @@ module.exports = {
         _videoHTML = _video.video;
         _canvas = game.canvas;
 
+        InitializeBitmapBg(_game);
+
         _framebuffer = document.createElement("canvas");
         _framebuffer.width = _game.width;
         _framebuffer.height = _game.height;
         _framebuffer.context = _framebuffer.getContext("2d");
         return _instance;
     },
-    create: function(filter) {
+    createOverlay: function(filter) {
         _filter = filter;
         InitializeBitmapOverlay(_game);
         CreateVideoFilter();
+    },
+    clearBg: function() {
+        if(_frameHolderBitmapCanvas)
+            _frameHolderBitmapCanvas.clear();
     },
     startFilterFade: function(signal) {
         StartFilterFadeIn(signal);

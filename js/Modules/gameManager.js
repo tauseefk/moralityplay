@@ -26,6 +26,8 @@ var GameManager = function() {
     this._triggerInteractionSignal = null;
     this._endInteractionSignal = null;
 
+    this._videoSeekSignal = null;
+
     this._createThoughtsSignal = null;
     this._createChoicesSignal = null;
     this._revealChoicesSignal = null;
@@ -56,6 +58,9 @@ GameManager.prototype.initSignals = function() {
     this._triggerInteractionSignal.add(InteractState.createThought, this);
     this._endInteractionSignal = new Phaser.Signal();
     this._endInteractionSignal.add(InteractState.endInteraction, this);
+
+    this._videoSeekSignal = new Phaser.Signal();
+    this._videoSeekSignal.add(Video.seekTo, this);
 
     this._createThoughtsSignal = new Phaser.Signal();
     this._createThoughtsSignal.add(Thoughts.create, this);
@@ -100,6 +105,10 @@ GameManager.prototype.getTriggerInteractionSignal = function() {
 
 GameManager.prototype.getEndInteractionSignal = function() {
     return this._endInteractionSignal;
+}
+
+GameManager.prototype.getVideoSeekSignal = function() {
+    return this._videoSeekSignal;
 }
 
 GameManager.prototype.getCreateThoughtsSignal = function() {

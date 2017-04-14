@@ -5,13 +5,18 @@ const Linkable = require('./Linkable'),
 
 var _instance = null;
 var _game = null;
+
 var _video = null;
 var _videoHTML = null;
 var _bitmapCanvas = null;
 var _bitmapSprite = null;
-var _canvas = null;
 var _context = null;
+var _frameHolderBitmapCanvas = null;
+var _frameHolderBitmapSprite = null;
+var _contextBitmap = null;
+var _canvas = null;
 var _framebuffer = null;
+
 var _effect = null;
 var _filter = null;
 var _fadeOutSignal = null;
@@ -29,7 +34,20 @@ function InitializeBitmapOverlay(game) {
     _context = _bitmapCanvas.context;
 }
 
+function InitializeBitmapBg(game){    
+    _frameHolderBitmapCanvas = game.add.bitmapData(game.width, game.height);
+    _frameHolderBitmapSprite = game.add.sprite(game.width/2, game.height/2, _frameHolderBitmapCanvas);
+    _frameHolderBitmapSprite = game.stage.addChildAt(_frameHolderBitmapSprite, 0);  
+    //console.log(game.stage); 
+    //_frameHolderBitmapSprite = _frameHolderBitmapCanvas.addToWorld(0, 0);
+    //game.mediaGroup.add(_frameHolderBitmapSprite);    
+    //_frameHolderBitmapSprite.alpha = 0;    
+    _frameHolderBitmapSprite.anchor.setTo(0.5, 0.5);
+    _contextBitmap = _frameHolderBitmapCanvas.context;
+}
+
 function StartFilterFadeIn(signal) {    
+    //RenderFrame();  
     var linkable = new Linkable(_game, _bitmapSprite, signal);
     linkable.addOnClickAnimation(Animation.fade(_game, _bitmapSprite, 1, false));
     linkable.addOnClickAnimation(Animation.scale(_game, _bitmapSprite, false, _game.width, _game.height));
@@ -39,6 +57,8 @@ function StartFilterFadeIn(signal) {
 function EndFilter(targetScene) {
     //var linkable = new Linkable(_game, _game.global.gameManager.getToggleUISignal());
     //linkable.addAnimation(Animation.fade(_game, _bitmapSprite, 0, false));
+    //if(targetScene)
+    //    _frameHolderBitmapSprite.alpha = 0;
     Animation.fade(_game, _bitmapSprite, 0, true);
     //linkable.onTrigger();
     //linkable.triggerSignal(true);
@@ -46,16 +66,18 @@ function EndFilter(targetScene) {
 
 function CreateVideoFilter() {
      //   _game.time.reset();
-        Render();
-    //_game.time.events.repeat(10, 1, render, this);
+    Render();
 
+    //_contextBitmap.drawImage(_videoHTML, 0, 0, _video.width,
+      //  _video.height, 0, 0, _game.width, _game.height);
+    //_game.time.events.repeat(10, 1, render, this);
 };
 
 function Render() {
-    if(!_video.playing)
-        return;
-    RenderFrame();
     _game.time.events.repeat(REFRESH_TIME_MS, 1, Render, this);
+    if(_video.video.paused || _bitmapSprite.alpha > 0) {
+        RenderFrame();
+    }
     /*
     setTimeout(function() {
         render();
@@ -64,11 +86,12 @@ function Render() {
 };
 
 function RenderFrame() {
-    if(_bitmapSprite.alpha == 0)
-        return;
+    //if(_bitmapSprite.alpha == 0)
+     //   return;
     _context.drawImage(_videoHTML, 0, 0, _video.width,
         _video.height, 0, 0, _game.width, _game.height);
     var data = _context.getImageData(0, 0, _game.width, _game.height);
+    _contextBitmap.putImageData(data, 0, 0);
     var effect;
     _filter.forEach(function(filter) {
         if(filter[0] in JSManipulate) {
@@ -83,11 +106,6 @@ function RenderFrame() {
     return;
 };
 
-function stopVideo() {
-    if(_video !== null)
-        _video.stop();
-}
-
 module.exports = {
     init: function(game, video) {
         console.log("Filter initialized");
@@ -101,16 +119,22 @@ module.exports = {
         _videoHTML = _video.video;
         _canvas = game.canvas;
 
+        InitializeBitmapBg(_game);
+
         _framebuffer = document.createElement("canvas");
         _framebuffer.width = _game.width;
         _framebuffer.height = _game.height;
         _framebuffer.context = _framebuffer.getContext("2d");
         return _instance;
     },
-    create: function(filter) {
+    createOverlay: function(filter) {
         _filter = filter;
         InitializeBitmapOverlay(_game);
         CreateVideoFilter();
+    },
+    clearBg: function() {
+        if(_frameHolderBitmapCanvas)
+            _frameHolderBitmapCanvas.clear();
     },
     startFilterFade: function(signal) {
         StartFilterFadeIn(signal);

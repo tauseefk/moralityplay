@@ -128,8 +128,9 @@ function FadeChoiceAfterDelay(index, targetScene) {
     function fadeChoice(){
         _text[index].disableInput();
         _choiceBg[index].disableInput();
-        if(targetScene)
+        if(targetScene) {
             _text[index].fadeOut(_game, _game.global.gameManager.getChangeSceneSignal(), targetScene);
+        }
         else
             _text[index].fadeOut(_game);
         _choiceBg[index].fadeOut(_game);

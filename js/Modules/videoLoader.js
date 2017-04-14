@@ -57,6 +57,7 @@ function AddInteractionEvents() {
 }
 
 function AddVideoAndFilter(doFadeOut, sub, nextScene) {
+
     _videoImage = _video.addToWorld(0, 0, 0, 0);
     _game.mediaGroup.add(_videoImage);
     _video.onChangeSource.addOnce(OnVideoLoad, this);
@@ -77,7 +78,7 @@ function AddVideoAndFilter(doFadeOut, sub, nextScene) {
             Subtitle.create(_video.video, sub);
         if(_videoFilter != null && _videoFilter != 'none') {
             VideoFilter.init(_game, _video);
-            VideoFilter.create(_videoFilter);
+            VideoFilter.createOverlay(_videoFilter);
         }
     }
 }
@@ -119,6 +120,12 @@ function ChangeScene(nextScenes) {
     }
 }
 
+function SeekTo(time) {    
+    _video.video.currentTime = time;
+    _game.global.gameManager.getShowUISignal().dispatch();
+    _instance.play(false);
+}
+
 function LoopVideo() {
     _loopEventEnabled = true;
     _video.video.addEventListener("timeupdate", function loop() {        
@@ -141,6 +148,7 @@ module.exports = {
         _instance = this;
         _video = _game.add.video('start', 'emptyVideo');
         _video.video.setAttribute('playsinline', 'playsinline');
+        VideoFilter.init(game, _video);
         return _instance;
     },
     /*
@@ -163,6 +171,9 @@ module.exports = {
         if(_video)
             _video.play();
     },
+    seekTo: function(time) {
+        SeekTo(time);
+    },
     paused: function() {
         if(_video)
             return _video.video.paused;
@@ -172,6 +183,9 @@ module.exports = {
     },
     endFilter: function(targetScene) {
         VideoFilter.endFilter(targetScene);
+    },
+    clearFilterBg:function() {
+        VideoFilter.clearBg();
     },
     toggleSubtitle: function() {
         Subtitle.toggleSubtitle();

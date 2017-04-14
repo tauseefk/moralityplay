@@ -266,7 +266,7 @@
         "bgImageKey": "cmu_gates_inside",
         "videoFilter": "none",
         "transition": {
-            "fadeIn": true,
+            "fadeIn": false,
             "fadeOut": false
         },
         "backgroundMusic": "cmuCutLocationSound",
@@ -642,7 +642,6 @@
         "stateType": "MovieState",
         "movieSrcHD": "./Videos/black2_bad_optimized.mp4",
         "movieSrcSD": "./Videos/black2_bad_optimized_lo.mp4",
-        "bgImageKey": "michael_still",
         "transition": {
             "fadeIn": false,
             "fadeOut": false
@@ -654,7 +653,7 @@
         "movieSrcHD": "./Videos/black2_good_optimized.mp4",
         "movieSrcSD": "./Videos/black2_good_optimized_lo.mp4",
         "transition": {
-            "fadeIn": true,
+            "fadeIn": false,
             "fadeOut": false
         },
         "nextScene": "cmuGatesInsideLocation"

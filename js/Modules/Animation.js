@@ -2,7 +2,7 @@
 
 const FADE_SPEED = 700;
 const SCALE_SPEED = 300;
-const SCALE_SIZE = 1.05;
+const SCALE_SIZE = 1.2;
 
 //Animation constructor
 var Animation = function() {
@@ -44,7 +44,7 @@ Animation.fade = function(game, object, value, autoStart, speed, repeat, destroy
 }
 
 Animation.bob = function(game, object, autoStart) {
-    var tween = game.add.tween(object).to({y:'-5'}, 400, Phaser.Easing.Quadratic.InOut, autoStart, 0, -1, true);
+    var tween = game.add.tween(object).to({y:'-1'}, 200, Phaser.Easing.Quadratic.InOut, autoStart, 0, -1, true);
     tween.repeatDelay(700);
     return tween;
 }
