@@ -7,7 +7,8 @@ const Group = require('../Modules/groupLoader'),
     Icons = require('../Modules/iconsLoader'),
     State = require('./State'),
     Choices = require('../Modules/choiceLoader'),
-    Thoughts = require('../Modules/thoughtsLoader');
+    Thoughts = require('../Modules/thoughtsLoader'),
+    MovingBackground = require('../Modules/movingObjectLoader');
 
 var _stateInfo = null;
 var _instance = null;
@@ -46,7 +47,7 @@ function EndInteraction(lingeringChoice, targetScene) {
         Video.play(false);
         _instance.game.global.gameManager.getShowUISignal().dispatch();
     }
-    Video.endFilter();
+    Video.endFilter(targetScene);
 }
 
 function GetTimeStamps() {
@@ -67,6 +68,7 @@ module.exports = {
         }
         Video.init(this.game);
         Icons.init(this.game);        
+        MovingBackground.init(this.game);      
         Thoughts.init(this.game);
         Choices.init(this.game);
         if(_instance !== null)
@@ -80,6 +82,8 @@ module.exports = {
     },
     create: function() {
         Group.initializeGroups();
+        if(_stateInfo.getBgImageKey())
+            MovingBackground.create(_stateInfo.getBgImageKey(), _stateInfo.getDraggable());
         _momentCount = 0;
         var timeStamps = GetTimeStamps();
         Video.create(_stateInfo.getMovieSrc(_game.global.quality), _stateInfo.getTransitionInfo().fadeOut,

@@ -4,7 +4,8 @@ const Group = require('../Modules/groupLoader'),
     UI = require('../Modules/uiLoader'),
     Video = require('../Modules/videoLoader'),
     Transition = require('../Modules/transition'),
-    State = require('./State');
+    State = require('./State'),
+    MovingBackground = require('../Modules/movingObjectLoader');
 
 var _instance = null;
 var _game = null;
@@ -15,6 +16,7 @@ module.exports = {
         if(_stateInfo !== null)
             _stateInfo.setStateScene(scene);
         Video.init(this.game, signal);
+        MovingBackground.init(this.game);
         if(_instance !== null)
             return _instance;
         _stateInfo = new State(scene);
@@ -26,6 +28,8 @@ module.exports = {
     },
     create: function() {
         Group.initializeGroups();
+        if(_stateInfo.getBgImageKey())
+            MovingBackground.create(_stateInfo.getBgImageKey(), _stateInfo.getDraggable());
         var movieSrc = _stateInfo.getMovieSrc(_game.global.quality);
         Video.create(movieSrc, _stateInfo.getTransitionInfo().fadeOut, _stateInfo.getVideoFilter(), _stateInfo.getNextScenes(), _stateInfo.getMovieSubKey());
         if(_stateInfo.getTransitionInfo().fadeIn)

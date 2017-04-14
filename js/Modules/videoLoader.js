@@ -170,8 +170,8 @@ module.exports = {
     isPausedByGame: function() {
         return _pausedByGame;
     },
-    endFilter: function() {
-        VideoFilter.endFilter();
+    endFilter: function(targetScene) {
+        VideoFilter.endFilter(targetScene);
     },
     toggleSubtitle: function() {
         Subtitle.toggleSubtitle();

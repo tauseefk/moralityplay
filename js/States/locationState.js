@@ -31,7 +31,7 @@ module.exports = {
     preload: function() {
     },
     create: function() {
-        _game.global.soundManager.playBackgroundMusic(_stateInfo.getBackgroundMusic());        
+        _game.global.soundManager.playBackgroundMusic(_stateInfo.getBackgroundMusic());
         MovingBackground.create(_stateInfo.getBgImageKey(), _stateInfo.getDraggable());
         if(_stateInfo.getMovieSrc(_game.global.quality)) {
             Video.create(_stateInfo.getMovieSrc(_game.global.quality), _stateInfo.getTransitionInfo().fadeOut, _stateInfo.getVideoFilter(), _stateInfo.getNextScenes());

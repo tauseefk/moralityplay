@@ -150,7 +150,8 @@ Image.prototype.changeToDisplayImage = function(game, target) {
     this._image.anchor.setTo(0.5, 0.5);
     this._link = new Linkable(game, this._image, game.global.gameManager.getDisplayImageSignal(), target, true);
     this._link.setAsButton(false);
-    this._link.addMouseOverScaleEffect(game, this._image);
+    this._link.addMouseOverScaleEffect(game, this._image);    
+    Animation.bob(game, this._image, true);
  //   this._link.addSound('testSound');
 }
 

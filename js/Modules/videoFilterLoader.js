@@ -22,6 +22,7 @@ const FADE_IN_TIME_MS = 2000;
 function InitializeBitmapOverlay(game) {
     _bitmapCanvas = game.add.bitmapData(game.width, game.height);
     _bitmapSprite = game.add.sprite(game.width/2, game.height/2, _bitmapCanvas);
+    //_bitmapSprite = _bitmapCanvas.addToWorld(game.width/2, game.height/2);
     game.mediaGroup.add(_bitmapSprite);
     _bitmapSprite.alpha = 0;
     _bitmapSprite.anchor.setTo(0.5, 0.5);
@@ -33,10 +34,9 @@ function StartFilterFadeIn(signal) {
     linkable.addOnClickAnimation(Animation.fade(_game, _bitmapSprite, 1, false));
     linkable.addOnClickAnimation(Animation.scale(_game, _bitmapSprite, false, _game.width, _game.height));
     linkable.onTrigger();
-    _video.stop();
 }
 
-function EndFilter() {
+function EndFilter(targetScene) {
     //var linkable = new Linkable(_game, _game.global.gameManager.getToggleUISignal());
     //linkable.addAnimation(Animation.fade(_game, _bitmapSprite, 0, false));
     Animation.fade(_game, _bitmapSprite, 0, true);
@@ -115,8 +115,8 @@ module.exports = {
     startFilterFade: function(signal) {
         StartFilterFadeIn(signal);
     },
-    endFilter: function() {
-        EndFilter();
+    endFilter: function(targetScene) {
+        EndFilter(targetScene);
     },
     stop: function() {
         _video.stop();

@@ -299,8 +299,8 @@ module.exports = {
     isPausedByGame: function() {
         return _pausedByGame;
     },
-    endFilter: function() {
-        VideoFilter.endFilter();
+    endFilter: function(targetScene) {
+        VideoFilter.endFilter(targetScene);
     },
     toggleSubtitle: function() {
         Subtitle.toggleSubtitle();
@@ -381,19 +381,19 @@ function Play() {
 function ToggleUI() {
     _uiVisible = !_uiVisible;
     _pauseImage.setVisible(_uiVisible);
-    _toggleSubtitleImage.setVisible(_uiVisible);
+    //_toggleSubtitleImage.setVisible(_uiVisible);
 }
 
 function HideUI() {
     _uiVisible = false;
     _pauseImage.setVisible(_uiVisible);
-    _toggleSubtitleImage.setVisible(_uiVisible);
+    //_toggleSubtitleImage.setVisible(_uiVisible);
 }
 
 function ShowUI() {
     _uiVisible = true;
     _pauseImage.setVisible(_uiVisible);
-    _toggleSubtitleImage.setVisible(_uiVisible);
+    //_toggleSubtitleImage.setVisible(_uiVisible);
 }
 
 function DrawPauseOverlay() {
@@ -428,7 +428,7 @@ module.exports = {
     create: function(drawPause, drawSubtitleToggle) {
         _uiVisible = true;
         if(drawSubtitleToggle)
-            DrawToggleSubtitleButton();
+            //DrawToggleSubtitleButton();
         if(drawPause) {
             DrawPauseButton();
             DrawPauseOverlay();
@@ -1296,7 +1296,8 @@ Image.prototype.changeToDisplayImage = function(game, target) {
     this._image.anchor.setTo(0.5, 0.5);
     this._link = new Linkable(game, this._image, game.global.gameManager.getDisplayImageSignal(), target, true);
     this._link.setAsButton(false);
-    this._link.addMouseOverScaleEffect(game, this._image);
+    this._link.addMouseOverScaleEffect(game, this._image);    
+    Animation.bob(game, this._image, true);
  //   this._link.addSound('testSound');
 }
 
@@ -1862,7 +1863,8 @@ const Group = __webpack_require__(3),
     Icons = __webpack_require__(6),
     State = __webpack_require__(7),
     Choices = __webpack_require__(10),
-    Thoughts = __webpack_require__(11);
+    Thoughts = __webpack_require__(11),
+    MovingBackground = __webpack_require__(18);
 
 var _stateInfo = null;
 var _instance = null;
@@ -1901,7 +1903,7 @@ function EndInteraction(lingeringChoice, targetScene) {
         Video.play(false);
         _instance.game.global.gameManager.getShowUISignal().dispatch();
     }
-    Video.endFilter();
+    Video.endFilter(targetScene);
 }
 
 function GetTimeStamps() {
@@ -1922,6 +1924,7 @@ module.exports = {
         }
         Video.init(this.game);
         Icons.init(this.game);        
+        MovingBackground.init(this.game);      
         Thoughts.init(this.game);
         Choices.init(this.game);
         if(_instance !== null)
@@ -1935,6 +1938,8 @@ module.exports = {
     },
     create: function() {
         Group.initializeGroups();
+        if(_stateInfo.getBgImageKey())
+            MovingBackground.create(_stateInfo.getBgImageKey(), _stateInfo.getDraggable());
         _momentCount = 0;
         var timeStamps = GetTimeStamps();
         Video.create(_stateInfo.getMovieSrc(_game.global.quality), _stateInfo.getTransitionInfo().fadeOut,
@@ -1990,7 +1995,7 @@ module.exports = {
     preload: function() {
     },
     create: function() {
-        _game.global.soundManager.playBackgroundMusic(_stateInfo.getBackgroundMusic());        
+        _game.global.soundManager.playBackgroundMusic(_stateInfo.getBackgroundMusic());
         MovingBackground.create(_stateInfo.getBgImageKey(), _stateInfo.getDraggable());
         if(_stateInfo.getMovieSrc(_game.global.quality)) {
             Video.create(_stateInfo.getMovieSrc(_game.global.quality), _stateInfo.getTransitionInfo().fadeOut, _stateInfo.getVideoFilter(), _stateInfo.getNextScenes());
@@ -2421,6 +2426,7 @@ function CreateGlobalVars() {
     _game.global.gameManager = new GameManager();
     _game.global.gameManager.initSignals();
     _game.global.soundManager = new SoundManager(_game);
+    _game.global.soundManager.init();
 }
 
 function InitGameGroups() {
@@ -2795,6 +2801,7 @@ const FADE_IN_TIME_MS = 2000;
 function InitializeBitmapOverlay(game) {
     _bitmapCanvas = game.add.bitmapData(game.width, game.height);
     _bitmapSprite = game.add.sprite(game.width/2, game.height/2, _bitmapCanvas);
+    //_bitmapSprite = _bitmapCanvas.addToWorld(game.width/2, game.height/2);
     game.mediaGroup.add(_bitmapSprite);
     _bitmapSprite.alpha = 0;
     _bitmapSprite.anchor.setTo(0.5, 0.5);
@@ -2806,10 +2813,9 @@ function StartFilterFadeIn(signal) {
     linkable.addOnClickAnimation(Animation.fade(_game, _bitmapSprite, 1, false));
     linkable.addOnClickAnimation(Animation.scale(_game, _bitmapSprite, false, _game.width, _game.height));
     linkable.onTrigger();
-    _video.stop();
 }
 
-function EndFilter() {
+function EndFilter(targetScene) {
     //var linkable = new Linkable(_game, _game.global.gameManager.getToggleUISignal());
     //linkable.addAnimation(Animation.fade(_game, _bitmapSprite, 0, false));
     Animation.fade(_game, _bitmapSprite, 0, true);
@@ -2888,8 +2894,8 @@ module.exports = {
     startFilterFade: function(signal) {
         StartFilterFadeIn(signal);
     },
-    endFilter: function() {
-        EndFilter();
+    endFilter: function(targetScene) {
+        EndFilter(targetScene);
     },
     stop: function() {
         _video.stop();
@@ -2972,7 +2978,7 @@ module.exports = {
     init: function(scene) {
         if(_stateInfo !== null)
             _stateInfo.setStateScene(scene);        
-        this.game.global.soundManager.init();
+        //this.game.global.soundManager.init();
         MovingBackground.init(this.game);
         Icons.init(this.game);
         Input.init(this.game);
@@ -3014,7 +3020,8 @@ const Group = __webpack_require__(3),
     UI = __webpack_require__(2),
     Video = __webpack_require__(1),
     Transition = __webpack_require__(0),
-    State = __webpack_require__(7);
+    State = __webpack_require__(7),
+    MovingBackground = __webpack_require__(18);
 
 var _instance = null;
 var _game = null;
@@ -3025,6 +3032,7 @@ module.exports = {
         if(_stateInfo !== null)
             _stateInfo.setStateScene(scene);
         Video.init(this.game, signal);
+        MovingBackground.init(this.game);
         if(_instance !== null)
             return _instance;
         _stateInfo = new State(scene);
@@ -3036,6 +3044,8 @@ module.exports = {
     },
     create: function() {
         Group.initializeGroups();
+        if(_stateInfo.getBgImageKey())
+            MovingBackground.create(_stateInfo.getBgImageKey(), _stateInfo.getDraggable());
         var movieSrc = _stateInfo.getMovieSrc(_game.global.quality);
         Video.create(movieSrc, _stateInfo.getTransitionInfo().fadeOut, _stateInfo.getVideoFilter(), _stateInfo.getNextScenes(), _stateInfo.getMovieSubKey());
         if(_stateInfo.getTransitionInfo().fadeIn)

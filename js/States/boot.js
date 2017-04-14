@@ -50,6 +50,7 @@ function CreateGlobalVars() {
     _game.global.gameManager = new GameManager();
     _game.global.gameManager.initSignals();
     _game.global.soundManager = new SoundManager(_game);
+    _game.global.soundManager.init();
 }
 
 function InitGameGroups() {
