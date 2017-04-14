@@ -2,10 +2,10 @@
 "images": {
     "cmu1": "./Images/Locations/LocationBG.jpg",    
     "background": "./Images/Splash/bg.jpg",
-    "leftArrow": "./Images/UI/arrow_left.png",
-    "leftOutline": "./Images/UI/outline_left.png",
+    "arrowBackword": "./Images/UI/arrow_backward.png",
+    "arrowMainleft": "./Images/UI/main_arrow_left.png",
     "mainTitle": "./Images/UI/Title.png",
-    "middleArrow": "./Images/UI/arrow_middle.png",
+    "arrowMainmiddle": "./Images/UI/main_arrow_middle.png",
     "middleOutline": "./Images/UI/outline_middle.png",
     "rightArrow": "./Images/UI/arrow_right.png",
     "rightOutline": "./Images/UI/outline_right.png",
