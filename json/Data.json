@@ -649,7 +649,7 @@
                     "fadeIn": true,
                     "fadeOut": false
                 },
-                "nextScene": "menueScene"
+                "nextScene": "cmuCutLocation"
         },
         "black2good": {
                 "stateType": "MovieState",
@@ -659,7 +659,7 @@
                     "fadeIn": true,
                     "fadeOut": false
                 },
-                "nextScene": "menuScene"
+                "nextScene": "cmuCutLocation"
         },
         "indian1": {
                 "videoFilter": [
