@@ -41,7 +41,18 @@
     "sub1": "./Videos/Subtitles/test.srt"
 },
 "scenes": {
-    "startScene": {
+    "startScene":{
+        "stateType": "MovieState",
+        "movieSrcHD": "./Videos/Opening.mp4",
+        "movieSrcSD": "./Videos/Opening_lo.mp4",
+        "transition": {
+            "fadeIn": true,
+            "fadeOut": false
+        },
+        "nextScene": "titleScene"      
+    },
+
+    "titleScene": {
         "stateType": "MenuState",
         "draggable": false,
         "bgImageKey": "background",
@@ -231,14 +242,14 @@
                 "cmuGatesInsideLocation"
             ],
             "lockedByScenes": [
-                ["black2good", "black2bad"],
+                ["MK2good", "MK2bad"],
                 null,
                 null
             ],
             "unlockedByScenes": [
                 null,
                 null, [
-                    ["black2good", "black2bad"]
+                    ["MK2good", "MK2bad"]
                 ]
             ]
         },
@@ -254,7 +265,7 @@
                 [640, 200]
             ],
             "targetImageIndexOrScene": [
-                "black1"
+                "MK1"
             ]
         }
     },
@@ -481,12 +492,12 @@
         },
         "nextScene": "cmuCutLocation"
     },
-    "black1": {
+    "MK1": {
         "videoFilter": [
             [ "grayscale", null ]
         ],
-        "movieSrcHD": "./Videos/black1_optimized.mp4",
-        "movieSrcSD": "./Videos/black1_optimized_lo.mp4",
+        "movieSrcHD": "./Videos/MK1_optimized.mp4",
+        "movieSrcSD": "./Videos/MK1_optimized_lo.mp4",
         "stateType": "InteractState",
         "transition": {
             "fadeIn": true,
@@ -498,7 +509,7 @@
             {
                 "timeStamp": 5,
                 "choices": {
-                    "question": "Choose what to say.",
+                    "question": "Choose what to say:",
                     "size": 3,
                     "content": [
                         "Hey, can I join you \nguys for lunch?",
@@ -539,7 +550,7 @@
             {
                 "timeStamp": 63,
                 "choices": {
-                    "question": "Choose what to say.",
+                    "question": "Choose what to say:",
                     "size": 3,
                     "content": [
                         "Michael, if you practiced\nyou'll be fine.",
@@ -610,7 +621,7 @@
                     ],
                     "choices": 
                     {
-                        "question": "You know I am just trying to help.",
+                        "question": "\"You know I am just trying to help\".",
                         "size": 3,
                         "content": [
                             "Michael, don't overthink it.\nShe means well.",
@@ -628,9 +639,9 @@
                             [ 420, 200 ]
                         ],
                         "targetScene": [
-                            "black2bad",
-                            "black2good",
-                            "black2good"
+                            "MK2bad",
+                            "MK2good",
+                            "MK2good"
                         ]
                     }                  
                 }
@@ -638,25 +649,25 @@
             ]
         }
     },
-    "black2bad": {
+    "MK2bad": {
         "stateType": "MovieState",
-        "movieSrcHD": "./Videos/black2_bad_optimized.mp4",
-        "movieSrcSD": "./Videos/black2_bad_optimized_lo.mp4",
+        "movieSrcHD": "./Videos/MK2_bad_optimized.mp4",
+        "movieSrcSD": "./Videos/MK2_bad_optimized_lo.mp4",
         "transition": {
             "fadeIn": false,
             "fadeOut": false
         },
-        "nextScene": "cmuGatesInsideLocation"
+        "nextScene": "cmuCutLocation"
     },
-    "black2good": {
+    "MK2good": {
         "stateType": "MovieState",
-        "movieSrcHD": "./Videos/black2_good_optimized.mp4",
-        "movieSrcSD": "./Videos/black2_good_optimized_lo.mp4",
+        "movieSrcHD": "./Videos/MK2_good_optimized.mp4",
+        "movieSrcSD": "./Videos/MK2_good_optimized_lo.mp4",
         "transition": {
             "fadeIn": false,
             "fadeOut": false
         },
-        "nextScene": "cmuGatesInsideLocation"
+        "nextScene": "cmuCutLocation"
     },
     "indian1": {
         "videoFilter": [
@@ -743,7 +754,7 @@
             []
         ],
         "endingRequirements": [
-            ["indian2good", "black3good"]
+            ["indian2good", "MK3good"]
         ],
         "endingScenes": [
             ["./Videos/Indian2 Bad_optimized.mp4", "./Videos/Indian2 Bad_optimized.mp4"]
