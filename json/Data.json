@@ -5,6 +5,9 @@
     "cmu_gates_inside": "./Images/Locations/cmu_gates_inside.jpg", 
     "cmu_hunt": "./Images/Locations/cmu_hunt.jpg",
     "cmu_hunt_inside": "./Images/Locations/cmu_hunt_inside.jpg",
+    "cmu_hunt_indoor":"./Images/Locations/cmu_hunt_indoor.jpg",
+    "cmu_cohon": "./Images/Locations/cmu_cohon.jpg",
+    "cmu_cohon_indoor": "./Images/Locations/cmu_cohon_indoor.jpg",   
 
     "background": "./Images/Splash/bg.jpg",
     "mainTitle": "./Images/UI/Title.png",
@@ -139,6 +142,11 @@
         },
         "nextScene": "cmuCutLocation"
     },
+
+
+
+
+
     "cmuCutLocation": {
         "stateType": "LocationState",
         "draggable": false,
@@ -152,11 +160,11 @@
         },
         "backgroundMusic": "cmuCutLocationSound",
         "icons": {
-            "size": 4,
+            "size": 3,
             "type": [
                 "IMAGE_BUTTON_SCENECHANGE",
                 "IMAGE_BUTTON_SCENECHANGE",
-                "IMAGE_BUTTON_DISPLAY_IMAGE",
+                "IMAGE_BUTTON_SCENECHANGE",
                 "IMAGE_BUTTON_SCENECHANGE"
             ],
             "key": [
@@ -164,34 +172,99 @@
                 "arrowMainmiddle",
                 "arrowMainleft",
                 "arrowMainleft"
+
             ],
             "coords": [
                 [1150, 600],
                 [650, 600],
                 [150, 600],
-                [550, 600]
+                [600, 360]
             ],
+
             "targetImageIndexOrScene": [
                 "cmuGatesLocation",
                 "cmuHuntLocation",
-                0,
+                "cmuCohonLocation",
                 "ending"
+            ]
+        },
+
+        "unlockedByScenes": [
+            null,
+            null, 
+            null,
+            [
+                ["MK2good", "MK2bad"]
+            ]
+        ]
+    },
+
+    "cmuCohonLocation": {
+        "stateType": "LocationState",
+        "draggable": false,
+        "movieSrcHD": "./Videos/cmu_cohon_optimized.mp4",
+        "movieSrcSD": "./Videos/cmu_cohon_optimized_lo.mp4",
+        "bgImageKey": "cmu_cohon",
+        "videoFilter": "none",
+        "transition": {
+            "fadeIn": false,
+            "fadeOut": false
+        },
+        "backgroundMusic": "cmuCutLocationSound",
+        "icons": {
+            "size": 2,
+            "type": [
+                "IMAGE_BUTTON_SCENECHANGE",
+                "IMAGE_BUTTON_SCENECHANGE"
+            ],
+            "key": [
+                "arrowS2middle",
+                "arrowBackward"
+            ],
+            "coords": [
+                [ 600, 600 ],
+                [ 100, 650 ]
+            ],
+            "targetImageIndexOrScene": [
+                "cmuCohonIndoorLocation",
+                "cmuCutLocation"
+            ]
+        }
+    }, 
+
+    "cmuCohonIndoorLocation": {
+        "stateType": "LocationState",
+        "draggable": false,
+        "movieSrcHD": "./Videos/cmu_cohon_indoor_optimzed.mp4",
+        "movieSrcSD": "./Videos/cmu_cohon_indoor_optimzed_lo.mp4",
+        "bgImageKey": "cmu_cohon_indoor",
+        "videoFilter": "none",
+        "transition": {
+            "fadeIn": false,
+            "fadeOut": false
+        },
+        "backgroundMusic": "cmuCutLocationSound",
+        "icons": {
+            "size": 2,
+            "type": [
+                "IMAGE_BUTTON_SCENECHANGE",
+                "IMAGE_BUTTON_DISPLAY_IMAGE"
+            ],
+            "key": [
+                "arrowBackward",
+                "arrowBackward"
+            ],
+            "coords": [
+                [ 100, 650 ],
+                [ 600, 100 ]
+            ],
+            "targetImageIndexOrScene": [
+                "cmuCohonLocation",
+                0
             ],
             "lockedByScenes": [
                 null,
-                null, 
-                ["indian2good", "indian2bad"],
-                null
-            ],
-            "unlockedByScenes": [
-                null,
-                null,
-                null, 
-                [
-                    ["asian2good", "asian2bad"],
-                    ["indian2good", "indian2bad"],
-                    ["MK2good", "MK2bad"]
-                ]
+                ["indian2good","indian2bad"]
             ]
         },
         "linkedIcons": {
@@ -210,6 +283,7 @@
             ]
         }
     },
+
     "cmuGatesLocation": {
         "stateType": "LocationState",
         "draggable": false,
@@ -301,6 +375,8 @@
             ]
         }
     },
+
+
     "cmuHuntLocation": {
         "stateType": "LocationState",
         "draggable": false,
@@ -336,9 +412,9 @@
     "cmuHuntInsideLocation": {
         "stateType": "LocationState",
         "draggable": false,
-        "movieSrcHD": "./Videos/cmu_hunt_inside_optimized.mp4",
-        "movieSrcSD": "./Videos/cmu_hunt_inside_optimized_lo.mp4",
-        "bgImageKey": "cmu_hunt_inside",
+        "movieSrcHD": "./Videos/cmu_hunt_indoor_optimized.mp4",
+        "movieSrcSD": "./Videos/cmu_hunt_indoor_optimized_lo.mp4",
+        "bgImageKey": "cmu_hunt_indoor",
         "videoFilter": "none",
         "transition": {
             "fadeIn": false,
@@ -384,6 +460,8 @@
             ]
         }
     },
+
+
     "asian1": {
         "videoFilter": [
             [ "grayscale", null ]
