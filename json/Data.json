@@ -527,6 +527,10 @@
                             "I feel that we are ignoring Li.\n She IS part of the group.",
                             "Don't worry about it, Li.\n We will get a good grade\n You are still part of the group."
                         ],
+                        "tag": [
+                            "positive",
+                            "negative"
+                        ],
                         "y": [
                             615,
                             615
@@ -701,6 +705,11 @@
                             "Why do you think \nthat would help?",
                             "I am not sure \nwhat to say."
                         ],
+                        "tag": [
+                            "positive",
+                            "negative",
+                            "negative"
+                        ],
                         "y": [
                             615,
                             615,
@@ -783,6 +792,10 @@
                     "content": [
                         "I think she was just \ntrying to show interesting.",
                         "Why would you assume \nhe is not from here?"
+                    ],
+                    "tag": [
+                        "positive",
+                        "negative"
                     ],
                     "y": [
                         615,

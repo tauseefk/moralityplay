@@ -8,6 +8,7 @@ var ImageTypeEnum = {
         ThoughtSprite: 'IMAGE_SPRITE_THOUGHT',
         SceneChange: 'IMAGE_BUTTON_SCENECHANGE',
         DisplayImage: 'IMAGE_BUTTON_DISPLAY_IMAGE',
+        InfoImage: 'IMAGE_INFO',
         Thought: 'IMAGE_BUTTON_THOUGHT',
         Transition: 'IMAGE_TRANSITION',
         Background: 'IMAGE_BACKGROUND',
@@ -43,6 +44,7 @@ Image.prototype.addImageToGame = function(game, group) {
             break;
         case ImageTypeEnum.Static:
         case ImageTypeEnum.Background:
+        case ImageTypeEnum.InfoImage:
             this._image = game.add.image(this._xPos, this._yPos, this._key);
             break;
         case ImageTypeEnum.ThoughtSprite:
@@ -72,8 +74,11 @@ Image.prototype.changeImage = function (game, arg1, arg2, arg3, arg4, arg5) {
         case ImageTypeEnum.DisplayImage:
             this.changeToDisplayImage(game, arg1);
             break;
+        case ImageTypeEnum.InfoImage:
+            this.changeToInfoImage(game, arg1);
+            break;
         case ImageTypeEnum.ChoiceBackground:
-            this.changeToChoiceBackgroundImage(game, arg1, arg2, arg3, arg4);
+            this.changeToChoiceBackgroundImage(game, arg1, arg2, arg3, arg4, arg5);
             break;
         case ImageTypeEnum.ExternalLink:
             this.changeToExternalLinkImage(game, arg1);
@@ -159,13 +164,17 @@ Image.prototype.changeToDisplayImage = function(game, target) {
  //   this._link.addSound('testSound');
 }
 
-Image.prototype.changeToChoiceBackgroundImage = function(game, width, height, target, phaserText) {
+Image.prototype.changeToInfoImage = function(game, target) {
+
+}
+
+Image.prototype.changeToChoiceBackgroundImage = function(game, width, height, target, phaserText, tag) {
     this._image.alpha = 0;
     this._image.anchor.set(0.5, 0.5);
     this._image.width = width;
     this._image.height = height;
 
-    this._link = new Linkable(game, this._image, game.global.gameManager.getEndInteractionSignal(), this, target);
+    this._link = new Linkable(game, this._image, game.global.gameManager.getEndInteractionSignal(), this, target, tag);
     this._link.setAsButton(true);        
     this._link.addMouseOverScaleEffect(game, this._image);
     this._link.addMouseOverScaleEffect(game, phaserText);

@@ -87,7 +87,7 @@ module.exports = {
     init: function() {
         console.log("Initializing StateManager");
         if(_stateManagerInstance !== null)
-            return _instance;
+            return _stateManagerInstance;
         _stateManagerInstance = this.game.state;
         _game = this.game;
         Group.init(_game);
