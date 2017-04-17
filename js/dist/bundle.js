@@ -1034,7 +1034,7 @@ State.prototype.getSrcList = function() {
 }
 
 State.prototype.getMovieSrc = function(definition, index) {
-  if(index != null) {    
+  if(typeof(index) == 'number') {    
     if(definition == 'HD')
       return this._scene.movieSrcArr[index][0];
     else if(definition == 'SD')       

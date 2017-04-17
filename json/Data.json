@@ -175,19 +175,22 @@
                 "cmuGatesLocation",
                 "cmuHuntLocation",
                 0,
-                "asian1"
+                "ending"
             ],
             "lockedByScenes": [
                 null,
-                null, ["indian2good", "indian2bad"],
+                null, 
+                ["indian2good", "indian2bad"],
                 null
             ],
             "unlockedByScenes": [
                 null,
                 null,
-                null, [
+                null, 
+                [
                     ["asian2good", "asian2bad"],
-                    ["indian2good", "indian2bad"]
+                    ["indian2good", "indian2bad"],
+                    ["MK2good", "MK2bad"]
                 ]
             ]
         },
@@ -248,7 +251,8 @@
             ],
             "unlockedByScenes": [
                 null,
-                null, [
+                null, 
+                [
                     ["MK2good", "MK2bad"]
                 ]
             ]
@@ -349,7 +353,7 @@
             ],
             "key": [
                 "arrowBackward",
-                "middleArrow"
+                "arrowBackward"
             ],
             "coords": [
                 [ 100, 650 ],
@@ -749,18 +753,21 @@
         "nextScene": "cmuCutLocation"
     },
     "ending": {
-        "stateType": "movieState",
-        "endingScenes": [
-            []
+        "stateType": "MovieState",
+        "movieReqs": [
+            ["MK3good", "indian2good", "asian2good"],
+            ["MK3bad", "indian2good", "asian2good"],
+            ["MK3good", "indian2bad", "asian2good"],  
+            ["MK3good", "asian2bad"],                     
+            ["MK3bad"]
         ],
-        "endingRequirements": [
-            ["indian2good", "MK3good"]
+        "movieSrcArr": [
+            ["./Videos/Indian2 Bad_optimized.mp4", "./Videos/Indian2 Bad_optimized_lo.mp4"],
+            ["./Videos/Indian2 Bad_optimized.mp4", "./Videos/Indian2 Bad_optimized_lo.mp4"],
+            ["./Videos/Indian2 Bad_optimized.mp4", "./Videos/Indian2 Bad_optimized_lo.mp4"],
+            ["./Videos/Indian2 Bad_optimized.mp4", "./Videos/Indian2 Bad_optimized_lo.mp4"],
+            ["./Videos/Indian2 Bad_optimized.mp4", "./Videos/Indian2 Bad_optimized_lo.mp4"]
         ],
-        "endingScenes": [
-            ["./Videos/Indian2 Bad_optimized.mp4", "./Videos/Indian2 Bad_optimized.mp4"]
-        ],
-        "movieSrcHD": "./Videos/Indian2 Bad_optimized.mp4",
-        "movieSrcSD": "./Videos/Indian2 Bad_optimized.mp4",
         "transition": {
             "fadeIn": true,
             "fadeOut": false
