@@ -114,5 +114,8 @@ Linkable.prototype.dispatchSignal = function() {
     this._signal.dispatch(this._arg1, this._arg2, this._arg3);
 }
 
+Linkable.goToLink = function(link) {
+    window.open(link,'_blank');
+}
 
 module.exports = Linkable;

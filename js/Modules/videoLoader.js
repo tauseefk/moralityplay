@@ -29,8 +29,6 @@ function CreateVideo(src, doFadeOut, nextScene, sub, interactionTimeStamps) {
     if(doFadeOut)
         _game.time.events.add((_video.video.duration-FADEOUT_OFFSET_SECONDS)*1000, fadeOut, this, signal);
     */
-    if(nextScene) 
-        _video.onComplete.addOnce(ChangeScene(nextScene), this);
     /*
     if(nextScene) {
         _video.onComplete.addOnce(ChangeScene(nextScene), this);
@@ -67,8 +65,10 @@ function AddVideoAndFilter(doFadeOut, sub, nextScene) {
         //_instance.clearFilterBg();
         if(!nextScene)
             _video.loop = true;
-        else
+        else {
             _video.loop = false;
+            _video.onComplete.addOnce(ChangeScene(nextScene), this);
+        }
         //_video.video.addEventListener('progress', CheckProgress, false);
         if(doFadeOut) {
             //_game.time.events.add((_video.video.duration-FADEOUT_OFFSET_SECONDS)*Phaser.Timer.SECOND, FadeOut, this);
@@ -76,7 +76,6 @@ function AddVideoAndFilter(doFadeOut, sub, nextScene) {
         if(sub)
             Subtitle.create(_video.video, sub);
         if(_videoFilter != null && _videoFilter != 'none') {
-            VideoFilter.init(_game, _video);
             VideoFilter.createOverlay(_videoFilter);
         }
     }

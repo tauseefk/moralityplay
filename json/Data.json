@@ -142,11 +142,6 @@
         },
         "nextScene": "cmuCutLocation"
     },
-
-
-
-
-
     "cmuCutLocation": {
         "stateType": "LocationState",
         "draggable": false,
@@ -375,8 +370,6 @@
             ]
         }
     },
-
-
     "cmuHuntLocation": {
         "stateType": "LocationState",
         "draggable": false,
@@ -460,8 +453,6 @@
             ]
         }
     },
-
-
     "asian1": {
         "videoFilter": [
             [ "grayscale", null ]
@@ -850,7 +841,35 @@
             "fadeIn": true,
             "fadeOut": false
         },
-        "nextScene": "cmuCutLocation"
+        "nextScene": "postEnding"
+    },
+    "postEndingMenu": {
+        "stateType": "MenuState",
+        "draggable": false,
+        "bgImageKey": "background",
+        "transition": {
+            "fadeIn": true,
+            "fadeOut": true
+        },
+        "icons": {
+            "size": 2,
+            "type": [
+                "IMAGE_STATIC",
+                "IMAGE_BUTTON_EXTERNAL_LINK"
+            ],
+            "key": [
+                "mainTitle",
+                "startButton"
+            ],
+            "coords": [
+                [ 640, 250 ],
+                [ 640, 560 ]
+            ],
+            "targetImageIndexOrScene": [
+                null,
+                "http://www.google.com"
+            ]
+        }
     }
 }
 }

@@ -9,7 +9,8 @@ const ConnectionChecker = require('./connectionChecker'),
     Thoughts = require('./thoughtsLoader'),
     Transition = require('./transition'),
     UI = require('./uiLoader'),
-    Video = require('./videoLoader');
+    Video = require('./videoLoader'),
+    Linkable = require('./Linkable');
 
 var _instance = null;
 var _game = null;
@@ -40,6 +41,8 @@ var GameManager = function() {
     this._pauseSignal = null;
     this._playSignal = null;
     this._toggleSubtitleSignal = null;
+
+    this._goToLinkSignal = null;
 
     return _instance;
 }
@@ -85,6 +88,9 @@ GameManager.prototype.initSignals = function() {
 
     this._createThoughtsAndChoicesSignal = new Phaser.Signal();
     this._createThoughtsAndChoicesSignal.add(Icons.createThoughtsAndChoices, this);
+
+    this._goToLinkSignal = new Phaser.Signal();
+    this._goToLinkSignal.add(Linkable.goToLink, this);
 }
 
 GameManager.prototype.getChangeSceneSignal = function() {
@@ -149,6 +155,10 @@ GameManager.prototype.getPlaySignal = function() {
 
 GameManager.prototype.getToggleSubtitleSignal = function() {
     return this._toggleSubtitleSignal;
+}
+
+GameManager.prototype.getGoToLinkSignal = function() {
+    return this._goToLinkSignal;
 }
 
 module.exports = GameManager;

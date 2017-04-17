@@ -161,8 +161,6 @@ function CreateVideo(src, doFadeOut, nextScene, sub, interactionTimeStamps) {
     if(doFadeOut)
         _game.time.events.add((_video.video.duration-FADEOUT_OFFSET_SECONDS)*1000, fadeOut, this, signal);
     */
-    if(nextScene) 
-        _video.onComplete.addOnce(ChangeScene(nextScene), this);
     /*
     if(nextScene) {
         _video.onComplete.addOnce(ChangeScene(nextScene), this);
@@ -199,8 +197,10 @@ function AddVideoAndFilter(doFadeOut, sub, nextScene) {
         //_instance.clearFilterBg();
         if(!nextScene)
             _video.loop = true;
-        else
+        else {
             _video.loop = false;
+            _video.onComplete.addOnce(ChangeScene(nextScene), this);
+        }
         //_video.video.addEventListener('progress', CheckProgress, false);
         if(doFadeOut) {
             //_game.time.events.add((_video.video.duration-FADEOUT_OFFSET_SECONDS)*Phaser.Timer.SECOND, FadeOut, this);
@@ -208,7 +208,6 @@ function AddVideoAndFilter(doFadeOut, sub, nextScene) {
         if(sub)
             Subtitle.create(_video.video, sub);
         if(_videoFilter != null && _videoFilter != 'none') {
-            VideoFilter.init(_game, _video);
             VideoFilter.createOverlay(_videoFilter);
         }
     }
@@ -618,6 +617,9 @@ Linkable.prototype.dispatchSignal = function() {
     this._signal.dispatch(this._arg1, this._arg2, this._arg3);
 }
 
+Linkable.goToLink = function(link) {
+    window.open(link,'_blank');
+}
 
 module.exports = Linkable;
 
@@ -1162,6 +1164,7 @@ var ImageTypeEnum = {
         Transition: 'IMAGE_TRANSITION',
         Background: 'IMAGE_BACKGROUND',
         ChoiceBackground: 'IMAGE_CHOICE_BACKGROUND',
+        ExternalLink: 'IMAGE_BUTTON_EXTERNAL_LINK',
         Pause: 'IMAGE_BUTTON_PAUSE',
         Play: 'IMAGE_BUTTON_PLAY',
         ToggleSubtitle: 'IMAGE_BUTTON_TOGGLE_SUBTITLE'
@@ -1187,8 +1190,8 @@ Image.prototype.addImageToGame = function(game, group) {
         case ImageTypeEnum.DisplayImage:
         case ImageTypeEnum.ToggleSubtitle:
         case ImageTypeEnum.ChoiceBackground:
+        case ImageTypeEnum.ExternalLink:
             this._image = game.add.button(this._xPos, this._yPos, this._key);
-            this._image.inputEnabled = true;
             break;
         case ImageTypeEnum.Static:
         case ImageTypeEnum.Background:
@@ -1223,6 +1226,9 @@ Image.prototype.changeImage = function (game, arg1, arg2, arg3, arg4, arg5) {
             break;
         case ImageTypeEnum.ChoiceBackground:
             this.changeToChoiceBackgroundImage(game, arg1, arg2, arg3, arg4);
+            break;
+        case ImageTypeEnum.ExternalLink:
+            this.changeToExternalLinkImage(game, arg1);
             break;
         case ImageTypeEnum.Pause:
             this.changeToPauseButton(game, arg1);
@@ -1321,6 +1327,13 @@ Image.prototype.changeToChoiceBackgroundImage = function(game, width, height, ta
     
     //Animation.fade(game, this._image, 1, true);
     return this._image;
+}
+
+Image.prototype.changeToExternalLinkImage = function(game, target) {
+    this._image.anchor.set(0.5, 0.5);
+    this._link = new Linkable(game, this._image, game.global.gameManager.getGoToLinkSignal(), target);
+    this._link.setAsButton(true);
+    this._link.addMouseOverScaleEffect(game, this._image);
 }
 
 Image.prototype.changeToPauseButton = function(game, signal) {
@@ -2558,7 +2571,8 @@ const ConnectionChecker = __webpack_require__(16),
     Thoughts = __webpack_require__(11),
     Transition = __webpack_require__(0),
     UI = __webpack_require__(2),
-    Video = __webpack_require__(1);
+    Video = __webpack_require__(1),
+    Linkable = __webpack_require__(4);
 
 var _instance = null;
 var _game = null;
@@ -2589,6 +2603,8 @@ var GameManager = function() {
     this._pauseSignal = null;
     this._playSignal = null;
     this._toggleSubtitleSignal = null;
+
+    this._goToLinkSignal = null;
 
     return _instance;
 }
@@ -2634,6 +2650,9 @@ GameManager.prototype.initSignals = function() {
 
     this._createThoughtsAndChoicesSignal = new Phaser.Signal();
     this._createThoughtsAndChoicesSignal.add(Icons.createThoughtsAndChoices, this);
+
+    this._goToLinkSignal = new Phaser.Signal();
+    this._goToLinkSignal.add(Linkable.goToLink, this);
 }
 
 GameManager.prototype.getChangeSceneSignal = function() {
@@ -2698,6 +2717,10 @@ GameManager.prototype.getPlaySignal = function() {
 
 GameManager.prototype.getToggleSubtitleSignal = function() {
     return this._toggleSubtitleSignal;
+}
+
+GameManager.prototype.getGoToLinkSignal = function() {
+    return this._goToLinkSignal;
 }
 
 module.exports = GameManager;

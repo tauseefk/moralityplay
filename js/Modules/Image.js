@@ -12,6 +12,7 @@ var ImageTypeEnum = {
         Transition: 'IMAGE_TRANSITION',
         Background: 'IMAGE_BACKGROUND',
         ChoiceBackground: 'IMAGE_CHOICE_BACKGROUND',
+        ExternalLink: 'IMAGE_BUTTON_EXTERNAL_LINK',
         Pause: 'IMAGE_BUTTON_PAUSE',
         Play: 'IMAGE_BUTTON_PLAY',
         ToggleSubtitle: 'IMAGE_BUTTON_TOGGLE_SUBTITLE'
@@ -37,8 +38,8 @@ Image.prototype.addImageToGame = function(game, group) {
         case ImageTypeEnum.DisplayImage:
         case ImageTypeEnum.ToggleSubtitle:
         case ImageTypeEnum.ChoiceBackground:
+        case ImageTypeEnum.ExternalLink:
             this._image = game.add.button(this._xPos, this._yPos, this._key);
-            this._image.inputEnabled = true;
             break;
         case ImageTypeEnum.Static:
         case ImageTypeEnum.Background:
@@ -73,6 +74,9 @@ Image.prototype.changeImage = function (game, arg1, arg2, arg3, arg4, arg5) {
             break;
         case ImageTypeEnum.ChoiceBackground:
             this.changeToChoiceBackgroundImage(game, arg1, arg2, arg3, arg4);
+            break;
+        case ImageTypeEnum.ExternalLink:
+            this.changeToExternalLinkImage(game, arg1);
             break;
         case ImageTypeEnum.Pause:
             this.changeToPauseButton(game, arg1);
@@ -171,6 +175,13 @@ Image.prototype.changeToChoiceBackgroundImage = function(game, width, height, ta
     
     //Animation.fade(game, this._image, 1, true);
     return this._image;
+}
+
+Image.prototype.changeToExternalLinkImage = function(game, target) {
+    this._image.anchor.set(0.5, 0.5);
+    this._link = new Linkable(game, this._image, game.global.gameManager.getGoToLinkSignal(), target);
+    this._link.setAsButton(true);
+    this._link.addMouseOverScaleEffect(game, this._image);
 }
 
 Image.prototype.changeToPauseButton = function(game, signal) {
