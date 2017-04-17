@@ -73,6 +73,8 @@
 "use strict";
 
 
+const VideoFilter = __webpack_require__(26);
+
 var _instance = null;
 var _game = null;
 var _rectGraphic = null;
@@ -80,18 +82,18 @@ var _fadeInSignal = null;
 var _fadeOutSignal = null;
 const TRANSITION_COLOR = 0xFFFFFF;
 
-	function fade(isFadeIn) {
-		var val = 0;
-		if(isFadeIn)
-			val = 1;
-		_rectGraphic = _game.add.graphics(0, 0);
-		_rectGraphic.beginFill(TRANSITION_COLOR, 1);
-		_rectGraphic.drawRect(0, 0, _game.width, _game.height);
-		_rectGraphic.endFill();
-		_rectGraphic.alpha = val;
-		_game.world.bringToTop(_rectGraphic);
-        startFade(_rectGraphic, isFadeIn);
-	}
+function fade(isFadeIn) {
+	var val = 0;
+	if(isFadeIn)
+		val = 1;
+	_rectGraphic = _game.add.graphics(0, 0);
+	_rectGraphic.beginFill(TRANSITION_COLOR, 1);
+	_rectGraphic.drawRect(0, 0, _game.width, _game.height);
+	_rectGraphic.endFill();
+	_rectGraphic.alpha = val;
+	_game.world.bringToTop(_rectGraphic);
+    startFade(_rectGraphic, isFadeIn);
+}
 
 function startFade(obj, isFadeIn) {
 	var val = 1;
@@ -114,6 +116,7 @@ module.exports = {
 		return _instance;
 	},
 	fadeInTransition: function() {
+		VideoFilter.clearBg();
 		fade(true);
 	},
 	fadeOutTransition: function() {
@@ -193,12 +196,11 @@ function AddVideoAndFilter(doFadeOut, sub, nextScene) {
 
     function OnVideoLoad() {
         _video.play();
-        
+        //_instance.clearFilterBg();
         if(!nextScene)
             _video.loop = true;
         else
             _video.loop = false;
-        console.log("hiiii");
         //_video.video.addEventListener('progress', CheckProgress, false);
         if(doFadeOut) {
             //_game.time.events.add((_video.video.duration-FADEOUT_OFFSET_SECONDS)*Phaser.Timer.SECOND, FadeOut, this);
@@ -280,11 +282,6 @@ module.exports = {
         VideoFilter.init(game, _video);
         return _instance;
     },
-    /*
-    preload: function(videos) {
-        load(videos);
-    },
-    */
     create: function(src, doFadeOut, videoFilter, nextScene, sub, interactionTimeStamps) {
         _videoFilter = videoFilter;
         _interactionTimeStamps = interactionTimeStamps;
@@ -831,7 +828,8 @@ module.exports = Text;
 const Filter = __webpack_require__(17),
     Thoughts = __webpack_require__(11),
     Choices = __webpack_require__(10),
-    Image = __webpack_require__(9);
+    Image = __webpack_require__(9),
+    SceneParser = __webpack_require__(31);
 
 var _instance = null;
 var _game = null;
@@ -882,7 +880,7 @@ function HideLockedIcons(locked) {
     if(locked) {
         for(var i=0; i<locked.length; i++){
             var scenesArr = locked[i];
-            if(OneSceneVisited(scenesArr)) {
+            if(SceneParser.OneSceneVisited(_game, scenesArr)) {
                 _icons[i].setVisible(false);
             }
         };
@@ -896,7 +894,7 @@ function ShowUnlockedIcons(conditionsForIconIndexArr) {
         for(var i=0; i<conditionsForIconIndexArr.length; i++) {
             var currIconUnlockConditions = conditionsForIconIndexArr[i];
             if(currIconUnlockConditions) {
-                if(VisitAtLeastOnceOfEach(currIconUnlockConditions)) {
+                if(SceneParser.VisitAtLeastOnceOfEach(_game, currIconUnlockConditions)) {
                     _icons[i].setVisible(true);
                 }
                 else {
@@ -905,25 +903,6 @@ function ShowUnlockedIcons(conditionsForIconIndexArr) {
             }
         }
     }
-}
-
-function VisitAtLeastOnceOfEach(sceneSetArray) {
-    var unlocked = true;
-    for(var j=0; j<sceneSetArray.length; j++) {
-        unlocked &= OneSceneVisited(sceneSetArray[j]);
-    }
-    return unlocked;
-}
-
-function OneSceneVisited(sceneArr) {
-    if(sceneArr){
-        for(var i=0; i<sceneArr.length; i++) {
-            if(_game.global.visitedScenes[sceneArr[i]]) {
-                return true;
-            }
-        }
-    }
-    return false;
 }
 
 function EndInteraction() {
@@ -1046,15 +1025,26 @@ State.prototype.getInputInfo = function() {
   return this._scene.input;
 }
 
-State.prototype.getMovieSrc = function(definition) {
-  console.log(definition);
-  if(definition == 'HD')
-    return this._scene.movieSrcHD;
-  else if(definition == 'SD')
-    return this._scene.movieSrcSD;
+State.prototype.getSrcList = function() {
+  if(!this._scene.movieReqs || !this._scene.movieSrcArr) 
+    return false;
   else {
-    console.warn('Deprecated: Must specify HD or SD in json.')    
-    return this._scene.movieSrc;
+    return [this._scene.movieReqs, this._scene.movieSrcArr];
+  }
+}
+
+State.prototype.getMovieSrc = function(definition, index) {
+  if(index != null) {    
+    if(definition == 'HD')
+      return this._scene.movieSrcArr[index][0];
+    else if(definition == 'SD')       
+      return this._scene.movieSrcArr[index][1];
+  }
+  else {
+    if(definition == 'HD')
+      return this._scene.movieSrcHD;
+    else if(definition == 'SD')
+      return this._scene.movieSrcSD;
   }
 }
 
@@ -1836,6 +1826,13 @@ function ChangePlayerName() {
     };
 }
 
+function SceneTestCase() {
+    _game.global.visitedScenes['MK3bad'] = true;
+    _game.global.visitedScenes['indian2bad'] = true;
+    _game.global.visitedScenes['asian2bad'] = true;
+    console.log(_game.global.visitedScenes);
+}
+
 module.exports = {
     init: function() {
         console.log("Initializing StateManager");
@@ -1843,7 +1840,7 @@ module.exports = {
             return _instance;
         _stateManagerInstance = this.game.state;
         _game = this.game;
-        Group.init(_game);        
+        Group.init(_game);
         Subtitle.init(this.game);
         Transition.init(_game);
         AddAllStates();
@@ -1859,6 +1856,8 @@ module.exports = {
     changeScene: function(sceneName) {
         _game.mediaGroup.removeAll();
         _game.global.visitedScenes[sceneName] = true;
+        _game.global.currentSceneName = sceneName;
+        //SceneTestCase();
         ChangeScene(sceneName);
     }
 }
@@ -3070,11 +3069,26 @@ const Group = __webpack_require__(3),
     Video = __webpack_require__(1),
     Transition = __webpack_require__(0),
     State = __webpack_require__(7),
-    MovingBackground = __webpack_require__(18);
+    MovingBackground = __webpack_require__(18),
+    SceneParser = __webpack_require__(31);
 
 var _instance = null;
 var _game = null;
 var _stateInfo = null;
+
+const START_SCENE_NAME = 'startScene';
+
+function GetMovieSrc(state) {
+    var SrcList = state.getSrcList();
+    var index = null;
+    if(SrcList) {
+        index = SceneParser.GetIndexOfVisitedAll(_game, SrcList[0]);
+        if(typeof(index) != 'number')
+            console.warn("No valid requirements met for movie source selection.");
+        console.log(index);
+    }
+    return state.getMovieSrc(_game.global.quality, index);
+}
 
 module.exports = {
     init: function(scene, signal) {
@@ -3095,11 +3109,11 @@ module.exports = {
         Group.initializeGroups();
         if(_stateInfo.getBgImageKey())
             MovingBackground.create(_stateInfo.getBgImageKey(), _stateInfo.getDraggable());
-        var movieSrc = _stateInfo.getMovieSrc(_game.global.quality);
-        Video.create(movieSrc, _stateInfo.getTransitionInfo().fadeOut, _stateInfo.getVideoFilter(), _stateInfo.getNextScenes(), _stateInfo.getMovieSubKey());
+        Video.create(GetMovieSrc(_stateInfo), _stateInfo.getTransitionInfo().fadeOut, _stateInfo.getVideoFilter(), _stateInfo.getNextScenes(), _stateInfo.getMovieSubKey());
         if(_stateInfo.getTransitionInfo().fadeIn)
             this.game.global.gameManager.getFadeInTransitionSignal().dispatch();
-        UI.create(true, true);
+        if(!_game.global.currentSceneName === START_SCENE_NAME)
+            UI.create(true, true);
     }
 }
 
@@ -3144,6 +3158,66 @@ function initGame(Boot, Preload, StateManager, ResourceLoader) {
 }
 
 initGame(Boot, Preload, StateManager, ResourceLoader);
+
+
+/***/ }),
+/* 31 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+//ScenePartser constructor
+var SceneParser = function() {
+}
+
+SceneParser.VisitAtLeastOnceOfEach = function(game, sceneSetArray) {
+    var unlocked = true;
+    for(var j=0; j<sceneSetArray.length; j++) {
+        unlocked &= SceneParser.OneSceneVisited(game, sceneSetArray[j]);
+    }
+    return unlocked;
+}
+
+SceneParser.OneSceneVisited = function(game, sceneArr) {
+    if(sceneArr){
+        for(var i=0; i<sceneArr.length; i++) {
+            if(game.global.visitedScenes[sceneArr[i]]) {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+SceneParser.AllSceneVisited = function(game, sceneArr) {
+    if(sceneArr){
+    	console.log(sceneArr);
+        for(var i=0; i<sceneArr.length; i++) {
+            if(!game.global.visitedScenes[sceneArr[i]]) {
+            	console.log(sceneArr[i]);
+            	console.log(game.global.visitedScenes[sceneArr[i]]);
+                return false;
+            }
+        }
+        return true;
+    }
+    else
+    	return false;
+}
+
+SceneParser.GetIndexOfVisitedAll = function(game, sceneArr) {
+    if(sceneArr){
+        for(var i=0; i<sceneArr.length; i++) {
+            if(SceneParser.AllSceneVisited(game, sceneArr[i])) {
+                return i;
+            }
+        }
+    }
+    return false;
+}
+
+module.exports = SceneParser;
 
 
 /***/ })

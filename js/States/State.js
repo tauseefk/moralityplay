@@ -54,15 +54,26 @@ State.prototype.getInputInfo = function() {
   return this._scene.input;
 }
 
-State.prototype.getMovieSrc = function(definition) {
-  console.log(definition);
-  if(definition == 'HD')
-    return this._scene.movieSrcHD;
-  else if(definition == 'SD')
-    return this._scene.movieSrcSD;
+State.prototype.getSrcList = function() {
+  if(!this._scene.movieReqs || !this._scene.movieSrcArr) 
+    return false;
   else {
-    console.warn('Deprecated: Must specify HD or SD in json.')    
-    return this._scene.movieSrc;
+    return [this._scene.movieReqs, this._scene.movieSrcArr];
+  }
+}
+
+State.prototype.getMovieSrc = function(definition, index) {
+  if(index != null) {    
+    if(definition == 'HD')
+      return this._scene.movieSrcArr[index][0];
+    else if(definition == 'SD')       
+      return this._scene.movieSrcArr[index][1];
+  }
+  else {
+    if(definition == 'HD')
+      return this._scene.movieSrcHD;
+    else if(definition == 'SD')
+      return this._scene.movieSrcSD;
   }
 }
 

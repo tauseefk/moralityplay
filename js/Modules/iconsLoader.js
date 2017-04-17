@@ -3,7 +3,8 @@
 const Filter = require('./filter'),
     Thoughts = require('./thoughtsLoader'),
     Choices = require('./choiceLoader'),
-    Image = require('./Image');
+    Image = require('./Image'),
+    SceneParser = require('./SceneParser');
 
 var _instance = null;
 var _game = null;
@@ -54,7 +55,7 @@ function HideLockedIcons(locked) {
     if(locked) {
         for(var i=0; i<locked.length; i++){
             var scenesArr = locked[i];
-            if(OneSceneVisited(scenesArr)) {
+            if(SceneParser.OneSceneVisited(_game, scenesArr)) {
                 _icons[i].setVisible(false);
             }
         };
@@ -68,7 +69,7 @@ function ShowUnlockedIcons(conditionsForIconIndexArr) {
         for(var i=0; i<conditionsForIconIndexArr.length; i++) {
             var currIconUnlockConditions = conditionsForIconIndexArr[i];
             if(currIconUnlockConditions) {
-                if(VisitAtLeastOnceOfEach(currIconUnlockConditions)) {
+                if(SceneParser.VisitAtLeastOnceOfEach(_game, currIconUnlockConditions)) {
                     _icons[i].setVisible(true);
                 }
                 else {
@@ -77,25 +78,6 @@ function ShowUnlockedIcons(conditionsForIconIndexArr) {
             }
         }
     }
-}
-
-function VisitAtLeastOnceOfEach(sceneSetArray) {
-    var unlocked = true;
-    for(var j=0; j<sceneSetArray.length; j++) {
-        unlocked &= OneSceneVisited(sceneSetArray[j]);
-    }
-    return unlocked;
-}
-
-function OneSceneVisited(sceneArr) {
-    if(sceneArr){
-        for(var i=0; i<sceneArr.length; i++) {
-            if(_game.global.visitedScenes[sceneArr[i]]) {
-                return true;
-            }
-        }
-    }
-    return false;
 }
 
 function EndInteraction() {

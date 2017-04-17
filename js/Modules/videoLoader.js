@@ -64,12 +64,11 @@ function AddVideoAndFilter(doFadeOut, sub, nextScene) {
 
     function OnVideoLoad() {
         _video.play();
-        
+        //_instance.clearFilterBg();
         if(!nextScene)
             _video.loop = true;
         else
             _video.loop = false;
-        console.log("hiiii");
         //_video.video.addEventListener('progress', CheckProgress, false);
         if(doFadeOut) {
             //_game.time.events.add((_video.video.duration-FADEOUT_OFFSET_SECONDS)*Phaser.Timer.SECOND, FadeOut, this);
@@ -151,11 +150,6 @@ module.exports = {
         VideoFilter.init(game, _video);
         return _instance;
     },
-    /*
-    preload: function(videos) {
-        load(videos);
-    },
-    */
     create: function(src, doFadeOut, videoFilter, nextScene, sub, interactionTimeStamps) {
         _videoFilter = videoFilter;
         _interactionTimeStamps = interactionTimeStamps;

@@ -76,6 +76,13 @@ function ChangePlayerName() {
     };
 }
 
+function SceneTestCase() {
+    _game.global.visitedScenes['MK3bad'] = true;
+    _game.global.visitedScenes['indian2bad'] = true;
+    _game.global.visitedScenes['asian2bad'] = true;
+    console.log(_game.global.visitedScenes);
+}
+
 module.exports = {
     init: function() {
         console.log("Initializing StateManager");
@@ -83,7 +90,7 @@ module.exports = {
             return _instance;
         _stateManagerInstance = this.game.state;
         _game = this.game;
-        Group.init(_game);        
+        Group.init(_game);
         Subtitle.init(this.game);
         Transition.init(_game);
         AddAllStates();
@@ -99,6 +106,8 @@ module.exports = {
     changeScene: function(sceneName) {
         _game.mediaGroup.removeAll();
         _game.global.visitedScenes[sceneName] = true;
+        _game.global.currentSceneName = sceneName;
+        //SceneTestCase();
         ChangeScene(sceneName);
     }
 }
