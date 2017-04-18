@@ -190,7 +190,7 @@
                 null,
                 null, 
                 [
-                    ["MK2good", "MK2bad"]
+                    ["MK2good", "MK2bad"], ["li2bad","li2good"],["an2bad","an2good"]
                 ]
             ]            
 
