@@ -77,6 +77,14 @@ State.prototype.getMovieSrc = function(definition, index) {
   }
 }
 
+State.prototype.getSceneReqs = function() {
+  return this._scene.sceneReqs;
+}
+
+State.prototype.getSceneTargetNames = function() {
+  return this._scene.sceneTargetNames;
+}
+
 State.prototype.getMovieSubKey = function() {
   return this._scene.sub;
 }

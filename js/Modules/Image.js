@@ -116,7 +116,7 @@ Image.prototype.changeToThoughtSprite = function(game, thoughtsAndChoicesSignal,
     this._link.addOnClickAnimation(Animation.fade(game, this._image, 0, false));
     this._link.addOnClickAnimation(Animation.scale(game, this._image, false));
     this._link.setAsButton(true);
-    //Animation.bob(game, this._image, true);
+    Animation.bob(game, this._image, true);
 }
 
 //Changes image to a horizontally draggable image
@@ -161,11 +161,18 @@ Image.prototype.changeToDisplayImage = function(game, target) {
     this._link.setAsButton(false);
     this._link.addMouseOverScaleEffect(game, this._image);    
     Animation.bob(game, this._image, true);
+    this._link.addOnClickAnimation(Animation.fade(game, this._image, 0,false, null, null, true));
  //   this._link.addSound('testSound');
 }
 
 Image.prototype.changeToInfoImage = function(game, target) {
-
+    this._mask = game.add.graphics(0, 0);
+    this._mask.beginFill(0xffffff);
+    this._mask.drawRect(200, 200, 500, 500);
+    this._image.mask = this._mask;
+    this._image.inputEnabled = true;
+    this._image.input.draggable = true;
+    this.changeCursorImage(game, 'url("./Images/UI/hand_2.png"), auto');
 }
 
 Image.prototype.changeToChoiceBackgroundImage = function(game, width, height, target, phaserText, tag) {

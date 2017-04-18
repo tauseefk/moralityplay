@@ -1054,6 +1054,14 @@ State.prototype.getMovieSrc = function(definition, index) {
   }
 }
 
+State.prototype.getSceneReqs = function() {
+  return this._scene.sceneReqs;
+}
+
+State.prototype.getSceneTargetNames = function() {
+  return this._scene.sceneTargetNames;
+}
+
 State.prototype.getMovieSubKey = function() {
   return this._scene.sub;
 }
@@ -1272,7 +1280,7 @@ Image.prototype.changeToThoughtSprite = function(game, thoughtsAndChoicesSignal,
     this._link.addOnClickAnimation(Animation.fade(game, this._image, 0, false));
     this._link.addOnClickAnimation(Animation.scale(game, this._image, false));
     this._link.setAsButton(true);
-    //Animation.bob(game, this._image, true);
+    Animation.bob(game, this._image, true);
 }
 
 //Changes image to a horizontally draggable image
@@ -1317,11 +1325,18 @@ Image.prototype.changeToDisplayImage = function(game, target) {
     this._link.setAsButton(false);
     this._link.addMouseOverScaleEffect(game, this._image);    
     Animation.bob(game, this._image, true);
+    this._link.addOnClickAnimation(Animation.fade(game, this._image, 0,false, null, null, true));
  //   this._link.addSound('testSound');
 }
 
 Image.prototype.changeToInfoImage = function(game, target) {
-
+    this._mask = game.add.graphics(0, 0);
+    this._mask.beginFill(0xffffff);
+    this._mask.drawRect(200, 200, 500, 500);
+    this._image.mask = this._mask;
+    this._image.inputEnabled = true;
+    this._image.input.draggable = true;
+    this.changeCursorImage(game, 'url("./Images/UI/hand_2.png"), auto');
 }
 
 Image.prototype.changeToChoiceBackgroundImage = function(game, width, height, target, phaserText, tag) {
@@ -1784,7 +1799,7 @@ const Resources = __webpack_require__(12),
     MenuState = __webpack_require__(28),
     LocationState = __webpack_require__(15),
     InteractState = __webpack_require__(14),
-    FlashbackState = __webpack_require__(27),
+    SwitchState = __webpack_require__(33),
     MovieState = __webpack_require__(29),
     Subtitle = __webpack_require__(19);
 
@@ -1795,7 +1810,7 @@ var _game = null;
 var StateEnum = {
     MenuState: 'MenuState',
     InteractState: 'InteractState',
-    FlashbackState: 'FlashbackState',
+    SwitchState: 'SwitchState',
     MovieState: 'MovieState',
     LocationState: 'LocationState'
 }
@@ -1813,7 +1828,7 @@ function ChangeScene(sceneName) {
         case StateEnum.InteractState:
             _stateManagerInstance.start(nextScene.stateType, true, false, nextScene);
             break;
-        case StateEnum.FlashbackState:
+        case StateEnum.SwitchState:
             _stateManagerInstance.start(nextScene.stateType, true, false, nextScene);
             break;
         case StateEnum.MovieState:
@@ -1841,7 +1856,7 @@ function AddAllStates() {
     _stateManagerInstance.add(StateEnum.MenuState, MenuState);
     _stateManagerInstance.add(StateEnum.LocationState, LocationState);
     _stateManagerInstance.add(StateEnum.InteractState, InteractState);
-    _stateManagerInstance.add(StateEnum.FlashbackState, FlashbackState);
+    _stateManagerInstance.add(StateEnum.SwitchState, SwitchState);
     _stateManagerInstance.add(StateEnum.MovieState, MovieState);
 }
 
@@ -1853,9 +1868,9 @@ function ChangePlayerName() {
 }
 
 function SceneTestCase() {
-    _game.global.visitedScenes['MK3bad'] = true;
-    _game.global.visitedScenes['indian2bad'] = true;
-    _game.global.visitedScenes['asian2bad'] = true;
+    _game.global.visitedScenes['MK2bad'] = true;
+    _game.global.visitedScenes['an2good'] = true;
+    _game.global.visitedScenes['li2good'] = true;
     console.log(_game.global.visitedScenes);
 }
 
@@ -2991,44 +3006,7 @@ module.exports = {
 
 
 /***/ }),
-/* 27 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var _instance = null;
-var _stateInfo = null;
-var Group = __webpack_require__(3),
-    UI = __webpack_require__(2),
-    Video = __webpack_require__(1),
-    Transition = __webpack_require__(0),
-    State = __webpack_require__(7);
-
-module.exports = {
-    init: function(scene, signal) {
-        if(_stateInfo !== null)
-            _stateInfo.setStateScene(scene);
-        Video.init(this.game, signal);
-        if(_instance !== null)
-            return _instance;
-        _stateInfo = new State(scene);
-        _instance = this;
-        return _instance;
-    },
-    preload: function() {
-    },
-    create: function() {
-        Group.initializeGroups();
-        Video.create(_stateInfo.getMovieSrc(), _stateInfo.getTransitionInfo().fadeOut, _stateInfo.getVideoFilter(), _stateInfo.getNextScenes());
-        if(_stateInfo.getTransitionInfo().fadeIn)
-            this.game.global.gameManager.getFadeInTransitionSignal().dispatch();
-        UI.create(true, true);
-    }
-}
-
-
-/***/ }),
+/* 27 */,
 /* 28 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -3278,6 +3256,50 @@ DatabaseManager.prototype.sendInteractionData = function(currentSceneName, tag) 
 }
 
 module.exports = DatabaseManager;
+
+/***/ }),
+/* 33 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+const State = __webpack_require__(7),
+    SceneParser = __webpack_require__(31);
+
+var _instance = null;
+var _stateInfo = null;
+var _game = null;
+
+function GetSceneNameFromReqs(stateInfo) {
+    var sceneReqs = stateInfo.getSceneReqs();    
+    var index = null;
+    if(sceneReqs) {
+        index = SceneParser.GetIndexOfVisitedAll(_game, sceneReqs);
+        if(typeof(index) != 'number')
+            console.warn("No valid requirements met for movie source selection.");
+        console.log(index);
+    }
+    return stateInfo.getSceneTargetNames()[index];
+}
+
+module.exports = {
+    init: function(scene, signal) {
+        if(_stateInfo !== null)
+            _stateInfo.setStateScene(scene);
+        _stateInfo = new State(scene);
+        _instance = this;
+        _game = this.game;
+        return _instance;
+    },
+    preload: function() {
+    },
+    create: function() {
+        var targetSceneName =GetSceneNameFromReqs(_stateInfo);
+        _game.global.gameManager.getChangeSceneSignal().dispatch(targetSceneName);
+    }
+}
+
 
 /***/ })
 /******/ ]);

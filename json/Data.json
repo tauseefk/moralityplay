@@ -205,6 +205,7 @@
         "draggable": false,
         "movieSrcHD": "./Videos/cmu_cohon_optimized.mp4",
         "movieSrcSD": "./Videos/cmu_cohon_optimized_lo.mp4",
+        "bgImageKey": "cmu_cohon",
         "videoFilter": "none",
         "transition": {
             "fadeIn": false,
@@ -268,6 +269,7 @@
         "draggable": false,
         "movieSrcHD": "./Videos/cmu_cohon_indoor_optimzed.mp4",
         "movieSrcSD": "./Videos/cmu_cohon_indoor_optimzed_lo.mp4",
+        "bgImageKey": "cmu_cohon_indoor",
         "videoFilter": "none",
         "transition": {
             "fadeIn": false,
@@ -664,7 +666,7 @@
         "movieSrcHD": "./Videos/Li2_good_optimized.mp4",
         "movieSrcSD": "./Videos/Li2_good_optimized_lo.mp4",
         "transition": {
-            "fadeIn": true,
+            "fadeIn": false,
             "fadeOut": false
         },
         "nextScene": "cmuCutLocation"
@@ -674,7 +676,7 @@
         "movieSrcHD": "./Videos/Li2_bad_optimized.mp4",
         "movieSrcSD": "./Videos/Li2_bad_optimized_lo.mp4",
         "transition": {
-            "fadeIn": true,
+            "fadeIn": false,
             "fadeOut": false
         },
         "nextScene": "cmuCutLocation"
@@ -935,7 +937,7 @@
                             "question": "Choose what to say:",
                             "size": 3,
                             "content": [
-                                "I think she was just \ntrying to show interesting.",
+                                "I think she was just \ntrying to show interest.",
                                 "Why would you assume \nshe is not from here?",
                                 "I better stay out of this."
                             ],
@@ -970,7 +972,7 @@
         "movieSrcHD": "./Videos/An2_good_optimized.mp4",
         "movieSrcSD": "./Videos/An2_good_optimized_lo.mp4",
         "transition": {
-            "fadeIn": true,
+            "fadeIn": false,
             "fadeOut": false
         },
         "nextScene": "cmuCutLocation"
@@ -980,7 +982,7 @@
         "movieSrcHD": "./Videos/An2_bad_optimized.mp4",
         "movieSrcSD": "./Videos/An2_bad_optimized_lo.mp4",
         "transition": {
-            "fadeIn": true,
+            "fadeIn": false,
             "fadeOut": false
         },
         "nextScene": "cmuCutLocation"
@@ -1005,7 +1007,7 @@
             "fadeIn": true,
             "fadeOut": false
         },
-        "nextScene": "postEnding"
+        "nextScene": "postEndingMenu"
     },
     "postEndingMenu": {
         "stateType": "MenuState",
@@ -1034,6 +1036,23 @@
                 "http://www.google.com"
             ]
         }
+    },
+    "endingSceneSwitch": {
+        "stateType": "SwitchState",
+        "sceneReqs": [
+            ["MK2good", "an2good", "li2good"],
+            ["MK2bad", "an2good", "li2good"],
+            ["MK2good", "an2bad", "li2good"],  
+            ["MK2good", "li2bad"],                     
+            ["MK2bad"]
+        ],
+        "sceneTargetNames": [
+            "postEndingMenu",
+            "postEndingMenu",
+            "postEndingMenu",
+            "postEndingMenu",
+            "postEndingMenu"
+        ]
     }
 }
 }

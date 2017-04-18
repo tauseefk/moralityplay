@@ -28,7 +28,7 @@
         "boundsHeight": 100,
         "lineSpacing": -5,
 
-        "shadow": [10, 0, "rgba(79,105,120,0.7)", 25]
+        "shadow": [10, 0, "rgba(79,105,120,0.9)", 25]
     },
     "choicesTextProperties": {
         "fontSize": 30,

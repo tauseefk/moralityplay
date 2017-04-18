@@ -8,7 +8,7 @@ const Resources = require('../Modules/resourceLoader'),
     MenuState = require('./menuState'),
     LocationState = require('./locationState'),
     InteractState = require('./interactState'),
-    FlashbackState = require('./flashbackState'),
+    SwitchState = require('./switchState'),
     MovieState = require('./movieState'),
     Subtitle = require('../Modules/subtitleLoader');
 
@@ -19,7 +19,7 @@ var _game = null;
 var StateEnum = {
     MenuState: 'MenuState',
     InteractState: 'InteractState',
-    FlashbackState: 'FlashbackState',
+    SwitchState: 'SwitchState',
     MovieState: 'MovieState',
     LocationState: 'LocationState'
 }
@@ -37,7 +37,7 @@ function ChangeScene(sceneName) {
         case StateEnum.InteractState:
             _stateManagerInstance.start(nextScene.stateType, true, false, nextScene);
             break;
-        case StateEnum.FlashbackState:
+        case StateEnum.SwitchState:
             _stateManagerInstance.start(nextScene.stateType, true, false, nextScene);
             break;
         case StateEnum.MovieState:
@@ -65,7 +65,7 @@ function AddAllStates() {
     _stateManagerInstance.add(StateEnum.MenuState, MenuState);
     _stateManagerInstance.add(StateEnum.LocationState, LocationState);
     _stateManagerInstance.add(StateEnum.InteractState, InteractState);
-    _stateManagerInstance.add(StateEnum.FlashbackState, FlashbackState);
+    _stateManagerInstance.add(StateEnum.SwitchState, SwitchState);
     _stateManagerInstance.add(StateEnum.MovieState, MovieState);
 }
 
@@ -77,9 +77,9 @@ function ChangePlayerName() {
 }
 
 function SceneTestCase() {
-    _game.global.visitedScenes['MK3bad'] = true;
-    _game.global.visitedScenes['indian2bad'] = true;
-    _game.global.visitedScenes['asian2bad'] = true;
+    _game.global.visitedScenes['MK2bad'] = true;
+    _game.global.visitedScenes['an2good'] = true;
+    _game.global.visitedScenes['li2good'] = true;
     console.log(_game.global.visitedScenes);
 }
 
