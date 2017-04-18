@@ -27,7 +27,7 @@
     "thoughtRight":"./Images/UI/ThoughBubble_Right.png",
     "choiceBg": "./Images/UI/choice_button_bg.png",
     "infoS1": "./Images/UI/scene1_infobox.png",
-    "asianInfo": "./Images/UI/asian.png",
+    "liInfo": "./Images/UI/li.png",
 
     "leftOutline": "./Images/UI/outline_left.png",
 
@@ -44,7 +44,7 @@
     "sub1": "./Videos/Subtitles/test.srt"
 },
 "scenes": {
-    "startScene":{
+    "startScene1":{
         "stateType": "MovieState",
         "movieSrcHD": "./Videos/Opening.mp4",
         "movieSrcSD": "./Videos/Opening_lo.mp4",
@@ -142,7 +142,8 @@
         },
         "nextScene": "cmuCutLocation"
     },
-    "cmuCutLocation": {
+
+    "startScene": {
         "stateType": "LocationState",
         "draggable": false,
         "movieSrcHD": "./Videos/cmu_cut_optimized.mp4",
@@ -226,7 +227,6 @@
             ]
         }
     }, 
-
     "cmuCohonIndoorLocation": {
         "stateType": "LocationState",
         "draggable": false,
@@ -259,7 +259,7 @@
             ],
             "lockedByScenes": [
                 null,
-                ["indian2good","indian2bad"]
+                ["an2good","an2bad"]
             ]
         },
         "linkedIcons": {
@@ -274,7 +274,7 @@
                 [ 200, 325 ]
             ],
             "targetImageIndexOrScene": [
-                "indian1"
+                "an1"
             ]
         }
     },
@@ -370,6 +370,7 @@
             ]
         }
     },
+
     "cmuHuntLocation": {
         "stateType": "LocationState",
         "draggable": false,
@@ -434,7 +435,7 @@
             ],
             "lockedByScenes": [
                 null,
-                ["asian2good","asian2bad"]
+                ["li2good","li2bad"]
             ]
         },
         "linkedIcons": {
@@ -449,16 +450,17 @@
                 [ 200, 325 ]
             ],
             "targetImageIndexOrScene": [
-                "asian1"
+                "li1"
             ]
         }
     },
-    "asian1": {
+    
+    "li1": {
         "videoFilter": [
             [ "grayscale", null ]
         ],
-        "movieSrcHD": "./Videos/Asian1_optimized.mp4",
-        "movieSrcSD": "./Videos/Asian1_optimized_lo.mp4",
+        "movieSrcHD": "./Videos/Li1_optimized.mp4",
+        "movieSrcSD": "./Videos/Li1_optimized_lo.mp4",
         "sub": "sub1",
         "stateType": "InteractState",
         "transition": {
@@ -536,8 +538,8 @@
                             [ 590, 200 ]
                         ],
                         "targetScene": [
-                            "asian2good",
-                            "asian2bad"
+                            "li2good",
+                            "li2bad"
                         ]
                     }
                 }   
@@ -545,7 +547,7 @@
             ]
         }
     },
-    "asian2good": {
+    "li2good": {
         "stateType": "MovieState",
         "movieSrcHD": "./Videos/Asian2 Good_optimized.mp4",
         "movieSrcSD": "./Videos/Asian2 Good_optimized_lo.mp4",
@@ -555,7 +557,7 @@
         },
         "nextScene": "cmuCutLocation"
     },
-    "asian2bad": {
+    "li2bad": {
         "stateType": "MovieState",
         "movieSrcHD": "./Videos/Asian2 Bad_optimized.mp4",
         "movieSrcSD": "./Videos/Asian2 Bad_optimized_lo.mp4",
@@ -742,7 +744,7 @@
         },
         "nextScene": "cmuCutLocation"
     },
-    "indian1": {
+    "an1": {
         "videoFilter": [
             [ "grayscale", null ]
         ],
@@ -793,15 +795,15 @@
                         [ 590, 200 ]
                     ],
                     "targetScene": [
-                        "indian2bad",
-                        "indian2good"
+                        "an2bad",
+                        "an2good"
                     ]
                 }
             }
             ]
         }
     },
-    "indian2good": {
+    "an2good": {
         "stateType": "MovieState",
         "movieSrcHD": "./Videos/Indian2 Good_optimized.mp4",
         "movieSrcSD": "./Videos/Indian2 Good_optimized_lo.mp4",
@@ -811,7 +813,7 @@
         },
         "nextScene": "cmuCutLocation"
     },
-    "indian2bad": {
+    "an2bad": {
         "stateType": "MovieState",
         "movieSrcHD": "./Videos/Indian2 Bad_optimized.mp4",
         "movieSrcSD": "./Videos/Indian2 Bad_optimized_lo.mp4",
@@ -824,10 +826,10 @@
     "ending": {
         "stateType": "MovieState",
         "movieReqs": [
-            ["MK3good", "indian2good", "asian2good"],
-            ["MK3bad", "indian2good", "asian2good"],
-            ["MK3good", "indian2bad", "asian2good"],  
-            ["MK3good", "asian2bad"],                     
+            ["MK3good", "an2good", "li2good"],
+            ["MK3bad", "an2good", "li2good"],
+            ["MK3good", "an2bad", "li2good"],  
+            ["MK3good", "li2bad"],                     
             ["MK3bad"]
         ],
         "movieSrcArr": [
