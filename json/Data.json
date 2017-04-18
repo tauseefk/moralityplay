@@ -988,11 +988,11 @@
     "ending": {
         "stateType": "MovieState",
         "movieReqs": [
-            ["MK3good", "an2good", "li2good"],
-            ["MK3bad", "an2good", "li2good"],
-            ["MK3good", "an2bad", "li2good"],  
-            ["MK3good", "li2bad"],                     
-            ["MK3bad"]
+            ["MK2good", "an2good", "li2good"],
+            ["MK2bad", "an2good", "li2good"],
+            ["MK2good", "an2bad", "li2good"],  
+            ["MK2good", "li2bad"],                     
+            ["MK2bad"]
         ],
         "movieSrcArr": [
             ["./Videos/Ending_4_optimized.mp4", "./Videos/Ending_4_optimized_lo.mp4"],
