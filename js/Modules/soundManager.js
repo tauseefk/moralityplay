@@ -17,8 +17,9 @@ var _soundHashSet = null;
 
 
 var SoundManager = function(game) {
-    if(_instance === null)
-        _instance = this;
+    if(_instance !== null)
+        return _instance;
+    _instance = this;
     _game = game;
     return _instance;
 }

@@ -174,7 +174,11 @@ module.exports = {
     isPausedByGame: function() {
         return _pausedByGame;
     },
-    endFilter: function(targetScene) {
+    endFilter: function(targetScene) {        
+        if(!targetScene) { 
+            this.play(false);
+            _game.global.gameManager.getShowUISignal().dispatch();
+        }
         VideoFilter.endFilter(targetScene);
     },
     clearFilterBg:function() {

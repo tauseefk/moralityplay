@@ -16,8 +16,10 @@ var _instance = null;
 var _game = null;
 
 var GameManager = function() {
-    if(_instance === null)
-        _instance = this;
+    if(_instance !== null)
+        return _instance;
+    
+    _instance = this;
 
     this._changeSceneSignal = null;
 

@@ -1,7 +1,8 @@
 //Dependency: None
 const ConnectionChecker = require('../Modules/connectionChecker'), 
     GameManager = require('../Modules/gameManager'),
-    SoundManager = require('../Modules/soundManager');
+    SoundManager = require('../Modules/soundManager'),
+    DatabaseManager = require('../Modules/databaseManager');
 
 var _instance = null
 var _game = null;
@@ -51,6 +52,7 @@ function CreateGlobalVars() {
     _game.global.gameManager.initSignals();
     _game.global.soundManager = new SoundManager(_game);
     _game.global.soundManager.init();
+    _game.global.databaseManager = new DatabaseManager(_game);
 }
 
 function InitGameGroups() {

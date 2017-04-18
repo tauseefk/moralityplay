@@ -306,7 +306,11 @@ module.exports = {
     isPausedByGame: function() {
         return _pausedByGame;
     },
-    endFilter: function(targetScene) {
+    endFilter: function(targetScene) {        
+        if(!targetScene) { 
+            this.play(false);
+            _game.global.gameManager.getShowUISignal().dispatch();
+        }
         VideoFilter.endFilter(targetScene);
     },
     clearFilterBg:function() {
@@ -710,7 +714,7 @@ Text.prototype.changeToThoughts = function(game, xTo, yTo, filter) {
     Animation.fade(game, this._text, 1, true);
 }
 
-Text.prototype.changeToMeaningfulChoices = function(game, targetScene, endInteractionSignal, boundsY, totalChoices) {
+Text.prototype.changeToMeaningfulChoices = function(game, boundsY, totalChoices) {
     /*
     if(totalChoices > 2)
         this._text.fontSize -= 5;
@@ -732,7 +736,7 @@ Text.prototype.changeToMeaningfulChoices = function(game, targetScene, endIntera
     //Animation.fade(game, this._text, 1, true);
 }
 
-Text.prototype.changeToMeaninglessChoices = function(game, endInteractionSignal, boundsY, totalChoices) {
+Text.prototype.changeToMeaninglessChoices = function(game, boundsY, totalChoices) {
     /*
     if(totalChoices > 2)
         this._text.fontSize -= 5;
@@ -1160,6 +1164,7 @@ var ImageTypeEnum = {
         ThoughtSprite: 'IMAGE_SPRITE_THOUGHT',
         SceneChange: 'IMAGE_BUTTON_SCENECHANGE',
         DisplayImage: 'IMAGE_BUTTON_DISPLAY_IMAGE',
+        InfoImage: 'IMAGE_INFO',
         Thought: 'IMAGE_BUTTON_THOUGHT',
         Transition: 'IMAGE_TRANSITION',
         Background: 'IMAGE_BACKGROUND',
@@ -1195,6 +1200,7 @@ Image.prototype.addImageToGame = function(game, group) {
             break;
         case ImageTypeEnum.Static:
         case ImageTypeEnum.Background:
+        case ImageTypeEnum.InfoImage:
             this._image = game.add.image(this._xPos, this._yPos, this._key);
             break;
         case ImageTypeEnum.ThoughtSprite:
@@ -1224,8 +1230,11 @@ Image.prototype.changeImage = function (game, arg1, arg2, arg3, arg4, arg5) {
         case ImageTypeEnum.DisplayImage:
             this.changeToDisplayImage(game, arg1);
             break;
+        case ImageTypeEnum.InfoImage:
+            this.changeToInfoImage(game, arg1);
+            break;
         case ImageTypeEnum.ChoiceBackground:
-            this.changeToChoiceBackgroundImage(game, arg1, arg2, arg3, arg4);
+            this.changeToChoiceBackgroundImage(game, arg1, arg2, arg3, arg4, arg5);
             break;
         case ImageTypeEnum.ExternalLink:
             this.changeToExternalLinkImage(game, arg1);
@@ -1311,13 +1320,17 @@ Image.prototype.changeToDisplayImage = function(game, target) {
  //   this._link.addSound('testSound');
 }
 
-Image.prototype.changeToChoiceBackgroundImage = function(game, width, height, target, phaserText) {
+Image.prototype.changeToInfoImage = function(game, target) {
+
+}
+
+Image.prototype.changeToChoiceBackgroundImage = function(game, width, height, target, phaserText, tag) {
     this._image.alpha = 0;
     this._image.anchor.set(0.5, 0.5);
     this._image.width = width;
     this._image.height = height;
 
-    this._link = new Linkable(game, this._image, game.global.gameManager.getEndInteractionSignal(), this, target);
+    this._link = new Linkable(game, this._image, game.global.gameManager.getEndInteractionSignal(), this, target, tag);
     this._link.setAsButton(true);        
     this._link.addMouseOverScaleEffect(game, this._image);
     this._link.addMouseOverScaleEffect(game, phaserText);
@@ -1461,10 +1474,10 @@ const questionTextKeyEnum = 'TEXT_QUESTION';
 
 const FADE_DELAY = 1;
 
-function CreateBg(x, y, width, height, phaserText, target) {
+function CreateBg(x, y, width, height, phaserText, target, tag) {
     var choiceBg = new Image(x, y, 'choiceBg', choiceBgKeyEnum);
     choiceBg.addImageToGame(_game, _game.mediaGroup);
-    choiceBg.changeImage(_game, width, height, target, phaserText);
+    choiceBg.changeImage(_game, width, height, target, phaserText, tag);
     return choiceBg;
 }
 
@@ -1491,11 +1504,11 @@ function CreateMeaningfulChoices(info) {
         _text[i].index = i;
         _text[i].addToGame(_game, _game.mediaGroup);
 
-        var bgImg = CreateBg(GetXPos(info.size, i), info.y[i], info.bounds[i][0], info.bounds[i][1], _text[i].getPhaserText(), info.targetScene[i]);
+        var bgImg = CreateBg(GetXPos(info.size, i), info.y[i], info.bounds[i][0], info.bounds[i][1], _text[i].getPhaserText(), info.targetScene[i], info.tag[i]);
         bgImg.index = i;
         _choiceBg.push(bgImg);
 
-        _text[i].changeText(_game, info.targetScene[i], _game.global.gameManager.getEndInteractionSignal(), bgImg.getPhaserImage().y, info.size);
+        _text[i].changeText(_game, bgImg.getPhaserImage().y, info.size);
     };
 }
 
@@ -1512,7 +1525,7 @@ function CreateMeaninglessChoices(info) {
         bgImg.index = i;
         _choiceBg.push(bgImg);
 
-        _text[i].changeText(_game, _game.global.gameManager.getEndInteractionSignal(), bgImg.getPhaserImage().y, info.size);
+        _text[i].changeText(_game, bgImg.getPhaserImage().y, info.size);
     }
 }
 
@@ -1850,7 +1863,7 @@ module.exports = {
     init: function() {
         console.log("Initializing StateManager");
         if(_stateManagerInstance !== null)
-            return _instance;
+            return _stateManagerInstance;
         _stateManagerInstance = this.game.state;
         _game = this.game;
         Group.init(_game);
@@ -1922,14 +1935,11 @@ function CreateThought() {
     _momentCount++;
 }
 
-function EndInteraction(lingeringChoice, targetScene) {
+function EndInteraction(lingeringChoice, targetScene, tag) {    
+    _game.global.databaseManager.sendInteractionData(_game.global.currentSceneName, tag);
     Icons.endInteraction();
     Choices.endInteraction(lingeringChoice, targetScene);
     Thoughts.endInteraction();
-    if(!targetScene) {        
-        Video.play(false);
-        _instance.game.global.gameManager.getShowUISignal().dispatch();
-    }
     Video.endFilter(targetScene);
 }
 
@@ -1961,8 +1971,6 @@ module.exports = {
         _instance = this;
         return _instance;
     },
-    preload: function() {
-    },
     create: function() {
         Group.initializeGroups();
         if(_stateInfo.getBgImageKey())
@@ -1978,8 +1986,8 @@ module.exports = {
     createThought: function() {
         CreateThought();
     },
-    endInteraction: function(lingeringChoice, targetScene) {
-        EndInteraction(lingeringChoice, targetScene);
+    endInteraction: function(lingeringChoice, targetScene, tag) {
+        EndInteraction(lingeringChoice, targetScene, tag);
     }
 }
 
@@ -2405,7 +2413,8 @@ module.exports = {
 //Dependency: None
 const ConnectionChecker = __webpack_require__(16), 
     GameManager = __webpack_require__(23),
-    SoundManager = __webpack_require__(25);
+    SoundManager = __webpack_require__(25),
+    DatabaseManager = __webpack_require__(32);
 
 var _instance = null
 var _game = null;
@@ -2455,6 +2464,7 @@ function CreateGlobalVars() {
     _game.global.gameManager.initSignals();
     _game.global.soundManager = new SoundManager(_game);
     _game.global.soundManager.init();
+    _game.global.databaseManager = new DatabaseManager(_game);
 }
 
 function InitGameGroups() {
@@ -2578,8 +2588,10 @@ var _instance = null;
 var _game = null;
 
 var GameManager = function() {
-    if(_instance === null)
-        _instance = this;
+    if(_instance !== null)
+        return _instance;
+    
+    _instance = this;
 
     this._changeSceneSignal = null;
 
@@ -2784,8 +2796,9 @@ var _soundHashSet = null;
 
 
 var SoundManager = function(game) {
-    if(_instance === null)
-        _instance = this;
+    if(_instance !== null)
+        return _instance;
+    _instance = this;
     _game = game;
     return _instance;
 }
@@ -3242,6 +3255,29 @@ SceneParser.GetIndexOfVisitedAll = function(game, sceneArr) {
 
 module.exports = SceneParser;
 
+
+/***/ }),
+/* 32 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _instance = null;
+var _game = null;
+
+var DatabaseManager = function() {
+    if(_instance !== null)
+        return _instance;
+    _instance = this;
+    return _instance;
+}
+
+DatabaseManager.prototype.sendInteractionData = function(currentSceneName, tag) {
+    console.log("Stub sending to database: " + currentSceneName + " " + tag);
+}
+
+module.exports = DatabaseManager;
 
 /***/ })
 /******/ ]);

@@ -39,14 +39,11 @@ function CreateThought() {
     _momentCount++;
 }
 
-function EndInteraction(lingeringChoice, targetScene) {
+function EndInteraction(lingeringChoice, targetScene, tag) {    
+    _game.global.databaseManager.sendInteractionData(_game.global.currentSceneName, tag);
     Icons.endInteraction();
     Choices.endInteraction(lingeringChoice, targetScene);
     Thoughts.endInteraction();
-    if(!targetScene) {        
-        Video.play(false);
-        _instance.game.global.gameManager.getShowUISignal().dispatch();
-    }
     Video.endFilter(targetScene);
 }
 
@@ -78,8 +75,6 @@ module.exports = {
         _instance = this;
         return _instance;
     },
-    preload: function() {
-    },
     create: function() {
         Group.initializeGroups();
         if(_stateInfo.getBgImageKey())
@@ -95,7 +90,7 @@ module.exports = {
     createThought: function() {
         CreateThought();
     },
-    endInteraction: function(lingeringChoice, targetScene) {
-        EndInteraction(lingeringChoice, targetScene);
+    endInteraction: function(lingeringChoice, targetScene, tag) {
+        EndInteraction(lingeringChoice, targetScene, tag);
     }
 }

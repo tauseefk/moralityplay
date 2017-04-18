@@ -20,10 +20,10 @@ const questionTextKeyEnum = 'TEXT_QUESTION';
 
 const FADE_DELAY = 1;
 
-function CreateBg(x, y, width, height, phaserText, target) {
+function CreateBg(x, y, width, height, phaserText, target, tag) {
     var choiceBg = new Image(x, y, 'choiceBg', choiceBgKeyEnum);
     choiceBg.addImageToGame(_game, _game.mediaGroup);
-    choiceBg.changeImage(_game, width, height, target, phaserText);
+    choiceBg.changeImage(_game, width, height, target, phaserText, tag);
     return choiceBg;
 }
 
@@ -50,11 +50,11 @@ function CreateMeaningfulChoices(info) {
         _text[i].index = i;
         _text[i].addToGame(_game, _game.mediaGroup);
 
-        var bgImg = CreateBg(GetXPos(info.size, i), info.y[i], info.bounds[i][0], info.bounds[i][1], _text[i].getPhaserText(), info.targetScene[i]);
+        var bgImg = CreateBg(GetXPos(info.size, i), info.y[i], info.bounds[i][0], info.bounds[i][1], _text[i].getPhaserText(), info.targetScene[i], info.tag[i]);
         bgImg.index = i;
         _choiceBg.push(bgImg);
 
-        _text[i].changeText(_game, info.targetScene[i], _game.global.gameManager.getEndInteractionSignal(), bgImg.getPhaserImage().y, info.size);
+        _text[i].changeText(_game, bgImg.getPhaserImage().y, info.size);
     };
 }
 
@@ -71,7 +71,7 @@ function CreateMeaninglessChoices(info) {
         bgImg.index = i;
         _choiceBg.push(bgImg);
 
-        _text[i].changeText(_game, _game.global.gameManager.getEndInteractionSignal(), bgImg.getPhaserImage().y, info.size);
+        _text[i].changeText(_game, bgImg.getPhaserImage().y, info.size);
     }
 }
 
