@@ -995,11 +995,11 @@
             ["MK3bad"]
         ],
         "movieSrcArr": [
-            ["./Videos/An2_bad_optimized.mp4", "./Videos/An2_bad_optimized_lo.mp4"],
-            ["./Videos/An2_bad_optimized.mp4", "./Videos/An2_bad_optimized_lo.mp4"],
-            ["./Videos/An2_bad_optimized.mp4", "./Videos/An2_bad_optimized_lo.mp4"],
-            ["./Videos/An2_bad_optimized.mp4", "./Videos/An2_bad_optimized_lo.mp4"],
-            ["./Videos/An2_bad_optimized.mp4", "./Videos/An2_bad_optimized_lo.mp4"]
+            ["./Videos/Ending_4_optimized.mp4", "./Videos/Ending_4_optimized_lo.mp4"],
+            ["./Videos/Ending_5_optimized.mp4", "./Videos/Ending_5_optimized_lo.mp4"],
+            ["./Videos/Ending_3_optimized.mp4", "./Videos/Ending_3_optimized_lo.mp4"],
+            ["./Videos/Ending_2_optimized.mp4", "./Videos/Ending_2_optimized_lo.mp4"],
+            ["./Videos/Ending_1_optimized.mp4", "./Videos/Ending_1_optimized_lo.mp4"]
         ],
         "transition": {
             "fadeIn": true,
