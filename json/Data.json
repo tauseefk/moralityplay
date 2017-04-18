@@ -20,6 +20,7 @@
     "arrowS2middle": "./Images/UI/scene2_arrow_middle.png",
     "arrowS3middle": "./Images/UI/scene3_arrow_middle.png",
 
+    "endButton": "./Images/UI/end.png",
     "pauseButton": "./Images/UI/pause.png",
     "playButton": "./Images/UI/start.png",
     "startButton": "./Images/UI/play.png",
@@ -169,14 +170,14 @@
                 "arrowMainright",
                 "arrowMainmiddle",
                 "arrowMainleft",
-                "arrowMainleft"
+                "endButton"
 
             ],
             "coords": [
                 [1150, 600],
                 [650, 600],
                 [150, 600],
-                [600, 360]
+                [640, 360]
             ],
 
             "targetImageIndexOrScene": [
