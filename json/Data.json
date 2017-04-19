@@ -196,9 +196,8 @@
             ]            
 
         }
-
-
     },
+
 
     "cmuCohonLocation": {
         "stateType": "LocationState",
@@ -408,6 +407,7 @@
         }
     },
 
+
     "cmuHuntLocation": {
         "stateType": "LocationState",
         "draggable": false,
@@ -470,7 +470,8 @@
                 "li1"
             ]
         }
-    },    
+    },   
+
     "cmuHuntInsideLocation": {
         "stateType": "LocationState",
         "draggable": false,
@@ -987,6 +988,333 @@
         },
         "nextScene": "cmuCutLocation"
     },
+
+
+    "ending1": {
+        "videoFilter": [
+            [ "grayscale", null ]
+        ],
+        "movieSrcHD": "./Videos/Ending_1_optimized.mp4",
+        "movieSrcSD": "./Videos/Ending_1_optimized_lo.mp4",
+        "stateType": "InteractState",
+        "transition": {
+            "fadeIn": false,
+            "fadeOut": false
+        },
+        "choiceMoments": {
+            "size": 1,
+            "choiceMomentsProperties": [
+            {
+                "timeStamp": 7,
+                "choices": {
+                    "question": "\"Hey! Heading out?\"",
+                    "size": 3,
+                    "content": [
+                        "Yes, I'm done for today",
+                        "I'm on my way out.",
+                        "I was just about to leave."
+                    ],
+                    "y": [
+                        615,
+                        615,
+                        615
+                    ],
+                    "bounds": [
+                        [ 420, 200 ],
+                        [ 420, 200 ],
+                        [ 420, 200 ]
+                    ]
+                }
+            }
+            ]
+        }
+    },
+    "ending2": {
+        "videoFilter": [
+            [ "grayscale", null ]
+        ],
+        "movieSrcHD": "./Videos/Ending_2_optimized.mp4",
+        "movieSrcSD": "./Videos/Ending_2_optimized_lo.mp4",
+        "stateType": "InteractState",
+        "transition": {
+            "fadeIn": false,
+            "fadeOut": false
+        },
+        "choiceMoments": {
+            "size": 2,
+            "choiceMomentsProperties": [
+            {
+                "timeStamp": 10,
+                "choices": {
+                    "question": "\"Li just stormed off at the end of it.\"",
+                    "size": 2,
+                    "content": [
+                        "I think Li felt a little left out.",
+                        "Why do you think she did that?"
+                    ],
+                    "y": [
+                        615,
+                        615
+                    ],
+                    "bounds": [
+                        [ 650, 200 ],
+                        [ 650, 200 ]
+                    ]
+                }
+            },
+            {
+                "timeStamp": 19,
+                "choices": {
+                    "question": "\"Li just stormed off at the end of it.\"",
+                    "size": 3,
+                    "content": [
+                        "You are right.",
+                        "You can still fix it.",
+                        "I can understand that too."
+                    ],
+                    "y": [
+                        615,
+                        615,
+                        615
+                    ],
+                    "bounds": [
+                        [ 420, 200 ],
+                        [ 420, 200 ],
+                        [ 420, 200 ]
+                    ]
+                }
+            }
+            ]
+        }
+    },
+    "ending3": {
+        "videoFilter": [
+            [ "grayscale", null ]
+        ],
+        "movieSrcHD": "./Videos/Ending_3_optimized.mp4",
+        "movieSrcSD": "./Videos/Ending_3_optimized_lo.mp4",
+        "stateType": "InteractState",
+        "transition": {
+            "fadeIn": false,
+            "fadeOut": false
+        },
+        "choiceMoments": {
+            "size": 3,
+            "choiceMomentsProperties": [
+            {
+                "timeStamp": 3,
+                "choices": {
+                    "question": "\"Hey! Done for today?\"",
+                    "size": 3,
+                    "content": [
+                        "Yes.",
+                        "It's been a long day.",
+                        "I'm ready to call it a day."
+                    ],
+                    "y": [
+                        615,
+                        615,
+                        615
+                    ],
+                    "bounds": [
+                        [ 420, 200 ],
+                        [ 420, 200 ],
+                        [ 420, 200 ]
+                    ]
+                }
+            },
+            {
+                "timeStamp": 7,
+                "choices": {
+                    "question": "\"Did you sign up for the bake sale?\"",
+                    "size": 3,
+                    "content": [
+                        "Yes. Why?",
+                        "No, I am not into it.",
+                        "Yes, it sounds fun."
+                    ],
+                    "y": [
+                        615,
+                        615,
+                        615
+                    ],
+                    "bounds": [
+                        [ 420, 200 ],
+                        [ 420, 200 ],
+                        [ 420, 200 ]
+                    ]
+                }
+            }, 
+            {
+                "timeStamp": 18,
+                "choices": {
+                    "question": "\"See you tomorrow!\"",
+                    "size": 3,
+                    "content": [
+                        "See you!",
+                        "Bye.",
+                        "Have a good evening!"
+                    ],
+                    "y": [
+                        615,
+                        615,
+                        615
+                    ],
+                    "bounds": [
+                        [ 420, 200 ],
+                        [ 420, 200 ],
+                        [ 420, 200 ]
+                    ]
+                }
+            }                       
+            ]
+        }
+    },
+    "ending4": {
+        "videoFilter": [
+            [ "grayscale", null ]
+        ],
+        "movieSrcHD": "./Videos/Ending_4_optimized.mp4",
+        "movieSrcSD": "./Videos/Ending_4_optimized_lo.mp4",
+        "stateType": "InteractState",
+        "transition": {
+            "fadeIn": false,
+            "fadeOut": false
+        },
+        "choiceMoments": {
+            "size": 3,
+            "choiceMomentsProperties": [
+            {
+                "timeStamp": 7,
+                "choices": {
+                    "question": "\"Hey! Heading home?\"",
+                    "size": 3,
+                    "content": [
+                        "Yes, I'm done for today",
+                        "I'm on my way out.",
+                        "I was just about to leave."
+                    ],
+                    "y": [
+                        615,
+                        615,
+                        615
+                    ],
+                    "bounds": [
+                        [ 420, 200 ],
+                        [ 420, 200 ],
+                        [ 420, 200 ]
+                    ]
+                }
+            },
+            {
+                "timeStamp": 11,
+                "choices": {
+                    "question": "\"I just wanted to say thank you again.\"",
+                    "size": 2,
+                    "content": [
+                        "For what?",
+                        "I had to say something."
+                    ],
+                    "y": [
+                        615,
+                        615
+                    ],
+                    "bounds": [
+                        [ 650, 200 ],
+                        [ 650, 200 ]
+                    ]
+                }
+            },
+            {
+                "timeStamp": 27,
+                "choices": {
+                    "question": "\"See you tomorrow!\"",
+                    "size": 3,
+                    "content": [
+                        "See you!",
+                        "Bye.",
+                        "Have a good evening!"
+                    ],
+                    "y": [
+                        615,
+                        615,
+                        615
+                    ],
+                    "bounds": [
+                        [ 420, 200 ],
+                        [ 420, 200 ],
+                        [ 420, 200 ]
+                    ]
+                }
+            }
+
+            ]
+        }
+    },
+    "ending5": {
+        "videoFilter": [
+            [ "grayscale", null ]
+        ],
+        "movieSrcHD": "./Videos/Ending_5_optimized.mp4",
+        "movieSrcSD": "./Videos/Ending_5_optimized_lo.mp4",
+        "stateType": "InteractState",
+        "transition": {
+            "fadeIn": false,
+            "fadeOut": false
+        },
+        "choiceMoments": {
+            "size": 2,
+            "choiceMomentsProperties": [
+            {
+                "timeStamp": 8,
+                "choices": {
+                    "question": "\"It's kind of a long day.\"",
+                    "size": 3,
+                    "content": [
+                        "Yes.",
+                        "It's been a long day.",
+                        "I'm ready to call it a day."
+                    ],
+                    "y": [
+                        615,
+                        615,
+                        615
+                    ],
+                    "bounds": [
+                        [ 420, 200 ],
+                        [ 420, 200 ],
+                        [ 420, 200 ]
+                    ]
+                }
+            },
+            {
+                "timeStamp": 17,
+                "choices": {
+                    "question": "\"Michael was upset, right?\"",
+                    "size": 3,
+                    "content": [
+                        "Why?",
+                        "I think he was.",
+                        "I don't know."
+                    ],
+                    "y": [
+                        615,
+                        615,
+                        615
+                    ],
+                    "bounds": [
+                        [ 420, 200 ],
+                        [ 420, 200 ],
+                        [ 420, 200 ]
+                    ]
+                }
+            }            
+            ]
+        }
+    },
+
+
+
     "ending": {
         "stateType": "MovieState",
         "movieReqs": [
@@ -1009,6 +1337,8 @@
         },
         "nextScene": "postEndingMenu"
     },
+
+
     "postEndingMenu": {
         "stateType": "MenuState",
         "draggable": false,
