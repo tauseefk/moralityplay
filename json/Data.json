@@ -11,6 +11,9 @@
 
     "background": "./Images/Splash/bg.jpg",
     "mainTitle": "./Images/UI/Title.png",
+    "endBG":"./Images/UI/end_screen_bg.jpg",
+    "endLearnMore":"learnmore.png",
+
 
     "arrowBackward": "./Images/UI/arrow_backward.png",
     "arrowMainleft": "./Images/UI/main_arrow_left.png",
@@ -184,7 +187,7 @@
                 "cmuGatesLocation",
                 "cmuHuntLocation",
                 "cmuCohonLocation",
-                "ending"
+                "endingSceneSwitch"
             ],
             "unlockedByScenes": [
                 null,
@@ -632,7 +635,7 @@
                         "question": "Choose what to say:",
                         "size": 3,
                         "content": [
-                            "Li's roll still seems \npretty small.",
+                            "Li's role still seems \npretty small.",
                             "Li, how do you \nfeel about this?",
                             "Li, it's just one presentation.\nNext time you can do more."
                         ],
@@ -820,8 +823,8 @@
                             "I am not sure \nwhat to say."
                         ],
                         "tag": [
-                            "positive",
                             "negative",
+                            "positive",
                             "negative"
                         ],
                         "y": [
@@ -837,7 +840,7 @@
                         "targetScene": [
                             "MK2bad",
                             "MK2good",
-                            "MK2good"
+                            "MK2bad"
                         ]
                     }                  
                 }
@@ -1027,7 +1030,8 @@
                 }
             }
             ]
-        }
+        },
+        "nextScene": "postEndingMenu"        
     },
     "ending2": {
         "videoFilter": [
@@ -1085,7 +1089,8 @@
                 }
             }
             ]
-        }
+        },
+        "nextScene": "postEndingMenu"        
     },
     "ending3": {
         "videoFilter": [
@@ -1168,7 +1173,8 @@
                 }
             }                       
             ]
-        }
+        },
+        "nextScene": "postEndingMenu"        
     },
     "ending4": {
         "videoFilter": [
@@ -1249,7 +1255,8 @@
             }
 
             ]
-        }
+        },
+        "nextScene": "postEndingMenu"        
     },
     "ending5": {
         "videoFilter": [
@@ -1310,7 +1317,8 @@
                 }
             }            
             ]
-        }
+        },
+        "nextScene": "postEndingMenu"       
     },
 
 
@@ -1354,8 +1362,8 @@
                 "IMAGE_BUTTON_EXTERNAL_LINK"
             ],
             "key": [
-                "mainTitle",
-                "startButton"
+                "endBG",
+                "endLearnMore"
             ],
             "coords": [
                 [ 640, 250 ],
@@ -1363,7 +1371,7 @@
             ],
             "targetImageIndexOrScene": [
                 null,
-                "http://www.google.com"
+                "http://www.cmu.edu/diversity/"
             ]
         }
     },
@@ -1377,11 +1385,11 @@
             ["MK2bad"]
         ],
         "sceneTargetNames": [
-            "postEndingMenu",
-            "postEndingMenu",
-            "postEndingMenu",
-            "postEndingMenu",
-            "postEndingMenu"
+            "ending4",
+            "ending5",
+            "ending3",
+            "ending2",
+            "ending1"
         ]
     }
 }
