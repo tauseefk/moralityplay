@@ -12,7 +12,7 @@
     "background": "./Images/Splash/bg.jpg",
     "mainTitle": "./Images/UI/Title.png",
     "endBG":"./Images/UI/end_screen_bg.jpg",
-    "endLearnMore":"learnmore.png",
+    "endLearnMore":"./Images/UI/learnmore.png",
 
 
     "arrowBackward": "./Images/UI/arrow_backward.png",
@@ -50,7 +50,7 @@
     "sub1": "./Videos/Subtitles/test.srt"
 },
 "scenes": {
-    "startScene":{
+    "startScene1":{
         "stateType": "MovieState",
         "movieSrcHD": "./Videos/Opening.mp4",
         "movieSrcSD": "./Videos/Opening_lo.mp4",
@@ -673,7 +673,7 @@
             "fadeIn": false,
             "fadeOut": false
         },
-        "nextScene": "cmuCutLocation"
+        "nextScene": "cmuHuntLocation"
     },
     "li2bad": {
         "stateType": "MovieState",
@@ -683,7 +683,7 @@
             "fadeIn": false,
             "fadeOut": false
         },
-        "nextScene": "cmuCutLocation"
+        "nextScene": "cmuHuntLocation"
     },
 
     "MK1": {
@@ -856,7 +856,7 @@
             "fadeIn": false,
             "fadeOut": false
         },
-        "nextScene": "cmuCutLocation"
+        "nextScene": "cmuGatesLocation"
     },
     "MK2good": {
         "stateType": "MovieState",
@@ -866,7 +866,7 @@
             "fadeIn": false,
             "fadeOut": false
         },
-        "nextScene": "cmuCutLocation"
+        "nextScene": "cmuGatesLocation"
     },
 
     "an1": {
@@ -979,7 +979,7 @@
             "fadeIn": false,
             "fadeOut": false
         },
-        "nextScene": "cmuCutLocation"
+        "nextScene": "cmuCohonLocation"
     },
     "an2bad": {
         "stateType": "MovieState",
@@ -989,7 +989,7 @@
             "fadeIn": false,
             "fadeOut": false
         },
-        "nextScene": "cmuCutLocation"
+        "nextScene": "cmuCohonLocation"
     },
 
 
@@ -1350,7 +1350,7 @@
     "postEndingMenu": {
         "stateType": "MenuState",
         "draggable": false,
-        "bgImageKey": "background",
+        "bgImageKey": "endBG",
         "transition": {
             "fadeIn": true,
             "fadeOut": true
@@ -1367,7 +1367,7 @@
             ],
             "coords": [
                 [ 640, 250 ],
-                [ 640, 560 ]
+                [ 1000, 600 ]
             ],
             "targetImageIndexOrScene": [
                 null,
