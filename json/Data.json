@@ -50,7 +50,7 @@
     "sub1": "./Videos/Subtitles/test.srt"
 },
 "scenes": {
-    "startScene1":{
+    "startScene":{
         "stateType": "MovieState",
         "movieSrcHD": "./Videos/Opening.mp4",
         "movieSrcSD": "./Videos/Opening_lo.mp4",
