@@ -104,7 +104,7 @@
             "size": 2,
             "choiceMomentsProperties": [
             {
-                "timeStamp": 6,
+                "timeStamp": 5,
                 "choices": {
                     "question": "\"How's it going?\"",
                     "size": 2,
@@ -123,7 +123,7 @@
                 }
             },
             {
-                "timeStamp": 15,
+                "timeStamp": 14,
                 "choices": {
                     "question": "\"We are meeting later, right?\"",
                     "size": 3,
