@@ -95,7 +95,7 @@ function TriggerMoment() {
 function VideoZoom() {
     Linkable.zoomIn(_game, _video, 1.5);
 }
-
+/*
 function checkVideoDuration(time) {
     _video.video.addEventListener("timeupdate", function trigger() {        
         if(_video.video.currentTime >= time){
@@ -105,6 +105,18 @@ function checkVideoDuration(time) {
         }
     }, false);
 }
+*/
+
+function checkVideoDuration(time) {
+    var interval = setInterval(function() {
+        if(_video.video.currentTime >= time) {
+            clearInterval(interval);
+            TriggerMoment();
+            AddInteractionEvents();
+        }
+    },100);
+}
+
 
 function FadeOut(signal) {
     _game.global.gameManager.getFadeOutTransitionSignal().dispatch();
