@@ -1001,12 +1001,39 @@
         }
     },
     "an2good": {
-        "stateType": "MovieState",
+        "videoFilter": [
+            [ "grayscale", null ]
+        ],
         "movieSrcHD": "./Videos/An2_good_optimized.mp4",
         "movieSrcSD": "./Videos/An2_good_optimized_lo.mp4",
+        "stateType": "InteractState",
         "transition": {
-            "fadeIn": false,
+            "fadeIn": true,
             "fadeOut": false
+        },
+        "choiceMoments": {
+            "size": 1,
+            "choiceMomentsProperties": [
+            {
+                "timeStamp": 53,
+                "choices":  {
+                    "question": "\"I don't think it is for you\"",
+                    "size": 2,
+                    "content": [
+                        "Is it for someone special?",
+                        "Why is it not for her?"
+                    ],
+                    "y": [
+                        615,
+                        615
+                    ],
+                    "bounds": [
+                        [ 650, 200 ],
+                        [ 650, 200 ]
+                    ]
+                }
+            }
+            ]
         },
         "nextScene": "cmuCohonIndoorLocation"
     },
