@@ -659,38 +659,37 @@
                         ]
                     }
 
+                    ]
+                },
+                "choices": {
+                    "question": "Choose what to say:",
+                    "size": 3,
+                    "content": [
+                        "Li's role still seems \npretty small.",
+                        "Li, how do you \nfeel about this?",
+                        "Li, it's just one presentation.\nNext time you can do more."
                     ],
-                    "choices": 
-                    {
-                        "question": "Choose what to say:",
-                        "size": 3,
-                        "content": [
-                            "Li's role still seems \npretty small.",
-                            "Li, how do you \nfeel about this?",
-                            "Li, it's just one presentation.\nNext time you can do more."
-                        ],
-                        "tag": [
-                            "positive",
-                            "negative",
-                            "negative"
-                        ],
-                        "y": [
-                            615,
-                            615,
-                            615
-                        ],
-                        "bounds": [
-                            [ 420, 200 ],
-                            [ 420, 200 ],
-                            [ 420, 200 ]                          
-                        ],
-                        "targetScene": [
-                            "li2good",
-                            "li2bad",
-                            "li2bad"
-                        ]
-                    }
-                }   
+                    "tag": [
+                        "positive",
+                        "negative",
+                        "negative"
+                    ],
+                    "y": [
+                        615,
+                        615,
+                        615
+                    ],
+                    "bounds": [
+                        [ 420, 200 ],
+                        [ 420, 200 ],
+                        [ 420, 200 ]                          
+                    ],
+                    "targetScene": [
+                        "li2good",
+                        "li2bad",
+                        "li2bad"
+                    ]
+                }
             }
             ]
         }
@@ -842,37 +841,37 @@
                             [ 1000, 50 ]
                         ]
                     }
+                    ]
+                },
+                "choices": 
+                {
+                    "question": "\"You know I am just trying to help\".",
+                    "size": 3,
+                    "content": [
+                        "Michael, don't overthink it.\nShe means well.",
+                        "Why do you think \nthat would help?",
+                        "I am not sure \nwhat to say."
                     ],
-                    "choices": 
-                    {
-                        "question": "\"You know I am just trying to help\".",
-                        "size": 3,
-                        "content": [
-                            "Michael, don't overthink it.\nShe means well.",
-                            "Why do you think \nthat would help?",
-                            "I am not sure \nwhat to say."
-                        ],
-                        "tag": [
-                            "negative",
-                            "positive",
-                            "negative"
-                        ],
-                        "y": [
-                            615,
-                            615,
-                            615
-                        ],
-                        "bounds": [
-                            [ 420, 200 ],
-                            [ 420, 200 ],
-                            [ 420, 200 ]
-                        ],
-                        "targetScene": [
-                            "MK2bad",
-                            "MK2good",
-                            "MK2bad"
-                        ]
-                    }                  
+                    "tag": [
+                        "negative",
+                        "positive",
+                        "negative"
+                    ],
+                    "y": [
+                        615,
+                        615,
+                        615
+                    ],
+                    "bounds": [
+                        [ 420, 200 ],
+                        [ 420, 200 ],
+                        [ 420, 200 ]
+                    ],
+                    "targetScene": [
+                        "MK2bad",
+                        "MK2good",
+                        "MK2bad"
+                    ]
                 }
             }
             ]
@@ -966,37 +965,37 @@
                             [ 1000, 100 ]
                         ]
                     }
-                    ],                
-                        "choices":  {
-                            "question": "Choose what to say:",
-                            "size": 3,
-                            "content": [
-                                "I think she was just \ntrying to show interest.",
-                                "Why would you assume \nshe is not from here?",
-                                "I better stay out of this."
-                            ],
-                            "tag": [
-                                "negative",
-                                "positive",
-                                "negative"
-                            ],
-                            "y": [
-                                615,
-                                615,
-                                615
-                            ],
-                            "bounds": [
-                                [ 420, 200 ],
-                                [ 420, 200 ],
-                                [ 420, 200 ]
-                            ],
-                            "targetScene": [
-                                "an2bad",
-                                "an2good",
-                                "an2bad"
-                            ]
-                        }
-                    }
+                    ]
+                },
+                "choices":  {
+                    "question": "Choose what to say:",
+                    "size": 3,
+                    "content": [
+                        "I think she was just \ntrying to show interest.",
+                        "Why would you assume \nshe is not from here?",
+                        "I better stay out of this."
+                    ],
+                    "tag": [
+                        "negative",
+                        "positive",
+                        "negative"
+                    ],
+                    "y": [
+                        615,
+                        615,
+                        615
+                    ],
+                    "bounds": [
+                        [ 420, 200 ],
+                        [ 420, 200 ],
+                        [ 420, 200 ]
+                    ],
+                    "targetScene": [
+                        "an2bad",
+                        "an2good",
+                        "an2bad"
+                    ]
+                }
             }
             ]
         }
