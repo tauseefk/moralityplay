@@ -23,7 +23,6 @@ function CreateThought() {
 
     if(thoughtBubbles) {
         for(var i=0; i<thoughtBubbles.size; i++) {
-            console.log("Thought bubble: ");
             Icons.createThoughtIcon(thoughtBubbles.thoughtIconKey[i], thoughtBubbles.coords[i], thoughtBubbles.thoughts[i]);
         }
 
@@ -77,6 +76,7 @@ module.exports = {
     },
     create: function() {
         Group.initializeGroups();
+        _game.global.soundManager.stopBackgroundMusic();
         if(_stateInfo.getBgImageKey())
             MovingBackground.create(_stateInfo.getBgImageKey(), _stateInfo.getDraggable());
         _momentCount = 0;

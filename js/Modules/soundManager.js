@@ -13,7 +13,9 @@ const StateManager = require('../States/StateManager'),
 var _instance = null;
 var _game = null;
 var _bgMusic = null;
+var _bgMusicKey = null;
 var _soundHashSet = null;
+var _currTime = 0;
 
 
 var SoundManager = function(game) {
@@ -36,18 +38,32 @@ SoundManager.prototype.playSound = function(soundKey) {
 }
 
 SoundManager.prototype.playBackgroundMusic = function(musicKey) {
-    if(_bgMusic)
-        _bgMusic.stop();
-    if(!_soundHashSet[musicKey]) 
-        _soundHashSet[musicKey] = _game.add.audio(musicKey);
-    _bgMusic =_soundHashSet[musicKey];
-    _bgMusic.loop = true;
-    _bgMusic.play();
-}
+  //  if(_bgMusicKey == musicKey) {
+   //     _bgMusic = _game.add.audio(musicKey);
+  //      _bgMusic.currentTime = _currTime;
+ //   }
+    //else {
+    if(_bgMusicKey != musicKey) {
+        if(_bgMusic)
+            _bgMusic.stop();
+        if(!_soundHashSet[musicKey]) 
+            _soundHashSet[musicKey] = _game.add.audio(musicKey);
+        _bgMusic =_soundHashSet[musicKey];
+        _bgMusicKey = musicKey;
+        _bgMusic.loop = true;
+        _bgMusic.play(); 
+
+    }
+}    
 
 SoundManager.prototype.stopBackgroundMusic = function() {
     if(_bgMusic)
         _bgMusic.stop();
 }
+
+SoundManager.prototype.setCurrentTime = function(time) {
+    _currTime = time;
+}
+
 
 module.exports = SoundManager;

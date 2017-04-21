@@ -43,8 +43,11 @@ Animation.fade = function(game, object, value, autoStart, speed, repeat, destroy
     return tween;
 }
 
-Animation.bob = function(game, object, autoStart) {
-    var tween = game.add.tween(object).to({y:'-1'}, 200, Phaser.Easing.Quadratic.InOut, autoStart, 0, -1, true);
+Animation.bob = function(game, object, autoStart, value) {
+    if(!value)
+        value = -5;
+    value = value.toString();
+    var tween = game.add.tween(object).to({y:value}, 200, Phaser.Easing.Quadratic.InOut, autoStart, 0, -1, true);
     tween.repeatDelay(700);
     return tween;
 }

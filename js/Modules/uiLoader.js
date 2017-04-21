@@ -2,6 +2,8 @@
 "use strict";
 
 const Image = require('./Image'),
+    Text = require('./Text'),
+    Graphic = require('./Graphics'),
     Video = require('./videoLoader');
 
 var _instance = null;
@@ -12,11 +14,17 @@ var _playImage = null;
 var _toggleSubtitleImage = null;
 var _pausedByEngine = false;
 
+var _overlayGraphic = null;
+var _overlayCloseButton = null;
+var _overlayText = null;
+
 var _uiVisible = true;
 
 const pauseButtonImageKeyEnum = 'IMAGE_BUTTON_PAUSE';
 const playButtonImageKeyEnum = 'IMAGE_BUTTON_PLAY';
 const toggleSubtitleButtonImageKeyEnum = 'IMAGE_BUTTON_TOGGLE_SUBTITLE';
+const closeOverlayImageKeyEnum = 'IMAGE_OVERLAY_CLOSE';
+const infoOverlayTextKeyEnum= 'TEXT_INFO_OVERLAY';
 
 function DrawPauseButton() {
     if(!_pauseImage)
@@ -38,6 +46,29 @@ function DrawPlayButton() {
     _playImage.addImageToGame(_game, _game.uiGroup);
     _playImage.changeImage(_game);
     _playImage.setVisible(false);
+}
+
+function CreateInfoOverlay() {    
+    CreateOverlayGraphic();
+    CreateOverlayCrossButton();
+    CreateOverlayHelperText();
+}
+
+function CreateOverlayGraphic() {
+    _overlayGraphic = new Graphic(0, 0);
+    _overlayGraphic.createOverlayBg(_game, 50);
+}
+
+function CreateOverlayCrossButton() {
+    _overlayCloseButton = new Image(_game.width-50, 50, 'closeButton', closeOverlayImageKeyEnum);
+    _overlayCloseButton.addImageToGame(_game, _game.uiGroup);
+    _overlayCloseButton.changeImage(_game);
+}
+
+function CreateOverlayHelperText() {
+    _overlayText = new Text('Drag the image below to scroll', _game.width/2, 25, infoOverlayTextKeyEnum, _game.global.style.questionTextProperties);
+    _overlayText.addToGame(_game, _game.uiGroup);
+    _overlayText.changeText(_game);
 }
 
 function Pause() {
@@ -134,5 +165,18 @@ module.exports = {
     },
     hideUI: function() {
         HideUI();
+    },
+    createInfoOverlay() {
+        CreateInfoOverlay();
+    },
+    showInfoOverlay() {
+        _overlayGraphic.setVisible(true);
+        _overlayCloseButton.setVisible(true);
+        _overlayText.setVisible(true);
+    },
+    hideInfoOverlay() {
+        _overlayGraphic.setVisible(false);
+        _overlayCloseButton.setVisible(false);        
+        _overlayText.setVisible(false);
     }
 }

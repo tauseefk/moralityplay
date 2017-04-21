@@ -37,9 +37,12 @@ var GameManager = function() {
     this._createThoughtsAndChoicesSignal = null;
 
     this._displayImageSignal = null;
+    this._hideDisplayedImageSignal = null;
 
     this._showUISignal = null;
     this._hideUISignal = null;
+    this._showInfoOverlaySignal = null;
+    this._hideInfoOverlaySignal = null;
     this._pauseSignal = null;
     this._playSignal = null;
     this._toggleSubtitleSignal = null;
@@ -76,11 +79,17 @@ GameManager.prototype.initSignals = function() {
 
     this._displayImageSignal = new Phaser.Signal();
     this._displayImageSignal.add(LocationState.displayImage, this);
+    this._hideDisplayedImageSignal = new Phaser.Signal();
+    this._hideDisplayedImageSignal.add(LocationState.hideDisplayedImage, this);
 
     this._showUISignal = new Phaser.Signal();
     this._showUISignal.add(UI.showUI, this);
     this._hideUISignal = new Phaser.Signal();
     this._hideUISignal.add(UI.hideUI, this);
+    this._showInfoOverlaySignal = new Phaser.Signal();
+    this._showInfoOverlaySignal.add(UI.showInfoOverlay, this);    
+    this._hideInfoOverlaySignal = new Phaser.Signal();
+    this._hideInfoOverlaySignal.add(UI.hideInfoOverlay, this);
     this._pauseSignal = new Phaser.Signal();
     this._pauseSignal.add(UI.pause, this);    
     this._playSignal = new Phaser.Signal();
@@ -139,12 +148,24 @@ GameManager.prototype.getDisplayImageSignal = function() {
     return this._displayImageSignal;
 }
 
+GameManager.prototype.getHideDisplayedImageSignal = function() {
+    return this._hideDisplayedImageSignal;
+}
+
 GameManager.prototype.getShowUISignal = function() {
     return this._showUISignal;
 }
 
 GameManager.prototype.getHideUISignal = function() {
     return this._hideUISignal;
+}
+
+GameManager.prototype.getShowInfoOverlaySignal = function() {
+    return this._showInfoOverlaySignal;
+}
+
+GameManager.prototype.getHideInfoOverlaySignal = function() {
+    return this._hideInfoOverlaySignal;
 }
 
 GameManager.prototype.getPauseSignal = function() {

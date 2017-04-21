@@ -46,8 +46,7 @@ function InitializeBitmapBg(game){
     _contextBitmap = _frameHolderBitmapCanvas.context;
 }
 
-function StartFilterFadeIn(signal) {    
-    //RenderFrame();  
+function StartFilterFadeIn(signal) {
     var linkable = new Linkable(_game, _bitmapSprite, signal);
     linkable.addOnClickAnimation(Animation.fade(_game, _bitmapSprite, 1, false));
     linkable.addOnClickAnimation(Animation.scale(_game, _bitmapSprite, false, _game.width, _game.height));

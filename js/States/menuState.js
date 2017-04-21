@@ -45,7 +45,7 @@ module.exports = {
         //updatePlayerNameCallback(this.game);
         //Video.create(_stateInfo.getMovieSrc(), _stateInfo.getTransition().fadeOut, Transition.getFadeOutSignal(), _stateInfo.getVideoFilter(), _stateInfo.getNextScenes());
         MovingBackground.create(_stateInfo.getBgImageKey(), _stateInfo.getDraggable());
-        Icons.createExploratoryIcons(_stateInfo.getIconsInfo(), false);
+        Icons.createExploratoryIcons(_stateInfo.getIconsInfo());
         //_input = Input.create(_stateInfo.getInputInfo());
         if(_stateInfo.getTransitionInfo().fadeIn)
             this.game.global.gameManager.getFadeInTransitionSignal().dispatch();

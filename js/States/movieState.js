@@ -43,12 +43,13 @@ module.exports = {
     },
     create: function() {
         Group.initializeGroups();
+        _game.global.soundManager.stopBackgroundMusic();
         if(_stateInfo.getBgImageKey())
             MovingBackground.create(_stateInfo.getBgImageKey(), _stateInfo.getDraggable());
         Video.create(GetMovieSrc(_stateInfo), _stateInfo.getTransitionInfo().fadeOut, _stateInfo.getVideoFilter(), _stateInfo.getNextScenes(), _stateInfo.getMovieSubKey());
         if(_stateInfo.getTransitionInfo().fadeIn)
             this.game.global.gameManager.getFadeInTransitionSignal().dispatch();
-        if(!_game.global.currentSceneName === START_SCENE_NAME)
+        if(_game.global.currentSceneName !== START_SCENE_NAME)
             UI.create(true, true);
     }
 }

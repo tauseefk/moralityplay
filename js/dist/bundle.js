@@ -63,7 +63,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 30);
+/******/ 	return __webpack_require__(__webpack_require__.s = 33);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -73,7 +73,135 @@
 "use strict";
 
 
-const VideoFilter = __webpack_require__(26);
+const Animation = __webpack_require__(8);
+
+const FADE_SPEED = 700;
+const MOUSEOVER_SPEED = 300;
+
+//Linkable constructor
+var Linkable = function(game, event, signal, arg1, arg2, arg3) {
+    this._game = game;
+    this._linkable = this;
+    this._event = event;
+    this._signal = signal;
+    this._arg1 = arg1;
+    this._arg2 = arg2;
+    this._arg3 = arg3;
+    this._onClickAnimations = [];
+    this._onMouseOverAnimations = [];
+    this._onMouseOutAnimations = [];
+    this._sound = [];
+}
+
+Linkable.prototype.setAsButton = function(once) {
+    if(once) {
+        this._event.onInputUp.addOnce(this.onTrigger, this);
+        this._event.onInputUp.addOnce(this.removeInput, this);
+    }
+    else {        
+        this._event.onInputUp.add(this.onTrigger, this);
+    }
+    this._event.onInputUp.add(this.playSound, this);
+}
+
+Linkable.prototype.setMouseOver = function() {
+    this._event.onInputOver.add(this.playOnMouseOverAnimations, this);
+    this._event.onInputOver.add(this.playSound, this);
+}
+
+Linkable.prototype.setMouseOut = function() {
+    this._event.onInputOut.add(this.playOnMouseOutAnimations, this);
+}
+
+Linkable.prototype.addOnClickAnimation = function(tween) {
+    this._onClickAnimations.push(tween);
+}
+
+Linkable.prototype.addMouseOverAnimation = function(tween) {
+    this._onMouseOverAnimations.push(tween);
+}
+
+Linkable.prototype.addMouseOutAnimation = function(tween) {
+    this._onMouseOutAnimations.push(tween);
+}
+
+Linkable.prototype.addSound = function(soundKey) {
+    this._sound.push(soundKey);
+}
+
+Linkable.prototype.playOnClickAnimations = function() {    
+    var tween = null;
+    this._onClickAnimations.forEach(function(animation) {
+        tween = animation.start();
+    });
+    return tween;
+}
+
+Linkable.prototype.playOnMouseOverAnimations = function() {    
+    var tween = null;
+    this._onMouseOverAnimations.forEach(function(animation) {
+        animation.reverse = false;
+        tween = animation.start();
+    });
+    return tween;
+}
+
+Linkable.prototype.playOnMouseOutAnimations = function() {    
+    var tween = null;
+    this._onMouseOutAnimations.forEach(function(animation) {
+        tween = animation.start();
+    });
+    return tween;
+}
+
+Linkable.prototype.playSound = function() {
+    var game = this._game;
+    this._sound.forEach(function(sound) {
+        game.global.soundManager.playSound(sound);
+    });
+}
+
+Linkable.prototype.removeInput = function() {
+    this._event.inputEnabled = false;
+    if(this._event.input) {
+        this._event.input.useHandCursor = false;
+    } 
+}
+
+Linkable.prototype.onTrigger = function() {
+    var tween = this._linkable.playOnClickAnimations();
+    if(tween)
+        tween.onComplete.add(this.dispatchSignal, this);
+    else
+        this.dispatchSignal();
+}
+
+Linkable.prototype.addMouseOverScaleEffect = function(game, object) {
+    this._linkable.addMouseOverAnimation(Animation.scale(game, object, false, object.width *1.05, object.height *1.05, MOUSEOVER_SPEED));
+    this._linkable.setMouseOver();    
+    this._linkable.addMouseOutAnimation(Animation.scale(game, object, false, object.width, object.height, MOUSEOVER_SPEED));
+    this._linkable.setMouseOut();
+}
+
+Linkable.prototype.dispatchSignal = function() {
+    this._signal.dispatch(this._arg1, this._arg2, this._arg3);
+}
+
+Linkable.goToLink = function(link) {
+    window.open(link,'_blank');
+}
+
+module.exports = Linkable;
+
+
+/***/ }),
+/* 1 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+const VideoFilter = __webpack_require__(22);
 
 var _instance = null;
 var _game = null;
@@ -126,15 +254,15 @@ module.exports = {
 
 
 /***/ }),
-/* 1 */
+/* 2 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-const VideoFilter = __webpack_require__(26),
-    Linkable = __webpack_require__(4),
-    Subtitle = __webpack_require__(19);
+const VideoFilter = __webpack_require__(22),
+    Linkable = __webpack_require__(0),
+    Subtitle = __webpack_require__(21);
 
 var _instance = null;
 var _game = null;
@@ -323,7 +451,7 @@ module.exports = {
 
 
 /***/ }),
-/* 2 */
+/* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -331,7 +459,9 @@ module.exports = {
 
 
 const Image = __webpack_require__(9),
-    Video = __webpack_require__(1);
+    Text = __webpack_require__(4),
+    Graphic = __webpack_require__(18),
+    Video = __webpack_require__(2);
 
 var _instance = null;
 var _game = null;
@@ -341,11 +471,17 @@ var _playImage = null;
 var _toggleSubtitleImage = null;
 var _pausedByEngine = false;
 
+var _overlayGraphic = null;
+var _overlayCloseButton = null;
+var _overlayText = null;
+
 var _uiVisible = true;
 
 const pauseButtonImageKeyEnum = 'IMAGE_BUTTON_PAUSE';
 const playButtonImageKeyEnum = 'IMAGE_BUTTON_PLAY';
 const toggleSubtitleButtonImageKeyEnum = 'IMAGE_BUTTON_TOGGLE_SUBTITLE';
+const closeOverlayImageKeyEnum = 'IMAGE_OVERLAY_CLOSE';
+const infoOverlayTextKeyEnum= 'TEXT_INFO_OVERLAY';
 
 function DrawPauseButton() {
     if(!_pauseImage)
@@ -367,6 +503,29 @@ function DrawPlayButton() {
     _playImage.addImageToGame(_game, _game.uiGroup);
     _playImage.changeImage(_game);
     _playImage.setVisible(false);
+}
+
+function CreateInfoOverlay() {    
+    CreateOverlayGraphic();
+    CreateOverlayCrossButton();
+    CreateOverlayHelperText();
+}
+
+function CreateOverlayGraphic() {
+    _overlayGraphic = new Graphic(0, 0);
+    _overlayGraphic.createOverlayBg(_game, 50);
+}
+
+function CreateOverlayCrossButton() {
+    _overlayCloseButton = new Image(_game.width-50, 50, 'closeButton', closeOverlayImageKeyEnum);
+    _overlayCloseButton.addImageToGame(_game, _game.uiGroup);
+    _overlayCloseButton.changeImage(_game);
+}
+
+function CreateOverlayHelperText() {
+    _overlayText = new Text('Drag the image below to scroll', _game.width/2, 25, infoOverlayTextKeyEnum, _game.global.style.questionTextProperties);
+    _overlayText.addToGame(_game, _game.uiGroup);
+    _overlayText.changeText(_game);
 }
 
 function Pause() {
@@ -463,41 +622,21 @@ module.exports = {
     },
     hideUI: function() {
         HideUI();
+    },
+    createInfoOverlay() {
+        CreateInfoOverlay();
+    },
+    showInfoOverlay() {
+        _overlayGraphic.setVisible(true);
+        _overlayCloseButton.setVisible(true);
+        _overlayText.setVisible(true);
+    },
+    hideInfoOverlay() {
+        _overlayGraphic.setVisible(false);
+        _overlayCloseButton.setVisible(false);        
+        _overlayText.setVisible(false);
     }
 }
-
-
-/***/ }),
-/* 3 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var _instance = null;
-var _game = null;
-
-function InitializeGroups() {        
-    _game.mediaGroup = _game.add.group();
-    _game.uiGroup = _game.add.group();
-}
-
-module.exports = {
-    init: function(game) {
-        if(_instance !== null)
-            return _instance;
-        _game = game;
-        _instance = this;
-        return _instance;
-    },
-    preload: function() {
-    },
-    initializeGroups: function() {
-        InitializeGroups();
-    }
-}
-
-
 
 
 /***/ }),
@@ -507,135 +646,7 @@ module.exports = {
 "use strict";
 
 
-const Animation = __webpack_require__(8);
-
-const FADE_SPEED = 700;
-const MOUSEOVER_SPEED = 300;
-
-//Linkable constructor
-var Linkable = function(game, event, signal, arg1, arg2, arg3) {
-    this._game = game;
-    this._linkable = this;
-    this._event = event;
-    this._signal = signal;
-    this._arg1 = arg1;
-    this._arg2 = arg2;
-    this._arg3 = arg3;
-    this._onClickAnimations = [];
-    this._onMouseOverAnimations = [];
-    this._onMouseOutAnimations = [];
-    this._sound = [];
-}
-
-Linkable.prototype.setAsButton = function(once) {
-    if(once) {
-        this._event.onInputUp.addOnce(this.onTrigger, this);
-        this._event.onInputUp.addOnce(this.removeInput, this);
-    }
-    else {        
-        this._event.onInputUp.add(this.onTrigger, this);
-    }
-    this._event.onInputUp.add(this.playSound, this);
-}
-
-Linkable.prototype.setMouseOver = function() {
-    this._event.onInputOver.add(this.playOnMouseOverAnimations, this);
-    this._event.onInputOver.add(this.playSound, this);
-}
-
-Linkable.prototype.setMouseOut = function() {
-    this._event.onInputOut.add(this.playOnMouseOutAnimations, this);
-}
-
-Linkable.prototype.addOnClickAnimation = function(tween) {
-    this._onClickAnimations.push(tween);
-}
-
-Linkable.prototype.addMouseOverAnimation = function(tween) {
-    this._onMouseOverAnimations.push(tween);
-}
-
-Linkable.prototype.addMouseOutAnimation = function(tween) {
-    this._onMouseOutAnimations.push(tween);
-}
-
-Linkable.prototype.addSound = function(soundKey) {
-    this._sound.push(soundKey);
-}
-
-Linkable.prototype.playOnClickAnimations = function() {    
-    var tween = null;
-    this._onClickAnimations.forEach(function(animation) {
-        tween = animation.start();
-    });
-    return tween;
-}
-
-Linkable.prototype.playOnMouseOverAnimations = function() {    
-    var tween = null;
-    this._onMouseOverAnimations.forEach(function(animation) {
-        animation.reverse = false;
-        tween = animation.start();
-    });
-    return tween;
-}
-
-Linkable.prototype.playOnMouseOutAnimations = function() {    
-    var tween = null;
-    this._onMouseOutAnimations.forEach(function(animation) {
-        tween = animation.start();
-    });
-    return tween;
-}
-
-Linkable.prototype.playSound = function() {
-    var game = this._game;
-    this._sound.forEach(function(sound) {
-        game.global.soundManager.playSound(sound);
-    });
-}
-
-Linkable.prototype.removeInput = function() {
-    this._event.inputEnabled = false;
-    if(this._event.input) {
-        this._event.input.useHandCursor = false;
-    } 
-}
-
-Linkable.prototype.onTrigger = function() {
-    var tween = this._linkable.playOnClickAnimations();
-    if(tween)
-        tween.onComplete.add(this.dispatchSignal, this);
-    else
-        this.dispatchSignal();
-}
-
-Linkable.prototype.addMouseOverScaleEffect = function(game, object) {
-    this._linkable.addMouseOverAnimation(Animation.scale(game, object, false, object.width *1.05, object.height *1.05, MOUSEOVER_SPEED));
-    this._linkable.setMouseOver();    
-    this._linkable.addMouseOutAnimation(Animation.scale(game, object, false, object.width, object.height, MOUSEOVER_SPEED));
-    this._linkable.setMouseOut();
-}
-
-Linkable.prototype.dispatchSignal = function() {
-    this._signal.dispatch(this._arg1, this._arg2, this._arg3);
-}
-
-Linkable.goToLink = function(link) {
-    window.open(link,'_blank');
-}
-
-module.exports = Linkable;
-
-
-/***/ }),
-/* 5 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-const Linkable = __webpack_require__(4),
+const Linkable = __webpack_require__(0),
     Animation = __webpack_require__(8);
 
 const PADDING = 10;
@@ -645,7 +656,8 @@ var TextTypeEnum = {
     MeaningfulChoices: 'TEXT_MEANINGFUL_CHOICES',
     MeaninglessChoices: 'TEXT_MEANINGLESS_CHOICES',    
     Question: 'TEXT_QUESTION',
-    Subtitle: 'TEXT_SUBTITLE'
+    Subtitle: 'TEXT_SUBTITLE',
+    InfoOverlayText: 'TEXT_INFO_OVERLAY'
 }
 
 var Text = function(content, xPos, yPos, type, properties) {
@@ -697,7 +709,10 @@ Text.prototype.changeText = function(game, arg1, arg2, arg3, arg4, arg5, arg6) {
             this.changeToMeaninglessChoices(game, arg1, arg2, arg3, arg4, arg5);
             break;
         case TextTypeEnum.Question:
-            this.changeToQuestion(game, arg1, arg2);
+            this.changeToQuestion(game);
+            break;
+        case TextTypeEnum.InfoOverlayText:
+            this.changeToInfoOverlayText(game);
             break;
         case TextTypeEnum.Subtitle:
             this.changeToSubtitle(game, arg1);
@@ -765,6 +780,12 @@ Text.prototype.changeToQuestion = function(game) {
     Animation.fade(game, this._text, 1, true);
 }
 
+Text.prototype.changeToInfoOverlayText = function(game) {    
+    this._text.anchor.set(0.5, 0.5);
+    this._text.x = game.width/2;
+    this.setVisible(false);
+}
+
 Text.prototype.changeToSubtitle = function(game, isVisible) {
     this._text.anchor.x = 0.5
     this._text.x = game.width/2;
@@ -825,26 +846,65 @@ module.exports = Text;
 
 
 /***/ }),
+/* 5 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _instance = null;
+var _game = null;
+
+function InitializeGroups() {        
+    _game.mediaGroup = _game.add.group();
+    _game.uiGroup = _game.add.group();
+}
+
+module.exports = {
+    init: function(game) {
+        if(_instance !== null)
+            return _instance;
+        _game = game;
+        _instance = this;
+        return _instance;
+    },
+    preload: function() {
+    },
+    initializeGroups: function() {
+        InitializeGroups();
+    }
+}
+
+
+
+
+/***/ }),
 /* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-const Filter = __webpack_require__(17),
-    Thoughts = __webpack_require__(11),
+const Filter = __webpack_require__(20),
+    Thoughts = __webpack_require__(12),
     Choices = __webpack_require__(10),
     Image = __webpack_require__(9),
-    SceneParser = __webpack_require__(31);
+    Text = __webpack_require__(4),
+    Graphic = __webpack_require__(18),
+    SceneParser = __webpack_require__(15);
 
 var _instance = null;
 var _game = null;
 var _icons = [];
 var _linkedIcons = [];
+var _clickedIconIndex = null;
+var _displayedIconIndex = null;
 
 const buttonThoughtImageKeyEnum = 'IMAGE_BUTTON_THOUGHT',
     buttonThoughtSpriteKeyEnum = 'IMAGE_SPRITE_THOUGHT',
-    sceneChangeImageKeyEnum = 'IMAGE_BUTTON_SCENECHANGE';
+    sceneChangeImageKeyEnum = 'IMAGE_BUTTON_SCENECHANGE',
+    infoImageKeyEnum = 'IMAGE_INFO',
+    questionTextEnum = 'TEXT_QUESTION';
 
 function CreateThoughtIcon(iconKey, coords, thoughts) {
     var button = new Image(coords[0], coords[1], iconKey, buttonThoughtSpriteKeyEnum);
@@ -853,33 +913,33 @@ function CreateThoughtIcon(iconKey, coords, thoughts) {
     _icons.push(button);
 }
 
-function CreateExploratoryIcons(icons, hideSceneChangeIcons) {
+function CreateExploratoryIcons(icons) {
     for(var i=0; i<icons.size; i++) {
-        CreateExploratoryIcon(icons.key[i], icons.coords[i], icons.targetImageIndexOrScene[i], icons.type[i]);
+        CreateExploratoryIcon(icons.key[i], icons.coords[i], icons.targetImageIndexOrScene[i], icons.type[i], i);
     }
     HideLockedIcons(icons.lockedByScenes);
     ShowUnlockedIcons(icons.unlockedByScenes);
 }
 
-function CreateExploratoryIcon(key, coords, target, type) {
-    var button = new Image(coords[0], coords[1], key, type);
-    button.addImageToGame(_game, _game.mediaGroup);
-    button.changeImage(_game, target);
+function CreateExploratoryIcon(key, coords, target, type, index) {
+    var button = new Image(coords[0], coords[1], key, type);    
     _icons.push(button);
+    button.addImageToGame(_game, _game.mediaGroup);
+    button.changeImage(_game, target, index);
 }
 
 function CreateLinkedIcons(linkedIcons) {
     for(var i=0; i<linkedIcons.size; i++) {
         CreateLinkedIcon(linkedIcons.key[i], linkedIcons.coords[i], linkedIcons.targetImageIndexOrScene[i], linkedIcons.type[i]);
     } 
-    HideIconType(sceneChangeImageKeyEnum);
+    HideLinkedIcons();
 }
 
 function CreateLinkedIcon(key, coords, target, type) {
-    var button = new Image(coords[0], coords[1], key, type);
-    button.addImageToGame(_game, _game.mediaGroup);
-    button.changeImage(_game, target);
-    _linkedIcons.push(button);
+    var image = new Image(coords[0], coords[1], key, type);
+    image.addImageToGame(_game, _game.mediaGroup);
+    image.changeImage(_game, target);
+    _linkedIcons.push(image);
 }
 
 function HideLockedIcons(locked) {
@@ -911,16 +971,33 @@ function ShowUnlockedIcons(conditionsForIconIndexArr) {
     }
 }
 
+
 function EndInteraction() {
     _icons.forEach(function(icon) {
         icon.fadeOut(_game);
     });
 }
 
-function HideIconType(iconType) {
+function HideLinkedIcons() {
     _linkedIcons.forEach(function(icon) {
         icon.setVisible(false);
     });
+}
+
+function ShowIcons() {
+    _icons.forEach(function(icon) {
+        icon.setVisible(true);
+    });
+}
+
+function ShowPreviouslyClickedIcon() {
+    if(_clickedIconIndex != null)
+        _icons[_clickedIconIndex].setVisible(true);
+}
+
+function HideDisplayedIcon() {
+    if(_displayedIconIndex != null)        
+        _linkedIcons[_displayedIconIndex].setVisible(false);
 }
 
 module.exports = {
@@ -937,11 +1014,11 @@ module.exports = {
     createThoughtIcon: function(iconKey, coords, thoughts) {
         CreateThoughtIcon(iconKey, coords, thoughts);
     },
-    createExploratoryIcons: function(icons, hideSceneChangeIcons) {
-        CreateExploratoryIcons(icons, hideSceneChangeIcons);
+    createExploratoryIcons: function(icons) {
+        CreateExploratoryIcons(icons);
         return _icons;
     },
-    createNavigationIcons: function(icons, linkedIcons) {  
+    createNavigationIcons: function(icons, linkedIcons) {
         if(linkedIcons)  
             CreateLinkedIcons(linkedIcons);  
         CreateExploratoryIcons(icons);
@@ -949,10 +1026,23 @@ module.exports = {
     endInteraction: function() {
         EndInteraction();
     },
-    displayIcon: function(index, hideSameType) {
-        if(hideSameType)
-            HideIconType(_linkedIcons[index].getType());
-        _linkedIcons[index].setVisible(true);
+    displayIcon: function(targetIndex, clickedIndex) {
+        HideDisplayedIcon();
+        ShowPreviouslyClickedIcon();
+        _displayedIconIndex = targetIndex;
+        _linkedIcons[_displayedIconIndex].getPhaserImage().bringToTop();
+        _linkedIcons[_displayedIconIndex].setVisible(true);
+        _clickedIconIndex = clickedIndex;
+        _icons[_clickedIconIndex].setVisible(false);
+        if(_linkedIcons[_displayedIconIndex].getType() == infoImageKeyEnum) {
+            _game.global.gameManager.getShowInfoOverlaySignal().dispatch();
+        }
+    },
+    hideDisplayedIcon() {
+        HideDisplayedIcon();        
+        ShowPreviouslyClickedIcon();
+        _displayedIconIndex = null;
+        _clickedIconIndex = null;
     },
     createThoughtsAndChoices: function(thoughts, coords) {
         _game.global.gameManager.getCreateThoughtsSignal().dispatch(thoughts, coords);
@@ -1148,8 +1238,11 @@ Animation.fade = function(game, object, value, autoStart, speed, repeat, destroy
     return tween;
 }
 
-Animation.bob = function(game, object, autoStart) {
-    var tween = game.add.tween(object).to({y:'-1'}, 200, Phaser.Easing.Quadratic.InOut, autoStart, 0, -1, true);
+Animation.bob = function(game, object, autoStart, value) {
+    if(!value)
+        value = -5;
+    value = value.toString();
+    var tween = game.add.tween(object).to({y:value}, 200, Phaser.Easing.Quadratic.InOut, autoStart, 0, -1, true);
     tween.repeatDelay(700);
     return tween;
 }
@@ -1164,24 +1257,26 @@ module.exports = Animation;
 "use strict";
 
 
-const Linkable = __webpack_require__(4),
-    Animation = __webpack_require__(8);
+const Linkable = __webpack_require__(0),
+    Animation = __webpack_require__(8),
+    Graphic = __webpack_require__(18);
 
 var ImageTypeEnum = {
-        Static: 'IMAGE_STATIC',
-        ThoughtSprite: 'IMAGE_SPRITE_THOUGHT',
-        SceneChange: 'IMAGE_BUTTON_SCENECHANGE',
-        DisplayImage: 'IMAGE_BUTTON_DISPLAY_IMAGE',
-        InfoImage: 'IMAGE_INFO',
-        Thought: 'IMAGE_BUTTON_THOUGHT',
-        Transition: 'IMAGE_TRANSITION',
-        Background: 'IMAGE_BACKGROUND',
-        ChoiceBackground: 'IMAGE_CHOICE_BACKGROUND',
-        ExternalLink: 'IMAGE_BUTTON_EXTERNAL_LINK',
-        Pause: 'IMAGE_BUTTON_PAUSE',
-        Play: 'IMAGE_BUTTON_PLAY',
-        ToggleSubtitle: 'IMAGE_BUTTON_TOGGLE_SUBTITLE'
-    }
+    Static: 'IMAGE_STATIC',
+    ThoughtSprite: 'IMAGE_SPRITE_THOUGHT',
+    SceneChange: 'IMAGE_BUTTON_SCENECHANGE',
+    DisplayImage: 'IMAGE_BUTTON_DISPLAY_IMAGE',
+    InfoImage: 'IMAGE_INFO',
+    Thought: 'IMAGE_BUTTON_THOUGHT',
+    Transition: 'IMAGE_TRANSITION',
+    Background: 'IMAGE_BACKGROUND',
+    ChoiceBackground: 'IMAGE_CHOICE_BACKGROUND',
+    OverlayCloseImage: 'IMAGE_OVERLAY_CLOSE',
+    ExternalLink: 'IMAGE_BUTTON_EXTERNAL_LINK',
+    Pause: 'IMAGE_BUTTON_PAUSE',
+    Play: 'IMAGE_BUTTON_PLAY',
+    ToggleSubtitle: 'IMAGE_BUTTON_TOGGLE_SUBTITLE'
+}
 
 //Image constructor
 var Image = function(xPos, yPos, key, type, properties) {
@@ -1203,6 +1298,7 @@ Image.prototype.addImageToGame = function(game, group) {
         case ImageTypeEnum.DisplayImage:
         case ImageTypeEnum.ToggleSubtitle:
         case ImageTypeEnum.ChoiceBackground:
+        case ImageTypeEnum.OverlayCloseImage:
         case ImageTypeEnum.ExternalLink:
             this._image = game.add.button(this._xPos, this._yPos, this._key);
             break;
@@ -1236,13 +1332,16 @@ Image.prototype.changeImage = function (game, arg1, arg2, arg3, arg4, arg5) {
             this.changeToSceneChangeImage(game, arg1, arg2);
             break;
         case ImageTypeEnum.DisplayImage:
-            this.changeToDisplayImage(game, arg1);
+            this.changeToDisplayImage(game, arg1, arg2);
             break;
         case ImageTypeEnum.InfoImage:
-            this.changeToInfoImage(game, arg1);
+            this.changeToInfoImage(game, arg1, arg2, arg3);
             break;
         case ImageTypeEnum.ChoiceBackground:
             this.changeToChoiceBackgroundImage(game, arg1, arg2, arg3, arg4, arg5);
+            break;
+        case ImageTypeEnum.OverlayCloseImage:
+            this.changeToOverlayCloseImage(game, arg1, arg2);
             break;
         case ImageTypeEnum.ExternalLink:
             this.changeToExternalLinkImage(game, arg1);
@@ -1294,7 +1393,7 @@ Image.prototype.changeToBgImage = function(game, draggable) {
     //Initializes container for bg image to be dragged around
 
     if(draggable) {
-        this.makeDraggable(game, 'stub', false, true, -this._image.width+game.width, 0, this._image.width*2-game.width, this._image.height);
+        this.makeDraggable(game, false, true, -this._image.width+game.width, 0, this._image.width*2-game.width, this._image.height);
     }
 }
 
@@ -1315,28 +1414,41 @@ Image.prototype.changeToSceneChangeImage = function(game, targetScene) {
     this._link = new Linkable(game, this._image, game.global.gameManager.getChangeSceneSignal(), targetScene);
     this._link.setAsButton(true);    
     this._link.addMouseOverScaleEffect(game, this._image);
-    Animation.bob(game, this._image, true);
+    Animation.bob(game, this._image, true, -1);
 }
 
-Image.prototype.changeToDisplayImage = function(game, target) {
+Image.prototype.changeToDisplayImage = function(game, target, clickedIndex) {
     this._target = target;
     this._image.anchor.setTo(0.5, 0.5);
-    this._link = new Linkable(game, this._image, game.global.gameManager.getDisplayImageSignal(), target, true);
+    this._link = new Linkable(game, this._image, game.global.gameManager.getDisplayImageSignal(), target, clickedIndex);
     this._link.setAsButton(false);
-    this._link.addMouseOverScaleEffect(game, this._image);    
+    this._link.addMouseOverScaleEffect(game, this._image);
     Animation.bob(game, this._image, true);
-    this._link.addOnClickAnimation(Animation.fade(game, this._image, 0,false, null, null, true));
+    //this._link.addOnClickAnimation(Animation.fade(game, this._image, 0,false, null, null, true));
  //   this._link.addSound('testSound');
 }
 
 Image.prototype.changeToInfoImage = function(game, target) {
+    var MARGIN = 50;
+    //this._graphic = overlayGraphics;
+
+    var DISPLAY_WIDTH = game.width - (MARGIN<<1);    
+    var DISPLAY_HEIGHT = game.height - (MARGIN<<1);
+    var SCALE = DISPLAY_WIDTH/this._image.width;
+    this._image.height = Math.floor(this._image.height*SCALE);
+    this._image.width = Math.floor(this._image.width*SCALE);
+    this._image.x = MARGIN;
+    this._image.y = MARGIN;
+
     this._mask = game.add.graphics(0, 0);
+    //game.mediaGroup.add(this._mask);
     this._mask.beginFill(0xffffff);
-    this._mask.drawRect(200, 200, 500, 500);
+    this._mask.drawRect(MARGIN, MARGIN, DISPLAY_WIDTH, DISPLAY_HEIGHT);
     this._image.mask = this._mask;
-    this._image.inputEnabled = true;
-    this._image.input.draggable = true;
-    this.changeCursorImage(game, 'url("./Images/UI/hand_2.png"), auto');
+
+    this.makeDraggable(game, true, false, MARGIN, -this._image.height+DISPLAY_HEIGHT+MARGIN, 
+        DISPLAY_WIDTH, this._image.height*2-DISPLAY_HEIGHT);
+    
 }
 
 Image.prototype.changeToChoiceBackgroundImage = function(game, width, height, target, phaserText, tag) {
@@ -1355,6 +1467,17 @@ Image.prototype.changeToChoiceBackgroundImage = function(game, width, height, ta
     
     //Animation.fade(game, this._image, 1, true);
     return this._image;
+}
+
+Image.prototype.changeToOverlayCloseImage = function(game) {
+    this.setVisible(false);
+    this._image.anchor.set(0.5, 0.5);
+
+    this._link = new Linkable(game, this._image, game.global.gameManager.getHideDisplayedImageSignal());
+    this._link.setAsButton(false);        
+    this._link2 = new Linkable(game, this._image, game.global.gameManager.getHideInfoOverlaySignal());
+    this._link2.setAsButton(false);    
+    this._link.addMouseOverScaleEffect(game, this._image);
 }
 
 Image.prototype.changeToExternalLinkImage = function(game, target) {
@@ -1382,6 +1505,11 @@ Image.prototype.changeToToggleSubtitleButton = function(game, signal) {
     this._link.setAsButton(false);
 }
 
+Image.prototype.createBgGraphics = function(game, margin) {
+    this._graphic = new Graphic(0, 0);
+    this._graphic.createOverlayBg(game, margin);
+}
+
 //Changes cursor image on mouseover
 Image.prototype.changeCursorImage = function(game, cursorImageSrc) {
     this._image.events.onInputOver.add(function(){
@@ -1393,7 +1521,7 @@ Image.prototype.changeCursorImage = function(game, cursorImageSrc) {
     }, this);
 }
 
-Image.prototype.makeDraggable = function(game, hoverImageSrc, lockHorizontal, lockVertical, boundsX, boundsY, boundsWidth, boundsHeight) {
+Image.prototype.makeDraggable = function(game, lockHorizontal, lockVertical, boundsX, boundsY, boundsWidth, boundsHeight) {
 
     //Enables drag interaction on the horizontal axis
     this._image.inputEnabled = true;
@@ -1404,7 +1532,6 @@ Image.prototype.makeDraggable = function(game, hoverImageSrc, lockHorizontal, lo
     this._image.input.draggable = true;
     this._image.input.allowVerticalDrag = !lockVertical;
     this._image.input.allowHorizontalDrag = !lockHorizontal;
-    this._image.x = -this._image.width/2;
     //Changes mouseover image
     this.changeCursorImage(game, 'url("./Images/UI/hand_2.png"), auto');
 }
@@ -1431,6 +1558,11 @@ Image.prototype.disableInput = function() {
 
 Image.prototype.setVisible = function(isVisible) {
     this._image.visible = isVisible;
+    if(this._chainImages) {
+        this._chainImages.forEach(function(image) {
+            image.setVisible(isVisible);
+        });
+    }
 }
 
 Image.prototype.setImage = function(key) {
@@ -1469,7 +1601,7 @@ module.exports = Image;
 "use strict";
 
 
-const Text = __webpack_require__(5),
+const Text = __webpack_require__(4),
     Image = __webpack_require__(9);
 
 //initializes once
@@ -1645,10 +1777,78 @@ module.exports = {
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
+//Dependency: choiceText
+
+
+//initializes once
+var _instance = null;
+var _game = null;
+var _text = [];
+var _choiceFont = null;
+var _bgImage = null;
+var _group = null;
+var Text = __webpack_require__(4),
+    Image = __webpack_require__(9);
+
+const bgImageKeyEnum = 'IMAGE_BACKGROUND';
+
+function createBgImage(key, draggable) {
+    _bgImage = new Image(0, 0, key, bgImageKeyEnum);
+    _bgImage.addImageToGame(_game, _game.mediaGroup);
+    _bgImage.changeImage(_game, draggable);
+}
+
+function dragStart() {
+}
+
+function dragUpdate() {
+    _group.x = _bgImage.getPhaserImage().x;
+    _group.y = _bgImage.getPhaserImage().y;
+}
+
+function dragStop() {
+
+}
+
+module.exports = {
+    init: function(game) {
+        if(_instance !== null)
+            return _instance;
+        _game = game;
+        _instance = this;
+        return _instance;
+    },
+    preload: function() {
+    },
+    create: function(bgKey, draggable) {
+        createBgImage(bgKey, draggable);
+        return _bgImage.getPhaserImage();
+    //    createIcons(icons, draggable, _bgImage);
+    },
+    assignFollowIcons: function(icons) {
+        _group = _game.add.group();
+        _game.mediaGroup.add(_group);
+        icons.forEach(function(icon) {
+            _group.add(icon.getPhaserImage());
+        });
+
+        _bgImage.getPhaserImage().events.onDragStart.add(dragStart);
+        _bgImage.getPhaserImage().events.onDragUpdate.add(dragUpdate);
+        _group.x = _bgImage.getPhaserImage().x;
+        _group.y = _bgImage.getPhaserImage().y;
+    }
+}
+
+
+/***/ }),
+/* 12 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
 
 
 //Initialized once
-const Text = __webpack_require__(5);
+const Text = __webpack_require__(4);
 
 var _instance = null,
     _game = null,
@@ -1686,12 +1886,12 @@ module.exports = {
 
 
 /***/ }),
-/* 12 */
+/* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
-var Filter = __webpack_require__(17);
+var Filter = __webpack_require__(20);
 var _instance = null;
 var _game = null;
 var _startSceneKey = 'startScene';
@@ -1785,23 +1985,23 @@ module.exports = {
 
 
 /***/ }),
-/* 13 */
+/* 14 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-const Resources = __webpack_require__(12),
-    Group = __webpack_require__(3),
-    Transition = __webpack_require__(0),
-    UI = __webpack_require__(2),
-    Video = __webpack_require__(1),
-    MenuState = __webpack_require__(28),
-    LocationState = __webpack_require__(15),
-    InteractState = __webpack_require__(14),
-    SwitchState = __webpack_require__(33),
-    MovieState = __webpack_require__(29),
-    Subtitle = __webpack_require__(19);
+const Resources = __webpack_require__(13),
+    Group = __webpack_require__(5),
+    Transition = __webpack_require__(1),
+    UI = __webpack_require__(3),
+    Video = __webpack_require__(2),
+    MenuState = __webpack_require__(30),
+    LocationState = __webpack_require__(17),
+    InteractState = __webpack_require__(16),
+    SwitchState = __webpack_require__(32),
+    MovieState = __webpack_require__(31),
+    Subtitle = __webpack_require__(21);
 
 var _stateManagerInstance = null;
 var _transitionSignal = null;
@@ -1905,21 +2105,81 @@ module.exports = {
 
 
 /***/ }),
-/* 14 */
+/* 15 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-const Group = __webpack_require__(3),
-    UI = __webpack_require__(2),
-    Video = __webpack_require__(1),
-    Transition = __webpack_require__(0),
+//ScenePartser constructor
+var SceneParser = function() {
+}
+
+SceneParser.VisitAtLeastOnceOfEach = function(game, sceneSetArray) {
+    var unlocked = true;
+    for(var j=0; j<sceneSetArray.length; j++) {
+        unlocked &= SceneParser.OneSceneVisited(game, sceneSetArray[j]);
+    }
+    return unlocked;
+}
+
+SceneParser.OneSceneVisited = function(game, sceneArr) {
+    if(sceneArr){
+        for(var i=0; i<sceneArr.length; i++) {
+            if(game.global.visitedScenes[sceneArr[i]]) {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+SceneParser.AllSceneVisited = function(game, sceneArr) {
+    if(sceneArr){
+    	console.log(sceneArr);
+        for(var i=0; i<sceneArr.length; i++) {
+            if(!game.global.visitedScenes[sceneArr[i]]) {
+            	console.log(sceneArr[i]);
+            	console.log(game.global.visitedScenes[sceneArr[i]]);
+                return false;
+            }
+        }
+        return true;
+    }
+    else
+    	return false;
+}
+
+SceneParser.GetIndexOfVisitedAll = function(game, sceneArr) {
+    if(sceneArr){
+        for(var i=0; i<sceneArr.length; i++) {
+            if(SceneParser.AllSceneVisited(game, sceneArr[i])) {
+                return i;
+            }
+        }
+    }
+    return false;
+}
+
+module.exports = SceneParser;
+
+
+/***/ }),
+/* 16 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+const Group = __webpack_require__(5),
+    UI = __webpack_require__(3),
+    Video = __webpack_require__(2),
+    Transition = __webpack_require__(1),
     Icons = __webpack_require__(6),
     State = __webpack_require__(7),
     Choices = __webpack_require__(10),
-    Thoughts = __webpack_require__(11),
-    MovingBackground = __webpack_require__(18);
+    Thoughts = __webpack_require__(12),
+    MovingBackground = __webpack_require__(11);
 
 var _stateInfo = null;
 var _instance = null;
@@ -1934,7 +2194,6 @@ function CreateThought() {
 
     if(thoughtBubbles) {
         for(var i=0; i<thoughtBubbles.size; i++) {
-            console.log("Thought bubble: ");
             Icons.createThoughtIcon(thoughtBubbles.thoughtIconKey[i], thoughtBubbles.coords[i], thoughtBubbles.thoughts[i]);
         }
 
@@ -1988,6 +2247,7 @@ module.exports = {
     },
     create: function() {
         Group.initializeGroups();
+        _game.global.soundManager.stopBackgroundMusic();
         if(_stateInfo.getBgImageKey())
             MovingBackground.create(_stateInfo.getBgImageKey(), _stateInfo.getDraggable());
         _momentCount = 0;
@@ -2008,24 +2268,25 @@ module.exports = {
 
 
 /***/ }),
-/* 15 */
+/* 17 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-const Transition = __webpack_require__(0),
-    Group = __webpack_require__(3),
+const Transition = __webpack_require__(1),
+    Group = __webpack_require__(5),
     State = __webpack_require__(7),
-    UI = __webpack_require__(2),
-    MovingBackground = __webpack_require__(18),
+    UI = __webpack_require__(3),
+    MovingBackground = __webpack_require__(11),
     Icons = __webpack_require__(6),
-    Video = __webpack_require__(1),
-    Text = __webpack_require__(5);
+    Video = __webpack_require__(2),
+    Text = __webpack_require__(4);
 
 var _instance = null;
 var _stateInfo = null;
 var _game = null;
+var _overlayGraphic = null;
 
 module.exports = {
     init: function(scene) {
@@ -2060,19 +2321,79 @@ module.exports = {
         //text.fadeIn(this.game);
         if(_stateInfo.getTransitionInfo().fadeIn)
             this.game.global.gameManager.getFadeInTransitionSignal().dispatch();
+        UI.createInfoOverlay();
     },
     shutdown: function() {
         Icons.destroy();        
-        _game.global.soundManager.stopBackgroundMusic();
+        //_game.global.soundManager.stopBackgroundMusic();
     },
-    displayImage: function(index, hideSameType) {
-        Icons.displayIcon(index, hideSameType);
+    displayImage: function(targetIndex, clickedIndex) {
+        Icons.displayIcon(targetIndex, clickedIndex);
+    },
+    hideDisplayedImage: function() {
+        Icons.hideDisplayedIcon();
     }
 }
 
 
 /***/ }),
-/* 16 */
+/* 18 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+const Linkable = __webpack_require__(0);
+
+var ImageTypeEnum = {
+        Info: 'IMAGE_BUTTON_INFO',
+        SceneChange: 'IMAGE_BUTTON_SCENECHANGE',
+        Thought: 'IMAGE_BUTTON_THOUGHT',
+        Transition: 'IMAGE_TRANSITION',
+        Background: 'IMAGE_BACKGROUND',
+        Static: 'IMAGE_STATIC'
+    };
+
+//Image constructor
+var Graphic = function(xPos, yPos) {
+    this._xPos = xPos;
+    this._yPos = yPos;
+}
+
+Graphic.prototype.createOverlayBg = function(game, margin) {
+    var offset = 5;
+    this._graphic = game.add.graphics(this._xPos, this._yPos);
+    game.uiGroup.add(this._graphic);
+    this._graphic.beginFill(0x000000, 0.8);
+    this._graphic.drawRect(0, 0, margin, game.height);
+    this._graphic.drawRect(game.width-margin, 0, margin, game.height);
+    this._graphic.drawRect(margin, 0, game.width-(margin<<1), margin);
+    this._graphic.drawRect(margin, game.height-margin, game.width-(margin<<1), margin);
+    this._graphic.visible = false;
+
+    this._graphic.inputEnabled = true;   
+    this._graphic.input.priorityID = 1;
+    this._graphic.input.useHandCursor = true;
+
+    this._link = new Linkable(game, this._graphic.events, game.global.gameManager.getHideDisplayedImageSignal());
+    this._link2 = new Linkable(game, this._graphic.events, game.global.gameManager.getHideInfoOverlaySignal());
+    this._link.setAsButton(false);
+    this._link2.setAsButton(false);
+}
+
+Graphic.prototype.setVisible = function(value) {
+    this._graphic.visible = value;
+}
+
+Graphic.prototype.getGraphic = function() {
+    return this._graphic;
+}
+
+module.exports = Graphic;
+
+
+/***/ }),
+/* 19 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2172,7 +2493,7 @@ module.exports = {
 
 
 /***/ }),
-/* 17 */
+/* 20 */
 /***/ (function(module, exports) {
 
 var _instance = null,
@@ -2220,81 +2541,13 @@ module.exports = {
 
 
 /***/ }),
-/* 18 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-//Dependency: choiceText
-
-
-//initializes once
-var _instance = null;
-var _game = null;
-var _text = [];
-var _choiceFont = null;
-var _bgImage = null;
-var _group = null;
-var Text = __webpack_require__(5),
-    Image = __webpack_require__(9);
-
-const bgImageKeyEnum = 'IMAGE_BACKGROUND';
-
-function createBgImage(key, draggable) {
-    _bgImage = new Image(0, 0, key, bgImageKeyEnum);
-    _bgImage.addImageToGame(_game, _game.mediaGroup);
-    _bgImage.changeImage(_game, draggable);
-}
-
-function dragStart() {
-}
-
-function dragUpdate() {
-    _group.x = _bgImage.getPhaserImage().x;
-    _group.y = _bgImage.getPhaserImage().y;
-}
-
-function dragStop() {
-
-}
-
-module.exports = {
-    init: function(game) {
-        if(_instance !== null)
-            return _instance;
-        _game = game;
-        _instance = this;
-        return _instance;
-    },
-    preload: function() {
-    },
-    create: function(bgKey, draggable) {
-        createBgImage(bgKey, draggable);
-        return _bgImage.getPhaserImage();
-    //    createIcons(icons, draggable, _bgImage);
-    },
-    assignFollowIcons: function(icons) {
-        _group = _game.add.group();
-        _game.mediaGroup.add(_group);
-        icons.forEach(function(icon) {
-            _group.add(icon.getPhaserImage());
-        });
-
-        _bgImage.getPhaserImage().events.onDragStart.add(dragStart);
-        _bgImage.getPhaserImage().events.onDragUpdate.add(dragUpdate);
-        _group.x = _bgImage.getPhaserImage().x;
-        _group.y = _bgImage.getPhaserImage().y;
-    }
-}
-
-
-/***/ }),
-/* 19 */
+/* 21 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-const Text = __webpack_require__(5);
+const Text = __webpack_require__(4);
 
 var _instance = null;
 var _game = null;
@@ -2422,439 +2675,13 @@ module.exports = {
 
 
 /***/ }),
-/* 20 */
-/***/ (function(module, exports, __webpack_require__) {
-
-//Dependency: None
-const ConnectionChecker = __webpack_require__(16), 
-    GameManager = __webpack_require__(23),
-    SoundManager = __webpack_require__(25),
-    DatabaseManager = __webpack_require__(32);
-
-var _instance = null
-var _game = null;
-
-const connectionTestFileKey = 'littleRootMusic',
-    connectionTestFileSrc = './Audio/Music/Pokemon Omega Ruby Alpha Sapphire - Littleroot Town Music (HQ).mp3',
-    connectionTestFileType = 'AUDIO',
-    connectionTestFileBytes = 2886887;
-
-
-WebFontConfig = {
-    //Load fonts before creation, timer delay. Can be improved  in implementation.
-    active: function() { _game.time.events.add(Phaser.Timer.SECOND, DelayedCreate, this); },
-
-    google: {
-      families: ['Kadwa', 'Merienda One', 'Noto Sans'],
-    }
-};
-
-function DelayedCreate() {
-
-    CreateGlobalVars();
-    InitGameGroups();
-    SetGameProperties();
-    CreateLoadingVisuals();
-    ConnectionChecker.loadFile(connectionTestFileKey, connectionTestFileSrc, connectionTestFileType, connectionTestFileBytes);
-    ConnectionChecker.checkConnection();
-}
-
-function CreateLoadingVisuals() {
-    var text = _game.add.text(_game.world.centerX, _game.world.centerY, "Checking connection...");
-    text.anchor.setTo(0.5, 0.5);
-}
-
-function SetGameProperties() {
-    _game.stage.disableVisibilityChange = true;
-    _game.stage.backgroundColor = "#ffffff";
-}
-
-function CreateGlobalVars() {
-    _game.global = {
-        playerName: null,
-        visitedScenes: {}
-    }
-
-    _game.global.gameManager = new GameManager();
-    _game.global.gameManager.initSignals();
-    _game.global.soundManager = new SoundManager(_game);
-    _game.global.soundManager.init();
-    _game.global.databaseManager = new DatabaseManager(_game);
-}
-
-function InitGameGroups() {
-    _game.mediaGroup = _game.add.group();
-    _game.uiGroup = _game.add.group();
-}
-
-module.exports = {
-    init: function() {
-        console.log("Boot State");
-        ConnectionChecker.init(this.game);
-        if( _instance !== null)
-            return _instance;
-        _game = this.game;
-        return _instance;
-    },
-    preload: function() {
-        _game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
-        _game.load.script('webfont', '//ajax.googleapis.com/ajax/libs/webfont/1.4.7/webfont.js');
-    },
-    create: function() {
-    }
-}
-
-
-/***/ }),
-/* 21 */
-/***/ (function(module, exports, __webpack_require__) {
-
-const Resources = __webpack_require__(12);
-
-var _instance = null,
-    _game = null;
-
-function CreateLoadingVisuals() {
-    var text = _game.add.text(_game.world.centerX, _game.world.centerY - 50, "Loading assets...");
-    text.anchor.setTo(0.5, 0.5);
-
-    var preloadImage = _game.add.sprite(_game.world.centerX, _game.world.centerY, 'progressBar');
-    preloadImage.anchor.setTo(0.5, 0.5);
-    _game.load.setPreloadSprite(preloadImage);
-}
-
-module.exports = {
-    init: function() {
-        if( _instance !== null)
-            return _instance;
-        _game = this.game;
-        Resources.init(_game);
-        return _instance;
-    },
-    preload: function() {
-        CreateLoadingVisuals();
-        Resources.preload();
-    },
-    create: function() {
-        _game.global.style = Resources.getStyle();
-        _game.state.start("stateManager");
-    }
-}
-
-
-/***/ }),
 /* 22 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var InputTypeEnum = {
-    NameInput: 'INPUT_TEXT',
-    Choices: 'TEXT_CHOICES'
-}
-var Linkable = __webpack_require__(4);
-
-var Input = function(content, xPos, yPos, properties) {
-    this._xPos = xPos;
-    this._yPos = yPos;
-    this._content = content;
-    this._properties = properties;
-    this._input = null;
-}
-
-Input.prototype.setDefaultProperties = function() {
-    this._input.font = '18px Roboto';
-}
-
-Input.prototype.addToGame = function(game) {
-    this._input = game.add.inputField(this._xPos, this._yPos, this._properties);
-    this.setDefaultProperties();
-}
-
-Input.prototype.getInput = function() {
-    return this._input;
-}
-
-
-module.exports = Input;
-
-
-/***/ }),
-/* 23 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-const ConnectionChecker = __webpack_require__(16),
-    StateManager = __webpack_require__(13),
-    InteractState = __webpack_require__(14),
-    LocationState = __webpack_require__(15),
-    Icons = __webpack_require__(6),
-    Choices = __webpack_require__(10),
-    Thoughts = __webpack_require__(11),
-    Transition = __webpack_require__(0),
-    UI = __webpack_require__(2),
-    Video = __webpack_require__(1),
-    Linkable = __webpack_require__(4);
-
-var _instance = null;
-var _game = null;
-
-var GameManager = function() {
-    if(_instance !== null)
-        return _instance;
-    
-    _instance = this;
-
-    this._changeSceneSignal = null;
-
-    this._fadeInTransitionSignal = null;
-    this._fadeOutTransitionSignal = null;
-
-    this._triggerInteractionSignal = null;
-    this._endInteractionSignal = null;
-
-    this._videoSeekSignal = null;
-
-    this._createThoughtsSignal = null;
-    this._createChoicesSignal = null;
-    this._revealChoicesSignal = null;
-    this._createThoughtsAndChoicesSignal = null;
-
-    this._displayImageSignal = null;
-
-    this._showUISignal = null;
-    this._hideUISignal = null;
-    this._pauseSignal = null;
-    this._playSignal = null;
-    this._toggleSubtitleSignal = null;
-
-    this._goToLinkSignal = null;
-
-    return _instance;
-}
-
-GameManager.prototype.initSignals = function() {
-
-    this._changeSceneSignal = new Phaser.Signal();
-    this._changeSceneSignal.add(StateManager.changeScene, this);
-
-    this._fadeInTransitionSignal = new Phaser.Signal();
-    this._fadeInTransitionSignal.add(Transition.fadeInTransition, this);
-    this._fadeOutTransitionSignal = new Phaser.Signal();
-    this._fadeOutTransitionSignal.add(Transition.fadeOutTransition, this);
-
-    this._triggerInteractionSignal = new Phaser.Signal();
-    this._triggerInteractionSignal.add(InteractState.createThought, this);
-    this._endInteractionSignal = new Phaser.Signal();
-    this._endInteractionSignal.add(InteractState.endInteraction, this);
-
-    this._videoSeekSignal = new Phaser.Signal();
-    this._videoSeekSignal.add(Video.seekTo, this);
-
-    this._createThoughtsSignal = new Phaser.Signal();
-    this._createThoughtsSignal.add(Thoughts.create, this);
-    this._createChoicesSignal = new Phaser.Signal();
-    this._createChoicesSignal.add(Choices.create, this);
-    this._revealChoicesSignal = new Phaser.Signal();
-    this._revealChoicesSignal.add(Choices.revealChoices, this);
-
-    this._displayImageSignal = new Phaser.Signal();
-    this._displayImageSignal.add(LocationState.displayImage, this);
-
-    this._showUISignal = new Phaser.Signal();
-    this._showUISignal.add(UI.showUI, this);
-    this._hideUISignal = new Phaser.Signal();
-    this._hideUISignal.add(UI.hideUI, this);
-    this._pauseSignal = new Phaser.Signal();
-    this._pauseSignal.add(UI.pause, this);    
-    this._playSignal = new Phaser.Signal();
-    this._playSignal.add(UI.play, this);
-    this._toggleSubtitleSignal = new Phaser.Signal();
-    this._toggleSubtitleSignal.add(Video.toggleSubtitle, this);
-
-    this._createThoughtsAndChoicesSignal = new Phaser.Signal();
-    this._createThoughtsAndChoicesSignal.add(Icons.createThoughtsAndChoices, this);
-
-    this._goToLinkSignal = new Phaser.Signal();
-    this._goToLinkSignal.add(Linkable.goToLink, this);
-}
-
-GameManager.prototype.getChangeSceneSignal = function() {
-    return this._changeSceneSignal;
-}
-
-GameManager.prototype.getFadeInTransitionSignal = function() {
-    return this._fadeInTransitionSignal;
-}
-
-GameManager.prototype.getFadeOutTransitionSignal = function() {
-    return this._fadeOutTransitionSignal;
-}
-
-GameManager.prototype.getTriggerInteractionSignal = function() {
-    return this._triggerInteractionSignal;
-}
-
-GameManager.prototype.getEndInteractionSignal = function() {
-    return this._endInteractionSignal;
-}
-
-GameManager.prototype.getVideoSeekSignal = function() {
-    return this._videoSeekSignal;
-}
-
-GameManager.prototype.getCreateThoughtsSignal = function() {
-    return this._createThoughtsSignal;
-}
-
-GameManager.prototype.getCreateChoicesSignal = function() {
-    return this._createChoicesSignal;
-}
-
-GameManager.prototype.getCreateThoughtsAndChoicesSignal = function() {
-    return this._createThoughtsAndChoicesSignal;
-}
-
-GameManager.prototype.getRevealChoicesSignal = function() {
-    return this._revealChoicesSignal;
-}
-
-GameManager.prototype.getDisplayImageSignal = function() {
-    return this._displayImageSignal;
-}
-
-GameManager.prototype.getShowUISignal = function() {
-    return this._showUISignal;
-}
-
-GameManager.prototype.getHideUISignal = function() {
-    return this._hideUISignal;
-}
-
-GameManager.prototype.getPauseSignal = function() {
-    return this._pauseSignal;
-}
-
-GameManager.prototype.getPlaySignal = function() {
-    return this._playSignal;
-}
-
-GameManager.prototype.getToggleSubtitleSignal = function() {
-    return this._toggleSubtitleSignal;
-}
-
-GameManager.prototype.getGoToLinkSignal = function() {
-    return this._goToLinkSignal;
-}
-
-module.exports = GameManager;
-
-
-/***/ }),
-/* 24 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var _instance = null;
-var _game = null;
-var _input = null;
-var Input = __webpack_require__(22);
-
-module.exports = {
-    init: function(game) {
-        if(_instance !== null)
-            return _instance;
-        _game = game;
-        _instance = this;
-        return _instance;
-    },
-    preload: function() {
-    },
-    create: function(input) {
-        _input = [];
-        for(var i=0; i<input.size; i++) {
-            console.log("added");
-            _input.push(new Input(input.name[i], input.coords[i][0], input.coords[i][1], input.properties[i]));
-            _input[i].addToGame(_game);
-        }
-        return _input;
-    }
-}
-
-
-/***/ }),
-/* 25 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-const StateManager = __webpack_require__(13),
-    InteractState = __webpack_require__(14),
-    LocationState = __webpack_require__(15),
-    Icons = __webpack_require__(6),
-    Choices = __webpack_require__(10),
-    Thoughts = __webpack_require__(11),
-    Transition = __webpack_require__(0),
-    UI = __webpack_require__(2),
-    Video = __webpack_require__(1);
-
-var _instance = null;
-var _game = null;
-var _bgMusic = null;
-var _soundHashSet = null;
-
-
-var SoundManager = function(game) {
-    if(_instance !== null)
-        return _instance;
-    _instance = this;
-    _game = game;
-    return _instance;
-}
-
-SoundManager.prototype.init = function() {
-    _soundHashSet = {};
-}
-
-SoundManager.prototype.playSound = function(soundKey) {
-    if(!_soundHashSet[soundKey]) {
-        _soundHashSet[soundKey] = _game.add.audio(soundKey);
-    }
-    _soundHashSet[soundKey].play();
-}
-
-SoundManager.prototype.playBackgroundMusic = function(musicKey) {
-    if(_bgMusic)
-        _bgMusic.stop();
-    if(!_soundHashSet[musicKey]) 
-        _soundHashSet[musicKey] = _game.add.audio(musicKey);
-    _bgMusic =_soundHashSet[musicKey];
-    _bgMusic.loop = true;
-    _bgMusic.play();
-}
-
-SoundManager.prototype.stopBackgroundMusic = function() {
-    if(_bgMusic)
-        _bgMusic.stop();
-}
-
-module.exports = SoundManager;
-
-
-/***/ }),
-/* 26 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-const Linkable = __webpack_require__(4),
+const Linkable = __webpack_require__(0),
     Animation = __webpack_require__(8);
 
 var _instance = null;
@@ -2900,8 +2727,7 @@ function InitializeBitmapBg(game){
     _contextBitmap = _frameHolderBitmapCanvas.context;
 }
 
-function StartFilterFadeIn(signal) {    
-    //RenderFrame();  
+function StartFilterFadeIn(signal) {
     var linkable = new Linkable(_game, _bitmapSprite, signal);
     linkable.addOnClickAnimation(Animation.fade(_game, _bitmapSprite, 1, false));
     linkable.addOnClickAnimation(Animation.scale(_game, _bitmapSprite, false, _game.width, _game.height));
@@ -3006,18 +2832,503 @@ module.exports = {
 
 
 /***/ }),
-/* 27 */,
+/* 23 */
+/***/ (function(module, exports, __webpack_require__) {
+
+//Dependency: None
+const ConnectionChecker = __webpack_require__(19), 
+    GameManager = __webpack_require__(27),
+    SoundManager = __webpack_require__(29),
+    DatabaseManager = __webpack_require__(26);
+
+var _instance = null
+var _game = null;
+
+const connectionTestFileKey = 'littleRootMusic',
+    connectionTestFileSrc = './Audio/Music/Pokemon Omega Ruby Alpha Sapphire - Littleroot Town Music (HQ).mp3',
+    connectionTestFileType = 'AUDIO',
+    connectionTestFileBytes = 2886887;
+
+
+WebFontConfig = {
+    //Load fonts before creation, timer delay. Can be improved  in implementation.
+    active: function() { _game.time.events.add(Phaser.Timer.SECOND, DelayedCreate, this); },
+
+    google: {
+      families: ['Kadwa', 'Merienda One', 'Noto Sans'],
+    }
+};
+
+function DelayedCreate() {
+
+    CreateGlobalVars();
+    InitGameGroups();
+    SetGameProperties();
+    CreateLoadingVisuals();
+    ConnectionChecker.loadFile(connectionTestFileKey, connectionTestFileSrc, connectionTestFileType, connectionTestFileBytes);
+    ConnectionChecker.checkConnection();
+}
+
+function CreateLoadingVisuals() {
+    var text = _game.add.text(_game.world.centerX, _game.world.centerY, "Checking connection...");
+    text.anchor.setTo(0.5, 0.5);
+}
+
+function SetGameProperties() {
+    _game.stage.disableVisibilityChange = true;
+    _game.stage.backgroundColor = "#ffffff";
+}
+
+function CreateGlobalVars() {
+    _game.global = {
+        playerName: null,
+        visitedScenes: {}
+    }
+
+    _game.global.gameManager = new GameManager();
+    _game.global.gameManager.initSignals();
+    _game.global.soundManager = new SoundManager(_game);
+    _game.global.soundManager.init();
+    _game.global.databaseManager = new DatabaseManager(_game);
+}
+
+function InitGameGroups() {
+    _game.mediaGroup = _game.add.group();
+    _game.uiGroup = _game.add.group();
+}
+
+module.exports = {
+    init: function() {
+        console.log("Boot State");
+        ConnectionChecker.init(this.game);
+        if( _instance !== null)
+            return _instance;
+        _game = this.game;
+        return _instance;
+    },
+    preload: function() {
+        _game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
+        _game.load.script('webfont', '//ajax.googleapis.com/ajax/libs/webfont/1.4.7/webfont.js');
+    },
+    create: function() {
+    }
+}
+
+
+/***/ }),
+/* 24 */
+/***/ (function(module, exports, __webpack_require__) {
+
+const Resources = __webpack_require__(13);
+
+var _instance = null,
+    _game = null;
+
+function CreateLoadingVisuals() {
+    var text = _game.add.text(_game.world.centerX, _game.world.centerY - 50, "Loading assets...");
+    text.anchor.setTo(0.5, 0.5);
+
+    var preloadImage = _game.add.sprite(_game.world.centerX, _game.world.centerY, 'progressBar');
+    preloadImage.anchor.setTo(0.5, 0.5);
+    _game.load.setPreloadSprite(preloadImage);
+}
+
+module.exports = {
+    init: function() {
+        if( _instance !== null)
+            return _instance;
+        _game = this.game;
+        Resources.init(_game);
+        return _instance;
+    },
+    preload: function() {
+        CreateLoadingVisuals();
+        Resources.preload();
+    },
+    create: function() {
+        _game.global.style = Resources.getStyle();
+        _game.state.start("stateManager");
+    }
+}
+
+
+/***/ }),
+/* 25 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var InputTypeEnum = {
+    NameInput: 'INPUT_TEXT',
+    Choices: 'TEXT_CHOICES'
+}
+var Linkable = __webpack_require__(0);
+
+var Input = function(content, xPos, yPos, properties) {
+    this._xPos = xPos;
+    this._yPos = yPos;
+    this._content = content;
+    this._properties = properties;
+    this._input = null;
+}
+
+Input.prototype.setDefaultProperties = function() {
+    this._input.font = '18px Roboto';
+}
+
+Input.prototype.addToGame = function(game) {
+    this._input = game.add.inputField(this._xPos, this._yPos, this._properties);
+    this.setDefaultProperties();
+}
+
+Input.prototype.getInput = function() {
+    return this._input;
+}
+
+
+module.exports = Input;
+
+
+/***/ }),
+/* 26 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _instance = null;
+var _game = null;
+
+var DatabaseManager = function() {
+    if(_instance !== null)
+        return _instance;
+    _instance = this;
+    return _instance;
+}
+
+DatabaseManager.prototype.sendInteractionData = function(currentSceneName, tag) {
+    console.log("Stub sending to database: " + currentSceneName + " " + tag);
+}
+
+module.exports = DatabaseManager;
+
+/***/ }),
+/* 27 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+const ConnectionChecker = __webpack_require__(19),
+    StateManager = __webpack_require__(14),
+    InteractState = __webpack_require__(16),
+    LocationState = __webpack_require__(17),
+    Icons = __webpack_require__(6),
+    Choices = __webpack_require__(10),
+    Thoughts = __webpack_require__(12),
+    Transition = __webpack_require__(1),
+    UI = __webpack_require__(3),
+    Video = __webpack_require__(2),
+    Linkable = __webpack_require__(0);
+
+var _instance = null;
+var _game = null;
+
+var GameManager = function() {
+    if(_instance !== null)
+        return _instance;
+    
+    _instance = this;
+
+    this._changeSceneSignal = null;
+
+    this._fadeInTransitionSignal = null;
+    this._fadeOutTransitionSignal = null;
+
+    this._triggerInteractionSignal = null;
+    this._endInteractionSignal = null;
+
+    this._videoSeekSignal = null;
+
+    this._createThoughtsSignal = null;
+    this._createChoicesSignal = null;
+    this._revealChoicesSignal = null;
+    this._createThoughtsAndChoicesSignal = null;
+
+    this._displayImageSignal = null;
+    this._hideDisplayedImageSignal = null;
+
+    this._showUISignal = null;
+    this._hideUISignal = null;
+    this._showInfoOverlaySignal = null;
+    this._hideInfoOverlaySignal = null;
+    this._pauseSignal = null;
+    this._playSignal = null;
+    this._toggleSubtitleSignal = null;
+
+    this._goToLinkSignal = null;
+
+    return _instance;
+}
+
+GameManager.prototype.initSignals = function() {
+
+    this._changeSceneSignal = new Phaser.Signal();
+    this._changeSceneSignal.add(StateManager.changeScene, this);
+
+    this._fadeInTransitionSignal = new Phaser.Signal();
+    this._fadeInTransitionSignal.add(Transition.fadeInTransition, this);
+    this._fadeOutTransitionSignal = new Phaser.Signal();
+    this._fadeOutTransitionSignal.add(Transition.fadeOutTransition, this);
+
+    this._triggerInteractionSignal = new Phaser.Signal();
+    this._triggerInteractionSignal.add(InteractState.createThought, this);
+    this._endInteractionSignal = new Phaser.Signal();
+    this._endInteractionSignal.add(InteractState.endInteraction, this);
+
+    this._videoSeekSignal = new Phaser.Signal();
+    this._videoSeekSignal.add(Video.seekTo, this);
+
+    this._createThoughtsSignal = new Phaser.Signal();
+    this._createThoughtsSignal.add(Thoughts.create, this);
+    this._createChoicesSignal = new Phaser.Signal();
+    this._createChoicesSignal.add(Choices.create, this);
+    this._revealChoicesSignal = new Phaser.Signal();
+    this._revealChoicesSignal.add(Choices.revealChoices, this);
+
+    this._displayImageSignal = new Phaser.Signal();
+    this._displayImageSignal.add(LocationState.displayImage, this);
+    this._hideDisplayedImageSignal = new Phaser.Signal();
+    this._hideDisplayedImageSignal.add(LocationState.hideDisplayedImage, this);
+
+    this._showUISignal = new Phaser.Signal();
+    this._showUISignal.add(UI.showUI, this);
+    this._hideUISignal = new Phaser.Signal();
+    this._hideUISignal.add(UI.hideUI, this);
+    this._showInfoOverlaySignal = new Phaser.Signal();
+    this._showInfoOverlaySignal.add(UI.showInfoOverlay, this);    
+    this._hideInfoOverlaySignal = new Phaser.Signal();
+    this._hideInfoOverlaySignal.add(UI.hideInfoOverlay, this);
+    this._pauseSignal = new Phaser.Signal();
+    this._pauseSignal.add(UI.pause, this);    
+    this._playSignal = new Phaser.Signal();
+    this._playSignal.add(UI.play, this);
+    this._toggleSubtitleSignal = new Phaser.Signal();
+    this._toggleSubtitleSignal.add(Video.toggleSubtitle, this);
+
+    this._createThoughtsAndChoicesSignal = new Phaser.Signal();
+    this._createThoughtsAndChoicesSignal.add(Icons.createThoughtsAndChoices, this);
+
+    this._goToLinkSignal = new Phaser.Signal();
+    this._goToLinkSignal.add(Linkable.goToLink, this);
+}
+
+GameManager.prototype.getChangeSceneSignal = function() {
+    return this._changeSceneSignal;
+}
+
+GameManager.prototype.getFadeInTransitionSignal = function() {
+    return this._fadeInTransitionSignal;
+}
+
+GameManager.prototype.getFadeOutTransitionSignal = function() {
+    return this._fadeOutTransitionSignal;
+}
+
+GameManager.prototype.getTriggerInteractionSignal = function() {
+    return this._triggerInteractionSignal;
+}
+
+GameManager.prototype.getEndInteractionSignal = function() {
+    return this._endInteractionSignal;
+}
+
+GameManager.prototype.getVideoSeekSignal = function() {
+    return this._videoSeekSignal;
+}
+
+GameManager.prototype.getCreateThoughtsSignal = function() {
+    return this._createThoughtsSignal;
+}
+
+GameManager.prototype.getCreateChoicesSignal = function() {
+    return this._createChoicesSignal;
+}
+
+GameManager.prototype.getCreateThoughtsAndChoicesSignal = function() {
+    return this._createThoughtsAndChoicesSignal;
+}
+
+GameManager.prototype.getRevealChoicesSignal = function() {
+    return this._revealChoicesSignal;
+}
+
+GameManager.prototype.getDisplayImageSignal = function() {
+    return this._displayImageSignal;
+}
+
+GameManager.prototype.getHideDisplayedImageSignal = function() {
+    return this._hideDisplayedImageSignal;
+}
+
+GameManager.prototype.getShowUISignal = function() {
+    return this._showUISignal;
+}
+
+GameManager.prototype.getHideUISignal = function() {
+    return this._hideUISignal;
+}
+
+GameManager.prototype.getShowInfoOverlaySignal = function() {
+    return this._showInfoOverlaySignal;
+}
+
+GameManager.prototype.getHideInfoOverlaySignal = function() {
+    return this._hideInfoOverlaySignal;
+}
+
+GameManager.prototype.getPauseSignal = function() {
+    return this._pauseSignal;
+}
+
+GameManager.prototype.getPlaySignal = function() {
+    return this._playSignal;
+}
+
+GameManager.prototype.getToggleSubtitleSignal = function() {
+    return this._toggleSubtitleSignal;
+}
+
+GameManager.prototype.getGoToLinkSignal = function() {
+    return this._goToLinkSignal;
+}
+
+module.exports = GameManager;
+
+
+/***/ }),
 /* 28 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-const Group = __webpack_require__(3), 
-    Input = __webpack_require__(24),
-    Transition = __webpack_require__(0),
+var _instance = null;
+var _game = null;
+var _input = null;
+var Input = __webpack_require__(25);
+
+module.exports = {
+    init: function(game) {
+        if(_instance !== null)
+            return _instance;
+        _game = game;
+        _instance = this;
+        return _instance;
+    },
+    preload: function() {
+    },
+    create: function(input) {
+        _input = [];
+        for(var i=0; i<input.size; i++) {
+            console.log("added");
+            _input.push(new Input(input.name[i], input.coords[i][0], input.coords[i][1], input.properties[i]));
+            _input[i].addToGame(_game);
+        }
+        return _input;
+    }
+}
+
+
+/***/ }),
+/* 29 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+const StateManager = __webpack_require__(14),
+    InteractState = __webpack_require__(16),
+    LocationState = __webpack_require__(17),
+    Icons = __webpack_require__(6),
+    Choices = __webpack_require__(10),
+    Thoughts = __webpack_require__(12),
+    Transition = __webpack_require__(1),
+    UI = __webpack_require__(3),
+    Video = __webpack_require__(2);
+
+var _instance = null;
+var _game = null;
+var _bgMusic = null;
+var _bgMusicKey = null;
+var _soundHashSet = null;
+var _currTime = 0;
+
+
+var SoundManager = function(game) {
+    if(_instance !== null)
+        return _instance;
+    _instance = this;
+    _game = game;
+    return _instance;
+}
+
+SoundManager.prototype.init = function() {
+    _soundHashSet = {};
+}
+
+SoundManager.prototype.playSound = function(soundKey) {
+    if(!_soundHashSet[soundKey]) {
+        _soundHashSet[soundKey] = _game.add.audio(soundKey);
+    }
+    _soundHashSet[soundKey].play();
+}
+
+SoundManager.prototype.playBackgroundMusic = function(musicKey) {
+  //  if(_bgMusicKey == musicKey) {
+   //     _bgMusic = _game.add.audio(musicKey);
+  //      _bgMusic.currentTime = _currTime;
+ //   }
+    //else {
+    if(_bgMusicKey != musicKey) {
+        if(_bgMusic)
+            _bgMusic.stop();
+        if(!_soundHashSet[musicKey]) 
+            _soundHashSet[musicKey] = _game.add.audio(musicKey);
+        _bgMusic =_soundHashSet[musicKey];
+        _bgMusicKey = musicKey;
+        _bgMusic.loop = true;
+        _bgMusic.play(); 
+
+    }
+}    
+
+SoundManager.prototype.stopBackgroundMusic = function() {
+    if(_bgMusic)
+        _bgMusic.stop();
+}
+
+SoundManager.prototype.setCurrentTime = function(time) {
+    _currTime = time;
+}
+
+
+module.exports = SoundManager;
+
+
+/***/ }),
+/* 30 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+const Group = __webpack_require__(5), 
+    Input = __webpack_require__(28),
+    Transition = __webpack_require__(1),
     State = __webpack_require__(7),
-    MovingBackground = __webpack_require__(18),
+    MovingBackground = __webpack_require__(11),
     Icons = __webpack_require__(6);
 
 var _instance = null;
@@ -3058,7 +3369,7 @@ module.exports = {
         //updatePlayerNameCallback(this.game);
         //Video.create(_stateInfo.getMovieSrc(), _stateInfo.getTransition().fadeOut, Transition.getFadeOutSignal(), _stateInfo.getVideoFilter(), _stateInfo.getNextScenes());
         MovingBackground.create(_stateInfo.getBgImageKey(), _stateInfo.getDraggable());
-        Icons.createExploratoryIcons(_stateInfo.getIconsInfo(), false);
+        Icons.createExploratoryIcons(_stateInfo.getIconsInfo());
         //_input = Input.create(_stateInfo.getInputInfo());
         if(_stateInfo.getTransitionInfo().fadeIn)
             this.game.global.gameManager.getFadeInTransitionSignal().dispatch();
@@ -3072,19 +3383,19 @@ module.exports = {
 
 
 /***/ }),
-/* 29 */
+/* 31 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-const Group = __webpack_require__(3),
-    UI = __webpack_require__(2),
-    Video = __webpack_require__(1),
-    Transition = __webpack_require__(0),
+const Group = __webpack_require__(5),
+    UI = __webpack_require__(3),
+    Video = __webpack_require__(2),
+    Transition = __webpack_require__(1),
     State = __webpack_require__(7),
-    MovingBackground = __webpack_require__(18),
-    SceneParser = __webpack_require__(31);
+    MovingBackground = __webpack_require__(11),
+    SceneParser = __webpack_require__(15);
 
 var _instance = null;
 var _game = null;
@@ -3121,117 +3432,16 @@ module.exports = {
     },
     create: function() {
         Group.initializeGroups();
+        _game.global.soundManager.stopBackgroundMusic();
         if(_stateInfo.getBgImageKey())
             MovingBackground.create(_stateInfo.getBgImageKey(), _stateInfo.getDraggable());
         Video.create(GetMovieSrc(_stateInfo), _stateInfo.getTransitionInfo().fadeOut, _stateInfo.getVideoFilter(), _stateInfo.getNextScenes(), _stateInfo.getMovieSubKey());
         if(_stateInfo.getTransitionInfo().fadeIn)
             this.game.global.gameManager.getFadeInTransitionSignal().dispatch();
-        if(!_game.global.currentSceneName === START_SCENE_NAME)
+        if(_game.global.currentSceneName !== START_SCENE_NAME)
             UI.create(true, true);
     }
 }
-
-
-/***/ }),
-/* 30 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-const Boot = __webpack_require__(20),
-    Preload = __webpack_require__(21),
-    StateManager = __webpack_require__(13),
-    ResourceLoader = __webpack_require__(12);
-    
-function initGame(Boot, Preload, StateManager, ResourceLoader) {
-    var game = new Phaser.Game(1280, 720, Phaser.CANVAS, '', { init: init, preload: preload, create: create, update: update });
-
-    function init() {
-        console.log("Game initialized.");
-        game.canvas.className += "center";
-        game.state.add("boot", Boot);
-        game.state.add("preload", Preload);
-        game.state.add("stateManager", StateManager);
-    }
-
-    function preload () {
-        game.load.json('data', 'json/Data.json');
-        game.load.json('style', 'json/Style.json');
-        game.load.image('progressBar', './Images/Icons/StubIcon.png');
-        game.load.image('title', './Images/UI/Title.png');
-    }
-
-    function create() {
-        game.state.start("boot");
-    }
-
-    function update() {
-
-    }
-}
-
-initGame(Boot, Preload, StateManager, ResourceLoader);
-
-
-/***/ }),
-/* 31 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-//ScenePartser constructor
-var SceneParser = function() {
-}
-
-SceneParser.VisitAtLeastOnceOfEach = function(game, sceneSetArray) {
-    var unlocked = true;
-    for(var j=0; j<sceneSetArray.length; j++) {
-        unlocked &= SceneParser.OneSceneVisited(game, sceneSetArray[j]);
-    }
-    return unlocked;
-}
-
-SceneParser.OneSceneVisited = function(game, sceneArr) {
-    if(sceneArr){
-        for(var i=0; i<sceneArr.length; i++) {
-            if(game.global.visitedScenes[sceneArr[i]]) {
-                return true;
-            }
-        }
-    }
-    return false;
-}
-
-SceneParser.AllSceneVisited = function(game, sceneArr) {
-    if(sceneArr){
-    	console.log(sceneArr);
-        for(var i=0; i<sceneArr.length; i++) {
-            if(!game.global.visitedScenes[sceneArr[i]]) {
-            	console.log(sceneArr[i]);
-            	console.log(game.global.visitedScenes[sceneArr[i]]);
-                return false;
-            }
-        }
-        return true;
-    }
-    else
-    	return false;
-}
-
-SceneParser.GetIndexOfVisitedAll = function(game, sceneArr) {
-    if(sceneArr){
-        for(var i=0; i<sceneArr.length; i++) {
-            if(SceneParser.AllSceneVisited(game, sceneArr[i])) {
-                return i;
-            }
-        }
-    }
-    return false;
-}
-
-module.exports = SceneParser;
 
 
 /***/ }),
@@ -3241,31 +3451,8 @@ module.exports = SceneParser;
 "use strict";
 
 
-var _instance = null;
-var _game = null;
-
-var DatabaseManager = function() {
-    if(_instance !== null)
-        return _instance;
-    _instance = this;
-    return _instance;
-}
-
-DatabaseManager.prototype.sendInteractionData = function(currentSceneName, tag) {
-    console.log("Stub sending to database: " + currentSceneName + " " + tag);
-}
-
-module.exports = DatabaseManager;
-
-/***/ }),
-/* 33 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
 const State = __webpack_require__(7),
-    SceneParser = __webpack_require__(31);
+    SceneParser = __webpack_require__(15);
 
 var _instance = null;
 var _stateInfo = null;
@@ -3299,6 +3486,48 @@ module.exports = {
         _game.global.gameManager.getChangeSceneSignal().dispatch(targetSceneName);
     }
 }
+
+
+/***/ }),
+/* 33 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+const Boot = __webpack_require__(23),
+    Preload = __webpack_require__(24),
+    StateManager = __webpack_require__(14),
+    ResourceLoader = __webpack_require__(13);
+    
+function initGame(Boot, Preload, StateManager, ResourceLoader) {
+    var game = new Phaser.Game(1280, 720, Phaser.CANVAS, '', { init: init, preload: preload, create: create, update: update });
+
+    function init() {
+        console.log("Game initialized.");
+        game.canvas.className += "center";
+        game.state.add("boot", Boot);
+        game.state.add("preload", Preload);
+        game.state.add("stateManager", StateManager);
+    }
+
+    function preload () {
+        game.load.json('data', 'json/Data.json');
+        game.load.json('style', 'json/Style.json');
+        game.load.image('progressBar', './Images/Icons/StubIcon.png');
+        game.load.image('title', './Images/UI/Title.png');
+    }
+
+    function create() {
+        game.state.start("boot");
+    }
+
+    function update() {
+
+    }
+}
+
+initGame(Boot, Preload, StateManager, ResourceLoader);
 
 
 /***/ })

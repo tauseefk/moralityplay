@@ -12,6 +12,7 @@ const Transition = require('../Modules/transition'),
 var _instance = null;
 var _stateInfo = null;
 var _game = null;
+var _overlayGraphic = null;
 
 module.exports = {
     init: function(scene) {
@@ -46,12 +47,16 @@ module.exports = {
         //text.fadeIn(this.game);
         if(_stateInfo.getTransitionInfo().fadeIn)
             this.game.global.gameManager.getFadeInTransitionSignal().dispatch();
+        UI.createInfoOverlay();
     },
     shutdown: function() {
         Icons.destroy();        
-        _game.global.soundManager.stopBackgroundMusic();
+        //_game.global.soundManager.stopBackgroundMusic();
     },
-    displayImage: function(index, hideSameType) {
-        Icons.displayIcon(index, hideSameType);
+    displayImage: function(targetIndex, clickedIndex) {
+        Icons.displayIcon(targetIndex, clickedIndex);
+    },
+    hideDisplayedImage: function() {
+        Icons.hideDisplayedIcon();
     }
 }

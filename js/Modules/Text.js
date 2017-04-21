@@ -10,7 +10,8 @@ var TextTypeEnum = {
     MeaningfulChoices: 'TEXT_MEANINGFUL_CHOICES',
     MeaninglessChoices: 'TEXT_MEANINGLESS_CHOICES',    
     Question: 'TEXT_QUESTION',
-    Subtitle: 'TEXT_SUBTITLE'
+    Subtitle: 'TEXT_SUBTITLE',
+    InfoOverlayText: 'TEXT_INFO_OVERLAY'
 }
 
 var Text = function(content, xPos, yPos, type, properties) {
@@ -62,7 +63,10 @@ Text.prototype.changeText = function(game, arg1, arg2, arg3, arg4, arg5, arg6) {
             this.changeToMeaninglessChoices(game, arg1, arg2, arg3, arg4, arg5);
             break;
         case TextTypeEnum.Question:
-            this.changeToQuestion(game, arg1, arg2);
+            this.changeToQuestion(game);
+            break;
+        case TextTypeEnum.InfoOverlayText:
+            this.changeToInfoOverlayText(game);
             break;
         case TextTypeEnum.Subtitle:
             this.changeToSubtitle(game, arg1);
@@ -128,6 +132,12 @@ Text.prototype.changeToQuestion = function(game) {
     this._text.x = game.width/2;    
     this._text.alpha = 0;
     Animation.fade(game, this._text, 1, true);
+}
+
+Text.prototype.changeToInfoOverlayText = function(game) {    
+    this._text.anchor.set(0.5, 0.5);
+    this._text.x = game.width/2;
+    this.setVisible(false);
 }
 
 Text.prototype.changeToSubtitle = function(game, isVisible) {
