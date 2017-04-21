@@ -63,7 +63,7 @@ GameManager.prototype.initSignals = function() {
     this._fadeOutTransitionSignal.add(Transition.fadeOutTransition, this);
 
     this._triggerInteractionSignal = new Phaser.Signal();
-    this._triggerInteractionSignal.add(InteractState.createThought, this);
+    this._triggerInteractionSignal.add(InteractState.createInteractionElements, this);
     this._endInteractionSignal = new Phaser.Signal();
     this._endInteractionSignal.add(InteractState.endInteraction, this);
 

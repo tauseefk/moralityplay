@@ -33,7 +33,7 @@ function CreateChoiceQuestion(question, y) {
     _question.changeText(_game, questionTextKeyEnum);
 }
 
-function CreateChoices(choices, thoughtsTriggerNeeded) {
+function CreateChoices(choices) {
     //_thoughtsTriggerNeeded = thoughtsTriggerNeeded;
     if(choices.targetScene)
         CreateMeaningfulChoices(choices);
@@ -155,8 +155,8 @@ module.exports = {
     },
     preload: function() {
     },
-    create: function(choices, thoughtsTriggerNeeded) {
-        CreateChoices(choices, thoughtsTriggerNeeded);
+    create: function(choices) {
+        CreateChoices(choices);
     },
     endInteraction: function(lingeringChoice, targetScene) {
         FadeChoicesExcept(lingeringChoice.index);

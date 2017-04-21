@@ -68,28 +68,25 @@
 
     "titleScene": {
         "stateType": "MenuState",
+        "movieSrcHD": "./Videos/Title_optimized.mp4",
+        "movieSrcSD": "./Videos/Title_optimized_lo.mp4",
         "draggable": false,
-        "bgImageKey": "background",
         "transition": {
             "fadeIn": true,
             "fadeOut": true
         },
         "icons": {
-            "size": 2,
+            "size": 1,
             "type": [
-                "IMAGE_STATIC",
                 "IMAGE_BUTTON_SCENECHANGE"
             ],
             "key": [
-                "mainTitle",
                 "startButton"
             ],
             "coords": [
-                [ 640, 250 ],
-                [ 640, 560 ]
+                [ 950, 600 ]
             ],
             "targetImageIndexOrScene": [
-                null,
                 "introScene"
             ]
         }

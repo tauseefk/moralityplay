@@ -1,4 +1,8 @@
-//Dependency: None
+/*
+Loads game fonts and tests user's connection.
+*/
+
+//Dependencies
 const ConnectionChecker = require('../Modules/connectionChecker'), 
     GameManager = require('../Modules/gameManager'),
     SoundManager = require('../Modules/soundManager'),
@@ -12,7 +16,9 @@ const connectionTestFileKey = 'littleRootMusic',
     connectionTestFileType = 'AUDIO',
     connectionTestFileBytes = 2886887;
 
-
+/*
+Loads google webfonts before initialization.
+*/
 WebFontConfig = {
     //Load fonts before creation, timer delay. Can be improved  in implementation.
     active: function() { _game.time.events.add(Phaser.Timer.SECOND, DelayedCreate, this); },
@@ -22,10 +28,13 @@ WebFontConfig = {
     }
 };
 
+/*
+Initializes game, sound and database managers.
+Performs connection test.
+Loads load visuals.
+*/
 function DelayedCreate() {
-
     CreateGlobalVars();
-    InitGameGroups();
     SetGameProperties();
     CreateLoadingVisuals();
     ConnectionChecker.loadFile(connectionTestFileKey, connectionTestFileSrc, connectionTestFileType, connectionTestFileBytes);
@@ -37,27 +46,34 @@ function CreateLoadingVisuals() {
     text.anchor.setTo(0.5, 0.5);
 }
 
+/*
+Sets game bg color and ensures application runs even when out of focus.
+*/
 function SetGameProperties() {
     _game.stage.disableVisibilityChange = true;
     _game.stage.backgroundColor = "#ffffff";
 }
 
+/*
+Global managers and variables initialized.
+*/
 function CreateGlobalVars() {
+    //Global variables
     _game.global = {
         playerName: null,
         visitedScenes: {}
     }
 
+    //Global groups
+    _game.mediaGroup = _game.add.group();
+    _game.uiGroup = _game.add.group();
+
+    //Global managers
     _game.global.gameManager = new GameManager();
     _game.global.gameManager.initSignals();
     _game.global.soundManager = new SoundManager(_game);
     _game.global.soundManager.init();
     _game.global.databaseManager = new DatabaseManager(_game);
-}
-
-function InitGameGroups() {
-    _game.mediaGroup = _game.add.group();
-    _game.uiGroup = _game.add.group();
 }
 
 module.exports = {

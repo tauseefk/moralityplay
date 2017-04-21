@@ -69,7 +69,7 @@ Image.prototype.changeImage = function (game, arg1, arg2, arg3, arg4, arg5) {
             this.changeToBgImage(game, arg1);
             break;
         case ImageTypeEnum.Thought:
-            this.changeToThoughtIcon(game, arg1, arg2, arg3, arg4, arg5);
+            this.changeToThoughtIcon(game, arg1, arg2, arg3);
             break;
         case ImageTypeEnum.SceneChange:
             this.changeToSceneChangeImage(game, arg1, arg2);
@@ -99,7 +99,7 @@ Image.prototype.changeImage = function (game, arg1, arg2, arg3, arg4, arg5) {
             this.changeToPauseButton(game, arg1);
             break;
         case ImageTypeEnum.ThoughtSprite:
-            this.changeToThoughtSprite(game, arg1, arg2, arg3, arg4, arg5);
+            this.changeToThoughtSprite(game, arg1, arg2, arg3);
             break;
         default:
             console.warn("Invalid Image Type.");
@@ -110,7 +110,7 @@ Image.prototype.changeToStaticImage = function(game) {
     this._image.anchor.setTo(0.5, 0.5);
 }
 
-Image.prototype.changeToThoughtSprite = function(game, thoughtsAndChoicesSignal, thoughts, coords, choices) {
+Image.prototype.changeToThoughtSprite = function(game, thoughts, coords, choices) {
     //this._image.width = 100;
     //this._image.height = 100;
     this._image.anchor.setTo(0.5, 0.5);
@@ -118,7 +118,7 @@ Image.prototype.changeToThoughtSprite = function(game, thoughtsAndChoicesSignal,
     this._image.animations.play('think', 4, false);
     this._image.inputEnabled = true;
     this._image.input.useHandCursor = true;
-    this._link = new Linkable(game, this._image.events, thoughtsAndChoicesSignal, thoughts, coords, choices);
+    this._link = new Linkable(game, this._image.events, game.global.gameManager.getCreateThoughtsAndChoicesSignal(), thoughts, coords, choices);
     this._link.addOnClickAnimation(Animation.fade(game, this._image, 0, false));
     this._link.addOnClickAnimation(Animation.scale(game, this._image, false));
     this._link.setAsButton(true);
@@ -140,11 +140,11 @@ Image.prototype.changeToBgImage = function(game, draggable) {
     }
 }
 
-Image.prototype.changeToThoughtIcon = function(game, thoughtsAndChoicesSignal, thoughts, coords, choices) {
+Image.prototype.changeToThoughtIcon = function(game, thoughts, coords) {
     this._image.width = 100;
     this._image.height = 100;
     this._image.anchor.setTo(0.5, 0.5);
-    this._link = new Linkable(game, this._image, thoughtsAndChoicesSignal, thoughts, coords, choices);
+    this._link = new Linkable(game, this._image, game.global.gameManager.getCreateThoughtsAndChoicesSignal(), thoughts, coords, choices);
     this._link.addOnClickAnimation(Animation.fade(game, this._image, 0, false));
     this._link.addOnClickAnimation(Animation.scale(game, this._image, false));
     this._link.setAsButton(true);

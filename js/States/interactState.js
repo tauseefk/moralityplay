@@ -1,5 +1,10 @@
+/*
+State for interactive video scenes.
+*/
+
 "use strict";
 
+//Dependencies
 const Group = require('../Modules/groupLoader'),
     UI = require('../Modules/uiLoader'),
     Video = require('../Modules/videoLoader'),
@@ -15,25 +20,27 @@ var _instance = null;
 var _game = null;
 var _momentCount = null;
 
-function CreateThought() {
+function CreateInteractionElements() {
     Icons.endInteraction();
+    CreateThoughtBubbles();
+    CreateChoices();
+}
 
+function CreateThoughtBubbles() {    
     var thoughtBubbles = _stateInfo.getThoughtBubble(_momentCount);
-    var choices = null;
-
     if(thoughtBubbles) {
         for(var i=0; i<thoughtBubbles.size; i++) {
             Icons.createThoughtIcon(thoughtBubbles.thoughtIconKey[i], thoughtBubbles.coords[i], thoughtBubbles.thoughts[i]);
-        }
+        }      
+    }
+}
 
-        choices = _stateInfo.getChoicesFromThoughtMoment(_momentCount);
-        Choices.create(choices, thoughtBubbles.size);        
-    }
-    else {
-        console.log("Choices: " + _momentCount);
-        choices = _stateInfo.getChoices(_momentCount);
-        Choices.create(choices);
-    }
+function CreateChoices() {
+    var choices = null;
+
+    choices = _stateInfo.getChoices(_momentCount);
+    Choices.create(choices);
+
     _game.global.gameManager.getRevealChoicesSignal().dispatch();
     _momentCount++;
 }
@@ -87,8 +94,8 @@ module.exports = {
             this.game.global.gameManager.getFadeInTransitionSignal().dispatch();
         UI.create(true, true);
     },
-    createThought: function() {
-        CreateThought();
+    createInteractionElements: function() {
+        CreateInteractionElements();
     },
     endInteraction: function(lingeringChoice, targetScene, tag) {
         EndInteraction(lingeringChoice, targetScene, tag);

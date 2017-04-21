@@ -24,7 +24,7 @@ const buttonThoughtImageKeyEnum = 'IMAGE_BUTTON_THOUGHT',
 function CreateThoughtIcon(iconKey, coords, thoughts) {
     var button = new Image(coords[0], coords[1], iconKey, buttonThoughtSpriteKeyEnum);
     button.addImageToGame(_game, _game.mediaGroup);
-    button.changeImage(_game, _game.global.gameManager.getCreateThoughtsAndChoicesSignal(), thoughts, coords);
+    button.changeImage(_game, thoughts, coords);
     _icons.push(button);
 }
 
