@@ -12,8 +12,9 @@
     "background": "./Images/Splash/bg.jpg",
     "mainTitle": "./Images/UI/Title.png",
     "endBG":"./Images/UI/end_screen_bg.jpg",
-    "endLearnMore":"./Images/UI/learnmore.png",
-
+    "endLearnMore": "./Images/UI/learnmore.png",
+    "closeButton": "./Images/UI/cross.png",
+    "infoButton": "./Images/UI/info_icon.png",
 
     "arrowBackward": "./Images/UI/arrow_backward.png",
     "arrowMainleft": "./Images/UI/main_arrow_left.png",
@@ -35,16 +36,17 @@
     "infoS2": "./Images/UI/scene2_infobox.png",
     "infoS3": "./Images/UI/scene3_infobox.png",
 
-    "leftOutline": "./Images/UI/outline_left.png",
-
-    "michael_still": "./Images/Locations/michael.jpg"
+    "infoPopupMicroaggression": "./Images/Info/Microaggressions dialogs.jpg"
 },
 "spritesheets": {
     "leftThoughtBubble": ["./Images/Sprites/ThoughBubble_Left_spritesheet.png", 200, 117, 6],
     "rightThoughtBubble": ["./Images/Sprites/ThoughBubble_Right_spritesheet.png", 200, 117, 6]
 },
 "audio": {
-    "cmuCutLocationSound": "./Audio/Sound/Main Campus Sounds.wav"
+    "cmuCutLocationSound": "./Audio/Sound/Main Campus Sounds.wav",
+    "huntIndoorSound": "./Audio/Sound/HuntIndoor.wav",
+    "gatesIndoorSound": "./Audio/Sound/GatesIndoor.wav",    
+    "cohonIndoorSound": "./Audio/Sound/CohonIndoor.wav"
 },
 "subtitles": {
     "sub1": "./Videos/Subtitles/test.srt"
@@ -277,43 +279,23 @@
             "fadeIn": false,
             "fadeOut": false
         },
-        "backgroundMusic": "cmuCutLocationSound",
+        "backgroundMusic": "cohonIndoorSound",
         "icons": {
-            "size": 2,
-            "type": [
-                "IMAGE_BUTTON_SCENECHANGE",
-                "IMAGE_BUTTON_DISPLAY_IMAGE"
-            ],
-            "key": [
-                "arrowBackward",
-                "arrowBackward"
-            ],
-            "coords": [
-                [ 100, 650 ],
-                [ 600, 100 ]
-            ],
-            "targetImageIndexOrScene": [
-                "cmuCohonLocation",
-                0
-            ],
-            "lockedByScenes": [
-                null,
-                ["an2good","an2bad"]
-            ]
-        },
-        "linkedIcons": {
             "size": 1,
             "type": [
                 "IMAGE_BUTTON_SCENECHANGE"
             ],
             "key": [
-                "leftOutline"
+                "arrowBackward"
             ],
             "coords": [
-                [ 200, 325 ]
+                [ 100, 650 ]
             ],
             "targetImageIndexOrScene": [
-                "an1"
+                "cmuCohonLocation"
+            ],
+            "lockedByScenes": [
+                null
             ]
         }
     },
@@ -392,24 +374,42 @@
             "fadeIn": false,
             "fadeOut": false
         },
-        "backgroundMusic": "cmuCutLocationSound",
+        "backgroundMusic": "gatesIndoorSound",
         "icons": {
-            "size": 1,
+            "size": 2,
             "type": [
-                "IMAGE_BUTTON_SCENECHANGE"
+                "IMAGE_BUTTON_SCENECHANGE",
+                "IMAGE_BUTTON_DISPLAY_IMAGE"
             ],
             "key": [
-                "arrowBackward"
+                "arrowBackward",
+                "infoButton"
             ],
             "coords": [
-                [ 1100, 650 ]
+                [ 1180, 650 ],
+                [ 500, 300]
             ],
             "targetImageIndexOrScene": [
-                "cmuGatesLocation"
+                "cmuGatesLocation",
+                0
+            ]
+        },
+        "linkedIcons": {
+            "size": 1,
+            "type": [
+                "IMAGE_INFO"
+            ],
+            "key": [
+                "infoPopupMicroaggression"
+            ],
+            "coords": [
+                [0, 0]
+            ],
+            "targetImageIndexOrScene": [
+                null
             ]
         }
     },
-
 
     "cmuHuntLocation": {
         "stateType": "LocationState",
@@ -486,43 +486,23 @@
             "fadeIn": false,
             "fadeOut": false
         },
-        "backgroundMusic": "cmuCutLocationSound",
+        "backgroundMusic": "huntIndoorSound",
         "icons": {
-            "size": 2,
-            "type": [
-                "IMAGE_BUTTON_SCENECHANGE",
-                "IMAGE_BUTTON_DISPLAY_IMAGE"
-            ],
-            "key": [
-                "arrowBackward",
-                "arrowBackward"
-            ],
-            "coords": [
-                [ 100, 650 ],
-                [ 600, 100 ]
-            ],
-            "targetImageIndexOrScene": [
-                "cmuHuntLocation",
-                0
-            ],
-            "lockedByScenes": [
-                null,
-                ["li2good","li2bad"]
-            ]
-        },
-        "linkedIcons": {
             "size": 1,
             "type": [
                 "IMAGE_BUTTON_SCENECHANGE"
             ],
             "key": [
-                "leftOutline"
+                "arrowBackward"
             ],
             "coords": [
-                [ 200, 325 ]
+                [ 100, 650 ]
             ],
             "targetImageIndexOrScene": [
-                "li1"
+                "cmuHuntLocation"
+            ],
+            "lockedByScenes": [
+                null
             ]
         }
     },
