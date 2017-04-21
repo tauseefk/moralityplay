@@ -36,7 +36,10 @@
     "infoS2": "./Images/UI/scene2_infobox.png",
     "infoS3": "./Images/UI/scene3_infobox.png",
 
-    "infoPopupMicroaggression": "./Images/Info/Microaggressions dialogs.jpg"
+    "infoPopupMicroaggression": "./Images/Info/Microaggressions dialogs.jpg",
+    "infoPopupSystemRacism": "./Images/Info/SystemRacism.jpg",
+    "infoPopupDemographic": "./Images/Info/Demographic.jpg",
+    "infoPopupNatureNurture": "./Images/Info/NatureNurture.jpg"
 },
 "spritesheets": {
     "leftThoughtBubble": ["./Images/Sprites/ThoughBubble_Left_spritesheet.png", 200, 117, 6],
@@ -281,24 +284,41 @@
         },
         "backgroundMusic": "cohonIndoorSound",
         "icons": {
-            "size": 1,
+            "size": 2,
             "type": [
-                "IMAGE_BUTTON_SCENECHANGE"
+                "IMAGE_BUTTON_SCENECHANGE",
+                "IMAGE_BUTTON_DISPLAY_IMAGE"
             ],
             "key": [
-                "arrowBackward"
+                "arrowBackward",
+                "infoButton"
             ],
             "coords": [
-                [ 100, 650 ]
+                [ 100, 650 ],
+                [ 400, 350 ]
             ],
             "targetImageIndexOrScene": [
-                "cmuCohonLocation"
+                "cmuCohonLocation",
+                0
+            ]
+        },
+         "linkedIcons": {
+            "size": 1,
+            "type": [
+                "IMAGE_INFO"
             ],
-            "lockedByScenes": [
+            "key": [
+                "infoPopupMicroaggression"
+            ],
+            "coords": [
+                [0, 0]
+            ],
+            "targetImageIndexOrScene": [
                 null
             ]
-        }
+        }       
     },
+
 
     "cmuGatesLocation": {
         "stateType": "LocationState",
@@ -363,6 +383,7 @@
             ]
         }
     },
+
     "cmuGatesInsideLocation": {
         "stateType": "LocationState",
         "draggable": false,
@@ -400,7 +421,7 @@
                 "IMAGE_INFO"
             ],
             "key": [
-                "infoPopupMicroaggression"
+                "infoPopupSystemRacism"
             ],
             "coords": [
                 [0, 0]
@@ -410,6 +431,7 @@
             ]
         }
     },
+
 
     "cmuHuntLocation": {
         "stateType": "LocationState",
@@ -488,25 +510,53 @@
         },
         "backgroundMusic": "huntIndoorSound",
         "icons": {
-            "size": 1,
+            "size": 3,
             "type": [
-                "IMAGE_BUTTON_SCENECHANGE"
+                "IMAGE_BUTTON_SCENECHANGE",
+                "IMAGE_BUTTON_DISPLAY_IMAGE",
+                "IMAGE_BUTTON_DISPLAY_IMAGE"
             ],
             "key": [
-                "arrowBackward"
+                "arrowBackward",
+                "infoButton",
+                "infoButton"
             ],
             "coords": [
-                [ 100, 650 ]
+                [ 100, 650 ],
+                [ 500, 400 ],
+                [ 850, 600 ]
             ],
             "targetImageIndexOrScene": [
-                "cmuHuntLocation"
+                "cmuHuntLocation",
+                0,
+                1
             ],
             "lockedByScenes": [
+                null
+            ]
+        },
+        "linkedIcons": {
+            "size": 2,
+            "type": [
+                "IMAGE_INFO",
+                "IMAGE_INFO"
+            ],
+            "key": [
+                "infoPopupDemographic",
+                "infoPopupNatureNurture"
+            ],
+            "coords": [
+                [0, 0],
+                [0, 0]
+
+            ],
+            "targetImageIndexOrScene": [
                 null
             ]
         }
     },
     
+
     "li1": {
         "videoFilter": [
             [ "grayscale", null ]
@@ -653,7 +703,7 @@
             "fadeIn": false,
             "fadeOut": false
         },
-        "nextScene": "cmuHuntLocation"
+        "nextScene": "cmuHuntInsideLocation"
     },
     "li2bad": {
         "stateType": "MovieState",
@@ -663,7 +713,7 @@
             "fadeIn": false,
             "fadeOut": false
         },
-        "nextScene": "cmuHuntLocation"
+        "nextScene": "cmuHuntInsideLocation"
     },
 
     "MK1": {
@@ -836,7 +886,7 @@
             "fadeIn": false,
             "fadeOut": false
         },
-        "nextScene": "cmuGatesLocation"
+        "nextScene": "cmuGatesInsideLocation"
     },
     "MK2good": {
         "stateType": "MovieState",
@@ -846,7 +896,7 @@
             "fadeIn": false,
             "fadeOut": false
         },
-        "nextScene": "cmuGatesLocation"
+        "nextScene": "cmuGatesInsideLocation"
     },
 
     "an1": {
@@ -959,7 +1009,7 @@
             "fadeIn": false,
             "fadeOut": false
         },
-        "nextScene": "cmuCohonLocation"
+        "nextScene": "cmuCohonIndoorLocation"
     },
     "an2bad": {
         "stateType": "MovieState",
@@ -969,7 +1019,7 @@
             "fadeIn": false,
             "fadeOut": false
         },
-        "nextScene": "cmuCohonLocation"
+        "nextScene": "cmuCohonIndoorLocation"
     },
 
 
@@ -1355,6 +1405,7 @@
             ]
         }
     },
+
     "endingSceneSwitch": {
         "stateType": "SwitchState",
         "sceneReqs": [
