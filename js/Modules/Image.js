@@ -207,6 +207,8 @@ Image.prototype.changeToChoiceBackgroundImage = function(game, width, height, ta
 
     phaserText.bringToTop();
     this._image.input.priorityID = 1;
+
+    this.fadeIn(game);
     
     //Animation.fade(game, this._image, 1, true);
     return this._image;

@@ -93,6 +93,7 @@ Text.prototype.changeToMeaningfulChoices = function(game, boundsY, totalChoices)
     this._text.anchor.set(0.5, 0.5);
     this._text.y = boundsY;
     this._text.alpha = 0;
+    this.fadeIn(game);
     //this._text.inputEnabled = false;
     //this._text.input.useHandCursor = true;
     //this._text.boundsAlignV = "middle";
@@ -115,6 +116,7 @@ Text.prototype.changeToMeaninglessChoices = function(game, boundsY, totalChoices
     this._text.anchor.set(0.5, 0.5);
     this._text.y = boundsY;
     this._text.alpha = 0;
+    this.fadeIn(game);
     //this._text.inputEnabled = false;
     //this._text.input.useHandCursor = true;
     //this._text.setTextBounds(0, boundsY, boundsWidth, boundsHeight);

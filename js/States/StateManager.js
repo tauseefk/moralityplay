@@ -1,5 +1,10 @@
+/***************************************************************
+Manages creation and transitions between state types. 
+***************************************************************/
+
 "use strict";
 
+//Dependencies
 const Resources = require('../Modules/resourceLoader'),
     Group = require('../Modules/groupLoader'),
     Transition = require('../Modules/transition'),
@@ -24,25 +29,21 @@ var StateEnum = {
     LocationState: 'LocationState'
 }
 
+/***************************************************************
+Changes state according to scene name.
+***************************************************************/
 function ChangeScene(sceneName) {
     var nextScene = Resources.getScene(sceneName);
     if(nextScene === null)
         console.warn("Scene: " + sceneName + "is undefined.");
-    if(nextScene)
-    console.log("Changing scene to: " + nextScene.stateType);
+    else
+        console.log("Changing scene to: " + nextScene.stateType);
+    
     switch(nextScene.stateType) {
         case StateEnum.MenuState:
-            _stateManagerInstance.start(nextScene.stateType, true, false, nextScene);
-            break;
         case StateEnum.InteractState:
-            _stateManagerInstance.start(nextScene.stateType, true, false, nextScene);
-            break;
         case StateEnum.SwitchState:
-            _stateManagerInstance.start(nextScene.stateType, true, false, nextScene);
-            break;
         case StateEnum.MovieState:
-            _stateManagerInstance.start(nextScene.stateType, true, false, nextScene);
-            break;
         case StateEnum.LocationState:
             _stateManagerInstance.start(nextScene.stateType, true, false, nextScene);
             break;
@@ -51,16 +52,9 @@ function ChangeScene(sceneName) {
     }
 }
 
-function CheckVisited(sceneName) {
-    console.log(sceneName);
-    var scene = Resources.getScene(sceneName);
-    if(scene.visited && scene.alternateSceneName) {
-        Resources.setVisitedScene(sceneName);
-        scene = Resources.getScene(scene.alternateSceneName);
-    }
-    return scene;
-}
-
+/***************************************************************
+Adds all state types to manager.
+***************************************************************/
 function AddAllStates() {
     _stateManagerInstance.add(StateEnum.MenuState, MenuState);
     _stateManagerInstance.add(StateEnum.LocationState, LocationState);
@@ -69,6 +63,7 @@ function AddAllStates() {
     _stateManagerInstance.add(StateEnum.MovieState, MovieState);
 }
 
+//Unused, phaser input extension
 function ChangePlayerName() {
     return function() {
         this.game.playerName = MenuState.getPlayerName();_input[0].getInput().text;
@@ -76,6 +71,7 @@ function ChangePlayerName() {
     };
 }
 
+//Test function for endings.
 function SceneTestCase() {
     _game.global.visitedScenes['MK2bad'] = true;
     _game.global.visitedScenes['an2good'] = true;
@@ -86,6 +82,8 @@ function SceneTestCase() {
 module.exports = {
     init: function() {
         console.log("Initializing StateManager");
+
+        //Statemanager singleton initialization
         if(_stateManagerInstance !== null)
             return _stateManagerInstance;
         _stateManagerInstance = this.game.state;
@@ -100,7 +98,7 @@ module.exports = {
     preload: function() {
     },
     create: function() {
-        Video.stop();
+        //Video.stop();
         _game.global.gameManager.getChangeSceneSignal().dispatch(Resources.getStartSceneKey());
     },
     changeScene: function(sceneName) {

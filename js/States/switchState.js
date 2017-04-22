@@ -1,5 +1,10 @@
+/***************************************************************
+Utility state that selects next scene to go depending on scenes visited.
+***************************************************************/
+
 "use strict";
 
+//Dependencies
 const State = require('./State'),
     SceneParser = require('../Modules/SceneParser');
 
@@ -7,6 +12,9 @@ var _instance = null;
 var _stateInfo = null;
 var _game = null;
 
+/***************************************************************
+Checks scene requirements against scenes visited and selects scene to go to.
+***************************************************************/
 function GetSceneNameFromReqs(stateInfo) {
     var sceneReqs = stateInfo.getSceneReqs();    
     var index = null;
@@ -21,6 +29,7 @@ function GetSceneNameFromReqs(stateInfo) {
 
 module.exports = {
     init: function(scene, signal) {
+        //Singleton variables initialization
         if(_stateInfo !== null)
             _stateInfo.setStateScene(scene);
         _stateInfo = new State(scene);

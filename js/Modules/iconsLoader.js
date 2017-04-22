@@ -86,7 +86,6 @@ function ShowUnlockedIcons(conditionsForIconIndexArr) {
     }
 }
 
-
 function EndInteraction() {
     _icons.forEach(function(icon) {
         icon.fadeOut(_game);

@@ -149,8 +149,6 @@ function LoopVideo() {
 module.exports = {
     init: function(game) {
         console.log("Video initialized");
-        _interactionTimeStamps = null;
-        _pausedByGame = false;
         //stopVideo();
         if(_instance !== null)
             return _instance;
@@ -162,9 +160,14 @@ module.exports = {
         return _instance;
     },
     create: function(src, doFadeOut, videoFilter, nextScene, sub, interactionTimeStamps) {
-        _videoFilter = videoFilter;
-        _interactionTimeStamps = interactionTimeStamps;
-        CreateVideo(src, doFadeOut, nextScene, sub, interactionTimeStamps);
+        if(src) {
+            _videoFilter = videoFilter;
+            _interactionTimeStamps = interactionTimeStamps;
+            CreateVideo(src, doFadeOut, nextScene, sub, interactionTimeStamps);
+        }
+        else {
+            console.warn("Undefined movie source.");
+        }
     },
     stop: function() {
         if(_video)
@@ -198,5 +201,9 @@ module.exports = {
     },
     toggleSubtitle: function() {
         Subtitle.toggleSubtitle();
+    },
+    resetVideoVariables() {        
+        _interactionTimeStamps = null;
+        _pausedByGame = false;
     }
 }

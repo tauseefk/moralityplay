@@ -1,11 +1,14 @@
+/***************************************************************
+Movie scene state without interaction.
+***************************************************************/
 "use strict";
 
+//Dependencies
 const Group = require('../Modules/groupLoader'),
     UI = require('../Modules/uiLoader'),
     Video = require('../Modules/videoLoader'),
-    Transition = require('../Modules/transition'),
     State = require('./State'),
-    MovingBackground = require('../Modules/movingObjectLoader'),
+    Background = require('../Modules/backgroundLoader'),
     SceneParser = require('../Modules/SceneParser');
 
 var _instance = null;
@@ -14,6 +17,9 @@ var _stateInfo = null;
 
 const START_SCENE_NAME = 'startScene';
 
+/***************************************************************
+Selects movie source depending on scenes visited.
+***************************************************************/
 function GetMovieSrc(state) {
     var SrcList = state.getSrcList();
     var index = null;
@@ -28,12 +34,18 @@ function GetMovieSrc(state) {
 
 module.exports = {
     init: function(scene, signal) {
+        //Sets new scene information
         if(_stateInfo !== null)
             _stateInfo.setStateScene(scene);
-        Video.init(this.game, signal);
-        MovingBackground.init(this.game);
+
+        //Initialize game variables
+        Group.initializeGroups();
+
+        //Singleton variable initialization
         if(_instance !== null)
             return _instance;
+        Video.init(this.game, signal);
+        Background.init(this.game);
         _stateInfo = new State(scene);
         _game = this.game;
         _instance = this;
@@ -42,13 +54,16 @@ module.exports = {
     preload: function() {
     },
     create: function() {
-        Group.initializeGroups();
         _game.global.soundManager.stopBackgroundMusic();
-        if(_stateInfo.getBgImageKey())
-            MovingBackground.create(_stateInfo.getBgImageKey(), _stateInfo.getDraggable());
-        Video.create(GetMovieSrc(_stateInfo), _stateInfo.getTransitionInfo().fadeOut, _stateInfo.getVideoFilter(), _stateInfo.getNextScenes(), _stateInfo.getMovieSubKey());
+
+        Background.create(_stateInfo.getBgImageKey(), _stateInfo.getDraggable());
+
+        Video.create(GetMovieSrc(_stateInfo), _stateInfo.getTransitionInfo().fadeOut, 
+            _stateInfo.getVideoFilter(), _stateInfo.getNextScenes(), _stateInfo.getMovieSubKey());
+
         if(_stateInfo.getTransitionInfo().fadeIn)
             this.game.global.gameManager.getFadeInTransitionSignal().dispatch();
+        
         if(_game.global.currentSceneName !== START_SCENE_NAME)
             UI.create(true, true);
     }

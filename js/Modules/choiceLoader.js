@@ -75,15 +75,6 @@ function CreateMeaninglessChoices(info) {
     }
 }
 
-function RevealChoices() {
-    _choiceBg.forEach(function(bg) {
-        bg.fadeIn(_game);
-    });
-    _text.forEach(function(text) {
-        text.fadeIn(_game, true);
-    });
-}
-
 function GetXPos(size, index) {
     if(size == 1)
         return _game.width/2;
@@ -141,8 +132,6 @@ function resetElements() {
     _text = [];
     _choiceBg = [];
     _question = null;
-    _thoughtsTriggerNeeded = 0;
-    _thoughtsTriggeredCount = 0;
 }
 
 module.exports = {
@@ -162,10 +151,7 @@ module.exports = {
         FadeChoicesExcept(lingeringChoice.index);
         FadeChoiceAfterDelay(lingeringChoice.index, targetScene);
     },
-    revealChoices: function() {
-        //_thoughtsTriggeredCount++;
-        //if(_thoughtsTriggeredCount >= _thoughtsTriggerNeeded) {
-            RevealChoices();
-        //}
+    resetChoicesVariables: function() {
+        resetElements();
     }
 }

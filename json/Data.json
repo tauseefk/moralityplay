@@ -42,6 +42,7 @@
     "infoPopupNatureNurture": "./Images/Info/NatureNurture.jpg"
 },
 "spritesheets": {
+    "thoughtBubbleSprite": ["./Images/Sprites/ThoughBubble_spritesheet.png", 200, 117, 6],
     "leftThoughtBubble": ["./Images/Sprites/ThoughBubble_Left_spritesheet.png", 200, 117, 6],
     "rightThoughtBubble": ["./Images/Sprites/ThoughBubble_Right_spritesheet.png", 200, 117, 6]
 },
@@ -618,13 +619,13 @@
                 "thoughtBubbles": {
                     "size": 3,
                     "thoughtIconKey": [
-                        "rightThoughtBubble",
-                        "rightThoughtBubble",
-                        "leftThoughtBubble"
+                        "thoughtBubbleSprite",
+                        "thoughtBubbleSprite",
+                        "thoughtBubbleSprite"
                     ],
                     "coords": [
-                        [ 900, 100 ],
-                        [ 700, 100 ],
+                        [ 1050, 100 ],
+                        [ 800, 100 ],
                         [ 400, 100 ]                      
                     ],
                     "thoughts": [
@@ -727,7 +728,7 @@
             "size": 5,
             "choiceMomentsProperties": [
             {
-                "timeStamp": 5,
+                "timeStamp": 5.1,
                 "choices": {
                     "question": "Choose what to say:",
                     "size": 3,
@@ -812,12 +813,12 @@
                 "thoughtBubbles": {
                     "size": 2,
                     "thoughtIconKey": [
-                        "leftThoughtBubble",
-                        "rightThoughtBubble"
+                        "thoughtBubbleSprite",
+                        "thoughtBubbleSprite"
                     ],
                     "coords": [
                         [ 400, 100 ],
-                        [ 900, 100 ]
+                        [ 950, 100 ]
                     ],
                     "thoughts": [
                     {
@@ -936,12 +937,12 @@
                 "thoughtBubbles": {
                     "size": 2,
                     "thoughtIconKey": [
-                        "leftThoughtBubble",
-                        "rightThoughtBubble"
+                        "thoughtBubbleSprite",
+                        "thoughtBubbleSprite"
                     ],
                     "coords": [
                         [ 400, 100 ],
-                        [ 900, 100 ]
+                        [ 1000, 100 ]
                     ],
                     "thoughts": [
                     {
@@ -1005,7 +1006,7 @@
         "movieSrcSD": "./Videos/An2_good_optimized_lo.mp4",
         "stateType": "InteractState",
         "transition": {
-            "fadeIn": true,
+            "fadeIn": false,
             "fadeOut": false
         },
         "choiceMoments": {

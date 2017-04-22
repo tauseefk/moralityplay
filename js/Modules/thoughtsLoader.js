@@ -11,9 +11,7 @@ var _instance = null,
 const thoughtsTextKeyEnum = 'TEXT_THOUGHTS';
 
 module.exports = {
-    init: function(game) {        
-        _text = [];
-        _currentIndex = 0;
+    init: function(game) {
         if(_instance !== null)
             return _instance;
         _game = game;
@@ -34,5 +32,9 @@ module.exports = {
         _text.forEach(function(text) {
             text.fadeOut(_game);
         });
+    },
+    resetThoughtVariables: function() {
+        _text = [];
+        _currentIndex = 0;        
     }
 }

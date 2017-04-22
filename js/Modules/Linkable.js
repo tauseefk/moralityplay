@@ -89,7 +89,12 @@ Linkable.prototype.playSound = function() {
 }
 
 Linkable.prototype.removeInput = function() {
-    this._event.inputEnabled = false;
+    if(this._event.inputEnabled)
+        this._event.inputEnabled = false;
+    else if(this._event.parent && this._event.parent.inputEnabled) {
+        this._event.parent.inputEnabled = false;
+        console.log("reached");
+    }
     if(this._event.input) {
         this._event.input.useHandCursor = false;
     } 

@@ -1,6 +1,8 @@
-/*
+/****************************************************************
 Loads game fonts and tests user's connection.
-*/
+****************************************************************/
+
+"use_strict";
 
 //Dependencies
 const ConnectionChecker = require('../Modules/connectionChecker'), 
@@ -16,9 +18,9 @@ const connectionTestFileKey = 'littleRootMusic',
     connectionTestFileType = 'AUDIO',
     connectionTestFileBytes = 2886887;
 
-/*
+/****************************************************************
 Loads google webfonts before initialization.
-*/
+****************************************************************/
 WebFontConfig = {
     //Load fonts before creation, timer delay. Can be improved  in implementation.
     active: function() { _game.time.events.add(Phaser.Timer.SECOND, DelayedCreate, this); },
@@ -28,11 +30,11 @@ WebFontConfig = {
     }
 };
 
-/*
+/****************************************************************
 Initializes game, sound and database managers.
 Performs connection test.
 Loads load visuals.
-*/
+****************************************************************/
 function DelayedCreate() {
     CreateGlobalVars();
     SetGameProperties();
@@ -46,17 +48,19 @@ function CreateLoadingVisuals() {
     text.anchor.setTo(0.5, 0.5);
 }
 
-/*
+
+/****************************************************************
 Sets game bg color and ensures application runs even when out of focus.
-*/
+****************************************************************/
 function SetGameProperties() {
     _game.stage.disableVisibilityChange = true;
     _game.stage.backgroundColor = "#ffffff";
 }
 
-/*
+
+/****************************************************************
 Global managers and variables initialized.
-*/
+****************************************************************/
 function CreateGlobalVars() {
     //Global variables
     _game.global = {

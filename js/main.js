@@ -1,6 +1,6 @@
-/*
+/***************************************************************
 Game startup
-*/
+****************************************************************/
 
 "use strict";
 
@@ -13,9 +13,9 @@ const Boot = require('./States/boot'),
 function initGame(Boot, Preload, StateManager, ResourceLoader) {
     var game = new Phaser.Game(1280, 720, Phaser.CANVAS, '', { init: init, preload: preload, create: create, update: update });
 
-    /*
+    /***************************************************************
     Creates initializing states
-    */
+    ****************************************************************/
     function init() {
         console.log("Game initialized.");
         game.canvas.className += "center";
@@ -24,9 +24,9 @@ function initGame(Boot, Preload, StateManager, ResourceLoader) {
         game.state.add("stateManager", StateManager);
     }
 
-    /*
+    /***************************************************************
     Loads Json Files and loading images
-    */
+    ****************************************************************/
     function preload () {
         game.load.json('data', 'json/Data.json');
         game.load.json('style', 'json/Style.json');
@@ -34,15 +34,15 @@ function initGame(Boot, Preload, StateManager, ResourceLoader) {
         game.load.image('title', './Images/UI/Title.png');
     }
 
-    /*
+    /***************************************************************
     Starts boot state
-    */
+    ****************************************************************/
     function create() {
         game.state.start("boot");
     }
 
     function update() {
-        
+
     }
 }
 

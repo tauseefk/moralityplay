@@ -1,10 +1,13 @@
+/***************************************************************
+Manu scenes.
+***************************************************************/
 "use strict";
 
 const Group = require('../Modules/groupLoader'), 
     Input = require('../Modules/inputLoader'),
     Transition = require('../Modules/transition'),
     State = require('./State'),
-    MovingBackground = require('../Modules/movingObjectLoader'),
+    Background = require('../Modules/backgroundLoader'),
     Video = require('../Modules/videoLoader'),
     Icons = require('../Modules/iconsLoader');
 
@@ -13,6 +16,7 @@ var _stateInfo = null;
 var _game = null;
 var _input = [];
 
+//Unused, for phaser input extension.
 function setPlayerName(game) {
     if(_input[0])
         return function() {game.global.playerName = _input[0].getInput().text._text;};
@@ -21,21 +25,27 @@ function setPlayerName(game) {
     }
 }
 
+//Unused, for phaser input extension.
 function updatePlayerNameCallback(game) {
     game.state.onShutDownCallback = setPlayerName(game);
 }
 
 module.exports = {
     init: function(scene) {
+        //Sets new scene information
         if(_stateInfo !== null)
-            _stateInfo.setStateScene(scene);        
-        //this.game.global.soundManager.init();
-        MovingBackground.init(this.game);
+            _stateInfo.setStateScene(scene);
+
+        //Initializes game variables
+        Group.initializeGroups();
+                
+        //Intitalize singleton variables
+        if(_instance !== null)
+            return _instance;
+        Background.init(this.game);
         Icons.init(this.game);
         Input.init(this.game);
         _game = this.game;
-        if(_instance !== null)
-            return _instance;
         _instance = this;
         _stateInfo = new State(scene);
         return _instance;
@@ -43,19 +53,25 @@ module.exports = {
     preload: function() {
     },
     create: function() {
+        //Unused input reset
         _input = [];
-        Group.initializeGroups();
-        //updatePlayerNameCallback(this.game);
-        var videoSrc = _stateInfo.getMovieSrc(_game.global.quality);
+
+        //Creates video or background image depending on source
+        var videoSrc = _stateInfo.getMovieSrc(_game.global.quality);        
         if(videoSrc)
-            Video.create(_stateInfo.getMovieSrc(_game.global.quality),  _stateInfo.getTransitionInfo().fadeOut, _stateInfo.getVideoFilter());
+            Video.create(videoSrc, _stateInfo.getTransitionInfo().fadeOut, _stateInfo.getVideoFilter());
         else
-            MovingBackground.create(_stateInfo.getBgImageKey(), _stateInfo.getDraggable());
+            Background.create(_stateInfo.getBgImageKey(), _stateInfo.getDraggable());
+
         Icons.createExploratoryIcons(_stateInfo.getIconsInfo());
-        //_input = Input.create(_stateInfo.getInputInfo());
+
         if(_stateInfo.getTransitionInfo().fadeIn)
             this.game.global.gameManager.getFadeInTransitionSignal().dispatch();
     },
+    shutdown: function() {
+        Icons.destroy();
+    },
+    //Unused, for phaser input extension
     update: function() {
         _input.forEach(function(element) {
             element.getInput().update();
