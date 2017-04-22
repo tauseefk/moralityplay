@@ -47,10 +47,10 @@
     "rightThoughtBubble": ["./Images/Sprites/ThoughBubble_Right_spritesheet.png", 200, 117, 6]
 },
 "audio": {
-    "cmuCutLocationSound": "./Audio/Sound/Main Campus Sounds.wav",
-    "huntIndoorSound": "./Audio/Sound/HuntIndoor.wav",
-    "gatesIndoorSound": "./Audio/Sound/GatesIndoor.wav",    
-    "cohonIndoorSound": "./Audio/Sound/CohonIndoor.wav"
+    "cmuCutLocationSound": "./Audio/Sound/Main Campus Sounds_lo.ogg",
+    "huntIndoorSound": "./Audio/Sound/HuntIndoor_lo.ogg",
+    "gatesIndoorSound": "./Audio/Sound/GatesIndoor_lo.ogg",    
+    "cohonIndoorSound": "./Audio/Sound/CohonIndoor_lo.ogg"
 },
 "subtitles": {
     "sub1": "./Videos/Subtitles/test.srt"
@@ -809,7 +809,7 @@
                 }
             },
             {
-                "timeStamp": 128,
+                "timeStamp": 128.5,
                 "thoughtBubbles": {
                     "size": 2,
                     "thoughtIconKey": [
