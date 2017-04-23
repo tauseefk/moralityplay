@@ -184,7 +184,7 @@
                 [1150, 600],
                 [650, 600],
                 [150, 600],
-                [640, 360]
+                [640, 240]
             ],
 
             "targetImageIndexOrScene": [
@@ -307,7 +307,7 @@
                 "IMAGE_INFO"
             ],
             "key": [
-                "infoPopupMicroaggression"
+                "infoPopupNatureNurture"
             ],
             "coords": [
                 [0, 0]
@@ -542,7 +542,7 @@
             ],
             "key": [
                 "infoPopupDemographic",
-                "infoPopupNatureNurture"
+                "infoPopupMicroaggression"
             ],
             "coords": [
                 [0, 0],
@@ -625,9 +625,9 @@
                         "thoughtBubbleSprite"
                     ],
                     "coords": [
-                        [ 1050, 100 ],
+                        [ 1050, 50],
                         [ 800, 100 ],
-                        [ 400, 100 ]                      
+                        [ 400, 50 ]                      
                     ],
                     "thoughts": [
                     {
@@ -636,7 +636,7 @@
                             "I guess it is okay \nif not everyone participates"
                         ],
                         "destination": [
-                            [ 1050, 100 ]
+                            [ 1050, 50 ]
                         ]
                     },
                     {
@@ -818,7 +818,7 @@
                         "thoughtBubbleSprite"
                     ],
                     "coords": [
-                        [ 400, 100 ],
+                        [ 400, 70 ],
                         [ 950, 100 ]
                     ],
                     "thoughts": [
@@ -934,7 +934,7 @@
                 }
             },
             {
-                "timeStamp": 26.5,
+                "timeStamp": 26.7,
                 "thoughtBubbles": {
                     "size": 2,
                     "thoughtIconKey": [
@@ -952,7 +952,7 @@
                             "I thought I answered that."
                         ],
                         "destination": [
-                            [ 300, 100 ]
+                            [ 300, 80 ]
                         ]
                     },
                     {
