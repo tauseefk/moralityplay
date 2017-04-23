@@ -6,6 +6,7 @@ var _dbUrl = "http://mocking-birds.etc.cmu.edu:3000/";
 var _userInteractionRoute = "addUserAction";
 var _createUserRoute = "createUser";
 var userId = null;
+var axios = require('axios');
 
 var useDatabase = true;
 

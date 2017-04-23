@@ -21,7 +21,6 @@ exports.game = function(req, res) {
        +'</div>'
        +'<script src="/js/phaser.min.js"></script>'
        +'<script src="/js/Lib/jsmanipulate.min.js"></script>'
-       +'<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.16.1/axios.min.js"></script>'
        +'<script src="/js/dist/bundle.js"></script>'
        +'</body>'
        +'</html>';

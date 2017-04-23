@@ -11,6 +11,9 @@
   }
 }
 */
+body {
+	margin: 0;
+}
 .center {
 	margin: 0 auto;
 }
