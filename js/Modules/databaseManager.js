@@ -7,7 +7,7 @@ var _userInteractionRoute = "addUserAction";
 var _createUserRoute = "createUser";
 var userId = null;
 
-var useDatabase = false;
+var useDatabase = true;
 
 var DatabaseManager = function() {
     if(_instance !== null)
