@@ -12,28 +12,49 @@ var _game = null;
 var _text = [];
 var _choiceFont = null;
 var _bgImage = null;
-var _group = null;
+var _iconGroup = null;
 
 const bgImageKeyEnum = 'IMAGE_BACKGROUND';
 
 /***************************************************************
 Creates background image.
 ***************************************************************/
-function createBgImage(key, draggable) {
+function CreateBgImage(key, draggable) {
     _bgImage = new Image(0, 0, key, bgImageKeyEnum);
     _bgImage.addImageToGame(_game, _game.mediaGroup);
     _bgImage.changeImage(_game, draggable);
+}
+
+/***************************************************************
+Adds images to group that follows dragged background position.
+***************************************************************/
+function AddIconsToGroup(icons) {
+    _iconGroup = _game.add.group();
+    _game.mediaGroup.add(_iconGroup);
+    icons.forEach(function(icon) {
+        _iconGroup.add(icon.getPhaserImage());
+    });
+}
+
+/***************************************************************
+Initializes drag follow for icon group.
+***************************************************************/
+function StartDragUpdate() {
+    _bgImage.getPhaserImage().events.onDragStart.add(dragStart);
+    _bgImage.getPhaserImage().events.onDragUpdate.add(dragUpdate);
+    _iconGroup.x = _bgImage.getPhaserImage().x;
+    _iconGroup.y = _bgImage.getPhaserImage().y;
 }
 
 function dragStart() {
 }
 
 /***************************************************************
-Icons follow dragged background position.
+Icons follow dragged background position every update.
 ***************************************************************/
 function dragUpdate() {
-    _group.x = _bgImage.getPhaserImage().x;
-    _group.y = _bgImage.getPhaserImage().y;
+    _iconGroup.x = _bgImage.getPhaserImage().x;
+    _iconGroup.y = _bgImage.getPhaserImage().y;
 }
 
 function dragStop() {
@@ -41,6 +62,7 @@ function dragStop() {
 
 module.exports = {
     init: function(game) {
+        //Initialize singleton variables.
         if(_instance !== null)
             return _instance;
         _game = game;
@@ -51,20 +73,10 @@ module.exports = {
     },
     create: function(bgKey, draggable) {
         if(bgKey)
-            createBgImage(bgKey, draggable);
-    //    return _bgImage.getPhaserImage();
-    //    createIcons(icons, draggable, _bgImage);
+            CreateBgImage(bgKey, draggable);
     },
-    assignFollowIcons: function(icons) {
-        _group = _game.add.group();
-        _game.mediaGroup.add(_group);
-        icons.forEach(function(icon) {
-            _group.add(icon.getPhaserImage());
-        });
-
-        _bgImage.getPhaserImage().events.onDragStart.add(dragStart);
-        _bgImage.getPhaserImage().events.onDragUpdate.add(dragUpdate);
-        _group.x = _bgImage.getPhaserImage().x;
-        _group.y = _bgImage.getPhaserImage().y;
+    attachIconsToBg: function(icons) {
+        AddIconsToGroup(group);
+        StartDragUpdate();
     }
 }

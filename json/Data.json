@@ -15,6 +15,7 @@
     "endLearnMore": "./Images/UI/learnmore.png",
     "closeButton": "./Images/UI/cross.png",
     "infoButton": "./Images/UI/info_icon.png",
+    "scrollBar": "./Images/UI/scrollbarRect.jpg",
 
     "arrowBackward": "./Images/UI/arrow_backward.png",
     "arrowMainleft": "./Images/UI/main_arrow_left.png",
@@ -56,7 +57,7 @@
     "sub1": "./Videos/Subtitles/test.srt"
 },
 "scenes": {
-    "startScene":{
+    "startScene1":{
         "stateType": "MovieState",
         "movieSrcHD": "./Videos/Opening.mp4",
         "movieSrcSD": "./Videos/Opening_lo.mp4",
@@ -85,7 +86,7 @@
                 "startButton"
             ],
             "coords": [
-                [ 950, 600 ]
+                [ 980, 600 ]
             ],
             "targetImageIndexOrScene": [
                 "introScene"
@@ -495,7 +496,7 @@
         }
     },   
 
-    "cmuHuntInsideLocation": {
+    "startScene": {
         "stateType": "LocationState",
         "draggable": false,
         "movieSrcHD": "./Videos/cmu_hunt_indoor_optimized.mp4",

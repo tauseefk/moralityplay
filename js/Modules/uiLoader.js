@@ -4,7 +4,8 @@
 const Image = require('./Image'),
     Text = require('./Text'),
     Graphic = require('./Graphics'),
-    Video = require('./videoLoader');
+    Video = require('./videoLoader'),
+    ImageViewer = require('./imageViewer');
 
 var _instance = null;
 var _game = null;
@@ -23,8 +24,6 @@ var _uiVisible = true;
 const pauseButtonImageKeyEnum = 'IMAGE_BUTTON_PAUSE';
 const playButtonImageKeyEnum = 'IMAGE_BUTTON_PLAY';
 const toggleSubtitleButtonImageKeyEnum = 'IMAGE_BUTTON_TOGGLE_SUBTITLE';
-const closeOverlayImageKeyEnum = 'IMAGE_OVERLAY_CLOSE';
-const infoOverlayTextKeyEnum= 'TEXT_INFO_OVERLAY';
 
 function DrawPauseButton() {
     if(!_pauseImage)
@@ -42,33 +41,10 @@ function DrawToggleSubtitleButton() {
 
 function DrawPlayButton() {
     if(!_playImage)
-        _playImage = new Image(_game.width/2, _game.height/2, 'playButton', playButtonImageKeyEnum);
+        _playImage = new Image(_game.world.centerX, _game.world.centerY, 'playButton', playButtonImageKeyEnum);
     _playImage.addImageToGame(_game, _game.uiGroup);
     _playImage.changeImage(_game);
     _playImage.setVisible(false);
-}
-
-function CreateInfoOverlay() {    
-    CreateOverlayGraphic();
-    CreateOverlayCrossButton();
-    CreateOverlayHelperText();
-}
-
-function CreateOverlayGraphic() {
-    _overlayGraphic = new Graphic(0, 0);
-    _overlayGraphic.createOverlayBg(_game, 50);
-}
-
-function CreateOverlayCrossButton() {
-    _overlayCloseButton = new Image(_game.width-50, 50, 'closeButton', closeOverlayImageKeyEnum);
-    _overlayCloseButton.addImageToGame(_game, _game.uiGroup);
-    _overlayCloseButton.changeImage(_game);
-}
-
-function CreateOverlayHelperText() {
-    _overlayText = new Text('Drag the image below to scroll', _game.width/2, 25, infoOverlayTextKeyEnum, _game.global.style.questionTextProperties);
-    _overlayText.addToGame(_game, _game.uiGroup);
-    _overlayText.changeText(_game);
 }
 
 function Pause() {
@@ -116,6 +92,7 @@ function DrawPauseOverlay() {
     _graphics = _game.add.graphics(0, 0);
     _graphics.beginFill(0x000000, 0.8);
     _graphics.drawRect(0, 0, _game.width, _game.height);
+    _graphics.endFill();
     _graphics.visible = false;
     _game.uiGroup.add(_graphics);
 }
@@ -135,6 +112,7 @@ module.exports = {
     init: function(game) {
         if(_instance !== null)
             return _instance;
+        ImageViewer.init(game);
         _instance = this;
         _game = game;
         return _instance;
@@ -167,16 +145,12 @@ module.exports = {
         HideUI();
     },
     createInfoOverlay() {
-        CreateInfoOverlay();
+        ImageViewer.createOverlay();
     },
-    showInfoOverlay() {
-        _overlayGraphic.setVisible(true);
-        _overlayCloseButton.setVisible(true);
-        _overlayText.setVisible(true);
+    showInfoOverlay(image) {
+        ImageViewer.setVisible(true, image);
     },
     hideInfoOverlay() {
-        _overlayGraphic.setVisible(false);
-        _overlayCloseButton.setVisible(false);        
-        _overlayText.setVisible(false);
+        ImageViewer.setVisible(false);
     }
 }

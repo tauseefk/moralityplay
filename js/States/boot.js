@@ -13,10 +13,10 @@ const ConnectionChecker = require('../Modules/connectionChecker'),
 var _instance = null
 var _game = null;
 
-const connectionTestFileKey = 'littleRootMusic',
-    connectionTestFileSrc = './Audio/Music/Pokemon Omega Ruby Alpha Sapphire - Littleroot Town Music (HQ).mp3',
-    connectionTestFileType = 'AUDIO',
-    connectionTestFileBytes = 2886887;
+const connectionTestFileKey = 'pooh',
+    connectionTestFileSrc = './Images/Loading/pooh.jpg',
+    connectionTestFileType = 'IMAGE',
+    connectionTestFileBytes = 1576132;
 
 /****************************************************************
 Loads google webfonts before initialization.
@@ -44,8 +44,8 @@ function DelayedCreate() {
 }
 
 function CreateLoadingVisuals() {
-    var text = _game.add.text(_game.world.centerX, _game.world.centerY, "Checking connection...");
-    text.anchor.setTo(0.5, 0.5);
+    var testConnectionImage = _game.add.image(_game.world.centerX, _game.world.centerY, 'connectionTestImage');
+    testConnectionImage.anchor.setTo(0.5, 0.5);
 }
 
 
@@ -78,6 +78,16 @@ function CreateGlobalVars() {
     _game.global.soundManager = new SoundManager(_game);
     _game.global.soundManager.init();
     _game.global.databaseManager = new DatabaseManager(_game);
+
+    //Constants
+    _game.global.constants = {};
+    _game.global.constants.INFO_VIEW_MARGIN = 50; 
+    _game.global.constants.INFO_VIEW_HEIGHT = _game.height - _game.global.constants.INFO_VIEW_MARGIN*2;
+    _game.global.constants.SCROLLBAR_DIM = [30, _game.global.constants.INFO_VIEW_HEIGHT];    
+    _game.global.constants.INFO_VIEW_WIDTH = _game.width - _game.global.constants.INFO_VIEW_MARGIN*2 - _game.global.constants.SCROLLBAR_DIM[0];   
+    _game.global.constants.SCROLLBAR_POS = [_game.width - _game.global.constants.INFO_VIEW_MARGIN - _game.global.constants.SCROLLBAR_DIM[0], 
+        _game.global.constants.INFO_VIEW_MARGIN];
+    _game.global.constants.SCROLLBAR_STROKEWIDTH = 2;
 }
 
 module.exports = {
@@ -92,6 +102,7 @@ module.exports = {
     preload: function() {
         _game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
         _game.load.script('webfont', '//ajax.googleapis.com/ajax/libs/webfont/1.4.7/webfont.js');
+        _game.load.image('connectionTestImage', './Images/Loading/connectionTestImage.jpg');
     },
     create: function() {
     }

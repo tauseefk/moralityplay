@@ -149,7 +149,7 @@ module.exports = {
         _clickedIconIndex = clickedIndex;
         _icons[_clickedIconIndex].setVisible(false);
         if(_linkedIcons[_displayedIconIndex].getType() == infoImageKeyEnum) {
-            _game.global.gameManager.getShowInfoOverlaySignal().dispatch();
+            _game.global.gameManager.getShowInfoOverlaySignal().dispatch(_linkedIcons[_displayedIconIndex]);
         }
     },
     hideDisplayedIcon() {

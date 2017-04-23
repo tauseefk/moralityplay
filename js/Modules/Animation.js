@@ -1,54 +1,55 @@
+/***************************************************************
+Handles animation of game objects.
+Static functions takes in the game object and applies animation to it.
+***************************************************************/
+
 "use strict";
 
-const FADE_SPEED = 700;
-const SCALE_SPEED = 300;
-const SCALE_SIZE = 1.2;
+const FADE_TIME_DEFAULT = 700;
+const SCALE_TIME_DEFAULT = 300;
+const BOB_DELAY_INTERVAL = 700;
 
-//Animation constructor
+/***************************************************************
+Animation constructor
+***************************************************************/
 var Animation = function() {
 }
 
-Animation.scale = function(game, object, autoStart, targetWidth, targetHeight, speed, repeat, reset) {
-    if(!repeat)
-        repeat = 0;
-    if(!speed)
-        speed = SCALE_SPEED;
+/***************************************************************
+Adds scaling animaton for object.
+***************************************************************/
+Animation.scale = function(game, object, autoStart, targetWidth, targetHeight, timeTaken) {
+    if(!timeTaken)
+        timeTaken = SCALE_TIME_DEFAULT;
 
-    var tween = game.add.tween(object).to({width:targetWidth, height:targetHeight}, speed, Phaser.Easing.Linear.None, autoStart, 0, repeat);
-    if(reset)
-        tween.onComplete.add(Reset, this);
-
-    function Reset(width, height) {
-        object.width = width;
-        object.height = height;
-    }
+    var tween = game.add.tween(object).to({width:targetWidth, height:targetHeight}, timeTaken, 
+        Phaser.Easing.Linear.None, autoStart, 0, 0);
 
     return tween;
 }
 
-Animation.fade = function(game, object, value, autoStart, speed, repeat, destroy) {
-    var customSpeed = speed;
-    if(!speed)
-        customSpeed = FADE_SPEED;
-    var tween = game.add.tween(object).to({alpha:value}, customSpeed, Phaser.Easing.Linear.None, autoStart, 0, 0, false);
+/***************************************************************
+Adds fade in/out animation for object.
+***************************************************************/
+Animation.fade = function(game, object, value, autoStart, timeTaken) {
+    if(!timeTaken)
+        timeTaken = FADE_TIME_DEFAULT;
+    var tween = game.add.tween(object).to({alpha:value}, timeTaken, Phaser.Easing.Linear.None, autoStart, 0, 0, false);
 
-    if(destroy) {
-        tween.onComplete.add(Destroy, this);
-    }
-
-    function Destroy() {
-        object.destroy();
-    }
-    
     return tween;
 }
 
+/***************************************************************
+Adds bobbing up and down animation for object.
+***************************************************************/
 Animation.bob = function(game, object, autoStart, value) {
     if(!value)
         value = -5;
     value = value.toString();
+
     var tween = game.add.tween(object).to({y:value}, 200, Phaser.Easing.Quadratic.InOut, autoStart, 0, -1, true);
-    tween.repeatDelay(700);
+    tween.repeatDelay(BOB_DELAY_INTERVAL);
+    
     return tween;
 }
 

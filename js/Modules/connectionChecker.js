@@ -1,4 +1,6 @@
-//Dependency: choiceText
+/***************************************************************
+Creates choice icons during interaction moments.
+***************************************************************/
 "use strict";
 
 //initializes once

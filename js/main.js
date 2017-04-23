@@ -30,8 +30,11 @@ function initGame(Boot, Preload, StateManager, ResourceLoader) {
     function preload () {
         game.load.json('data', 'json/Data.json');
         game.load.json('style', 'json/Style.json');
-        game.load.image('progressBar', './Images/Icons/StubIcon.png');
-        game.load.image('title', './Images/UI/Title.png');
+        game.load.image('progressSceneBackground', './Images/Loading/progress_bg.png');
+        game.load.image('progressBarFillFg', './Images/Loading/progressbar.png');
+        game.load.image('progressBarFillBg', './Images/Loading/progressbar_bg.png');
+        game.load.image('progressBarFrame', './Images/Loading/progressbar_frame.png');
+        game.load.image('progressBarText', './Images/Loading/progressbar_text.png');
     }
 
     /***************************************************************

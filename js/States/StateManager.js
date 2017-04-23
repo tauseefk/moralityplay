@@ -71,7 +71,9 @@ function ChangePlayerName() {
     };
 }
 
-//Test function for endings.
+/***************************************************************
+Test function for ending state switches
+***************************************************************/
 function SceneTestCase() {
     _game.global.visitedScenes['MK2bad'] = true;
     _game.global.visitedScenes['an2good'] = true;
@@ -98,7 +100,6 @@ module.exports = {
     preload: function() {
     },
     create: function() {
-        //Video.stop();
         _game.global.gameManager.getChangeSceneSignal().dispatch(Resources.getStartSceneKey());
     },
     changeScene: function(sceneName) {

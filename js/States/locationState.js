@@ -52,7 +52,7 @@ module.exports = {
         var icons = Icons.createNavigationIcons(_stateInfo.getIconsInfo(), _stateInfo.getLinkedIconsInfo());
 
         if(_stateInfo.getDraggable())
-            Background.assignFollowIcons(icons);
+            Background.attachIconsToBg(icons);
 
         if(_stateInfo.getTransitionInfo().fadeIn)
             this.game.global.gameManager.getFadeInTransitionSignal().dispatch();

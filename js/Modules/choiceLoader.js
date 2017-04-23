@@ -1,94 +1,104 @@
+/***************************************************************
+Creates choice icons during interaction moments.
+***************************************************************/
 "use strict";
 
+//Dependencies
 const Text = require('./Text'),
     Image = require('./Image');
 
-//initializes once
+const BACKGROUND_IMAGE_KEY = 'choiceBg';
+
+//Singleton variables
 var _instance = null;
 var _game = null;
 
-var _text = [];
+//Holds created game objects
 var _question = null;
+var _text = [];
 var _choiceBg = [];
-var _thoughtsTriggerNeeded = 0;
-var _thoughtsTriggeredCount = 0;
-
-const choiceBgKeyEnum = 'IMAGE_CHOICE_BACKGROUND';
-const meaningfulTextKeyEnum = 'TEXT_MEANINGFUL_CHOICES';
-const meaninglessTextKeyEnum = 'TEXT_MEANINGLESS_CHOICES';
-const questionTextKeyEnum = 'TEXT_QUESTION';
 
 const FADE_DELAY = 1;
+const QUESTION_Y_OFFSET = 30;
 
-function CreateBg(x, y, width, height, phaserText, target, tag) {
-    var choiceBg = new Image(x, y, 'choiceBg', choiceBgKeyEnum);
+/***************************************************************
+Creates background for choice buttons.
+***************************************************************/
+function CreateButtonBackground(x, y, width, height, phaserText, target, tag) {
+    var choiceBg = new Image(x, y, BACKGROUND_IMAGE_KEY, Image.getEnum().ChoiceBackground);
     choiceBg.addImageToGame(_game, _game.mediaGroup);
     choiceBg.changeImage(_game, width, height, target, phaserText, tag);
     return choiceBg;
 }
 
-function CreateChoiceQuestion(question, y) {
-    _question = new Text(question, 0, y, questionTextKeyEnum, _game.global.style.questionTextProperties);
+/***************************************************************
+Creates answer texts for choice buttons.
+***************************************************************/
+function CreateChoicePrompt(question, yPos) {
+    _question = new Text(question, 0, yPos, Text.getEnum().Question, _game.global.style.questionTextProperties);
     _question.addToGame(_game, _game.mediaGroup);
-    _question.changeText(_game, questionTextKeyEnum);
+    _question.changeText(_game, Text.getEnum().Question);
 }
 
+/***************************************************************
+Creates choice buttons.
+***************************************************************/
 function CreateChoices(choices) {
-    //_thoughtsTriggerNeeded = thoughtsTriggerNeeded;
-    if(choices.targetScene)
-        CreateMeaningfulChoices(choices);
-    else
-        CreateMeaninglessChoices(choices);
-}
+    ResetChoicesVariables();
+    CreateChoicePrompt(choices.question, choices.y[0] - choices.bounds[0][1]/2 - QUESTION_Y_OFFSET);
 
-function CreateMeaningfulChoices(info) {
-    resetElements();
-    CreateChoiceQuestion(info.question, info.y[0] - info.bounds[0][1]/2 - 30);
-
-    for(var i=0; i < info.size; i++) {        
-        _text.push(new Text(info.content[i], GetXPos(info.size, i), 0, meaningfulTextKeyEnum, _game.global.style.choicesTextProperties));
-        _text[i].index = i;
-        _text[i].addToGame(_game, _game.mediaGroup);
-
-        var bgImg = CreateBg(GetXPos(info.size, i), info.y[i], info.bounds[i][0], info.bounds[i][1], _text[i].getPhaserText(), info.targetScene[i], info.tag[i]);
-        bgImg.index = i;
-        _choiceBg.push(bgImg);
-
-        _text[i].changeText(_game, bgImg.getPhaserImage().y, info.size);
+    for(var i=0; i < choices.size; i++) {
+        CreateAnswers(i, choices);    
+        CreateBackgroundImage(i, choices);
+        //Aligns choice text to choice background
+        _text[i].changeText(_game, _choiceBg[i].getPhaserImage().y, choices.size);
     };
 }
 
-function CreateMeaninglessChoices(info) {
-    resetElements();
-    CreateChoiceQuestion(info.question, info.y[0] - info.bounds[0][1]/2 - 30);
-
-    for(var i=0; i < info.size; i++) {
-        _text.push(new Text(info.content[i], GetXPos(info.size, i), 0, meaninglessTextKeyEnum, _game.global.style.choicesTextProperties));
-        _text[i].index = i;
-        _text[i].addToGame(_game, _game.mediaGroup);
-
-        var bgImg = CreateBg(GetXPos(info.size, i), info.y[i], info.bounds[i][0], info.bounds[i][1], _text[i].getPhaserText());
-        bgImg.index = i;
-        _choiceBg.push(bgImg);
-
-        _text[i].changeText(_game, bgImg.getPhaserImage().y, info.size);
-    }
+/***************************************************************
+Creates choice answer text.
+***************************************************************/
+function CreateAnswers(currIndex, choices) {
+    _text.push(new Text(choices.content[currIndex], GetXPos(choices.size, currIndex), 0, 
+        Text.getEnum().MeaningfulChoices, _game.global.style.choicesTextProperties));
+    _text[currIndex].index = currIndex;
+    _text[currIndex].addToGame(_game, _game.mediaGroup);
 }
 
-function GetXPos(size, index) {
-    if(size == 1)
-        return _game.width/2;
-    if(size == 2) {
+/***************************************************************
+Creates choice background and passes it corresponding answer text.
+***************************************************************/
+function CreateBackgroundImage(currIndex, choices) {
+    var choiceBackgroundImage;
+    if(choices.targetScene)
+        choiceBackgroundImage = CreateButtonBackground(GetXPos(choices.size, currIndex), choices.y[currIndex], 
+            choices.bounds[currIndex][0], choices.bounds[currIndex][1], _text[currIndex].getPhaserText(), 
+            choices.targetScene[currIndex], choices.tag[currIndex]);
+    else
+        choiceBackgroundImage = CreateButtonBackground(GetXPos(choices.size, currIndex), choices.y[currIndex], 
+            choices.bounds[currIndex][0], choices.bounds[currIndex][1], _text[currIndex].getPhaserText());
+    choiceBackgroundImage.index = currIndex;
+    _choiceBg.push(choiceBackgroundImage);
+}
+
+/***************************************************************
+Partitions game width depending on number of choices.
+Returns x value of middle of each partition.
+***************************************************************/
+function GetXPos(choiceCount, index) {
+    if(choiceCount == 1)
+        return _game.world.centerX;
+    else if(choiceCount == 2) {
         if(index == 0)
             return _game.width/4;
         if(index == 1)
             return _game.width/4*3;
     }
-    if(size == 3) {
+    else if(choiceCount == 3) {
         if(index == 0)
             return _game.width/6;
         if(index == 1)
-            return _game.width/2;        
+            return _game.world.centerX;        
         if(index == 2)
             return _game.width/6*5;
     }
@@ -96,6 +106,10 @@ function GetXPos(size, index) {
     return null;
 }
 
+/***************************************************************
+Allows selected choice to linger for a while before fading.
+Fades out other choices and prompt.
+***************************************************************/
 function FadeChoicesExcept(index){
     _text.forEach(function(text) {
         if(text.index != index) {
@@ -110,9 +124,14 @@ function FadeChoicesExcept(index){
             choiceBg.fadeOut(_game);
         }
     });
+
     _question.fadeOut(_game);
 }
 
+/***************************************************************
+Starts a timer event that fades out selected choice.
+Goes to next scene upon fading out, if defined.
+***************************************************************/
 function FadeChoiceAfterDelay(index, targetScene) {
     _game.time.events.add(Phaser.Timer.SECOND*FADE_DELAY, fadeChoice, this);
 
@@ -128,7 +147,10 @@ function FadeChoiceAfterDelay(index, targetScene) {
     }
 }
 
-function resetElements() {
+/***************************************************************
+Resets vaiables containing elements.
+***************************************************************/
+function ResetChoicesVariables() {
     _text = [];
     _choiceBg = [];
     _question = null;
@@ -136,6 +158,7 @@ function resetElements() {
 
 module.exports = {
     init: function(game) {
+        //Singleton initialization.
         if(_instance !== null)
             return _instance;
         _game = game;
@@ -152,6 +175,6 @@ module.exports = {
         FadeChoiceAfterDelay(lingeringChoice.index, targetScene);
     },
     resetChoicesVariables: function() {
-        resetElements();
+        ResetChoicesVariables();
     }
 }

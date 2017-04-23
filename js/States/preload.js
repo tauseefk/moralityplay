@@ -15,11 +15,18 @@ var _instance = null,
 Draws loading visuals.
 ***************************************************************/
 function CreateLoadingVisuals() {
-    var text = _game.add.text(_game.world.centerX, _game.world.centerY - 50, "Loading assets...");
-    text.anchor.setTo(0.5, 0.5);
+    //var text = _game.add.text(_game.world.centerX, _game.world.centerY - 50, "Loading assets...");
+    //text.anchor.setTo(0.5, 0.5);
+    var background = _game.add.image(0, 0, 'progressSceneBackground');
+    var progressBarBackground = _game.add.image(_game.world.centerX, _game.world.centerY, 'progressBarFillBg');
+    progressBarBackground.anchor.setTo(0.5,0.5);
+    var progressBarFrame = _game.add.image(_game.world.centerX, _game.world.centerY, 'progressBarFrame');
+    progressBarFrame.anchor.setTo(0.5,0.5);
+    var progressBarText = _game.add.image(_game.world.centerX, _game.world.centerY+80, 'progressBarText');
+    progressBarText.anchor.setTo(0.5,0.5);
 
-    var preloadImage = _game.add.sprite(_game.world.centerX, _game.world.centerY, 'progressBar');
-    preloadImage.anchor.setTo(0.5, 0.5);
+    var preloadImage = _game.add.sprite((_game.width-progressBarBackground.width)/2, 
+        (_game.height-progressBarBackground.height)/2, 'progressBarFillFg');
     _game.load.setPreloadSprite(preloadImage);
 }
 

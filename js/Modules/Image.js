@@ -15,6 +15,7 @@ var ImageTypeEnum = {
     Background: 'IMAGE_BACKGROUND',
     ChoiceBackground: 'IMAGE_CHOICE_BACKGROUND',
     OverlayCloseImage: 'IMAGE_OVERLAY_CLOSE',
+    OverlayScrollBar: 'IMAGE_SCROLLBAR',
     ExternalLink: 'IMAGE_BUTTON_EXTERNAL_LINK',
     Pause: 'IMAGE_BUTTON_PAUSE',
     Play: 'IMAGE_BUTTON_PLAY',
@@ -48,13 +49,14 @@ Image.prototype.addImageToGame = function(game, group) {
         case ImageTypeEnum.Static:
         case ImageTypeEnum.Background:
         case ImageTypeEnum.InfoImage:
+        case ImageTypeEnum.OverlayScrollBar:
             this._image = game.add.image(this._xPos, this._yPos, this._key);
             break;
         case ImageTypeEnum.ThoughtSprite:
             this._image = game.add.sprite(this._xPos, this._yPos, this._key);
             break;
         default:
-            console.warn("Invalid image type not added.");
+            console.warn("Invalid image type not added:" + this._type);
     }
     group.add(this._image);
 }
@@ -85,6 +87,9 @@ Image.prototype.changeImage = function (game, arg1, arg2, arg3, arg4, arg5) {
             break;
         case ImageTypeEnum.OverlayCloseImage:
             this.changeToOverlayCloseImage(game, arg1, arg2);
+            break;
+        case ImageTypeEnum.OverlayScrollBar:
+            this.changeToOverlayScrollBar(game, arg1, arg2);
             break;
         case ImageTypeEnum.ExternalLink:
             this.changeToExternalLinkImage(game, arg1);
@@ -172,11 +177,9 @@ Image.prototype.changeToDisplayImage = function(game, target, clickedIndex) {
 }
 
 Image.prototype.changeToInfoImage = function(game, target) {
-    var MARGIN = 50;
-    //this._graphic = overlayGraphics;
-
-    var DISPLAY_WIDTH = game.width - (MARGIN<<1);    
-    var DISPLAY_HEIGHT = game.height - (MARGIN<<1);
+    var MARGIN = game.global.constants.INFO_VIEW_MARGIN;
+    var DISPLAY_WIDTH = game.global.constants.INFO_VIEW_WIDTH;    
+    var DISPLAY_HEIGHT = game.global.constants.INFO_VIEW_HEIGHT;
     var SCALE = DISPLAY_WIDTH/this._image.width;
     this._image.height = Math.floor(this._image.height*SCALE);
     this._image.width = Math.floor(this._image.width*SCALE);
@@ -186,7 +189,8 @@ Image.prototype.changeToInfoImage = function(game, target) {
     this._mask = game.add.graphics(0, 0);
     //game.mediaGroup.add(this._mask);
     this._mask.beginFill(0xffffff);
-    this._mask.drawRect(MARGIN, MARGIN, DISPLAY_WIDTH, DISPLAY_HEIGHT);
+    this._mask.drawRect(MARGIN, MARGIN, DISPLAY_WIDTH, game.global.constants.INFO_VIEW_HEIGHT);
+    this._mask.endFill();
     this._image.mask = this._mask;
 
     this.makeDraggable(game, true, false, MARGIN, -this._image.height+DISPLAY_HEIGHT+MARGIN, 
@@ -218,11 +222,28 @@ Image.prototype.changeToOverlayCloseImage = function(game) {
     this.setVisible(false);
     this._image.anchor.set(0.5, 0.5);
 
+    //this._image.width = 50;
+    //his._image.height = 50;
+
     this._link = new Linkable(game, this._image, game.global.gameManager.getHideDisplayedImageSignal());
     this._link.setAsButton(false);        
     this._link2 = new Linkable(game, this._image, game.global.gameManager.getHideInfoOverlaySignal());
     this._link2.setAsButton(false);    
     this._link.addMouseOverScaleEffect(game, this._image);
+}
+
+Image.prototype.changeToOverlayScrollBar = function(game, width) {
+    this.setVisible(false);
+    this._image.width = width-2;
+    this._image.anchor.set(0.5, 0);
+    this.makeDraggable(game, true, false, game.global.constants.SCROLLBAR_POS[0], game.global.constants.SCROLLBAR_POS[1],
+        game.global.constants.SCROLLBAR_DIM[0]+5, game.global.constants.SCROLLBAR_DIM[1]);
+
+    //this._link = new Linkable(game, this._image, game.global.gameManager.getHideDisplayedImageSignal());
+    //this._link.setAsButton(false);        
+    //this._link2 = new Linkable(game, this._image, game.global.gameManager.getHideInfoOverlaySignal());
+    //this._link2.setAsButton(false);    
+    //this._link.addMouseOverScaleEffect(game, this._image);
 }
 
 Image.prototype.changeToExternalLinkImage = function(game, target) {
@@ -289,6 +310,14 @@ Image.prototype.getPhaserImage = function() {
     return this._image;
 }
 
+Image.prototype.getHeight = function() {
+    return this._image.height;
+}
+
+Image.prototype.getY = function() {
+    return this._image.y;
+}
+
 Image.prototype.getType = function() {
     return this._type;
 }
@@ -299,6 +328,23 @@ Image.prototype.getTarget = function() {
 
 Image.prototype.disableInput = function() {
     this._image.inputEnabled = false;
+}
+
+Image.prototype.setX = function(x){
+    this._image.x = x;
+}
+
+Image.prototype.setY = function(y){
+    this._image.y = y;
+}
+
+Image.prototype.setPos = function(x, y) {
+    this.setX(x);
+    this.setY(y);
+}
+
+Image.prototype.setHeight = function(height) {
+    this._image.height = height;
 }
 
 Image.prototype.setVisible = function(isVisible) {
@@ -329,11 +375,16 @@ Image.prototype.fadeIn = function(game) {
     Animation.fade(game, this._image, 1, true);
 }
 
+Image.getEnum = function() {
+    return ImageTypeEnum;
+}
+
 function DebugRect(x, y, width, height, game) {
     var bounds = new Phaser.Rectangle(x, y, width, height);
     var graphics = game.add.graphics(bounds.x, bounds.y);
     graphics.beginFill(0x000077);
     graphics.drawRect(0, 0, bounds.width, bounds.height);
+    graphics.endFill();
 }
 
 module.exports = Image;

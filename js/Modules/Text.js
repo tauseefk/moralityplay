@@ -198,4 +198,8 @@ Text.prototype.setY = function(val) {
     this._text.y = val;
 }
 
+Text.getEnum = function() {
+    return TextTypeEnum;
+}
+
 module.exports = Text;
