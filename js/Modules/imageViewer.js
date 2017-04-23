@@ -28,7 +28,7 @@ var _effectiveImageHeight = 0;
 function CreateInfoOverlay() {    
     CreateOverlayGraphic();
     CreateOverlayCrossButton();
-    //CreateOverlayHelperText();
+    CreateOverlayHelperText();
 }
 
 function CreateOverlayGraphic() {
@@ -124,7 +124,7 @@ module.exports = {
             this.initializeScrollbar(image);
         _overlayGraphic.setVisible(value);
         _overlayCloseButton.setVisible(value);
-        //_overlayText.setVisible(true);
+        _overlayText.setVisible(value);
         _scrollbarBg.setVisible(value);
         _scrollbarDraggable.setVisible(value);
     },
