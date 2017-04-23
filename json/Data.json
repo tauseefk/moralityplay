@@ -57,7 +57,7 @@
     "sub1": "./Videos/Subtitles/test.srt"
 },
 "scenes": {
-    "startScene1":{
+    "startScene":{
         "stateType": "MovieState",
         "movieSrcHD": "./Videos/Opening.mp4",
         "movieSrcSD": "./Videos/Opening_lo.mp4",
@@ -496,7 +496,7 @@
         }
     },   
 
-    "startScene": {
+    "cmuHuntInsideLocation": {
         "stateType": "LocationState",
         "draggable": false,
         "movieSrcHD": "./Videos/cmu_hunt_indoor_optimized.mp4",
@@ -729,7 +729,7 @@
             "size": 5,
             "choiceMomentsProperties": [
             {
-                "timeStamp": 5.1,
+                "timeStamp": 5.5,
                 "choices": {
                     "question": "Choose what to say:",
                     "size": 3,
@@ -751,7 +751,7 @@
                 }
             },
             {
-                "timeStamp": 15,
+                "timeStamp": 15.1,
                 "choices": {
                     "question": "Three positive and negative things about Michael.",
                     "size": 2,
@@ -770,7 +770,7 @@
                 }
             },
             {
-                "timeStamp": 63,
+                "timeStamp": 63.3,
                 "choices": {
                     "question": "Choose what to say:",
                     "size": 3,
