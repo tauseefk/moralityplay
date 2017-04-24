@@ -406,7 +406,7 @@
                 "infoButton"
             ],
             "coords": [
-                [ 1180, 650 ],
+                [ 100, 620 ],
                 [ 500, 300]
             ],
             "targetImageIndexOrScene": [
@@ -597,7 +597,7 @@
                     "question": "What do you think?",
                     "size": 3,
                     "content": [
-                        "Li, what's missing?",
+                        "I am not sure what's missing",
                         "Li, if it's covered anyway,\n don't worry about it.",
                         "If we refer to it \nthen I think it's fine."
 
