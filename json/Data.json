@@ -597,7 +597,7 @@
                     "question": "What do you think?",
                     "size": 3,
                     "content": [
-                        "I am not sure what's missing",
+                        "I am not sure \nwhat's missing.",
                         "Li, if it's covered anyway,\n don't worry about it.",
                         "If we refer to it \nthen I think it's fine."
 
@@ -625,9 +625,9 @@
                         "thoughtBubbleSprite"
                     ],
                     "coords": [
-                        [ 1050, 50],
+                        [ 1050, 60],
                         [ 800, 100 ],
-                        [ 400, 50 ]                      
+                        [ 300, 60 ]                      
                     ],
                     "thoughts": [
                     {
@@ -1014,7 +1014,7 @@
             "size": 1,
             "choiceMomentsProperties": [
             {
-                "timeStamp": 54,
+                "timeStamp": 73,
                 "choices":  {
                     "question": "\"I don't think it is for you\"",
                     "size": 2,
@@ -1100,7 +1100,7 @@
             "fadeOut": false
         },
         "choiceMoments": {
-            "size": 2,
+            "size": 3,
             "choiceMomentsProperties": [
             {
                 "timeStamp": 10,
@@ -1142,7 +1142,29 @@
                         [ 420, 200 ]
                     ]
                 }
-            }
+            },
+            {
+                "timeStamp": 28,
+                "choices": {
+                    "question": "\"See you tomorrow.\"",
+                    "size": 3,
+                    "content": [
+                        "See you.",
+                        "Bye.",
+                        "Have a good evening."
+                    ],
+                    "y": [
+                        615,
+                        615,
+                        615
+                    ],
+                    "bounds": [
+                        [ 420, 200 ],
+                        [ 420, 200 ],
+                        [ 420, 200 ]
+                    ]
+                }
+            }            
             ]
         },
         "nextScene": "postEndingMenu"        
