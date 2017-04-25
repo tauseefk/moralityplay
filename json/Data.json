@@ -59,7 +59,7 @@
     "MK1sub": "./Videos/Subtitles/MK1_optimized.srt"
 },
 "scenes": {
-    "startScene1":{
+    "startScene":{
         "stateType": "MovieState",
         "movieSrcHD": "./Videos/Opening.mp4",
         "movieSrcSD": "./Videos/Opening_lo.mp4",
@@ -496,7 +496,7 @@
         }
     },   
 
-    "startScene": {
+    "cmuHuntInsideLocation": {
         "stateType": "LocationState",
         "draggable": false,
         "movieSrcHD": "./Videos/cmu_hunt_indoor_optimized.mp4",
