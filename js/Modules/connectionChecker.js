@@ -1,5 +1,5 @@
 /***************************************************************
-Creates choice icons during interaction moments.
+Checks user's connection
 ***************************************************************/
 "use strict";
 
@@ -12,33 +12,56 @@ var _timer = null;
 
 const SLOW_DOWNLOAD_THRESHOLD_MBPS = 0.36;
 
+//Type of file for connection test
 var FileTypeEnum = {
     Image: 'IMAGE',
     Video: 'VIDEO',
     Audio: 'AUDIO'
 }
 
+/***************************************************************
+Adds load start and on load complete functions.
+Starts load process of selected file and times it.
+***************************************************************/
 function CheckConnection() {    
     _game.load.onFileComplete.add(LoadComplete, this);
     _game.load.onLoadStart.add(StartLoading, this);    
     _game.load.start();
 }
 
+/***************************************************************
+Creates timer.
+***************************************************************/
 function StartLoading() {
     _timer = _game.time.create(true);
     _timer.start();
 }
 
+/***************************************************************
+Gets connection speed and starts preload state.
+***************************************************************/
 function LoadComplete() {    
     _timer.stop();
-    var elapsedSeconds = (_timer._now - _timer._started)/1000;
-    elapsedSeconds += _timer.elapsed/1000;
-    var connectionSpeedMbps = _bytes/(elapsedSeconds)/ 1000000;
-    SetVideoQuality(connectionSpeedMbps);  
+    SetVideoQuality(CalculateConnectionSpeed());  
     _game.load.onFileComplete.remove(LoadComplete, this);
+
+    //Starts preload state
     _game.state.start("preload");
 }
 
+/***************************************************************
+Calculates connection speed and returns it.
+***************************************************************/
+function CalculateConnectionSpeed() {
+    var elapsedSeconds = (_timer._now - _timer._started)/1000;
+    elapsedSeconds += _timer.elapsed/1000;
+    var connectionSpeedMbps = _bytes/(elapsedSeconds)/ 1000000;
+    return connectionSpeedMbps;
+}
+
+/***************************************************************
+Decides video quality for the rest of the experience.
+***************************************************************/
 function SetVideoQuality(speed) {
     if(speed > SLOW_DOWNLOAD_THRESHOLD_MBPS || speed < 0)
         _game.global.quality = 'HD';
@@ -47,6 +70,9 @@ function SetVideoQuality(speed) {
     console.log('Connection speed: ' + speed + ' Mb/s. Quality: ' +  _game.global.quality);  
 }
 
+/***************************************************************
+Prepares selected file for connection test.
+***************************************************************/
 function Load(key, src, type) {
     switch (type) {
         case FileTypeEnum.Image:
@@ -64,22 +90,19 @@ function Load(key, src, type) {
     return _file;
 }
 
-function StartPreloadState() {
-    _game.state.start("preload");
-}
-
 module.exports = {
     init: function(game) {
-        _file = null;
+        //Singleton initialization
         if(_instance !== null)
-            return _instance;
+            return _instance;        
+        _file = null;
         _game = game;
         _instance = this;
         return _instance;
     },
-    addToFiles: function(file) {
-        _files.push(file);
-    },
+    /***************************************************************
+    Prepares selected file for connection testing.
+    ***************************************************************/
     loadFile: function(key, src, type, bytes) {
         _bytes = bytes;
         if(!_bytes)

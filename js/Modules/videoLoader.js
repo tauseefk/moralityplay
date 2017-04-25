@@ -199,9 +199,6 @@ module.exports = {
     clearFilterBg:function() {
         VideoFilter.clearBg();
     },
-    toggleSubtitle: function() {
-        Subtitle.toggleSubtitle();
-    },
     resetVideoVariables() {        
         _interactionTimeStamps = null;
         _pausedByGame = false;

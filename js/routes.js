@@ -12,7 +12,7 @@ exports.game = function(req, res) {
        +'<meta name="keywords" content="interactive, experience, web, film">'
        +'<link rel="stylesheet" type="text/css" href="css/main.css">'
        +'</head>'
-       +'<body>'
+       +'<body class="bg-dark">'
        +'<div id="app">'
        +'<article>'
        +'<div class="layoutSingleColumn u-margin-header">'

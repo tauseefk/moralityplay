@@ -43,7 +43,7 @@ SoundManager.prototype.playBackgroundMusic = function(musicKey) {
   //      _bgMusic.currentTime = _currTime;
  //   }
     //else {
-    if(_bgMusicKey != musicKey) {
+    if(musicKey &&_bgMusicKey != musicKey) {
         if(_bgMusic)
             _bgMusic.stop();
         if(!_soundHashSet[musicKey]) 

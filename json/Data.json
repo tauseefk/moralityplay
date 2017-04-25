@@ -30,6 +30,7 @@
     "playButton": "./Images/UI/start.png",
     "startButton": "./Images/UI/play.png",
     "subtitleButton": "./Images/UI/subtitle.png",
+    "subtitleDisabledButton": "./Images/UI/subtitleDisabled.png",
     "thoughtLeft": "./Images/UI/ThoughBubble_Left.png",
     "thoughtRight":"./Images/UI/ThoughBubble_Right.png",
     "choiceBg": "./Images/UI/choice_button_bg.png",
@@ -40,7 +41,8 @@
     "infoPopupMicroaggression": "./Images/Info/Microaggressions dialogs.jpg",
     "infoPopupSystemRacism": "./Images/Info/SystemRacism.jpg",
     "infoPopupDemographic": "./Images/Info/Demographic.jpg",
-    "infoPopupNatureNurture": "./Images/Info/NatureNurture.jpg"
+    "infoPopupNatureNurture": "./Images/Info/NatureNurture.jpg",
+    "infoPopupTest": "./Images/Info/test.jpg"
 },
 "spritesheets": {
     "thoughtBubbleSprite": ["./Images/Sprites/ThoughBubble_spritesheet.png", 200, 117, 6],
@@ -50,14 +52,14 @@
 "audio": {
     "cmuCutLocationSound": "./Audio/Sound/Main Campus Sounds_lo.ogg",
     "huntIndoorSound": "./Audio/Sound/HuntIndoor_lo.ogg",
-    "gatesIndoorSound": "./Audio/Sound/GatesIndoor_lo.ogg",    
+    "gatesIndoorSound": "./Audio/Sound/GatesIndoor_lo.ogg",
     "cohonIndoorSound": "./Audio/Sound/CohonIndoor_lo.ogg"
 },
 "subtitles": {
-    "sub1": "./Videos/Subtitles/test.srt"
+    "MK1sub": "./Videos/Subtitles/MK1_optimized.srt"
 },
 "scenes": {
-    "startScene":{
+    "startScene1":{
         "stateType": "MovieState",
         "movieSrcHD": "./Videos/Opening.mp4",
         "movieSrcSD": "./Videos/Opening_lo.mp4",
@@ -281,7 +283,6 @@
             "fadeIn": false,
             "fadeOut": false
         },
-        "backgroundMusic": "cohonIndoorSound",
         "icons": {
             "size": 2,
             "type": [
@@ -307,7 +308,7 @@
                 "IMAGE_INFO"
             ],
             "key": [
-                "infoPopupNatureNurture"
+                "infoPopupTest"
             ],
             "coords": [
                 [0, 0]
@@ -394,7 +395,6 @@
             "fadeIn": false,
             "fadeOut": false
         },
-        "backgroundMusic": "gatesIndoorSound",
         "icons": {
             "size": 2,
             "type": [
@@ -496,7 +496,7 @@
         }
     },   
 
-    "cmuHuntInsideLocation": {
+    "startScene": {
         "stateType": "LocationState",
         "draggable": false,
         "movieSrcHD": "./Videos/cmu_hunt_indoor_optimized.mp4",
@@ -507,7 +507,6 @@
             "fadeIn": false,
             "fadeOut": false
         },
-        "backgroundMusic": "huntIndoorSound",
         "icons": {
             "size": 3,
             "type": [
@@ -554,7 +553,6 @@
             ]
         }
     },
-    
 
     "li1": {
         "videoFilter": [
@@ -720,6 +718,7 @@
         ],
         "movieSrcHD": "./Videos/MK1_optimized.mp4",
         "movieSrcSD": "./Videos/MK1_optimized_lo.mp4",
+        "sub": "MK1sub",
         "stateType": "InteractState",
         "transition": {
             "fadeIn": true,

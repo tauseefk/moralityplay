@@ -110,6 +110,9 @@ module.exports = {
     createInteractionElements: function() {
         CreateInteractionElements();
     },
+    createThoughts: function(thoughts, coords) {
+        Thoughts.create(thoughts, coords);
+    },
     endInteraction: function(lingeringChoice, targetScene, tag) {
         EndInteraction(lingeringChoice, targetScene, tag);
     }

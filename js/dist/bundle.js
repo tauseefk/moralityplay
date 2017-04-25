@@ -6,9 +6,9 @@
 /******/ 	function __webpack_require__(moduleId) {
 /******/
 /******/ 		// Check if module is in cache
-/******/ 		if(installedModules[moduleId]) {
+/******/ 		if(installedModules[moduleId])
 /******/ 			return installedModules[moduleId].exports;
-/******/ 		}
+/******/
 /******/ 		// Create a new module (and put it into the cache)
 /******/ 		var module = installedModules[moduleId] = {
 /******/ 			i: moduleId,
@@ -592,9 +592,6 @@ module.exports = {
     clearFilterBg:function() {
         VideoFilter.clearBg();
     },
-    toggleSubtitle: function() {
-        Subtitle.toggleSubtitle();
-    },
     resetVideoVariables() {        
         _interactionTimeStamps = null;
         _pausedByGame = false;
@@ -1017,14 +1014,16 @@ const Image = __webpack_require__(6),
     Text = __webpack_require__(3),
     Graphic = __webpack_require__(11),
     Video = __webpack_require__(1),
-    ImageViewer = __webpack_require__(36);
+    ImageViewer = __webpack_require__(36),
+    Subtitle = __webpack_require__(23);
 
 var _instance = null;
 var _game = null;
 var _graphics = null;
 var _pauseImage = null;
 var _playImage = null;
-var _toggleSubtitleImage = null;
+var _subtitleImage = null;
+var _subtitleDisabledImage = null;
 var _pausedByEngine = false;
 
 var _overlayGraphic = null;
@@ -1032,6 +1031,7 @@ var _overlayCloseButton = null;
 var _overlayText = null;
 
 var _uiVisible = true;
+var _subsVisible = true;
 
 const pauseButtonImageKeyEnum = 'IMAGE_BUTTON_PAUSE';
 const playButtonImageKeyEnum = 'IMAGE_BUTTON_PLAY';
@@ -1044,11 +1044,21 @@ function DrawPauseButton() {
     _pauseImage.changeImage(_game, _game.global.gameManager.getPauseSignal());
 }
 
-function DrawToggleSubtitleButton() {
-    if(!_toggleSubtitleImage)        
-        _toggleSubtitleImage = new Image(10, 100, 'subtitleButton', toggleSubtitleButtonImageKeyEnum);    
-    _toggleSubtitleImage.addImageToGame(_game, _game.uiGroup);
-    _toggleSubtitleImage.changeImage(_game, _game.global.gameManager.getToggleSubtitleSignal());
+function DrawSubtitleButtons() {
+    if(!_subtitleImage)        
+        _subtitleImage = new Image(10, 100, 'subtitleButton', toggleSubtitleButtonImageKeyEnum);    
+    _subtitleImage.addImageToGame(_game, _game.uiGroup);
+    _subtitleImage.changeImage(_game, _game.global.gameManager.getToggleSubtitleSignal());
+
+    if(!_subtitleDisabledImage)        
+        _subtitleDisabledImage = new Image(10, 100, 'subtitleDisabledButton', toggleSubtitleButtonImageKeyEnum);    
+    _subtitleDisabledImage.addImageToGame(_game, _game.uiGroup);
+    _subtitleDisabledImage.changeImage(_game, _game.global.gameManager.getToggleSubtitleSignal());
+
+    if(Subtitle.getSubtitleVisible())
+        _subtitleDisabledImage.setVisible(false);
+    else        
+        _subtitleImage.setVisible(false);
 }
 
 function DrawPlayButton() {
@@ -1082,22 +1092,20 @@ function Play() {
     }
 }
 
-function ToggleUI() {
-    _uiVisible = !_uiVisible;
-    _pauseImage.setVisible(_uiVisible);
-    //_toggleSubtitleImage.setVisible(_uiVisible);
-}
-
 function HideUI() {
     _uiVisible = false;
     _pauseImage.setVisible(_uiVisible);
-    //_toggleSubtitleImage.setVisible(_uiVisible);
+    _subtitleImage.setVisible(_uiVisible);
+    _subtitleDisabledImage.setVisible(_uiVisible);
 }
 
 function ShowUI() {
     _uiVisible = true;
     _pauseImage.setVisible(_uiVisible);
-    //_toggleSubtitleImage.setVisible(_uiVisible);
+    if(Subtitle.getSubtitleVisible())
+        _subtitleImage.setVisible(_uiVisible);
+    else        
+        _subtitleDisabledImage.setVisible(_uiVisible);
 }
 
 function DrawPauseOverlay() {
@@ -1124,6 +1132,7 @@ module.exports = {
     init: function(game) {
         if(_instance !== null)
             return _instance;
+        Subtitle.init(game);
         ImageViewer.init(game);
         _instance = this;
         _game = game;
@@ -1131,10 +1140,10 @@ module.exports = {
     },
     preload: function() {
     },
-    create: function(drawPause, drawSubtitleToggle) {
+    create: function(drawPause, drawSubtitles) {
         _uiVisible = true;
-        if(drawSubtitleToggle)
-            //DrawToggleSubtitleButton();
+        if(drawSubtitles)
+            DrawSubtitleButtons();
         if(drawPause) {
             DrawPauseButton();
             DrawPauseOverlay();
@@ -1147,15 +1156,23 @@ module.exports = {
     play: function() {
         Play();
     },
-    toggleUI: function() {
-        ToggleUI();
-    },
     showUI: function() {
         ShowUI();
     },
     hideUI: function() {
         HideUI();
     },
+    toggleSubtitle: function() {
+        _subsVisible = Subtitle.toggleSubtitle();
+        if(_subsVisible) {
+            _subtitleImage.setVisible(true);            
+            _subtitleDisabledImage.setVisible(false);
+        }
+        else {
+            _subtitleImage.setVisible(false);            
+            _subtitleDisabledImage.setVisible(true);
+        }
+    },    
     createInfoOverlay() {
         ImageViewer.createOverlay();
     },
@@ -1233,7 +1250,33 @@ Image.prototype.addImageToGame = function(game, group) {
         default:
             console.warn("Invalid image type not added:" + this._type);
     }
-    group.add(this._image);
+    if(group) {
+        group.add(this._image);
+    }
+    else {
+        switch(this._type) {
+            case ImageTypeEnum.Pause:
+            case ImageTypeEnum.Play:
+            case ImageTypeEnum.InfoImage:
+            case ImageTypeEnum.OverlayScrollBar:
+            case ImageTypeEnum.ToggleSubtitle:
+            case ImageTypeEnum.OverlayCloseImage:
+                game.uiGroup.add(this._image);
+                break;
+            case ImageTypeEnum.Thought:
+            case ImageTypeEnum.SceneChange:
+            case ImageTypeEnum.DisplayImage:
+            case ImageTypeEnum.ChoiceBackground:
+            case ImageTypeEnum.ExternalLink:
+            case ImageTypeEnum.Static:
+            case ImageTypeEnum.Background:
+            case ImageTypeEnum.ThoughtSprite:
+                game.mediaGroup.add(this._image);
+                break;
+            default:
+                console.warn("Invalid image type not added to group:" + this._type);
+        }
+    }
 }
 
 //Assigns image change function depending on enum
@@ -1298,7 +1341,7 @@ Image.prototype.changeToThoughtSprite = function(game, thoughts, coords, choices
     this._image.animations.play('think', 4, false);
     this._image.inputEnabled = true;
     this._image.input.useHandCursor = true;
-    this._link = new Linkable(game, this._image.events, game.global.gameManager.getCreateThoughtsAndChoicesSignal(), thoughts, coords, choices);
+    this._link = new Linkable(game, this._image.events, game.global.gameManager.getCreateThoughtsSignal(), thoughts, coords, choices);
     this._link.addOnClickAnimation(Animation.fade(game, this._image, 0, false));
     this._link.addOnClickAnimation(Animation.scale(game, this._image, false));
     this._link.setAsButton(true);
@@ -1324,7 +1367,7 @@ Image.prototype.changeToThoughtIcon = function(game, thoughts, coords) {
     this._image.width = 100;
     this._image.height = 100;
     this._image.anchor.setTo(0.5, 0.5);
-    this._link = new Linkable(game, this._image, game.global.gameManager.getCreateThoughtsAndChoicesSignal(), thoughts, coords, choices);
+    this._link = new Linkable(game, this._image, game.global.gameManager.getCreateThoughtsSignal(), thoughts, coords, choices);
     this._link.addOnClickAnimation(Animation.fade(game, this._image, 0, false));
     this._link.addOnClickAnimation(Animation.scale(game, this._image, false));
     this._link.setAsButton(true);
@@ -1359,17 +1402,24 @@ Image.prototype.changeToInfoImage = function(game, target) {
     this._image.height = Math.floor(this._image.height*SCALE);
     this._image.width = Math.floor(this._image.width*SCALE);
     this._image.x = MARGIN;
-    this._image.y = MARGIN;
 
-    this._mask = game.add.graphics(0, 0);
-    //game.mediaGroup.add(this._mask);
-    this._mask.beginFill(0xffffff);
-    this._mask.drawRect(MARGIN, MARGIN, DISPLAY_WIDTH, game.global.constants.INFO_VIEW_HEIGHT);
-    this._mask.endFill();
-    this._image.mask = this._mask;
+    if(this.checkIfScrollBarNeeded(game)) {    
+        this._image.y = MARGIN;    
+        this._mask = game.add.graphics(0, 0);
+        //game.mediaGroup.add(this._mask);
+        this._mask.beginFill(0xffffff);
+        this._mask.drawRect(MARGIN, MARGIN, DISPLAY_WIDTH, game.global.constants.INFO_VIEW_HEIGHT);
+        this._mask.endFill();
+        this._image.mask = this._mask;
 
-    this.makeDraggable(game, true, false, MARGIN, -this._image.height+DISPLAY_HEIGHT+MARGIN, 
-        DISPLAY_WIDTH, this._image.height*2-DISPLAY_HEIGHT);
+        this.makeDraggable(game, true, false, MARGIN, -this._image.height+DISPLAY_HEIGHT+MARGIN, 
+            DISPLAY_WIDTH, this._image.height*2-DISPLAY_HEIGHT);
+        console.log("here");
+    }
+    else{
+        this._image.y = game.world.centerY;
+        this._image.anchor.setTo(0, 0.5);
+    }
     
 }
 
@@ -1477,12 +1527,25 @@ Image.prototype.makeDraggable = function(game, lockHorizontal, lockVertical, bou
     this.changeCursorImage(game, 'url("./Images/UI/hand_2.png"), auto');
 }
 
+Image.prototype.checkIfScrollBarNeeded = function(game) {
+    var displayDimensionRatio = game.global.constants.INFO_VIEW_WIDTH/game.global.constants.INFO_VIEW_HEIGHT;
+    var imageDimensionRatio = this._image.width/this._image.height;
+    if(imageDimensionRatio > displayDimensionRatio)
+        return false;
+    else
+        return true;
+}
+
 Image.prototype.destroy = function() {
     this._image.destroy();
 }
 
 Image.prototype.getPhaserImage = function() {
     return this._image;
+}
+
+Image.prototype.bringToTop = function() {
+    this._image.bringToTop();
 }
 
 Image.prototype.getHeight = function() {
@@ -1657,7 +1720,7 @@ function CreateLinkedIcons(linkedIcons) {
 
 function CreateLinkedIcon(key, coords, target, type) {
     var image = new Image(coords[0], coords[1], key, type);
-    image.addImageToGame(_game, _game.mediaGroup);
+    image.addImageToGame(_game);
     image.changeImage(_game, target);
     _linkedIcons.push(image);
 }
@@ -1971,34 +2034,74 @@ module.exports = Animation;
 
 const Linkable = __webpack_require__(2);
 
-//Image constructor
-var Graphic = function(xPos, yPos) {
-    this._xPos = xPos;
-    this._yPos = yPos;
+var GraphicTypeEnum = {
+    Overlay: 'GRAPHIC_INFO_OVERLAY',
+    ScrollBarBackground: 'GRAPHIC_SCROLLBAR_BG'
 }
 
-Graphic.prototype.createOverlayBg = function(game, margin) {
-    var offset = 5;
+//Image constructor
+var Graphic = function(xPos, yPos, type) {
+    this._xPos = xPos;
+    this._yPos = yPos;
+    this._type = type;
+}
+
+Graphic.prototype.addGraphicToGame = function(game, group) {
+    this._graphic = game.add.graphics(this._xPos, this._yPos); 
+    if(group) {
+        group.add(this._graphic);
+    }
+    else {
+        switch(this._type) {
+            case GraphicTypeEnum.Overlay:
+            case GraphicTypeEnum.ScrollBarBackground:
+                game.uiGroup.add(this._graphic);
+                break;
+            default:
+                console.warn("Invalid graphic type not added to group:" + this._type);
+        }
+    }
+}
+
+Graphic.prototype.changeGraphic = function (game, arg1, arg2, arg3, arg4, arg5) {
+    switch(this._type) {
+        case GraphicTypeEnum.Overlay:            
+            this.changeToInfoOverlayGraphic(game, arg1, arg2);
+            break;
+        case GraphicTypeEnum.ScrollBarBackground:
+            this.changeToScrollBarBackgroundGraphic(game, arg1);
+            break;
+        default:
+            console.warn("Invalid Graphic Type.");
+    }
+}
+
+Graphic.prototype.changeToInfoOverlayGraphic = function(game, margin, scrollbarEnabled) {
     this._graphic = game.add.graphics(this._xPos, this._yPos);    
-    this._graphic.beginFill(0x000000, 0.8);
-    this._graphic.drawRect(0, 0, margin, game.height);
-    this._graphic.drawRect(game.width-margin, 0, margin, game.height);
-    this._graphic.drawRect(margin, 0, game.width-(margin<<1), margin);
-    this._graphic.drawRect(margin, game.height-margin, game.width-(margin<<1), margin);
+    this._graphic.beginFill(0x000000, 0.6);
+    this._graphic.inputEnabled = true;
+
+    if(scrollbarEnabled) {
+        this._graphic.drawRect(0, 0, margin, game.height);
+        this._graphic.drawRect(game.width-margin, 0, margin, game.height);
+        this._graphic.drawRect(margin, 0, game.width-(margin<<1), margin);
+        this._graphic.drawRect(margin, game.height-margin, game.width-(margin<<1), margin);   
+        this._graphic.input.priorityID = 1;
+        this._graphic.input.useHandCursor = true;
+    }
+    else {
+        this._graphic.drawRect(0, 0, game.width, game.height);
+    }
     this._graphic.endFill();
     this._graphic.visible = false;
     game.uiGroup.add(this._graphic);
 
-    this._graphic.inputEnabled = true;   
-    this._graphic.input.priorityID = 1;
-    this._graphic.input.useHandCursor = true;
 
     this._link = new Linkable(game, this._graphic.events, game.global.gameManager.getHideDisplayedImageSignal());
     this._link2 = new Linkable(game, this._graphic.events, game.global.gameManager.getHideInfoOverlaySignal());
     this._link.setAsButton(false);
     this._link2.setAsButton(false);
 }
-
 Graphic.prototype.drawRect = function(game, x, y, width, height, color, opacity, strokeWidth, lineColor) {
     if(!color)
         color = 0x000000;
@@ -2014,8 +2117,18 @@ Graphic.prototype.drawRect = function(game, x, y, width, height, color, opacity,
         this._graphic.lineStyle(strokeWidth, lineColor);
     }
     this._graphic.drawRect(x, y, width, height);
+    
     this._graphic.endFill();
-    this._graphic.visible = true;
+}
+
+Graphic.prototype.changeToScrollBarBackgroundGraphic = function(game, rectangle) {
+    this._graphic.beginFill(rectangle.color, rectangle.opacity);
+    this._graphic.lineStyle(rectangle.strokeWidth, rectangle.lineColor);
+
+    this._graphic.drawRect(rectangle.x, rectangle.y, rectangle.width, rectangle.height);
+    
+    this._graphic.endFill();
+    this._graphic.visible = false;
 }
 
 Graphic.prototype.setVisible = function(value) {
@@ -2024,6 +2137,36 @@ Graphic.prototype.setVisible = function(value) {
 
 Graphic.prototype.getGraphic = function() {
     return this._graphic;
+}
+
+Graphic.createRectangle = function(x, y, width, height, color, opacity, strokeWidth, lineColor, strokeOpacity) {
+    var rectangle = {};
+    rectangle.x = x;
+    rectangle.y = y;
+    rectangle.width = width;
+    rectangle.height = height;
+    if(!color)
+        color = 0x000000;
+    rectangle.color = color;
+    if(!opacity)
+        opacity = 1.0;
+    rectangle.opacity = opacity;
+
+    if(strokeWidth) {
+        rectangle.strokeWidth = strokeWidth;
+        if(!lineColor)
+            lineColor = 0x000000;
+        rectangle.lineColor = lineColor
+        if(!strokeOpacity)
+            strokeOpacity = 1.0;
+        rectangle.strokeOpacity = strokeOpacity;
+    }
+
+    return rectangle;
+}
+
+Graphic.getEnum = function() {
+    return GraphicTypeEnum;
 }
 
 module.exports = Graphic;
@@ -2076,13 +2219,9 @@ function AddIconsToGroup(icons) {
 Initializes drag follow for icon group.
 ***************************************************************/
 function StartDragUpdate() {
-    _bgImage.getPhaserImage().events.onDragStart.add(dragStart);
     _bgImage.getPhaserImage().events.onDragUpdate.add(dragUpdate);
     _iconGroup.x = _bgImage.getPhaserImage().x;
     _iconGroup.y = _bgImage.getPhaserImage().y;
-}
-
-function dragStart() {
 }
 
 /***************************************************************
@@ -2091,9 +2230,6 @@ Icons follow dragged background position every update.
 function dragUpdate() {
     _iconGroup.x = _bgImage.getPhaserImage().x;
     _iconGroup.y = _bgImage.getPhaserImage().y;
-}
-
-function dragStop() {
 }
 
 module.exports = {
@@ -2747,6 +2883,9 @@ module.exports = {
     createInteractionElements: function() {
         CreateInteractionElements();
     },
+    createThoughts: function(thoughts, coords) {
+        Thoughts.create(thoughts, coords);
+    },
     endInteraction: function(lingeringChoice, targetScene, tag) {
         EndInteraction(lingeringChoice, targetScene, tag);
     }
@@ -2938,7 +3077,7 @@ module.exports = defaults;
 
 "use strict";
 /***************************************************************
-Creates choice icons during interaction moments.
+Checks user's connection
 ***************************************************************/
 
 
@@ -2951,33 +3090,56 @@ var _timer = null;
 
 const SLOW_DOWNLOAD_THRESHOLD_MBPS = 0.36;
 
+//Type of file for connection test
 var FileTypeEnum = {
     Image: 'IMAGE',
     Video: 'VIDEO',
     Audio: 'AUDIO'
 }
 
+/***************************************************************
+Adds load start and on load complete functions.
+Starts load process of selected file and times it.
+***************************************************************/
 function CheckConnection() {    
     _game.load.onFileComplete.add(LoadComplete, this);
     _game.load.onLoadStart.add(StartLoading, this);    
     _game.load.start();
 }
 
+/***************************************************************
+Creates timer.
+***************************************************************/
 function StartLoading() {
     _timer = _game.time.create(true);
     _timer.start();
 }
 
+/***************************************************************
+Gets connection speed and starts preload state.
+***************************************************************/
 function LoadComplete() {    
     _timer.stop();
-    var elapsedSeconds = (_timer._now - _timer._started)/1000;
-    elapsedSeconds += _timer.elapsed/1000;
-    var connectionSpeedMbps = _bytes/(elapsedSeconds)/ 1000000;
-    SetVideoQuality(connectionSpeedMbps);  
+    SetVideoQuality(CalculateConnectionSpeed());  
     _game.load.onFileComplete.remove(LoadComplete, this);
+
+    //Starts preload state
     _game.state.start("preload");
 }
 
+/***************************************************************
+Calculates connection speed and returns it.
+***************************************************************/
+function CalculateConnectionSpeed() {
+    var elapsedSeconds = (_timer._now - _timer._started)/1000;
+    elapsedSeconds += _timer.elapsed/1000;
+    var connectionSpeedMbps = _bytes/(elapsedSeconds)/ 1000000;
+    return connectionSpeedMbps;
+}
+
+/***************************************************************
+Decides video quality for the rest of the experience.
+***************************************************************/
 function SetVideoQuality(speed) {
     if(speed > SLOW_DOWNLOAD_THRESHOLD_MBPS || speed < 0)
         _game.global.quality = 'HD';
@@ -2986,6 +3148,9 @@ function SetVideoQuality(speed) {
     console.log('Connection speed: ' + speed + ' Mb/s. Quality: ' +  _game.global.quality);  
 }
 
+/***************************************************************
+Prepares selected file for connection test.
+***************************************************************/
 function Load(key, src, type) {
     switch (type) {
         case FileTypeEnum.Image:
@@ -3003,22 +3168,19 @@ function Load(key, src, type) {
     return _file;
 }
 
-function StartPreloadState() {
-    _game.state.start("preload");
-}
-
 module.exports = {
     init: function(game) {
-        _file = null;
+        //Singleton initialization
         if(_instance !== null)
-            return _instance;
+            return _instance;        
+        _file = null;
         _game = game;
         _instance = this;
         return _instance;
     },
-    addToFiles: function(file) {
-        _files.push(file);
-    },
+    /***************************************************************
+    Prepares selected file for connection testing.
+    ***************************************************************/
     loadFile: function(key, src, type, bytes) {
         _bytes = bytes;
         if(!_bytes)
@@ -3038,7 +3200,10 @@ module.exports = {
 /* 22 */
 /***/ (function(module, exports) {
 
-var _instance = null,
+/***************************************************************
+Unused. Intended to blur text.
+***************************************************************/
+const _instance = null,
     _game = null,
     _blur = null,
     _blurNone = null;
@@ -3130,6 +3295,7 @@ function AddDestroyEvent(video, sub, text, slotIndex) {
 
 	function destroy() {
 		if(video.currentTime >= sub.endTime){
+			console.log("destroyed");
        		video.removeEventListener("timeupdate", destroy); 
             text.destroy();
             _textSlots[slotIndex] = null;
@@ -3149,7 +3315,7 @@ function FindSubtitleSlot(text) {
 		return 1;
 	}
 	else
-		console.warn("Max number of concurrent subtitles reached.");
+		console.warn("Max number of concurrent subtitles reached." + text);
 }
 
 function ToggleSubtitle() {
@@ -3158,6 +3324,7 @@ function ToggleSubtitle() {
 		if(slot)
 			slot.setVisible(_subtitleVisible);
 	});
+	return _subtitleVisible;
 }
 
 function fromSrt(data, ms) {
@@ -3202,7 +3369,7 @@ function timeMs(val) {
 module.exports = {
 	init: function (game) {
 		if(_instance)
-			return _instace;
+			return _instance;
 		_instance = this;
 		_game = game;
 		return _instance;
@@ -3211,7 +3378,10 @@ module.exports = {
 		CreateSubs(video, subs);
 	},
 	toggleSubtitle: function() {
-		ToggleSubtitle();
+		return ToggleSubtitle();
+	},
+	getSubtitleVisible: function() {
+		return _subtitleVisible;
 	}
 }
 
@@ -3925,13 +4095,14 @@ function CreateGlobalVars() {
 module.exports = {
     init: function() {
         console.log("Boot State");
-        ConnectionChecker.init(this.game);
-        if( _instance !== null)
+        if(_instance !== null)
             return _instance;
+        ConnectionChecker.init(this.game);
         _game = this.game;
         return _instance;
     },
     preload: function() {
+        //Tries to full screen on browser
         _game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
         _game.load.script('webfont', '//ajax.googleapis.com/ajax/libs/webfont/1.4.7/webfont.js');
         _game.load.image('connectionTestImage', './Images/Loading/connectionTestImage.jpg');
@@ -4123,15 +4294,15 @@ module.exports = DatabaseManager;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
+/***************************************************************
+All game signals go through here.
+***************************************************************/
 
 
-const ConnectionChecker = __webpack_require__(21),
-    StateManager = __webpack_require__(16),
+//Dependencies
+const StateManager = __webpack_require__(16),
     InteractState = __webpack_require__(18),
     LocationState = __webpack_require__(19),
-    Icons = __webpack_require__(8),
-    Choices = __webpack_require__(13),
-    Thoughts = __webpack_require__(14),
     Transition = __webpack_require__(4),
     UI = __webpack_require__(5),
     Video = __webpack_require__(1),
@@ -4140,70 +4311,90 @@ const ConnectionChecker = __webpack_require__(21),
 var _instance = null;
 var _game = null;
 
+/***************************************************************
+Signals declaration. Singleton.
+***************************************************************/
 var GameManager = function() {
     if(_instance !== null)
-        return _instance;
-    
+        return _instance;    
     _instance = this;
 
+    //Changes game scene
     this._changeSceneSignal = null;
 
+    //Triggers transition effects between scenes
     this._fadeInTransitionSignal = null;
+    //Fade out unused currently
     this._fadeOutTransitionSignal = null;
 
+    //Creates thought words
+    this._createThoughtsSignal = null;
+    //Starts thought/choice moments
     this._triggerInteractionSignal = null;
+    //Called when thought/choice moments ends
     this._endInteractionSignal = null;
 
-    this._videoSeekSignal = null;
-
-    this._createThoughtsSignal = null;
-    this._createChoicesSignal = null;
-    this._createThoughtsAndChoicesSignal = null;
-
+    //Reveals image hidden by another displayed image
     this._displayImageSignal = null;
+    //Hides previously hidden but currently shown image
     this._hideDisplayedImageSignal = null;
 
+    //Seeks to time specified for current video, currently unused
+    this._videoSeekSignal = null;
+
+    //Explains itself T.T
     this._showUISignal = null;
+    //Explains itself T.T
     this._hideUISignal = null;
+    //Shows/hides overlay graphics for displaying information images
     this._showInfoOverlaySignal = null;
     this._hideInfoOverlaySignal = null;
+    //Pauses the experience
     this._pauseSignal = null;
+    //Resumes the experience
     this._playSignal = null;
+    //Explains itself!
     this._toggleSubtitleSignal = null;
 
+    //Links to an external page
     this._goToLinkSignal = null;
 
     return _instance;
 }
 
+/***************************************************************
+Allocates functions from corresponding modules to each signal.
+***************************************************************/
 GameManager.prototype.initSignals = function() {
-
+    //StateManager 
     this._changeSceneSignal = new Phaser.Signal();
     this._changeSceneSignal.add(StateManager.changeScene, this);
 
+    //Transition
     this._fadeInTransitionSignal = new Phaser.Signal();
     this._fadeInTransitionSignal.add(Transition.fadeInTransition, this);
     this._fadeOutTransitionSignal = new Phaser.Signal();
     this._fadeOutTransitionSignal.add(Transition.fadeOutTransition, this);
 
+    //InteractState
+    this._createThoughtsSignal = new Phaser.Signal();
+    this._createThoughtsSignal.add(InteractState.createThoughts, this);
     this._triggerInteractionSignal = new Phaser.Signal();
     this._triggerInteractionSignal.add(InteractState.createInteractionElements, this);
     this._endInteractionSignal = new Phaser.Signal();
     this._endInteractionSignal.add(InteractState.endInteraction, this);
 
-    this._videoSeekSignal = new Phaser.Signal();
-    this._videoSeekSignal.add(Video.seekTo, this);
-
-    this._createThoughtsSignal = new Phaser.Signal();
-    this._createThoughtsSignal.add(Thoughts.create, this);
-    this._createChoicesSignal = new Phaser.Signal();
-    this._createChoicesSignal.add(Choices.create, this);
-
+    //LocationState
     this._displayImageSignal = new Phaser.Signal();
     this._displayImageSignal.add(LocationState.displayImage, this);
     this._hideDisplayedImageSignal = new Phaser.Signal();
     this._hideDisplayedImageSignal.add(LocationState.hideDisplayedImage, this);
 
+    //Video
+    this._videoSeekSignal = new Phaser.Signal();
+    this._videoSeekSignal.add(Video.seekTo, this);
+
+    //UI
     this._showUISignal = new Phaser.Signal();
     this._showUISignal.add(UI.showUI, this);
     this._hideUISignal = new Phaser.Signal();
@@ -4217,15 +4408,16 @@ GameManager.prototype.initSignals = function() {
     this._playSignal = new Phaser.Signal();
     this._playSignal.add(UI.play, this);
     this._toggleSubtitleSignal = new Phaser.Signal();
-    this._toggleSubtitleSignal.add(Video.toggleSubtitle, this);
+    this._toggleSubtitleSignal.add(UI.toggleSubtitle, this);
 
-    this._createThoughtsAndChoicesSignal = new Phaser.Signal();
-    this._createThoughtsAndChoicesSignal.add(Icons.createThoughtsAndChoices, this);
-
+    //Linkable
     this._goToLinkSignal = new Phaser.Signal();
     this._goToLinkSignal.add(Linkable.goToLink, this);
 }
 
+/***************************************************************
+Getters
+***************************************************************/
 GameManager.prototype.getChangeSceneSignal = function() {
     return this._changeSceneSignal;
 }
@@ -4253,15 +4445,6 @@ GameManager.prototype.getVideoSeekSignal = function() {
 GameManager.prototype.getCreateThoughtsSignal = function() {
     return this._createThoughtsSignal;
 }
-
-GameManager.prototype.getCreateChoicesSignal = function() {
-    return this._createChoicesSignal;
-}
-
-GameManager.prototype.getCreateThoughtsAndChoicesSignal = function() {
-    return this._createThoughtsAndChoicesSignal;
-}
-
 GameManager.prototype.getDisplayImageSignal = function() {
     return this._displayImageSignal;
 }
@@ -4323,7 +4506,8 @@ var _game = null;
 var _currImage = null;
 var _heightFraction = null;
 
-var _overlayGraphic = null;
+var _overlayGraphicScrollBar = null;
+var _overlayGraphicNoScrollBar = null;
 var _overlayCloseButton = null;
 var _overlayText = null;
 var _scrollbarBg = null;
@@ -4333,6 +4517,7 @@ const thoughtsTextKeyEnum = 'TEXT_THOUGHTS';
 const closeOverlayImageKeyEnum = 'IMAGE_OVERLAY_CLOSE';
 const infoOverlayTextKeyEnum= 'TEXT_INFO_OVERLAY';
 const SCROLLBAR_IMAGE_KEY = 'scrollBar';
+const SCROLLBAR_WHEEL_SENSITIVITY = 10;
 
 var _effectiveScrollBarHeight = 0;
 var _effectiveImageHeight = 0;
@@ -4344,14 +4529,30 @@ function CreateInfoOverlay() {
 }
 
 function CreateOverlayGraphic() {
-    _overlayGraphic = new Graphic(0, 0);
-    _overlayGraphic.createOverlayBg(_game, _game.global.constants.INFO_VIEW_MARGIN);
+    _overlayGraphicScrollBar = new Graphic(0, 0, Graphic.getEnum().Overlay);
+    _overlayGraphicScrollBar.addGraphicToGame(_game);
+    _overlayGraphicScrollBar.changeGraphic(_game, _game.global.constants.INFO_VIEW_MARGIN, true);
 
+    _overlayGraphicNoScrollBar = new Graphic(0, 0, Graphic.getEnum().Overlay);
+    _overlayGraphicNoScrollBar.addGraphicToGame(_game);
+    _overlayGraphicNoScrollBar.changeGraphic(_game, _game.global.constants.INFO_VIEW_MARGIN, false);
+
+    
+    _scrollbarBg = new Graphic(0, 0, Graphic.getEnum().ScrollBarBackground);
+    var rectangle = Graphic.createRectangle(_game.global.constants.SCROLLBAR_POS[0], _game.global.constants.SCROLLBAR_POS[1],
+        _game.global.constants.SCROLLBAR_DIM[0], _game.global.constants.SCROLLBAR_DIM[1], 0x153b65, 0.8, 
+        _game.global.constants.SCROLLBAR_STROKEWIDTH, 0xffffff);
+    _scrollbarBg.addGraphicToGame(_game);
+    _scrollbarBg.changeGraphic(_game, rectangle);
+    //_scrollbarBg.setVisible(false);
+    
+    /*
     _scrollbarBg = new Graphic(0, 0);
     _scrollbarBg.drawRect(_game, _game.global.constants.SCROLLBAR_POS[0], _game.global.constants.SCROLLBAR_POS[1],
         _game.global.constants.SCROLLBAR_DIM[0], _game.global.constants.SCROLLBAR_DIM[1], 0x153b65, 1, 
         _game.global.constants.SCROLLBAR_STROKEWIDTH, 0xffffff);
     _scrollbarBg.setVisible(false);
+        */
 
     _scrollbarDraggable = new Image(_game.global.constants.SCROLLBAR_POS[0] + _game.global.constants.SCROLLBAR_DIM[0]/2
         , _game.global.constants.SCROLLBAR_POS[1], SCROLLBAR_IMAGE_KEY, Image.getEnum().OverlayScrollBar);
@@ -4375,18 +4576,49 @@ function CreateOverlayHelperText() {
 function InitializeScrollbar(image) {
     _currImage = image;
     _currImage.setPos(_game.global.constants.INFO_VIEW_MARGIN, _game.global.constants.INFO_VIEW_MARGIN);
+    var _heightFraction = _game.global.constants.INFO_VIEW_HEIGHT/_currImage.getHeight();
 
-    _heightFraction = _game.global.constants.INFO_VIEW_HEIGHT/_currImage.getHeight();
-    if(_heightFraction >= 1) {
-        console.warn('Images with a wider than 16:9 ratio is unsupported for proper viewing.')
-        return;
-    }
-
+/*
+_heightFraction = _game.global.constants.INFO_VIEW_HEIGHT/_currImage.getHeight();
+if(_heightFraction >= 1) {
+    console.warn('Images with a wider than 16:9 ratio is unsupported for proper viewing.')
+    return;
+}
+*/
     _scrollbarDraggable.setHeight(_heightFraction*_game.global.constants.SCROLLBAR_DIM[1]);
     _scrollbarDraggable.setY(_game.global.constants.SCROLLBAR_POS[1]);
 
     _effectiveScrollBarHeight = _game.global.constants.SCROLLBAR_DIM[1] - _scrollbarDraggable.getHeight();
     _effectiveImageHeight = _currImage.getHeight() - _game.global.constants.INFO_VIEW_HEIGHT;
+
+
+}
+
+function HandleMouseWheel(enable) {
+    if(enable) {
+        _game.input.mouse.mouseWheelCallback = MouseWheel;
+    }
+    else {
+        _game.input.mouse.mouseWheelCallback = null;
+    }
+
+    function MouseWheel(event) {
+        var newY;
+        var delta = _game.input.mouse.wheelDelta;
+        if(delta > 0) {
+            newY = _scrollbarDraggable.getY() - SCROLLBAR_WHEEL_SENSITIVITY;
+            if(newY < _game.global.constants.INFO_VIEW_MARGIN)
+                newY = _game.global.constants.INFO_VIEW_MARGIN;
+        }
+        else if(delta < 0){
+            newY = _scrollbarDraggable.getY() + SCROLLBAR_WHEEL_SENSITIVITY;
+            if(newY > _effectiveScrollBarHeight + _game.global.constants.INFO_VIEW_MARGIN)
+                newY = _effectiveScrollBarHeight + _game.global.constants.INFO_VIEW_MARGIN;
+        }
+        _scrollbarDraggable.setY(newY);
+        ScrollBarDragUpdate();
+        //console.log(_game.input.mouse.wheelDelta);
+    }
 }
 
 function ScrollBarDragStart() {
@@ -4432,13 +4664,33 @@ module.exports = {
         StartDragUpdate();
     },
     setVisible: function(value, image) {
-        if(value && image)
-            this.initializeScrollbar(image);
-        _overlayGraphic.setVisible(value);
         _overlayCloseButton.setVisible(value);
-        _overlayText.setVisible(value);
-        _scrollbarBg.setVisible(value);
-        _scrollbarDraggable.setVisible(value);
+        if(value) {
+            if(image) {
+                var scrollBarNeeded = image.checkIfScrollBarNeeded(_game);
+                if(scrollBarNeeded) {
+                    this.initializeScrollbar(image);
+                    _overlayText.setVisible(true);
+                    _overlayGraphicScrollBar.setVisible(true);
+                    _scrollbarBg.setVisible(true);
+                    _scrollbarDraggable.setVisible(true);
+                    HandleMouseWheel(true);
+                }
+                else {
+                    _overlayGraphicNoScrollBar.setVisible(true);
+                }
+                image.bringToTop();
+            }
+            _overlayCloseButton.bringToTop();
+        }
+        else {            
+            _overlayText.setVisible(false);
+            _scrollbarBg.setVisible(false);
+            _scrollbarDraggable.setVisible(false);
+            _overlayGraphicScrollBar.setVisible(false);
+            _overlayGraphicNoScrollBar.setVisible(false);
+            HandleMouseWheel(false);            
+        }
     },
     resetThoughtVariables: function() {
         _text = [];
@@ -4531,7 +4783,7 @@ SoundManager.prototype.playBackgroundMusic = function(musicKey) {
   //      _bgMusic.currentTime = _currTime;
  //   }
     //else {
-    if(_bgMusicKey != musicKey) {
+    if(musicKey &&_bgMusicKey != musicKey) {
         if(_bgMusic)
             _bgMusic.stop();
         if(!_soundHashSet[musicKey]) 

@@ -52,7 +52,7 @@ function CreateLinkedIcons(linkedIcons) {
 
 function CreateLinkedIcon(key, coords, target, type) {
     var image = new Image(coords[0], coords[1], key, type);
-    image.addImageToGame(_game, _game.mediaGroup);
+    image.addImageToGame(_game);
     image.changeImage(_game, target);
     _linkedIcons.push(image);
 }

@@ -11,7 +11,8 @@ var _game = null;
 var _currImage = null;
 var _heightFraction = null;
 
-var _overlayGraphic = null;
+var _overlayGraphicScrollBar = null;
+var _overlayGraphicNoScrollBar = null;
 var _overlayCloseButton = null;
 var _overlayText = null;
 var _scrollbarBg = null;
@@ -21,6 +22,7 @@ const thoughtsTextKeyEnum = 'TEXT_THOUGHTS';
 const closeOverlayImageKeyEnum = 'IMAGE_OVERLAY_CLOSE';
 const infoOverlayTextKeyEnum= 'TEXT_INFO_OVERLAY';
 const SCROLLBAR_IMAGE_KEY = 'scrollBar';
+const SCROLLBAR_WHEEL_SENSITIVITY = 10;
 
 var _effectiveScrollBarHeight = 0;
 var _effectiveImageHeight = 0;
@@ -32,14 +34,30 @@ function CreateInfoOverlay() {
 }
 
 function CreateOverlayGraphic() {
-    _overlayGraphic = new Graphic(0, 0);
-    _overlayGraphic.createOverlayBg(_game, _game.global.constants.INFO_VIEW_MARGIN);
+    _overlayGraphicScrollBar = new Graphic(0, 0, Graphic.getEnum().Overlay);
+    _overlayGraphicScrollBar.addGraphicToGame(_game);
+    _overlayGraphicScrollBar.changeGraphic(_game, _game.global.constants.INFO_VIEW_MARGIN, true);
 
+    _overlayGraphicNoScrollBar = new Graphic(0, 0, Graphic.getEnum().Overlay);
+    _overlayGraphicNoScrollBar.addGraphicToGame(_game);
+    _overlayGraphicNoScrollBar.changeGraphic(_game, _game.global.constants.INFO_VIEW_MARGIN, false);
+
+    
+    _scrollbarBg = new Graphic(0, 0, Graphic.getEnum().ScrollBarBackground);
+    var rectangle = Graphic.createRectangle(_game.global.constants.SCROLLBAR_POS[0], _game.global.constants.SCROLLBAR_POS[1],
+        _game.global.constants.SCROLLBAR_DIM[0], _game.global.constants.SCROLLBAR_DIM[1], 0x153b65, 0.8, 
+        _game.global.constants.SCROLLBAR_STROKEWIDTH, 0xffffff);
+    _scrollbarBg.addGraphicToGame(_game);
+    _scrollbarBg.changeGraphic(_game, rectangle);
+    //_scrollbarBg.setVisible(false);
+    
+    /*
     _scrollbarBg = new Graphic(0, 0);
     _scrollbarBg.drawRect(_game, _game.global.constants.SCROLLBAR_POS[0], _game.global.constants.SCROLLBAR_POS[1],
         _game.global.constants.SCROLLBAR_DIM[0], _game.global.constants.SCROLLBAR_DIM[1], 0x153b65, 1, 
         _game.global.constants.SCROLLBAR_STROKEWIDTH, 0xffffff);
     _scrollbarBg.setVisible(false);
+        */
 
     _scrollbarDraggable = new Image(_game.global.constants.SCROLLBAR_POS[0] + _game.global.constants.SCROLLBAR_DIM[0]/2
         , _game.global.constants.SCROLLBAR_POS[1], SCROLLBAR_IMAGE_KEY, Image.getEnum().OverlayScrollBar);
@@ -63,18 +81,49 @@ function CreateOverlayHelperText() {
 function InitializeScrollbar(image) {
     _currImage = image;
     _currImage.setPos(_game.global.constants.INFO_VIEW_MARGIN, _game.global.constants.INFO_VIEW_MARGIN);
+    var _heightFraction = _game.global.constants.INFO_VIEW_HEIGHT/_currImage.getHeight();
 
-    _heightFraction = _game.global.constants.INFO_VIEW_HEIGHT/_currImage.getHeight();
-    if(_heightFraction >= 1) {
-        console.warn('Images with a wider than 16:9 ratio is unsupported for proper viewing.')
-        return;
-    }
-
+/*
+_heightFraction = _game.global.constants.INFO_VIEW_HEIGHT/_currImage.getHeight();
+if(_heightFraction >= 1) {
+    console.warn('Images with a wider than 16:9 ratio is unsupported for proper viewing.')
+    return;
+}
+*/
     _scrollbarDraggable.setHeight(_heightFraction*_game.global.constants.SCROLLBAR_DIM[1]);
     _scrollbarDraggable.setY(_game.global.constants.SCROLLBAR_POS[1]);
 
     _effectiveScrollBarHeight = _game.global.constants.SCROLLBAR_DIM[1] - _scrollbarDraggable.getHeight();
     _effectiveImageHeight = _currImage.getHeight() - _game.global.constants.INFO_VIEW_HEIGHT;
+
+
+}
+
+function HandleMouseWheel(enable) {
+    if(enable) {
+        _game.input.mouse.mouseWheelCallback = MouseWheel;
+    }
+    else {
+        _game.input.mouse.mouseWheelCallback = null;
+    }
+
+    function MouseWheel(event) {
+        var newY;
+        var delta = _game.input.mouse.wheelDelta;
+        if(delta > 0) {
+            newY = _scrollbarDraggable.getY() - SCROLLBAR_WHEEL_SENSITIVITY;
+            if(newY < _game.global.constants.INFO_VIEW_MARGIN)
+                newY = _game.global.constants.INFO_VIEW_MARGIN;
+        }
+        else if(delta < 0){
+            newY = _scrollbarDraggable.getY() + SCROLLBAR_WHEEL_SENSITIVITY;
+            if(newY > _effectiveScrollBarHeight + _game.global.constants.INFO_VIEW_MARGIN)
+                newY = _effectiveScrollBarHeight + _game.global.constants.INFO_VIEW_MARGIN;
+        }
+        _scrollbarDraggable.setY(newY);
+        ScrollBarDragUpdate();
+        //console.log(_game.input.mouse.wheelDelta);
+    }
 }
 
 function ScrollBarDragStart() {
@@ -120,13 +169,33 @@ module.exports = {
         StartDragUpdate();
     },
     setVisible: function(value, image) {
-        if(value && image)
-            this.initializeScrollbar(image);
-        _overlayGraphic.setVisible(value);
         _overlayCloseButton.setVisible(value);
-        _overlayText.setVisible(value);
-        _scrollbarBg.setVisible(value);
-        _scrollbarDraggable.setVisible(value);
+        if(value) {
+            if(image) {
+                var scrollBarNeeded = image.checkIfScrollBarNeeded(_game);
+                if(scrollBarNeeded) {
+                    this.initializeScrollbar(image);
+                    _overlayText.setVisible(true);
+                    _overlayGraphicScrollBar.setVisible(true);
+                    _scrollbarBg.setVisible(true);
+                    _scrollbarDraggable.setVisible(true);
+                    HandleMouseWheel(true);
+                }
+                else {
+                    _overlayGraphicNoScrollBar.setVisible(true);
+                }
+                image.bringToTop();
+            }
+            _overlayCloseButton.bringToTop();
+        }
+        else {            
+            _overlayText.setVisible(false);
+            _scrollbarBg.setVisible(false);
+            _scrollbarDraggable.setVisible(false);
+            _overlayGraphicScrollBar.setVisible(false);
+            _overlayGraphicNoScrollBar.setVisible(false);
+            HandleMouseWheel(false);            
+        }
     },
     resetThoughtVariables: function() {
         _text = [];

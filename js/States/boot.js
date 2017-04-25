@@ -93,13 +93,14 @@ function CreateGlobalVars() {
 module.exports = {
     init: function() {
         console.log("Boot State");
-        ConnectionChecker.init(this.game);
-        if( _instance !== null)
+        if(_instance !== null)
             return _instance;
+        ConnectionChecker.init(this.game);
         _game = this.game;
         return _instance;
     },
     preload: function() {
+        //Tries to full screen on browser
         _game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
         _game.load.script('webfont', '//ajax.googleapis.com/ajax/libs/webfont/1.4.7/webfont.js');
         _game.load.image('connectionTestImage', './Images/Loading/connectionTestImage.jpg');

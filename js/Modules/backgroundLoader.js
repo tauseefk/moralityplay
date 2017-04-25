@@ -40,13 +40,9 @@ function AddIconsToGroup(icons) {
 Initializes drag follow for icon group.
 ***************************************************************/
 function StartDragUpdate() {
-    _bgImage.getPhaserImage().events.onDragStart.add(dragStart);
     _bgImage.getPhaserImage().events.onDragUpdate.add(dragUpdate);
     _iconGroup.x = _bgImage.getPhaserImage().x;
     _iconGroup.y = _bgImage.getPhaserImage().y;
-}
-
-function dragStart() {
 }
 
 /***************************************************************
@@ -55,9 +51,6 @@ Icons follow dragged background position every update.
 function dragUpdate() {
     _iconGroup.x = _bgImage.getPhaserImage().x;
     _iconGroup.y = _bgImage.getPhaserImage().y;
-}
-
-function dragStop() {
 }
 
 module.exports = {

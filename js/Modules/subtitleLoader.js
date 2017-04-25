@@ -41,6 +41,7 @@ function AddDestroyEvent(video, sub, text, slotIndex) {
 
 	function destroy() {
 		if(video.currentTime >= sub.endTime){
+			console.log("destroyed");
        		video.removeEventListener("timeupdate", destroy); 
             text.destroy();
             _textSlots[slotIndex] = null;
@@ -60,7 +61,7 @@ function FindSubtitleSlot(text) {
 		return 1;
 	}
 	else
-		console.warn("Max number of concurrent subtitles reached.");
+		console.warn("Max number of concurrent subtitles reached." + text);
 }
 
 function ToggleSubtitle() {
@@ -69,6 +70,7 @@ function ToggleSubtitle() {
 		if(slot)
 			slot.setVisible(_subtitleVisible);
 	});
+	return _subtitleVisible;
 }
 
 function fromSrt(data, ms) {
@@ -113,7 +115,7 @@ function timeMs(val) {
 module.exports = {
 	init: function (game) {
 		if(_instance)
-			return _instace;
+			return _instance;
 		_instance = this;
 		_game = game;
 		return _instance;
@@ -122,6 +124,9 @@ module.exports = {
 		CreateSubs(video, subs);
 	},
 	toggleSubtitle: function() {
-		ToggleSubtitle();
+		return ToggleSubtitle();
+	},
+	getSubtitleVisible: function() {
+		return _subtitleVisible;
 	}
 }

@@ -58,7 +58,33 @@ Image.prototype.addImageToGame = function(game, group) {
         default:
             console.warn("Invalid image type not added:" + this._type);
     }
-    group.add(this._image);
+    if(group) {
+        group.add(this._image);
+    }
+    else {
+        switch(this._type) {
+            case ImageTypeEnum.Pause:
+            case ImageTypeEnum.Play:
+            case ImageTypeEnum.InfoImage:
+            case ImageTypeEnum.OverlayScrollBar:
+            case ImageTypeEnum.ToggleSubtitle:
+            case ImageTypeEnum.OverlayCloseImage:
+                game.uiGroup.add(this._image);
+                break;
+            case ImageTypeEnum.Thought:
+            case ImageTypeEnum.SceneChange:
+            case ImageTypeEnum.DisplayImage:
+            case ImageTypeEnum.ChoiceBackground:
+            case ImageTypeEnum.ExternalLink:
+            case ImageTypeEnum.Static:
+            case ImageTypeEnum.Background:
+            case ImageTypeEnum.ThoughtSprite:
+                game.mediaGroup.add(this._image);
+                break;
+            default:
+                console.warn("Invalid image type not added to group:" + this._type);
+        }
+    }
 }
 
 //Assigns image change function depending on enum
@@ -123,7 +149,7 @@ Image.prototype.changeToThoughtSprite = function(game, thoughts, coords, choices
     this._image.animations.play('think', 4, false);
     this._image.inputEnabled = true;
     this._image.input.useHandCursor = true;
-    this._link = new Linkable(game, this._image.events, game.global.gameManager.getCreateThoughtsAndChoicesSignal(), thoughts, coords, choices);
+    this._link = new Linkable(game, this._image.events, game.global.gameManager.getCreateThoughtsSignal(), thoughts, coords, choices);
     this._link.addOnClickAnimation(Animation.fade(game, this._image, 0, false));
     this._link.addOnClickAnimation(Animation.scale(game, this._image, false));
     this._link.setAsButton(true);
@@ -149,7 +175,7 @@ Image.prototype.changeToThoughtIcon = function(game, thoughts, coords) {
     this._image.width = 100;
     this._image.height = 100;
     this._image.anchor.setTo(0.5, 0.5);
-    this._link = new Linkable(game, this._image, game.global.gameManager.getCreateThoughtsAndChoicesSignal(), thoughts, coords, choices);
+    this._link = new Linkable(game, this._image, game.global.gameManager.getCreateThoughtsSignal(), thoughts, coords, choices);
     this._link.addOnClickAnimation(Animation.fade(game, this._image, 0, false));
     this._link.addOnClickAnimation(Animation.scale(game, this._image, false));
     this._link.setAsButton(true);
@@ -184,17 +210,24 @@ Image.prototype.changeToInfoImage = function(game, target) {
     this._image.height = Math.floor(this._image.height*SCALE);
     this._image.width = Math.floor(this._image.width*SCALE);
     this._image.x = MARGIN;
-    this._image.y = MARGIN;
 
-    this._mask = game.add.graphics(0, 0);
-    //game.mediaGroup.add(this._mask);
-    this._mask.beginFill(0xffffff);
-    this._mask.drawRect(MARGIN, MARGIN, DISPLAY_WIDTH, game.global.constants.INFO_VIEW_HEIGHT);
-    this._mask.endFill();
-    this._image.mask = this._mask;
+    if(this.checkIfScrollBarNeeded(game)) {    
+        this._image.y = MARGIN;    
+        this._mask = game.add.graphics(0, 0);
+        //game.mediaGroup.add(this._mask);
+        this._mask.beginFill(0xffffff);
+        this._mask.drawRect(MARGIN, MARGIN, DISPLAY_WIDTH, game.global.constants.INFO_VIEW_HEIGHT);
+        this._mask.endFill();
+        this._image.mask = this._mask;
 
-    this.makeDraggable(game, true, false, MARGIN, -this._image.height+DISPLAY_HEIGHT+MARGIN, 
-        DISPLAY_WIDTH, this._image.height*2-DISPLAY_HEIGHT);
+        this.makeDraggable(game, true, false, MARGIN, -this._image.height+DISPLAY_HEIGHT+MARGIN, 
+            DISPLAY_WIDTH, this._image.height*2-DISPLAY_HEIGHT);
+        console.log("here");
+    }
+    else{
+        this._image.y = game.world.centerY;
+        this._image.anchor.setTo(0, 0.5);
+    }
     
 }
 
@@ -302,12 +335,25 @@ Image.prototype.makeDraggable = function(game, lockHorizontal, lockVertical, bou
     this.changeCursorImage(game, 'url("./Images/UI/hand_2.png"), auto');
 }
 
+Image.prototype.checkIfScrollBarNeeded = function(game) {
+    var displayDimensionRatio = game.global.constants.INFO_VIEW_WIDTH/game.global.constants.INFO_VIEW_HEIGHT;
+    var imageDimensionRatio = this._image.width/this._image.height;
+    if(imageDimensionRatio > displayDimensionRatio)
+        return false;
+    else
+        return true;
+}
+
 Image.prototype.destroy = function() {
     this._image.destroy();
 }
 
 Image.prototype.getPhaserImage = function() {
     return this._image;
+}
+
+Image.prototype.bringToTop = function() {
+    this._image.bringToTop();
 }
 
 Image.prototype.getHeight = function() {

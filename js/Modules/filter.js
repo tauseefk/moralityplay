@@ -1,4 +1,7 @@
-var _instance = null,
+/***************************************************************
+Unused. Intended to blur text.
+***************************************************************/
+const _instance = null,
     _game = null,
     _blur = null,
     _blurNone = null;
