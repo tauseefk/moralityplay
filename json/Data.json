@@ -56,7 +56,11 @@
     "cohonIndoorSound": "./Audio/Sound/CohonIndoor_lo.ogg"
 },
 "subtitles": {
-    "MK1sub": "./Videos/Subtitles/MK1_optimized.srt"
+    "introScenesub": "./Videos/Subtitles/intro_optimized.srt",
+    "li1sub": "./Videos/Subtitles/Li1_optimized.srt",
+    "MK1sub": "./Videos/Subtitles/MK1_optimized.srt",
+    "MK2goodsub": "./Videos/Subtitles/MK2_bad_optimized.srt",
+    "MK2badsub": "./Videos/Subtitles/MK2_good_optimized.srt"
 },
 "scenes": {
     "startScene":{
@@ -101,6 +105,7 @@
         ],
         "movieSrcHD": "./Videos/Intro_optimized.mp4",
         "movieSrcSD": "./Videos/Intro_optimized_lo.mp4",
+        "sub": "introScenesub",
         "stateType": "InteractState",
         "transition": {
             "fadeIn": true,
@@ -560,7 +565,7 @@
         ],
         "movieSrcHD": "./Videos/Li1_optimized.mp4",
         "movieSrcSD": "./Videos/Li1_optimized_lo.mp4",
-        "sub": "sub1",
+        "sub": "li1sub",
         "stateType": "InteractState",
         "transition": {
             "fadeIn": true,
@@ -879,6 +884,7 @@
         "stateType": "MovieState",
         "movieSrcHD": "./Videos/MK2_bad_optimized.mp4",
         "movieSrcSD": "./Videos/MK2_bad_optimized_lo.mp4",
+        "sub": "MK2badsub",        
         "transition": {
             "fadeIn": false,
             "fadeOut": false
@@ -889,6 +895,7 @@
         "stateType": "MovieState",
         "movieSrcHD": "./Videos/MK2_good_optimized.mp4",
         "movieSrcSD": "./Videos/MK2_good_optimized_lo.mp4",
+        "sub":"MK2goodsub",
         "transition": {
             "fadeIn": false,
             "fadeOut": false
