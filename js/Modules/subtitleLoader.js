@@ -4,12 +4,12 @@ const Text = require('./Text');
 
 var _instance = null;
 var _game = null;
-var _textSlots = [null, null];
+var _textSlots = [null];
 var _subtitleVisible = false;
 
 const subtitleTextKeyEnum = 'TEXT_SUBTITLE';
 
-const SUBTITLE_Y_POS = 650;
+const SUBTITLE_Y_POS = 630;
 const SUBTITLE_SPACING = 5;
 
 function CreateSubs(video, subs) {
@@ -50,18 +50,18 @@ function AddDestroyEvent(video, sub, text, slotIndex) {
 }
 
 function FindSubtitleSlot(text) {
-	if(!_textSlots[0]) {
+	//if(!_textSlots[0]) {
 		_textSlots[0] = text;
 		text.setY(SUBTITLE_Y_POS);
 		return 0;
-	}
+	/*}
 	else if(!_textSlots[1]) {
 		_textSlots[1] = text;
 		text.setY(SUBTITLE_Y_POS - text.getHeight() - SUBTITLE_SPACING);
 		return 1;
-	}
-	else
-		console.warn("Max number of concurrent subtitles reached." + text);
+	}*/
+	//else
+	//	console.warn("Max number of concurrent subtitles reached." + text);
 }
 
 function ToggleSubtitle() {
