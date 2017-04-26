@@ -636,7 +636,7 @@
                     {
                         "size": 1,
                         "content": [
-                            "I guess it is okay \nif not everyone participates"
+                            "Whatever they decide, I don't mind"
                         ],
                         "destination": [
                             [ 1050, 50 ]
@@ -645,7 +645,7 @@
                     {
                         "size": 1,
                         "content": [
-                            "I can do much \nmore than nothing"
+                            "This is frustrating."
                         ],
                         "destination": [
                             [ 650, 100 ]
@@ -654,7 +654,7 @@
                     {
                         "size": 1,
                         "content": [
-                            "We got this."
+                            "We can be done with this in no time"
                         ],
                         "destination": [
                             [ 300, 50 ]
@@ -774,7 +774,7 @@
                 }
             },
             {
-                "timeStamp": 63.3,
+                "timeStamp": 63,
                 "choices": {
                     "question": "Choose what to say:",
                     "size": 3,
@@ -955,7 +955,7 @@
                     {
                         "size": 1,
                         "content": [
-                            "I thought I answered that."
+                            "Not this again"
                         ],
                         "destination": [
                             [ 300, 80 ]
@@ -964,7 +964,7 @@
                     {
                         "size": 1,
                         "content": [
-                            "I'm just curious."
+                            "I'm just trying to \nstart a conversation"
                         ],
                         "destination": [
                             [ 1000, 100 ]
@@ -1114,7 +1114,7 @@
                     "question": "\"Li just stormed off at the end of it.\"",
                     "size": 2,
                     "content": [
-                        "I think Li felt a little left out.",
+                        "Do you think she felt left out?",
                         "Why do you think she did that?"
                     ],
                     "y": [
@@ -1130,22 +1130,19 @@
             {
                 "timeStamp": 19,
                 "choices": {
-                    "question": "\"Li just stormed off at the end of it.\"",
-                    "size": 3,
+                    "question": "\"Choose what to say:\"",
+                    "size": 2,
                     "content": [
-                        "You are right.",
-                        "You can still fix it.",
-                        "I can understand that too."
+                        "I think Li could have contribuited more.",
+                        "I think Li was a little ignored."
                     ],
                     "y": [
-                        615,
                         615,
                         615
                     ],
                     "bounds": [
-                        [ 420, 200 ],
-                        [ 420, 200 ],
-                        [ 420, 200 ]
+                        [ 650, 200 ],
+                        [ 650, 200 ]
                     ]
                 }
             },
@@ -1196,18 +1193,15 @@
                     "size": 3,
                     "content": [
                         "Yes.",
-                        "It's been a long day.",
-                        "I'm ready to call it a day."
+                        "I'm on my way home."
                     ],
                     "y": [
-                        615,
                         615,
                         615
                     ],
                     "bounds": [
-                        [ 420, 200 ],
-                        [ 420, 200 ],
-                        [ 420, 200 ]
+                        [ 650, 200 ],
+                        [ 650, 200 ]
                     ]
                 }
             },

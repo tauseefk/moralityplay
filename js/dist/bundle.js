@@ -73,7 +73,7 @@
 "use strict";
 /* WEBPACK VAR INJECTION */(function(Buffer) {
 
-var bind = __webpack_require__(29);
+var bind = __webpack_require__(28);
 
 /*global toString:true*/
 
@@ -393,9 +393,9 @@ module.exports = {
 "use strict";
 
 
-const VideoFilter = __webpack_require__(24),
+const VideoFilter = __webpack_require__(23),
     Linkable = __webpack_require__(2),
-    Subtitle = __webpack_require__(23);
+    Subtitle = __webpack_require__(17);
 
 var _instance = null;
 var _game = null;
@@ -606,7 +606,7 @@ module.exports = {
 "use strict";
 
 
-const Animation = __webpack_require__(10);
+const Animation = __webpack_require__(9);
 
 const FADE_SPEED = 700;
 const MOUSEOVER_SPEED = 300;
@@ -739,7 +739,7 @@ module.exports = Linkable;
 
 
 const Linkable = __webpack_require__(2),
-    Animation = __webpack_require__(10);
+    Animation = __webpack_require__(9);
 
 const PADDING = 10;
 
@@ -950,7 +950,7 @@ module.exports = Text;
 "use strict";
 
 
-const VideoFilter = __webpack_require__(24);
+const VideoFilter = __webpack_require__(23);
 
 var _instance = null;
 var _game = null;
@@ -1012,10 +1012,10 @@ module.exports = {
 
 const Image = __webpack_require__(6),
     Text = __webpack_require__(3),
-    Graphic = __webpack_require__(11),
+    Graphic = __webpack_require__(10),
     Video = __webpack_require__(1),
     ImageViewer = __webpack_require__(36),
-    Subtitle = __webpack_require__(23);
+    Subtitle = __webpack_require__(17);
 
 var _instance = null;
 var _game = null;
@@ -1193,8 +1193,8 @@ module.exports = {
 
 
 const Linkable = __webpack_require__(2),
-    Animation = __webpack_require__(10),
-    Graphic = __webpack_require__(11);
+    Animation = __webpack_require__(9),
+    Graphic = __webpack_require__(10);
 
 var ImageTypeEnum = {
     Static: 'IMAGE_STATIC',
@@ -1666,15 +1666,427 @@ module.exports = {
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
+/***************************************************************
+State object, stores scene information.
+Getters to obtain scene information.
+***************************************************************/
+
+
+
+var State = function(scene) {
+    this._scene = scene;
+};
+
+State.prototype.setStateScene = function(scene) {
+    this._scene = scene;
+};
+
+State.prototype.getMovieKey = function() {
+    return this._scene.movieKey;
+}
+
+State.prototype.getChoiceMoments = function() {
+    return this._scene.choiceMoments;
+}
+
+State.prototype.getTimestamps = function() {
+    var timeStamps = [];
+    console.log("Interaction Times:")
+    for(var i=0; i<this._scene.choiceMoments.size; i++) {
+        timeStamps.push(this._scene.choiceMoments.choiceMomentsProperties[i].timeStamp);
+        console.log(this._scene.choiceMoments.choiceMomentsProperties[i].timeStamp);
+    }
+    return timeStamps;
+}
+
+State.prototype.getThoughtBubble = function(index) {
+    return this._scene.choiceMoments.choiceMomentsProperties[index].thoughtBubbles;
+}
+
+State.prototype.getChoices = function(index){
+    return this._scene.choiceMoments.choiceMomentsProperties[index].choices;
+}
+
+State.prototype.getBgImageKey = function() {
+    return this._scene.bgImageKey;
+}
+
+State.prototype.getIconsInfo = function() {
+    return this._scene.icons;
+}
+
+State.prototype.getLinkedIconsInfo = function() {
+    return this._scene.linkedIcons;
+}
+
+State.prototype.getInputInfo = function() {
+    return this._scene.input;
+}
+
+State.prototype.getSrcList = function() {
+    if(!this._scene.movieReqs || !this._scene.movieSrcArr) 
+        return false;
+    else {
+        return [this._scene.movieReqs, this._scene.movieSrcArr];
+    }
+}
+
+State.prototype.getMovieSrc = function(definition, index) {
+    if(typeof(index) == 'number') {    
+        if(definition == 'HD')
+            return this._scene.movieSrcArr[index][0];
+        else if(definition == 'SD')       
+            return this._scene.movieSrcArr[index][1];
+    }
+    else {
+        if(definition == 'HD')
+            return this._scene.movieSrcHD;
+        else if(definition == 'SD')
+            return this._scene.movieSrcSD;
+    }
+}
+
+State.prototype.getSceneReqs = function() {
+    return this._scene.sceneReqs;
+}
+
+State.prototype.getSceneTargetNames = function() {
+    return this._scene.sceneTargetNames;
+}
+
+State.prototype.getMovieSubKey = function() {
+    return this._scene.sub;
+}
+
+State.prototype.getBackgroundMusic = function() {
+    return this._scene.backgroundMusic;
+}
+
+State.prototype.getTransitionInfo = function() {
+    return this._scene.transition;
+}
+
+State.prototype.getVideoFilter = function() {
+    return this._scene.videoFilter;
+}
+
+State.prototype.getNextScenes = function() {
+    return this._scene.nextScene;
+}
+
+State.prototype.getDraggable = function() {
+    return this._scene.draggable;
+}
+
+module.exports = State;
+
+
+/***/ }),
+/* 9 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/***************************************************************
+Handles animation of game objects.
+Static functions takes in the game object and applies animation to it.
+***************************************************************/
+
+
+
+const FADE_TIME_DEFAULT = 700;
+const SCALE_TIME_DEFAULT = 300;
+const BOB_DELAY_INTERVAL = 700;
+
+/***************************************************************
+Animation constructor
+***************************************************************/
+var Animation = function() {
+}
+
+/***************************************************************
+Adds scaling animaton for object.
+***************************************************************/
+Animation.scale = function(game, object, autoStart, targetWidth, targetHeight, timeTaken) {
+    if(!timeTaken)
+        timeTaken = SCALE_TIME_DEFAULT;
+
+    var tween = game.add.tween(object).to({width:targetWidth, height:targetHeight}, timeTaken, 
+        Phaser.Easing.Linear.None, autoStart, 0, 0);
+
+    return tween;
+}
+
+/***************************************************************
+Adds fade in/out animation for object.
+***************************************************************/
+Animation.fade = function(game, object, value, autoStart, timeTaken) {
+    if(!timeTaken)
+        timeTaken = FADE_TIME_DEFAULT;
+    var tween = game.add.tween(object).to({alpha:value}, timeTaken, Phaser.Easing.Linear.None, autoStart, 0, 0, false);
+
+    return tween;
+}
+
+/***************************************************************
+Adds bobbing up and down animation for object.
+***************************************************************/
+Animation.bob = function(game, object, autoStart, value) {
+    if(!value)
+        value = -5;
+    value = value.toString();
+
+    var tween = game.add.tween(object).to({y:value}, 200, Phaser.Easing.Quadratic.InOut, autoStart, 0, -1, true);
+    tween.repeatDelay(BOB_DELAY_INTERVAL);
+    
+    return tween;
+}
+
+module.exports = Animation;
+
+
+/***/ }),
+/* 10 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+const Linkable = __webpack_require__(2);
+
+var GraphicTypeEnum = {
+    Overlay: 'GRAPHIC_INFO_OVERLAY',
+    ScrollBarBackground: 'GRAPHIC_SCROLLBAR_BG'
+}
+
+//Image constructor
+var Graphic = function(xPos, yPos, type) {
+    this._xPos = xPos;
+    this._yPos = yPos;
+    this._type = type;
+}
+
+Graphic.prototype.addGraphicToGame = function(game, group) {
+    this._graphic = game.add.graphics(this._xPos, this._yPos); 
+    if(group) {
+        group.add(this._graphic);
+    }
+    else {
+        switch(this._type) {
+            case GraphicTypeEnum.Overlay:
+            case GraphicTypeEnum.ScrollBarBackground:
+                game.uiGroup.add(this._graphic);
+                break;
+            default:
+                console.warn("Invalid graphic type not added to group:" + this._type);
+        }
+    }
+}
+
+Graphic.prototype.changeGraphic = function (game, arg1, arg2, arg3, arg4, arg5) {
+    switch(this._type) {
+        case GraphicTypeEnum.Overlay:            
+            this.changeToInfoOverlayGraphic(game, arg1, arg2);
+            break;
+        case GraphicTypeEnum.ScrollBarBackground:
+            this.changeToScrollBarBackgroundGraphic(game, arg1);
+            break;
+        default:
+            console.warn("Invalid Graphic Type.");
+    }
+}
+
+Graphic.prototype.changeToInfoOverlayGraphic = function(game, margin, scrollbarEnabled) {
+    this._graphic = game.add.graphics(this._xPos, this._yPos);    
+    this._graphic.beginFill(0x000000, 0.6);
+    this._graphic.inputEnabled = true;
+
+    if(scrollbarEnabled) {
+        this._graphic.drawRect(0, 0, margin, game.height);
+        this._graphic.drawRect(game.width-margin, 0, margin, game.height);
+        this._graphic.drawRect(margin, 0, game.width-(margin<<1), margin);
+        this._graphic.drawRect(margin, game.height-margin, game.width-(margin<<1), margin);   
+        this._graphic.input.priorityID = 1;
+        this._graphic.input.useHandCursor = true;
+    }
+    else {
+        this._graphic.drawRect(0, 0, game.width, game.height);
+    }
+    this._graphic.endFill();
+    this._graphic.visible = false;
+    game.uiGroup.add(this._graphic);
+
+
+    this._link = new Linkable(game, this._graphic.events, game.global.gameManager.getHideDisplayedImageSignal());
+    this._link2 = new Linkable(game, this._graphic.events, game.global.gameManager.getHideInfoOverlaySignal());
+    this._link.setAsButton(false);
+    this._link2.setAsButton(false);
+}
+Graphic.prototype.drawRect = function(game, x, y, width, height, color, opacity, strokeWidth, lineColor) {
+    if(!color)
+        color = 0x000000;
+    if(!opacity)
+        opacity = 1;
+    if(!lineColor)
+        lineColor = 0x000000;
+
+    this._graphic = game.add.graphics(this._xPos, this._yPos);
+    game.uiGroup.add(this._graphic);
+    this._graphic.beginFill(color, opacity);
+    if(strokeWidth) {
+        this._graphic.lineStyle(strokeWidth, lineColor);
+    }
+    this._graphic.drawRect(x, y, width, height);
+    
+    this._graphic.endFill();
+}
+
+Graphic.prototype.changeToScrollBarBackgroundGraphic = function(game, rectangle) {
+    this._graphic.beginFill(rectangle.color, rectangle.opacity);
+    this._graphic.lineStyle(rectangle.strokeWidth, rectangle.lineColor);
+
+    this._graphic.drawRect(rectangle.x, rectangle.y, rectangle.width, rectangle.height);
+    
+    this._graphic.endFill();
+    this._graphic.visible = false;
+}
+
+Graphic.prototype.setVisible = function(value) {
+    this._graphic.visible = value;
+}
+
+Graphic.prototype.getGraphic = function() {
+    return this._graphic;
+}
+
+Graphic.createRectangle = function(x, y, width, height, color, opacity, strokeWidth, lineColor, strokeOpacity) {
+    var rectangle = {};
+    rectangle.x = x;
+    rectangle.y = y;
+    rectangle.width = width;
+    rectangle.height = height;
+    if(!color)
+        color = 0x000000;
+    rectangle.color = color;
+    if(!opacity)
+        opacity = 1.0;
+    rectangle.opacity = opacity;
+
+    if(strokeWidth) {
+        rectangle.strokeWidth = strokeWidth;
+        if(!lineColor)
+            lineColor = 0x000000;
+        rectangle.lineColor = lineColor
+        if(!strokeOpacity)
+            strokeOpacity = 1.0;
+        rectangle.strokeOpacity = strokeOpacity;
+    }
+
+    return rectangle;
+}
+
+Graphic.getEnum = function() {
+    return GraphicTypeEnum;
+}
+
+module.exports = Graphic;
+
+
+/***/ }),
+/* 11 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/***************************************************************
+Creates draggable backgrounds and icons that follow drag movement.
+***************************************************************/
+
+
+//Dependencies
+const Text = __webpack_require__(3),
+    Image = __webpack_require__(6);
+
+var _instance = null;
+var _game = null;
+var _text = [];
+var _choiceFont = null;
+var _bgImage = null;
+var _iconGroup = null;
+
+const bgImageKeyEnum = 'IMAGE_BACKGROUND';
+
+/***************************************************************
+Creates background image.
+***************************************************************/
+function CreateBgImage(key, draggable) {
+    _bgImage = new Image(0, 0, key, bgImageKeyEnum);
+    _bgImage.addImageToGame(_game, _game.mediaGroup);
+    _bgImage.changeImage(_game, draggable);
+}
+
+/***************************************************************
+Adds images to group that follows dragged background position.
+***************************************************************/
+function AddIconsToGroup(icons) {
+    _iconGroup = _game.add.group();
+    _game.mediaGroup.add(_iconGroup);
+    icons.forEach(function(icon) {
+        _iconGroup.add(icon.getPhaserImage());
+    });
+}
+
+/***************************************************************
+Initializes drag follow for icon group.
+***************************************************************/
+function StartDragUpdate() {
+    _bgImage.getPhaserImage().events.onDragUpdate.add(dragUpdate);
+    _iconGroup.x = _bgImage.getPhaserImage().x;
+    _iconGroup.y = _bgImage.getPhaserImage().y;
+}
+
+/***************************************************************
+Icons follow dragged background position every update.
+***************************************************************/
+function dragUpdate() {
+    _iconGroup.x = _bgImage.getPhaserImage().x;
+    _iconGroup.y = _bgImage.getPhaserImage().y;
+}
+
+module.exports = {
+    init: function(game) {
+        //Initialize singleton variables.
+        if(_instance !== null)
+            return _instance;
+        _game = game;
+        _instance = this;
+        return _instance;
+    },
+    preload: function() {
+    },
+    create: function(bgKey, draggable) {
+        if(bgKey)
+            CreateBgImage(bgKey, draggable);
+    },
+    attachIconsToBg: function(icons) {
+        AddIconsToGroup(group);
+        StartDragUpdate();
+    }
+}
+
+
+/***/ }),
+/* 12 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
 
 
 const Filter = __webpack_require__(22),
-    Thoughts = __webpack_require__(14),
-    Choices = __webpack_require__(13),
+    Thoughts = __webpack_require__(18),
+    Choices = __webpack_require__(16),
     Image = __webpack_require__(6),
     Text = __webpack_require__(3),
-    Graphic = __webpack_require__(11),
-    SceneParser = __webpack_require__(17);
+    Graphic = __webpack_require__(10),
+    SceneParser = __webpack_require__(15);
 
 var _instance = null;
 var _game = null;
@@ -1843,419 +2255,285 @@ module.exports = {
 
 
 /***/ }),
-/* 9 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/***************************************************************
-State object, stores scene information.
-Getters to obtain scene information.
-***************************************************************/
-
-
-
-var State = function(scene) {
-    this._scene = scene;
-};
-
-State.prototype.setStateScene = function(scene) {
-    this._scene = scene;
-};
-
-State.prototype.getMovieKey = function() {
-    return this._scene.movieKey;
-}
-
-State.prototype.getChoiceMoments = function() {
-    return this._scene.choiceMoments;
-}
-
-State.prototype.getTimestamps = function() {
-    var timeStamps = [];
-    console.log("Interaction Times:")
-    for(var i=0; i<this._scene.choiceMoments.size; i++) {
-        timeStamps.push(this._scene.choiceMoments.choiceMomentsProperties[i].timeStamp);
-        console.log(this._scene.choiceMoments.choiceMomentsProperties[i].timeStamp);
-    }
-    return timeStamps;
-}
-
-State.prototype.getThoughtBubble = function(index) {
-    return this._scene.choiceMoments.choiceMomentsProperties[index].thoughtBubbles;
-}
-
-State.prototype.getChoices = function(index){
-    return this._scene.choiceMoments.choiceMomentsProperties[index].choices;
-}
-
-State.prototype.getBgImageKey = function() {
-    return this._scene.bgImageKey;
-}
-
-State.prototype.getIconsInfo = function() {
-    return this._scene.icons;
-}
-
-State.prototype.getLinkedIconsInfo = function() {
-    return this._scene.linkedIcons;
-}
-
-State.prototype.getInputInfo = function() {
-    return this._scene.input;
-}
-
-State.prototype.getSrcList = function() {
-    if(!this._scene.movieReqs || !this._scene.movieSrcArr) 
-        return false;
-    else {
-        return [this._scene.movieReqs, this._scene.movieSrcArr];
-    }
-}
-
-State.prototype.getMovieSrc = function(definition, index) {
-    if(typeof(index) == 'number') {    
-        if(definition == 'HD')
-            return this._scene.movieSrcArr[index][0];
-        else if(definition == 'SD')       
-            return this._scene.movieSrcArr[index][1];
-    }
-    else {
-        if(definition == 'HD')
-            return this._scene.movieSrcHD;
-        else if(definition == 'SD')
-            return this._scene.movieSrcSD;
-    }
-}
-
-State.prototype.getSceneReqs = function() {
-    return this._scene.sceneReqs;
-}
-
-State.prototype.getSceneTargetNames = function() {
-    return this._scene.sceneTargetNames;
-}
-
-State.prototype.getMovieSubKey = function() {
-    return this._scene.sub;
-}
-
-State.prototype.getBackgroundMusic = function() {
-    return this._scene.backgroundMusic;
-}
-
-State.prototype.getTransitionInfo = function() {
-    return this._scene.transition;
-}
-
-State.prototype.getVideoFilter = function() {
-    return this._scene.videoFilter;
-}
-
-State.prototype.getNextScenes = function() {
-    return this._scene.nextScene;
-}
-
-State.prototype.getDraggable = function() {
-    return this._scene.draggable;
-}
-
-module.exports = State;
-
-
-/***/ }),
-/* 10 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/***************************************************************
-Handles animation of game objects.
-Static functions takes in the game object and applies animation to it.
-***************************************************************/
-
-
-
-const FADE_TIME_DEFAULT = 700;
-const SCALE_TIME_DEFAULT = 300;
-const BOB_DELAY_INTERVAL = 700;
-
-/***************************************************************
-Animation constructor
-***************************************************************/
-var Animation = function() {
-}
-
-/***************************************************************
-Adds scaling animaton for object.
-***************************************************************/
-Animation.scale = function(game, object, autoStart, targetWidth, targetHeight, timeTaken) {
-    if(!timeTaken)
-        timeTaken = SCALE_TIME_DEFAULT;
-
-    var tween = game.add.tween(object).to({width:targetWidth, height:targetHeight}, timeTaken, 
-        Phaser.Easing.Linear.None, autoStart, 0, 0);
-
-    return tween;
-}
-
-/***************************************************************
-Adds fade in/out animation for object.
-***************************************************************/
-Animation.fade = function(game, object, value, autoStart, timeTaken) {
-    if(!timeTaken)
-        timeTaken = FADE_TIME_DEFAULT;
-    var tween = game.add.tween(object).to({alpha:value}, timeTaken, Phaser.Easing.Linear.None, autoStart, 0, 0, false);
-
-    return tween;
-}
-
-/***************************************************************
-Adds bobbing up and down animation for object.
-***************************************************************/
-Animation.bob = function(game, object, autoStart, value) {
-    if(!value)
-        value = -5;
-    value = value.toString();
-
-    var tween = game.add.tween(object).to({y:value}, 200, Phaser.Easing.Quadratic.InOut, autoStart, 0, -1, true);
-    tween.repeatDelay(BOB_DELAY_INTERVAL);
-    
-    return tween;
-}
-
-module.exports = Animation;
-
-
-/***/ }),
-/* 11 */
+/* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
-
-const Linkable = __webpack_require__(2);
-
-var GraphicTypeEnum = {
-    Overlay: 'GRAPHIC_INFO_OVERLAY',
-    ScrollBarBackground: 'GRAPHIC_SCROLLBAR_BG'
-}
-
-//Image constructor
-var Graphic = function(xPos, yPos, type) {
-    this._xPos = xPos;
-    this._yPos = yPos;
-    this._type = type;
-}
-
-Graphic.prototype.addGraphicToGame = function(game, group) {
-    this._graphic = game.add.graphics(this._xPos, this._yPos); 
-    if(group) {
-        group.add(this._graphic);
-    }
-    else {
-        switch(this._type) {
-            case GraphicTypeEnum.Overlay:
-            case GraphicTypeEnum.ScrollBarBackground:
-                game.uiGroup.add(this._graphic);
-                break;
-            default:
-                console.warn("Invalid graphic type not added to group:" + this._type);
-        }
-    }
-}
-
-Graphic.prototype.changeGraphic = function (game, arg1, arg2, arg3, arg4, arg5) {
-    switch(this._type) {
-        case GraphicTypeEnum.Overlay:            
-            this.changeToInfoOverlayGraphic(game, arg1, arg2);
-            break;
-        case GraphicTypeEnum.ScrollBarBackground:
-            this.changeToScrollBarBackgroundGraphic(game, arg1);
-            break;
-        default:
-            console.warn("Invalid Graphic Type.");
-    }
-}
-
-Graphic.prototype.changeToInfoOverlayGraphic = function(game, margin, scrollbarEnabled) {
-    this._graphic = game.add.graphics(this._xPos, this._yPos);    
-    this._graphic.beginFill(0x000000, 0.6);
-    this._graphic.inputEnabled = true;
-
-    if(scrollbarEnabled) {
-        this._graphic.drawRect(0, 0, margin, game.height);
-        this._graphic.drawRect(game.width-margin, 0, margin, game.height);
-        this._graphic.drawRect(margin, 0, game.width-(margin<<1), margin);
-        this._graphic.drawRect(margin, game.height-margin, game.width-(margin<<1), margin);   
-        this._graphic.input.priorityID = 1;
-        this._graphic.input.useHandCursor = true;
-    }
-    else {
-        this._graphic.drawRect(0, 0, game.width, game.height);
-    }
-    this._graphic.endFill();
-    this._graphic.visible = false;
-    game.uiGroup.add(this._graphic);
-
-
-    this._link = new Linkable(game, this._graphic.events, game.global.gameManager.getHideDisplayedImageSignal());
-    this._link2 = new Linkable(game, this._graphic.events, game.global.gameManager.getHideInfoOverlaySignal());
-    this._link.setAsButton(false);
-    this._link2.setAsButton(false);
-}
-Graphic.prototype.drawRect = function(game, x, y, width, height, color, opacity, strokeWidth, lineColor) {
-    if(!color)
-        color = 0x000000;
-    if(!opacity)
-        opacity = 1;
-    if(!lineColor)
-        lineColor = 0x000000;
-
-    this._graphic = game.add.graphics(this._xPos, this._yPos);
-    game.uiGroup.add(this._graphic);
-    this._graphic.beginFill(color, opacity);
-    if(strokeWidth) {
-        this._graphic.lineStyle(strokeWidth, lineColor);
-    }
-    this._graphic.drawRect(x, y, width, height);
-    
-    this._graphic.endFill();
-}
-
-Graphic.prototype.changeToScrollBarBackgroundGraphic = function(game, rectangle) {
-    this._graphic.beginFill(rectangle.color, rectangle.opacity);
-    this._graphic.lineStyle(rectangle.strokeWidth, rectangle.lineColor);
-
-    this._graphic.drawRect(rectangle.x, rectangle.y, rectangle.width, rectangle.height);
-    
-    this._graphic.endFill();
-    this._graphic.visible = false;
-}
-
-Graphic.prototype.setVisible = function(value) {
-    this._graphic.visible = value;
-}
-
-Graphic.prototype.getGraphic = function() {
-    return this._graphic;
-}
-
-Graphic.createRectangle = function(x, y, width, height, color, opacity, strokeWidth, lineColor, strokeOpacity) {
-    var rectangle = {};
-    rectangle.x = x;
-    rectangle.y = y;
-    rectangle.width = width;
-    rectangle.height = height;
-    if(!color)
-        color = 0x000000;
-    rectangle.color = color;
-    if(!opacity)
-        opacity = 1.0;
-    rectangle.opacity = opacity;
-
-    if(strokeWidth) {
-        rectangle.strokeWidth = strokeWidth;
-        if(!lineColor)
-            lineColor = 0x000000;
-        rectangle.lineColor = lineColor
-        if(!strokeOpacity)
-            strokeOpacity = 1.0;
-        rectangle.strokeOpacity = strokeOpacity;
-    }
-
-    return rectangle;
-}
-
-Graphic.getEnum = function() {
-    return GraphicTypeEnum;
-}
-
-module.exports = Graphic;
-
-
-/***/ }),
-/* 12 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/***************************************************************
-Creates draggable backgrounds and icons that follow drag movement.
-***************************************************************/
-
-
-//Dependencies
-const Text = __webpack_require__(3),
-    Image = __webpack_require__(6);
-
+var Filter = __webpack_require__(22);
 var _instance = null;
 var _game = null;
-var _text = [];
-var _choiceFont = null;
-var _bgImage = null;
-var _iconGroup = null;
+var _startSceneKey = 'startScene';
+var _data = null;
+var _videos = null;
+var _audio = null;
+var _images = null;
+var _spritesheets = null;
+var _scenes = null;
+var _subs = null;
+var _style = null;
 
-const bgImageKeyEnum = 'IMAGE_BACKGROUND';
-
-/***************************************************************
-Creates background image.
-***************************************************************/
-function CreateBgImage(key, draggable) {
-    _bgImage = new Image(0, 0, key, bgImageKeyEnum);
-    _bgImage.addImageToGame(_game, _game.mediaGroup);
-    _bgImage.changeImage(_game, draggable);
+function loadVideos(videos) {
+    console.log("Loading videos");
+    for (var key in _videos) {
+        _game.load.video(key, _videos[key]);
+    }
 }
 
-/***************************************************************
-Adds images to group that follows dragged background position.
-***************************************************************/
-function AddIconsToGroup(icons) {
-    _iconGroup = _game.add.group();
-    _game.mediaGroup.add(_iconGroup);
-    icons.forEach(function(icon) {
-        _iconGroup.add(icon.getPhaserImage());
-    });
+function loadAudio(audio) {
+    console.log("Loading audio");
+    for (var key in audio) {
+        _game.load.audio(key, _audio[key]);
+    }
 }
 
-/***************************************************************
-Initializes drag follow for icon group.
-***************************************************************/
-function StartDragUpdate() {
-    _bgImage.getPhaserImage().events.onDragUpdate.add(dragUpdate);
-    _iconGroup.x = _bgImage.getPhaserImage().x;
-    _iconGroup.y = _bgImage.getPhaserImage().y;
+function loadImages(images) {
+    console.log("Loading images");
+    for (var key in images) {
+        _game.load.image(key, images[key]);
+    }
 }
 
-/***************************************************************
-Icons follow dragged background position every update.
-***************************************************************/
-function dragUpdate() {
-    _iconGroup.x = _bgImage.getPhaserImage().x;
-    _iconGroup.y = _bgImage.getPhaserImage().y;
+function loadSpritesheets(spritesheet) {
+    console.log("Loading spritesheets");
+    for (var key in spritesheet) {
+        _game.load.spritesheet(key, spritesheet[key][0], spritesheet[key][1], spritesheet[key][2], spritesheet[key][3]);
+    }
+}
+
+function loadSubs(subs) {
+    console.log("Loading subs");
+    for (var key in subs) {
+        _game.load.text(key, subs[key]);
+    }
 }
 
 module.exports = {
     init: function(game) {
-        //Initialize singleton variables.
         if(_instance !== null)
             return _instance;
-        _game = game;
         _instance = this;
+    //    Filter.init(game);
+        _game = game;
+        _data = _game.cache.getJSON('data');
+        _style = _game.cache.getJSON('style');
+        _images = _data.images;
+        _spritesheets = _data.spritesheets;
+        _videos = _data.videos;
+        _audio = _data.audio;
+        _scenes = _data.scenes;
+        _subs = _data.subtitles;
         return _instance;
     },
     preload: function() {
+    //    Filter.preload();
+        console.log("Loading resources");
+        loadImages(_images);
+        loadSpritesheets(_spritesheets);
+        loadAudio(_audio);
+        loadSubs(_subs);
+    //    loadVideos(videos);
+
     },
-    create: function(bgKey, draggable) {
-        if(bgKey)
-            CreateBgImage(bgKey, draggable);
+    getScene: function(name) {
+        return _scenes[name];
     },
-    attachIconsToBg: function(icons) {
-        AddIconsToGroup(group);
-        StartDragUpdate();
+    getStyle: function() {
+        return _style;
+    },
+    getVideoSrc: function() {
+        return _videos;
+    },
+    getStartSceneKey: function() {
+        return _startSceneKey;
+    },
+    setVisitedScene: function(name) {
+        _scenes[name].visited = true;
     }
 }
 
 
 /***/ }),
-/* 13 */
+/* 14 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/***************************************************************
+Manages creation and transitions between state types. 
+***************************************************************/
+
+
+
+//Dependencies
+const Resources = __webpack_require__(13),
+    Group = __webpack_require__(7),
+    Transition = __webpack_require__(4),
+    UI = __webpack_require__(5),
+    Video = __webpack_require__(1),
+    MenuState = __webpack_require__(39),
+    LocationState = __webpack_require__(20),
+    InteractState = __webpack_require__(19),
+    SwitchState = __webpack_require__(41),
+    MovieState = __webpack_require__(40),
+    Subtitle = __webpack_require__(17);
+
+var _stateManagerInstance = null;
+var _transitionSignal = null;
+var _game = null;
+
+var StateEnum = {
+    MenuState: 'MenuState',
+    InteractState: 'InteractState',
+    SwitchState: 'SwitchState',
+    MovieState: 'MovieState',
+    LocationState: 'LocationState'
+}
+
+/***************************************************************
+Changes state according to scene name.
+***************************************************************/
+function ChangeScene(sceneName) {
+    var nextScene = Resources.getScene(sceneName);
+    if(nextScene === null)
+        console.warn("Scene: " + sceneName + "is undefined.");
+    else
+        console.log("Changing scene to: " + nextScene.stateType);
+    
+    switch(nextScene.stateType) {
+        case StateEnum.MenuState:
+        case StateEnum.InteractState:
+        case StateEnum.SwitchState:
+        case StateEnum.MovieState:
+        case StateEnum.LocationState:
+            _stateManagerInstance.start(nextScene.stateType, true, false, nextScene);
+            break;
+        default:
+            console.warn("Invalid State.");
+    }
+}
+
+/***************************************************************
+Adds all state types to manager.
+***************************************************************/
+function AddAllStates() {
+    _stateManagerInstance.add(StateEnum.MenuState, MenuState);
+    _stateManagerInstance.add(StateEnum.LocationState, LocationState);
+    _stateManagerInstance.add(StateEnum.InteractState, InteractState);
+    _stateManagerInstance.add(StateEnum.SwitchState, SwitchState);
+    _stateManagerInstance.add(StateEnum.MovieState, MovieState);
+}
+
+//Unused, phaser input extension
+function ChangePlayerName() {
+    return function() {
+        this.game.playerName = MenuState.getPlayerName();_input[0].getInput().text;
+        console.log("this.game.playerName");
+    };
+}
+
+/***************************************************************
+Test function for ending state switches
+***************************************************************/
+function SceneTestCase() {
+    _game.global.visitedScenes['MK2bad'] = true;
+    _game.global.visitedScenes['an2good'] = true;
+    _game.global.visitedScenes['li2good'] = true;
+    console.log(_game.global.visitedScenes);
+}
+
+module.exports = {
+    init: function() {
+        console.log("Initializing StateManager");
+
+        //Statemanager singleton initialization
+        if(_stateManagerInstance !== null)
+            return _stateManagerInstance;
+        _stateManagerInstance = this.game.state;
+        _game = this.game;
+        Group.init(_game);
+        Subtitle.init(this.game);
+        Transition.init(_game);
+        AddAllStates();
+        UI.init(_game);
+        return _stateManagerInstance;
+    },
+    preload: function() {
+    },
+    create: function() {
+        _game.global.gameManager.getChangeSceneSignal().dispatch(Resources.getStartSceneKey());
+    },
+    changeScene: function(sceneName) {
+        _game.mediaGroup.removeAll();
+        _game.global.visitedScenes[sceneName] = true;
+        _game.global.currentSceneName = sceneName;
+        //SceneTestCase();
+        ChangeScene(sceneName);
+    }
+}
+
+
+/***/ }),
+/* 15 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+//ScenePartser constructor
+var SceneParser = function() {
+}
+
+SceneParser.VisitAtLeastOnceOfEach = function(game, sceneSetArray) {
+    var unlocked = true;
+    for(var j=0; j<sceneSetArray.length; j++) {
+        unlocked &= SceneParser.OneSceneVisited(game, sceneSetArray[j]);
+    }
+    return unlocked;
+}
+
+SceneParser.OneSceneVisited = function(game, sceneArr) {
+    if(sceneArr){
+        for(var i=0; i<sceneArr.length; i++) {
+            if(game.global.visitedScenes[sceneArr[i]]) {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+SceneParser.AllSceneVisited = function(game, sceneArr) {
+    if(sceneArr){
+    	console.log(sceneArr);
+        for(var i=0; i<sceneArr.length; i++) {
+            if(!game.global.visitedScenes[sceneArr[i]]) {
+            	console.log(sceneArr[i]);
+            	console.log(game.global.visitedScenes[sceneArr[i]]);
+                return false;
+            }
+        }
+        return true;
+    }
+    else
+    	return false;
+}
+
+SceneParser.GetIndexOfVisitedAll = function(game, sceneArr) {
+    if(sceneArr){
+        for(var i=0; i<sceneArr.length; i++) {
+            if(SceneParser.AllSceneVisited(game, sceneArr[i])) {
+                return i;
+            }
+        }
+    }
+    return false;
+}
+
+module.exports = SceneParser;
+
+
+/***/ }),
+/* 16 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2442,7 +2720,148 @@ module.exports = {
 
 
 /***/ }),
-/* 14 */
+/* 17 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+const Text = __webpack_require__(3);
+
+var _instance = null;
+var _game = null;
+var _textSlots = [null];
+var _subtitleVisible = false;
+
+const subtitleTextKeyEnum = 'TEXT_SUBTITLE';
+
+const SUBTITLE_Y_POS = 630;
+const SUBTITLE_SPACING = 5;
+
+function CreateSubs(video, subs) {
+	var srt = _game.cache.getText(subs);
+	var parsedSrt = fromSrt(srt, true);
+	AddSubEvents(parsedSrt, video);
+}
+
+function AddSubEvents(parsedSrt, video) {
+	parsedSrt.forEach(function(sub) {
+		//console.log(sub.startTime);
+		video.addEventListener("timeupdate", show, false);
+
+		function show() {
+			if(video.currentTime >= sub.startTime){
+           		video.removeEventListener("timeupdate", show);
+	            var text = new Text(sub.text, 0, -500, subtitleTextKeyEnum, _game.global.style.subtitleTextProperties);
+	            text.addToGame(_game, _game.mediaGroup);
+	            text.changeText(_game, _subtitleVisible);
+	            var slotIndex = FindSubtitleSlot(text);
+	            AddDestroyEvent(video, sub, text, slotIndex);
+	        }
+		}		
+	});
+}
+
+function AddDestroyEvent(video, sub, text, slotIndex) {
+	video.addEventListener("timeupdate", destroy, false);
+
+	function destroy() {
+		if(video.currentTime >= sub.endTime){
+			console.log("destroyed");
+       		video.removeEventListener("timeupdate", destroy); 
+            text.destroy();
+            _textSlots[slotIndex] = null;
+        }
+	}
+}
+
+function FindSubtitleSlot(text) {
+	//if(!_textSlots[0]) {
+		if(_textSlots[0])
+			_textSlots[0].setVisible(false);
+		_textSlots[0] = text;
+		text.setY(SUBTITLE_Y_POS);
+		return 0;
+	/*}
+	else if(!_textSlots[1]) {
+		_textSlots[1] = text;
+		text.setY(SUBTITLE_Y_POS - text.getHeight() - SUBTITLE_SPACING);
+		return 1;
+	}*/
+	//else
+	//	console.warn("Max number of concurrent subtitles reached." + text);
+}
+
+function ToggleSubtitle() {
+	_subtitleVisible = !_subtitleVisible;
+	_textSlots.forEach(function(slot) {
+		if(slot)
+			slot.setVisible(_subtitleVisible);
+	});
+	return _subtitleVisible;
+}
+
+function fromSrt(data, ms) {
+    var useMs = ms ? true : false;
+
+    data = data.replace(/\r/g, '');
+    var regex = /(\d+)\n(\d{2}:\d{2}:\d{2},\d{3}) --> (\d{2}:\d{2}:\d{2},\d{3})/g;
+    data = data.split(regex);
+    data.shift();
+
+    var items = [];
+    for (var i = 0; i < data.length; i += 4) {
+        items.push({
+            id: data[i].trim(),
+            startTime: useMs ? timeMs(data[i + 1].trim()) : data[i + 1].trim(),
+            endTime: useMs ? timeMs(data[i + 2].trim()) : data[i + 2].trim(),
+            text: data[i + 3].trim()
+        });
+    }
+
+    return items;
+};
+
+function timeMs(val) {
+    var regex = /(\d+):(\d{2}):(\d{2}),(\d{3})/;
+    var parts = regex.exec(val);
+
+    if (parts === null) {
+        return 0;
+    }
+
+    for (var i = 1; i < 5; i++) {
+        parts[i] = parseInt(parts[i], 10);
+        if (isNaN(parts[i])) parts[i] = 0;
+    }
+
+    // hours + minutes + seconds + ms
+    return parts[1] * 3600 + parts[2] * 60 + parts[3] + parts[4]/1000;
+};
+
+
+module.exports = {
+	init: function (game) {
+		if(_instance)
+			return _instance;
+		_instance = this;
+		_game = game;
+		return _instance;
+	},
+	create: function(video, subs) {
+		CreateSubs(video, subs);
+	},
+	toggleSubtitle: function() {
+		return ToggleSubtitle();
+	},
+	getSubtitleVisible: function() {
+		return _subtitleVisible;
+	}
+}
+
+
+/***/ }),
+/* 18 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2489,285 +2908,7 @@ module.exports = {
 
 
 /***/ }),
-/* 15 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-var Filter = __webpack_require__(22);
-var _instance = null;
-var _game = null;
-var _startSceneKey = 'startScene';
-var _data = null;
-var _videos = null;
-var _audio = null;
-var _images = null;
-var _spritesheets = null;
-var _scenes = null;
-var _subs = null;
-var _style = null;
-
-function loadVideos(videos) {
-    console.log("Loading videos");
-    for (var key in _videos) {
-        _game.load.video(key, _videos[key]);
-    }
-}
-
-function loadAudio(audio) {
-    console.log("Loading audio");
-    for (var key in audio) {
-        _game.load.audio(key, _audio[key]);
-    }
-}
-
-function loadImages(images) {
-    console.log("Loading images");
-    for (var key in images) {
-        _game.load.image(key, images[key]);
-    }
-}
-
-function loadSpritesheets(spritesheet) {
-    console.log("Loading spritesheets");
-    for (var key in spritesheet) {
-        _game.load.spritesheet(key, spritesheet[key][0], spritesheet[key][1], spritesheet[key][2], spritesheet[key][3]);
-    }
-}
-
-function loadSubs(subs) {
-    console.log("Loading subs");
-    for (var key in subs) {
-        _game.load.text(key, subs[key]);
-    }
-}
-
-module.exports = {
-    init: function(game) {
-        if(_instance !== null)
-            return _instance;
-        _instance = this;
-    //    Filter.init(game);
-        _game = game;
-        _data = _game.cache.getJSON('data');
-        _style = _game.cache.getJSON('style');
-        _images = _data.images;
-        _spritesheets = _data.spritesheets;
-        _videos = _data.videos;
-        _audio = _data.audio;
-        _scenes = _data.scenes;
-        _subs = _data.subtitles;
-        return _instance;
-    },
-    preload: function() {
-    //    Filter.preload();
-        console.log("Loading resources");
-        loadImages(_images);
-        loadSpritesheets(_spritesheets);
-        loadAudio(_audio);
-        loadSubs(_subs);
-    //    loadVideos(videos);
-
-    },
-    getScene: function(name) {
-        return _scenes[name];
-    },
-    getStyle: function() {
-        return _style;
-    },
-    getVideoSrc: function() {
-        return _videos;
-    },
-    getStartSceneKey: function() {
-        return _startSceneKey;
-    },
-    setVisitedScene: function(name) {
-        _scenes[name].visited = true;
-    }
-}
-
-
-/***/ }),
-/* 16 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/***************************************************************
-Manages creation and transitions between state types. 
-***************************************************************/
-
-
-
-//Dependencies
-const Resources = __webpack_require__(15),
-    Group = __webpack_require__(7),
-    Transition = __webpack_require__(4),
-    UI = __webpack_require__(5),
-    Video = __webpack_require__(1),
-    MenuState = __webpack_require__(39),
-    LocationState = __webpack_require__(19),
-    InteractState = __webpack_require__(18),
-    SwitchState = __webpack_require__(41),
-    MovieState = __webpack_require__(40),
-    Subtitle = __webpack_require__(23);
-
-var _stateManagerInstance = null;
-var _transitionSignal = null;
-var _game = null;
-
-var StateEnum = {
-    MenuState: 'MenuState',
-    InteractState: 'InteractState',
-    SwitchState: 'SwitchState',
-    MovieState: 'MovieState',
-    LocationState: 'LocationState'
-}
-
-/***************************************************************
-Changes state according to scene name.
-***************************************************************/
-function ChangeScene(sceneName) {
-    var nextScene = Resources.getScene(sceneName);
-    if(nextScene === null)
-        console.warn("Scene: " + sceneName + "is undefined.");
-    else
-        console.log("Changing scene to: " + nextScene.stateType);
-    
-    switch(nextScene.stateType) {
-        case StateEnum.MenuState:
-        case StateEnum.InteractState:
-        case StateEnum.SwitchState:
-        case StateEnum.MovieState:
-        case StateEnum.LocationState:
-            _stateManagerInstance.start(nextScene.stateType, true, false, nextScene);
-            break;
-        default:
-            console.warn("Invalid State.");
-    }
-}
-
-/***************************************************************
-Adds all state types to manager.
-***************************************************************/
-function AddAllStates() {
-    _stateManagerInstance.add(StateEnum.MenuState, MenuState);
-    _stateManagerInstance.add(StateEnum.LocationState, LocationState);
-    _stateManagerInstance.add(StateEnum.InteractState, InteractState);
-    _stateManagerInstance.add(StateEnum.SwitchState, SwitchState);
-    _stateManagerInstance.add(StateEnum.MovieState, MovieState);
-}
-
-//Unused, phaser input extension
-function ChangePlayerName() {
-    return function() {
-        this.game.playerName = MenuState.getPlayerName();_input[0].getInput().text;
-        console.log("this.game.playerName");
-    };
-}
-
-/***************************************************************
-Test function for ending state switches
-***************************************************************/
-function SceneTestCase() {
-    _game.global.visitedScenes['MK2bad'] = true;
-    _game.global.visitedScenes['an2good'] = true;
-    _game.global.visitedScenes['li2good'] = true;
-    console.log(_game.global.visitedScenes);
-}
-
-module.exports = {
-    init: function() {
-        console.log("Initializing StateManager");
-
-        //Statemanager singleton initialization
-        if(_stateManagerInstance !== null)
-            return _stateManagerInstance;
-        _stateManagerInstance = this.game.state;
-        _game = this.game;
-        Group.init(_game);
-        Subtitle.init(this.game);
-        Transition.init(_game);
-        AddAllStates();
-        UI.init(_game);
-        return _stateManagerInstance;
-    },
-    preload: function() {
-    },
-    create: function() {
-        _game.global.gameManager.getChangeSceneSignal().dispatch(Resources.getStartSceneKey());
-    },
-    changeScene: function(sceneName) {
-        _game.mediaGroup.removeAll();
-        _game.global.visitedScenes[sceneName] = true;
-        _game.global.currentSceneName = sceneName;
-        //SceneTestCase();
-        ChangeScene(sceneName);
-    }
-}
-
-
-/***/ }),
-/* 17 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-//ScenePartser constructor
-var SceneParser = function() {
-}
-
-SceneParser.VisitAtLeastOnceOfEach = function(game, sceneSetArray) {
-    var unlocked = true;
-    for(var j=0; j<sceneSetArray.length; j++) {
-        unlocked &= SceneParser.OneSceneVisited(game, sceneSetArray[j]);
-    }
-    return unlocked;
-}
-
-SceneParser.OneSceneVisited = function(game, sceneArr) {
-    if(sceneArr){
-        for(var i=0; i<sceneArr.length; i++) {
-            if(game.global.visitedScenes[sceneArr[i]]) {
-                return true;
-            }
-        }
-    }
-    return false;
-}
-
-SceneParser.AllSceneVisited = function(game, sceneArr) {
-    if(sceneArr){
-    	console.log(sceneArr);
-        for(var i=0; i<sceneArr.length; i++) {
-            if(!game.global.visitedScenes[sceneArr[i]]) {
-            	console.log(sceneArr[i]);
-            	console.log(game.global.visitedScenes[sceneArr[i]]);
-                return false;
-            }
-        }
-        return true;
-    }
-    else
-    	return false;
-}
-
-SceneParser.GetIndexOfVisitedAll = function(game, sceneArr) {
-    if(sceneArr){
-        for(var i=0; i<sceneArr.length; i++) {
-            if(SceneParser.AllSceneVisited(game, sceneArr[i])) {
-                return i;
-            }
-        }
-    }
-    return false;
-}
-
-module.exports = SceneParser;
-
-
-/***/ }),
-/* 18 */
+/* 19 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2782,11 +2923,11 @@ const Group = __webpack_require__(7),
     UI = __webpack_require__(5),
     Video = __webpack_require__(1),
     Transition = __webpack_require__(4),
-    Icons = __webpack_require__(8),
-    State = __webpack_require__(9),
-    Choices = __webpack_require__(13),
-    Thoughts = __webpack_require__(14),
-    Background = __webpack_require__(12);
+    Icons = __webpack_require__(12),
+    State = __webpack_require__(8),
+    Choices = __webpack_require__(16),
+    Thoughts = __webpack_require__(18),
+    Background = __webpack_require__(11);
 
 var _stateInfo = null;
 var _instance = null;
@@ -2893,7 +3034,7 @@ module.exports = {
 
 
 /***/ }),
-/* 19 */
+/* 20 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2905,10 +3046,10 @@ State for location scenes.
 
 const Transition = __webpack_require__(4),
     Group = __webpack_require__(7),
-    State = __webpack_require__(9),
+    State = __webpack_require__(8),
     UI = __webpack_require__(5),
-    Background = __webpack_require__(12),
-    Icons = __webpack_require__(8),
+    Background = __webpack_require__(11),
+    Icons = __webpack_require__(12),
     Video = __webpack_require__(1);
 
 var _instance = null;
@@ -2972,7 +3113,7 @@ module.exports = {
 
 
 /***/ }),
-/* 20 */
+/* 21 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2995,10 +3136,10 @@ function getDefaultAdapter() {
   var adapter;
   if (typeof XMLHttpRequest !== 'undefined') {
     // For browsers use XHR adapter
-    adapter = __webpack_require__(25);
+    adapter = __webpack_require__(24);
   } else if (typeof process !== 'undefined') {
     // For node use HTTP adapter
-    adapter = __webpack_require__(25);
+    adapter = __webpack_require__(24);
   }
   return adapter;
 }
@@ -3069,132 +3210,7 @@ utils.forEach(['post', 'put', 'patch'], function forEachMethodWithData(method) {
 
 module.exports = defaults;
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(30)))
-
-/***/ }),
-/* 21 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/***************************************************************
-Checks user's connection
-***************************************************************/
-
-
-//initializes once
-var _instance = null;
-var _game = null;
-var _file = null;
-var _bytes = null;
-var _timer = null;
-
-const SLOW_DOWNLOAD_THRESHOLD_MBPS = 0.36;
-
-//Type of file for connection test
-var FileTypeEnum = {
-    Image: 'IMAGE',
-    Video: 'VIDEO',
-    Audio: 'AUDIO'
-}
-
-/***************************************************************
-Adds load start and on load complete functions.
-Starts load process of selected file and times it.
-***************************************************************/
-function CheckConnection() {    
-    _game.load.onFileComplete.add(LoadComplete, this);
-    _game.load.onLoadStart.add(StartLoading, this);    
-    _game.load.start();
-}
-
-/***************************************************************
-Creates timer.
-***************************************************************/
-function StartLoading() {
-    _timer = _game.time.create(true);
-    _timer.start();
-}
-
-/***************************************************************
-Gets connection speed and starts preload state.
-***************************************************************/
-function LoadComplete() {    
-    _timer.stop();
-    SetVideoQuality(CalculateConnectionSpeed());  
-    _game.load.onFileComplete.remove(LoadComplete, this);
-
-    //Starts preload state
-    _game.state.start("preload");
-}
-
-/***************************************************************
-Calculates connection speed and returns it.
-***************************************************************/
-function CalculateConnectionSpeed() {
-    var elapsedSeconds = (_timer._now - _timer._started)/1000;
-    elapsedSeconds += _timer.elapsed/1000;
-    var connectionSpeedMbps = _bytes/(elapsedSeconds)/ 1000000;
-    return connectionSpeedMbps;
-}
-
-/***************************************************************
-Decides video quality for the rest of the experience.
-***************************************************************/
-function SetVideoQuality(speed) {
-    if(speed > SLOW_DOWNLOAD_THRESHOLD_MBPS || speed < 0)
-        _game.global.quality = 'HD';
-    else
-        _game.global.quality = 'SD';
-    console.log('Connection speed: ' + speed + ' Mb/s. Quality: ' +  _game.global.quality);  
-}
-
-/***************************************************************
-Prepares selected file for connection test.
-***************************************************************/
-function Load(key, src, type) {
-    switch (type) {
-        case FileTypeEnum.Image:
-            _file = _game.load.image(key, src);
-            break;
-        case FileTypeEnum.Video:
-            _file = _game.load.text(key, src);
-            break;
-        case FileTypeEnum.Audio:
-            _file = _game.load.audio(key, src);
-            break;
-        default:
-            console.warn('Not a valid file type for loading check.');
-    }
-    return _file;
-}
-
-module.exports = {
-    init: function(game) {
-        //Singleton initialization
-        if(_instance !== null)
-            return _instance;        
-        _file = null;
-        _game = game;
-        _instance = this;
-        return _instance;
-    },
-    /***************************************************************
-    Prepares selected file for connection testing.
-    ***************************************************************/
-    loadFile: function(key, src, type, bytes) {
-        _bytes = bytes;
-        if(!_bytes)
-            console.warn("Error, file bytes not specified for connection testing.")
-        Load(key, src, type);
-    },
-    checkConnection: function() {
-        CheckConnection();
-    },
-    startPreload() {
-        StartPreloadState();
-    }
-}
-
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(29)))
 
 /***/ }),
 /* 22 */
@@ -3254,147 +3270,8 @@ module.exports = {
 "use strict";
 
 
-const Text = __webpack_require__(3);
-
-var _instance = null;
-var _game = null;
-var _textSlots = [null, null];
-var _subtitleVisible = false;
-
-const subtitleTextKeyEnum = 'TEXT_SUBTITLE';
-
-const SUBTITLE_Y_POS = 650;
-const SUBTITLE_SPACING = 5;
-
-function CreateSubs(video, subs) {
-	var srt = _game.cache.getText(subs);
-	var parsedSrt = fromSrt(srt, true);
-	AddSubEvents(parsedSrt, video);
-}
-
-function AddSubEvents(parsedSrt, video) {
-	parsedSrt.forEach(function(sub) {
-		//console.log(sub.startTime);
-		video.addEventListener("timeupdate", show, false);
-
-		function show() {
-			if(video.currentTime >= sub.startTime){
-           		video.removeEventListener("timeupdate", show);
-	            var text = new Text(sub.text, 0, -500, subtitleTextKeyEnum, _game.global.style.subtitleTextProperties);
-	            text.addToGame(_game, _game.mediaGroup);
-	            text.changeText(_game, _subtitleVisible);
-	            var slotIndex = FindSubtitleSlot(text);
-	            AddDestroyEvent(video, sub, text, slotIndex);
-	        }
-		}		
-	});
-}
-
-function AddDestroyEvent(video, sub, text, slotIndex) {
-	video.addEventListener("timeupdate", destroy, false);
-
-	function destroy() {
-		if(video.currentTime >= sub.endTime){
-			console.log("destroyed");
-       		video.removeEventListener("timeupdate", destroy); 
-            text.destroy();
-            _textSlots[slotIndex] = null;
-        }
-	}
-}
-
-function FindSubtitleSlot(text) {
-	if(!_textSlots[0]) {
-		_textSlots[0] = text;
-		text.setY(SUBTITLE_Y_POS);
-		return 0;
-	}
-	else if(!_textSlots[1]) {
-		_textSlots[1] = text;
-		text.setY(SUBTITLE_Y_POS - text.getHeight() - SUBTITLE_SPACING);
-		return 1;
-	}
-	else
-		console.warn("Max number of concurrent subtitles reached." + text);
-}
-
-function ToggleSubtitle() {
-	_subtitleVisible = !_subtitleVisible;
-	_textSlots.forEach(function(slot) {
-		if(slot)
-			slot.setVisible(_subtitleVisible);
-	});
-	return _subtitleVisible;
-}
-
-function fromSrt(data, ms) {
-    var useMs = ms ? true : false;
-
-    data = data.replace(/\r/g, '');
-    var regex = /(\d+)\n(\d{2}:\d{2}:\d{2},\d{3}) --> (\d{2}:\d{2}:\d{2},\d{3})/g;
-    data = data.split(regex);
-    data.shift();
-
-    var items = [];
-    for (var i = 0; i < data.length; i += 4) {
-        items.push({
-            id: data[i].trim(),
-            startTime: useMs ? timeMs(data[i + 1].trim()) : data[i + 1].trim(),
-            endTime: useMs ? timeMs(data[i + 2].trim()) : data[i + 2].trim(),
-            text: data[i + 3].trim()
-        });
-    }
-
-    return items;
-};
-
-function timeMs(val) {
-    var regex = /(\d+):(\d{2}):(\d{2}),(\d{3})/;
-    var parts = regex.exec(val);
-
-    if (parts === null) {
-        return 0;
-    }
-
-    for (var i = 1; i < 5; i++) {
-        parts[i] = parseInt(parts[i], 10);
-        if (isNaN(parts[i])) parts[i] = 0;
-    }
-
-    // hours + minutes + seconds + ms
-    return parts[1] * 3600 + parts[2] * 60 + parts[3] + parts[4]/1000;
-};
-
-
-module.exports = {
-	init: function (game) {
-		if(_instance)
-			return _instance;
-		_instance = this;
-		_game = game;
-		return _instance;
-	},
-	create: function(video, subs) {
-		CreateSubs(video, subs);
-	},
-	toggleSubtitle: function() {
-		return ToggleSubtitle();
-	},
-	getSubtitleVisible: function() {
-		return _subtitleVisible;
-	}
-}
-
-
-/***/ }),
-/* 24 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
 const Linkable = __webpack_require__(2),
-    Animation = __webpack_require__(10);
+    Animation = __webpack_require__(9);
 
 var _instance = null;
 var _game = null;
@@ -3544,7 +3421,7 @@ module.exports = {
 
 
 /***/ }),
-/* 25 */
+/* 24 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3555,7 +3432,7 @@ var settle = __webpack_require__(50);
 var buildURL = __webpack_require__(53);
 var parseHeaders = __webpack_require__(59);
 var isURLSameOrigin = __webpack_require__(57);
-var createError = __webpack_require__(28);
+var createError = __webpack_require__(27);
 var btoa = (typeof window !== 'undefined' && window.btoa && window.btoa.bind(window)) || __webpack_require__(52);
 
 module.exports = function xhrAdapter(config) {
@@ -3728,10 +3605,10 @@ module.exports = function xhrAdapter(config) {
   });
 };
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(30)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(29)))
 
 /***/ }),
-/* 26 */
+/* 25 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3757,7 +3634,7 @@ module.exports = Cancel;
 
 
 /***/ }),
-/* 27 */
+/* 26 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3769,7 +3646,7 @@ module.exports = function isCancel(value) {
 
 
 /***/ }),
-/* 28 */
+/* 27 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3793,7 +3670,7 @@ module.exports = function createError(message, config, code, response) {
 
 
 /***/ }),
-/* 29 */
+/* 28 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3811,7 +3688,7 @@ module.exports = function bind(fn, thisArg) {
 
 
 /***/ }),
-/* 30 */
+/* 29 */
 /***/ (function(module, exports) {
 
 // shim for using process in browser
@@ -3997,7 +3874,7 @@ process.umask = function() { return 0; };
 
 
 /***/ }),
-/* 31 */
+/* 30 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /****************************************************************
@@ -4007,7 +3884,7 @@ Loads game fonts and tests user's connection.
 "use_strict";
 
 //Dependencies
-const ConnectionChecker = __webpack_require__(21), 
+const ConnectionChecker = __webpack_require__(33), 
     GameManager = __webpack_require__(35),
     SoundManager = __webpack_require__(38),
     DatabaseManager = __webpack_require__(34);
@@ -4113,7 +3990,7 @@ module.exports = {
 
 
 /***/ }),
-/* 32 */
+/* 31 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /***************************************************************
@@ -4124,7 +4001,7 @@ Since videos are streamed, it's not loaded here.
 "use_strict";
 
 //Dependencies
-const Resources = __webpack_require__(15);
+const Resources = __webpack_require__(13);
 
 var _instance = null,
     _game = null;
@@ -4171,7 +4048,7 @@ module.exports = {
 
 
 /***/ }),
-/* 33 */
+/* 32 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4206,6 +4083,131 @@ Input.prototype.getInput = function() {
 
 
 module.exports = Input;
+
+
+/***/ }),
+/* 33 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/***************************************************************
+Checks user's connection
+***************************************************************/
+
+
+//initializes once
+var _instance = null;
+var _game = null;
+var _file = null;
+var _bytes = null;
+var _timer = null;
+
+const SLOW_DOWNLOAD_THRESHOLD_MBPS = 0.36;
+
+//Type of file for connection test
+var FileTypeEnum = {
+    Image: 'IMAGE',
+    Video: 'VIDEO',
+    Audio: 'AUDIO'
+}
+
+/***************************************************************
+Adds load start and on load complete functions.
+Starts load process of selected file and times it.
+***************************************************************/
+function CheckConnection() {    
+    _game.load.onFileComplete.add(LoadComplete, this);
+    _game.load.onLoadStart.add(StartLoading, this);    
+    _game.load.start();
+}
+
+/***************************************************************
+Creates timer.
+***************************************************************/
+function StartLoading() {
+    _timer = _game.time.create(true);
+    _timer.start();
+}
+
+/***************************************************************
+Gets connection speed and starts preload state.
+***************************************************************/
+function LoadComplete() {    
+    _timer.stop();
+    SetVideoQuality(CalculateConnectionSpeed());  
+    _game.load.onFileComplete.remove(LoadComplete, this);
+
+    //Starts preload state
+    _game.state.start("preload");
+}
+
+/***************************************************************
+Calculates connection speed and returns it.
+***************************************************************/
+function CalculateConnectionSpeed() {
+    var elapsedSeconds = (_timer._now - _timer._started)/1000;
+    elapsedSeconds += _timer.elapsed/1000;
+    var connectionSpeedMbps = _bytes/(elapsedSeconds)/ 1000000;
+    return connectionSpeedMbps;
+}
+
+/***************************************************************
+Decides video quality for the rest of the experience.
+***************************************************************/
+function SetVideoQuality(speed) {
+    if(speed > SLOW_DOWNLOAD_THRESHOLD_MBPS || speed < 0)
+        _game.global.quality = 'HD';
+    else
+        _game.global.quality = 'SD';
+    console.log('Connection speed: ' + speed + ' Mb/s. Quality: ' +  _game.global.quality);  
+}
+
+/***************************************************************
+Prepares selected file for connection test.
+***************************************************************/
+function Load(key, src, type) {
+    switch (type) {
+        case FileTypeEnum.Image:
+            _file = _game.load.image(key, src);
+            break;
+        case FileTypeEnum.Video:
+            _file = _game.load.text(key, src);
+            break;
+        case FileTypeEnum.Audio:
+            _file = _game.load.audio(key, src);
+            break;
+        default:
+            console.warn('Not a valid file type for loading check.');
+    }
+    return _file;
+}
+
+module.exports = {
+    init: function(game) {
+        //Singleton initialization
+        if(_instance !== null)
+            return _instance;        
+        _file = null;
+        _game = game;
+        _instance = this;
+        return _instance;
+    },
+    /***************************************************************
+    Prepares selected file for connection testing.
+    ***************************************************************/
+    loadFile: function(key, src, type, bytes) {
+        _bytes = bytes;
+        if(!_bytes)
+            console.warn("Error, file bytes not specified for connection testing.")
+        Load(key, src, type);
+    },
+    checkConnection: function() {
+        CheckConnection();
+    },
+    startPreload() {
+        StartPreloadState();
+    }
+}
 
 
 /***/ }),
@@ -4300,9 +4302,9 @@ All game signals go through here.
 
 
 //Dependencies
-const StateManager = __webpack_require__(16),
-    InteractState = __webpack_require__(18),
-    LocationState = __webpack_require__(19),
+const StateManager = __webpack_require__(14),
+    InteractState = __webpack_require__(19),
+    LocationState = __webpack_require__(20),
     Transition = __webpack_require__(4),
     UI = __webpack_require__(5),
     Video = __webpack_require__(1),
@@ -4498,7 +4500,7 @@ module.exports = GameManager;
 //Initialized once
 const Text = __webpack_require__(3),
     Image = __webpack_require__(6),
-    Graphic = __webpack_require__(11);
+    Graphic = __webpack_require__(10);
 
 var _instance = null;
 var _game = null;
@@ -4709,7 +4711,7 @@ module.exports = {
 var _instance = null;
 var _game = null;
 var _input = null;
-var Input = __webpack_require__(33);
+var Input = __webpack_require__(32);
 
 module.exports = {
     init: function(game) {
@@ -4740,12 +4742,12 @@ module.exports = {
 "use strict";
 
 
-const StateManager = __webpack_require__(16),
-    InteractState = __webpack_require__(18),
-    LocationState = __webpack_require__(19),
-    Icons = __webpack_require__(8),
-    Choices = __webpack_require__(13),
-    Thoughts = __webpack_require__(14),
+const StateManager = __webpack_require__(14),
+    InteractState = __webpack_require__(19),
+    LocationState = __webpack_require__(20),
+    Icons = __webpack_require__(12),
+    Choices = __webpack_require__(16),
+    Thoughts = __webpack_require__(18),
     Transition = __webpack_require__(4),
     UI = __webpack_require__(5),
     Video = __webpack_require__(1);
@@ -4822,10 +4824,10 @@ Manu scenes.
 const Group = __webpack_require__(7), 
     Input = __webpack_require__(37),
     Transition = __webpack_require__(4),
-    State = __webpack_require__(9),
-    Background = __webpack_require__(12),
+    State = __webpack_require__(8),
+    Background = __webpack_require__(11),
     Video = __webpack_require__(1),
-    Icons = __webpack_require__(8);
+    Icons = __webpack_require__(12);
 
 var _instance = null;
 var _stateInfo = null;
@@ -4910,9 +4912,9 @@ Movie scene state without interaction.
 const Group = __webpack_require__(7),
     UI = __webpack_require__(5),
     Video = __webpack_require__(1),
-    State = __webpack_require__(9),
-    Background = __webpack_require__(12),
-    SceneParser = __webpack_require__(17);
+    State = __webpack_require__(8),
+    Background = __webpack_require__(11),
+    SceneParser = __webpack_require__(15);
 
 var _instance = null;
 var _game = null;
@@ -4985,8 +4987,8 @@ Utility state that selects next scene to go depending on scenes visited.
 
 
 //Dependencies
-const State = __webpack_require__(9),
-    SceneParser = __webpack_require__(17);
+const State = __webpack_require__(8),
+    SceneParser = __webpack_require__(15);
 
 var _instance = null;
 var _stateInfo = null;
@@ -5038,10 +5040,10 @@ Game startup
 
 
 //Dependencies
-const Boot = __webpack_require__(31),
-    Preload = __webpack_require__(32),
-    StateManager = __webpack_require__(16),
-    ResourceLoader = __webpack_require__(15);
+const Boot = __webpack_require__(30),
+    Preload = __webpack_require__(31),
+    StateManager = __webpack_require__(14),
+    ResourceLoader = __webpack_require__(13);
     
 function initGame(Boot, Preload, StateManager, ResourceLoader) {
     var game = new Phaser.Game(1280, 720, Phaser.CANVAS, '', { init: init, preload: preload, create: create, update: update });
@@ -5099,9 +5101,9 @@ module.exports = __webpack_require__(44);
 
 
 var utils = __webpack_require__(0);
-var bind = __webpack_require__(29);
+var bind = __webpack_require__(28);
 var Axios = __webpack_require__(46);
-var defaults = __webpack_require__(20);
+var defaults = __webpack_require__(21);
 
 /**
  * Create an instance of Axios
@@ -5134,9 +5136,9 @@ axios.create = function create(instanceConfig) {
 };
 
 // Expose Cancel & CancelToken
-axios.Cancel = __webpack_require__(26);
+axios.Cancel = __webpack_require__(25);
 axios.CancelToken = __webpack_require__(45);
-axios.isCancel = __webpack_require__(27);
+axios.isCancel = __webpack_require__(26);
 
 // Expose all/spread
 axios.all = function all(promises) {
@@ -5157,7 +5159,7 @@ module.exports.default = axios;
 "use strict";
 
 
-var Cancel = __webpack_require__(26);
+var Cancel = __webpack_require__(25);
 
 /**
  * A `CancelToken` is an object that can be used to request cancellation of an operation.
@@ -5221,7 +5223,7 @@ module.exports = CancelToken;
 "use strict";
 
 
-var defaults = __webpack_require__(20);
+var defaults = __webpack_require__(21);
 var utils = __webpack_require__(0);
 var InterceptorManager = __webpack_require__(47);
 var dispatchRequest = __webpack_require__(48);
@@ -5374,8 +5376,8 @@ module.exports = InterceptorManager;
 
 var utils = __webpack_require__(0);
 var transformData = __webpack_require__(51);
-var isCancel = __webpack_require__(27);
-var defaults = __webpack_require__(20);
+var isCancel = __webpack_require__(26);
+var defaults = __webpack_require__(21);
 
 /**
  * Throws a `Cancel` if cancellation has been requested.
@@ -5484,7 +5486,7 @@ module.exports = function enhanceError(error, config, code, response) {
 "use strict";
 
 
-var createError = __webpack_require__(28);
+var createError = __webpack_require__(27);
 
 /**
  * Resolve or reject a Promise based on response status.
