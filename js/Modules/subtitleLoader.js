@@ -51,6 +51,8 @@ function AddDestroyEvent(video, sub, text, slotIndex) {
 
 function FindSubtitleSlot(text) {
 	//if(!_textSlots[0]) {
+		if(_textSlots[0])
+			_textSlots[0].setVisible(false);
 		_textSlots[0] = text;
 		text.setY(SUBTITLE_Y_POS);
 		return 0;
