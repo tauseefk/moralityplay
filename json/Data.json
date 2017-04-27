@@ -26,6 +26,7 @@
     "arrowS3middle": "./Images/UI/scene3_arrow_middle.png",
 
     "endButton": "./Images/UI/end.png",
+    "endButtonSm": "./Images/UI/endSmall.png",   
     "pauseButton": "./Images/UI/pause.png",
     "playButton": "./Images/UI/start.png",
     "startButton": "./Images/UI/play.png",
@@ -226,29 +227,34 @@
         },
         "backgroundMusic": "cmuCutLocationSound",
         "icons": {
-            "size": 3,
+            "size": 4,
             "type": [
                 "IMAGE_BUTTON_DISPLAY_IMAGE",
+                "IMAGE_BUTTON_SCENECHANGE",
                 "IMAGE_BUTTON_SCENECHANGE",
                 "IMAGE_BUTTON_SCENECHANGE"
             ],
             "key": [
                 "arrowS3middle",
                 "arrowBackward",
-                "arrowS3middle"
+                "arrowS3middle",
+                "endButtonSm"
             ],
             "coords": [
                 [850, 620],
                 [100, 620],
-                [850, 620]
+                [850, 620],
+                [1130, 55]
             ],
             "targetImageIndexOrScene": [
                 0,
                 "cmuCutLocation",
-                "cmuCohonIndoorLocation"
+                "cmuCohonIndoorLocation",
+                "endingSceneSwitch"
             ],
             "lockedByScenes": [
                 ["an2good", "an2bad"],
+                null,
                 null,
                 null
             ],
@@ -257,6 +263,9 @@
                 null, 
                 [
                     ["an2good", "an2bad"]
+                ],
+                [
+                    ["MK2good", "MK2bad"], ["li2bad","li2good"],["an2bad","an2good"]                    
                 ]
             ]
         },
@@ -338,29 +347,34 @@
         },
         "backgroundMusic": "cmuCutLocationSound",
         "icons": {
-            "size": 3,
+            "size": 4,
             "type": [
                 "IMAGE_BUTTON_DISPLAY_IMAGE",
+                "IMAGE_BUTTON_SCENECHANGE",
                 "IMAGE_BUTTON_SCENECHANGE",
                 "IMAGE_BUTTON_SCENECHANGE"
             ],
             "key": [
                 "arrowS1middle",
                 "arrowBackward",
-                "arrowS1middle"
+                "arrowS1middle",
+                "endButtonSm"
             ],
             "coords": [
                 [700, 620],
                 [100, 620],
-                [700, 620]
+                [700, 620],
+                [1130, 55]
             ],
             "targetImageIndexOrScene": [
                 0,
                 "cmuCutLocation",
-                "cmuGatesInsideLocation"
+                "cmuGatesInsideLocation",
+                "endingSceneSwitch"
             ],
             "lockedByScenes": [
                 ["MK2good", "MK2bad"],
+                null,
                 null,
                 null
             ],
@@ -369,6 +383,9 @@
                 null, 
                 [
                     ["MK2good", "MK2bad"]
+                ],
+                [
+                    ["MK2good", "MK2bad"], ["li2bad","li2good"],["an2bad","an2good"]                    
                 ]
             ]
         },
@@ -450,29 +467,34 @@
         },
         "backgroundMusic": "cmuCutLocationSound",
         "icons": {
-            "size": 3,
+            "size": 4,
             "type": [
                 "IMAGE_BUTTON_DISPLAY_IMAGE",
+                "IMAGE_BUTTON_SCENECHANGE",
                 "IMAGE_BUTTON_SCENECHANGE",
                 "IMAGE_BUTTON_SCENECHANGE"
             ],
             "key": [
                 "arrowS2middle",
                 "arrowBackward",
-                "arrowS2middle"
+                "arrowS2middle",
+                "endButtonSm"
             ],
             "coords": [
                 [360, 600],
                 [100, 620],
-                [360, 600]
+                [360, 600],
+                [1130, 55]
             ],
             "targetImageIndexOrScene": [
                 0,
                 "cmuCutLocation",
-                "cmuHuntInsideLocation"
+                "cmuHuntInsideLocation",
+                "endingSceneSwitch"
             ],
             "lockedByScenes": [
                 ["li2good", "li2bad"],
+                null,
                 null,
                 null
             ],
@@ -481,7 +503,11 @@
                 null, 
                 [
                     ["li2good", "li2bad"]
+                ],
+                [
+                    ["MK2good", "MK2bad"], ["li2bad","li2good"],["an2bad","an2good"]
                 ]
+
             ]
         },
         "linkedIcons": {
