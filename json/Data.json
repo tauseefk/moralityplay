@@ -61,7 +61,12 @@
     "li1sub": "./Videos/Subtitles/Li1_optimized.srt",
     "MK1sub": "./Videos/Subtitles/MK1_optimized.srt",
     "MK2goodsub": "./Videos/Subtitles/MK2_bad_optimized.srt",
-    "MK2badsub": "./Videos/Subtitles/MK2_good_optimized.srt"
+    "MK2badsub": "./Videos/Subtitles/MK2_good_optimized.srt",
+    "ed1":"./Videos/Subtitles/Ending1.srt",
+    "ed2":"./Videos/Subtitles/Ending2.srt",
+    "ed3":"./Videos/Subtitles/Ending3.srt",
+    "ed4":"./Videos/Subtitles/Ending4.srt",
+    "ed5":"./Videos/Subtitles/Ending5.srt",
 },
 "scenes": {
     "startScene":{
@@ -192,7 +197,7 @@
                 [1150, 600],
                 [650, 600],
                 [150, 600],
-                [640, 240]
+                [640, 100]
             ],
 
             "targetImageIndexOrScene": [
@@ -1123,6 +1128,7 @@
         "movieSrcHD": "./Videos/Ending_1_optimized.mp4",
         "movieSrcSD": "./Videos/Ending_1_optimized_lo.mp4",
         "stateType": "InteractState",
+        "sub":"ed1",
         "transition": {
             "fadeIn": false,
             "fadeOut": false
@@ -1154,7 +1160,7 @@
             }
             ]
         },
-        "nextScene": "postEndingMenu"        
+        "nextScene": "credit"        
     },
     "ending2": {
         "videoFilter": [
@@ -1163,6 +1169,7 @@
         "movieSrcHD": "./Videos/Ending_2_optimized.mp4",
         "movieSrcSD": "./Videos/Ending_2_optimized_lo.mp4",
         "stateType": "InteractState",
+        "sub":"ed2",
         "transition": {
             "fadeIn": false,
             "fadeOut": false
@@ -1232,7 +1239,7 @@
             }            
             ]
         },
-        "nextScene": "postEndingMenu"        
+        "nextScene": "credit"        
     },
     "ending3": {
         "videoFilter": [
@@ -1241,6 +1248,7 @@
         "movieSrcHD": "./Videos/Ending_3_optimized.mp4",
         "movieSrcSD": "./Videos/Ending_3_optimized_lo.mp4",
         "stateType": "InteractState",
+        "sub":"ed3",        
         "transition": {
             "fadeIn": false,
             "fadeOut": false
@@ -1313,7 +1321,7 @@
             }                       
             ]
         },
-        "nextScene": "postEndingMenu"        
+        "nextScene": "credit"        
     },
     "ending4": {
         "videoFilter": [
@@ -1322,6 +1330,7 @@
         "movieSrcHD": "./Videos/Ending_4_optimized.mp4",
         "movieSrcSD": "./Videos/Ending_4_optimized_lo.mp4",
         "stateType": "InteractState",
+        "sub":"ed4",        
         "transition": {
             "fadeIn": false,
             "fadeOut": false
@@ -1395,7 +1404,7 @@
 
             ]
         },
-        "nextScene": "postEndingMenu"        
+        "nextScene": "credit"        
     },
     "ending5": {
         "videoFilter": [
@@ -1404,6 +1413,7 @@
         "movieSrcHD": "./Videos/Ending_5_optimized.mp4",
         "movieSrcSD": "./Videos/Ending_5_optimized_lo.mp4",
         "stateType": "InteractState",
+        "sub":"ed5",        
         "transition": {
             "fadeIn": false,
             "fadeOut": false
@@ -1457,27 +1467,15 @@
             }            
             ]
         },
-        "nextScene": "postEndingMenu"       
+        "nextScene": "credit"       
     },
 
 
 
-    "ending": {
+    "credit": {
         "stateType": "MovieState",
-        "movieReqs": [
-            ["MK2good", "an2good", "li2good"],
-            ["MK2bad", "an2good", "li2good"],
-            ["MK2good", "an2bad", "li2good"],  
-            ["MK2good", "li2bad"],                     
-            ["MK2bad"]
-        ],
-        "movieSrcArr": [
-            ["./Videos/Ending_4_optimized.mp4", "./Videos/Ending_4_optimized_lo.mp4"],
-            ["./Videos/Ending_5_optimized.mp4", "./Videos/Ending_5_optimized_lo.mp4"],
-            ["./Videos/Ending_3_optimized.mp4", "./Videos/Ending_3_optimized_lo.mp4"],
-            ["./Videos/Ending_2_optimized.mp4", "./Videos/Ending_2_optimized_lo.mp4"],
-            ["./Videos/Ending_1_optimized.mp4", "./Videos/Ending_1_optimized_lo.mp4"]
-        ],
+        "movieSrcHD": "./Videos/credit.mp4",
+        "movieSrcSD": "./Videos/credit_lo.mp4",        
         "transition": {
             "fadeIn": true,
             "fadeOut": false
