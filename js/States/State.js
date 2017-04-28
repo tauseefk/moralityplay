@@ -1,6 +1,7 @@
 /***************************************************************
 State object, stores scene information.
 Getters to obtain scene information.
+Author: Christopher Weidya
 ***************************************************************/
 
 "use strict";

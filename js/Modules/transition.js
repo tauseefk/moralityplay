@@ -1,6 +1,7 @@
 "use strict";
 
-const VideoFilter = require('./videoFilterLoader');
+const Graphic = require('./Graphics'),
+	VideoFilter = require('./videoFilterLoader');
 
 var _instance = null;
 var _game = null;
@@ -13,20 +14,19 @@ function fade(isFadeIn) {
 	var val = 0;
 	if(isFadeIn)
 		val = 1;
-	_rectGraphic = _game.add.graphics(0, 0);
-	_rectGraphic.beginFill(TRANSITION_COLOR, 1);
-	_rectGraphic.drawRect(0, 0, _game.width, _game.height);
-	_rectGraphic.endFill();
-	_rectGraphic.alpha = val;
-	_game.world.bringToTop(_rectGraphic);
-    startFade(_rectGraphic, isFadeIn);
+	_rectGraphic = new Graphic(0, 0, Graphic.getEnum().Transition);
+	var rectangle = Graphic.createRectangle(0, 0, _game.width, _game.height, TRANSITION_COLOR);
+	_rectGraphic.addGraphicToGame(_game);
+	_rectGraphic.changeGraphic(_game, rectangle, val);
+	//_game.world.bringToTop(_rectGraphic.getGraphic());
+	//startFade(_rectGraphic.getGraphic(), isFadeIn);
 }
 
 function startFade(obj, isFadeIn) {
 	var val = 1;
 	if(isFadeIn)
 		val = 0;
-	var fadeTween = _game.add.tween(obj).to({alpha:val}, 1000, Phaser.Easing.Linear.None, true);
+	var fadeTween = _game.add.tween(obj).to({alpha:val}, 10000, Phaser.Easing.Linear.None, true);
 }
 
 //Not used

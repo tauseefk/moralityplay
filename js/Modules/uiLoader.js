@@ -30,19 +30,19 @@ const toggleSubtitleButtonImageKeyEnum = 'IMAGE_BUTTON_TOGGLE_SUBTITLE';
 
 function DrawPauseButton() {
     if(!_pauseImage)
-        _pauseImage = new Image(10, 10, 'pauseButton', pauseButtonImageKeyEnum);
+        _pauseImage = new Image(10, 10, _game.global.style.pauseButtonImageKey, Image.getEnum().Button);
     _pauseImage.addImageToGame(_game, _game.uiGroup);
     _pauseImage.changeImage(_game, _game.global.gameManager.getPauseSignal());
 }
 
 function DrawSubtitleButtons() {
     if(!_subtitleImage)        
-        _subtitleImage = new Image(10, 100, 'subtitleButton', toggleSubtitleButtonImageKeyEnum);    
+        _subtitleImage = new Image(10, 100, _game.global.style.subtitleButtonImageKey, Image.getEnum().Button);    
     _subtitleImage.addImageToGame(_game, _game.uiGroup);
     _subtitleImage.changeImage(_game, _game.global.gameManager.getToggleSubtitleSignal());
 
     if(!_subtitleDisabledImage)        
-        _subtitleDisabledImage = new Image(10, 100, 'subtitleDisabledButton', toggleSubtitleButtonImageKeyEnum);    
+        _subtitleDisabledImage = new Image(10, 100, _game.global.style.subtitleDisabledButtonImageKey, Image.getEnum().Button);    
     _subtitleDisabledImage.addImageToGame(_game, _game.uiGroup);
     _subtitleDisabledImage.changeImage(_game, _game.global.gameManager.getToggleSubtitleSignal());
 
@@ -65,7 +65,7 @@ function Pause() {
         _game.paused = true;
         Video.stop();
         if(_graphics) {
-            _graphics.visible = true;
+            _graphics.setVisible(true);;
         }
         if(_playImage) {
             _playImage.setVisible(true);
@@ -78,7 +78,7 @@ function Play() {
     if(!Video.isPausedByGame()) {
         Video.play();
         _game.paused = false;
-        _graphics.visible = false;
+        _graphics.setVisible(false);
         _playImage.setVisible(false);
     }
 }
@@ -100,12 +100,12 @@ function ShowUI() {
 }
 
 function DrawPauseOverlay() {
-    _graphics = _game.add.graphics(0, 0);
-    _graphics.beginFill(0x000000, 0.8);
-    _graphics.drawRect(0, 0, _game.width, _game.height);
-    _graphics.endFill();
-    _graphics.visible = false;
-    _game.uiGroup.add(_graphics);
+    _graphics = new Graphic(0, 0, Graphic.getEnum().Rectangle);
+    var rectangle = Graphic.createRectangle(0, 0, _game.width, _game.height, 0x000000, 0.8);
+    _graphics.addGraphicToGame(_game);
+    _graphics.changeGraphic(_game, rectangle);
+    _graphics.setVisible(false);
+    _game.uiGroup.add(_graphics.getGraphic());
 }
 
 function drawUI() {

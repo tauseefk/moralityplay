@@ -1,5 +1,7 @@
 /***************************************************************
-Game startup
+Game startup.
+The experience runs on Phaser v2.6.2
+Author: Christopher Weidya
 ****************************************************************/
 
 "use strict";

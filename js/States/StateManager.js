@@ -1,5 +1,6 @@
 /***************************************************************
 Manages creation and transitions between state types. 
+Author: Christopher Weidya
 ***************************************************************/
 
 "use strict";

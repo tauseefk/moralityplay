@@ -1,5 +1,6 @@
 /***************************************************************
-Manu scenes.
+Manu scene
+Author: Christopher Weidya
 ***************************************************************/
 "use strict";
 
@@ -62,8 +63,9 @@ module.exports = {
             Video.create(videoSrc, _stateInfo.getTransitionInfo().fadeOut, _stateInfo.getVideoFilter());
         else
             Background.create(_stateInfo.getBgImageKey(), _stateInfo.getDraggable());
-
-        Icons.createExploratoryIcons(_stateInfo.getIconsInfo());
+        
+        //Create Icons
+        Icons.createClickableIcons(_stateInfo.getIconsInfo());
 
         if(_stateInfo.getTransitionInfo().fadeIn)
             this.game.global.gameManager.getFadeInTransitionSignal().dispatch();

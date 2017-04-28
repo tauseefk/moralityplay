@@ -1,6 +1,7 @@
 /***************************************************************
 Loads resources including images, sprites, sound.
 Since videos are streamed, it's not loaded here.
+Author: Christopher Weidya
 ***************************************************************/
 
 "use_strict";

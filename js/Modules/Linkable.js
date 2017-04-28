@@ -108,7 +108,7 @@ Linkable.prototype.onTrigger = function() {
 }
 
 Linkable.prototype.addMouseOverScaleEffect = function(game, object) {
-    this._linkable.addMouseOverAnimation(Animation.scale(game, object, false, object.width *1.05, object.height *1.05, MOUSEOVER_SPEED));
+    this._linkable.addMouseOverAnimation(Animation.scale(game, object, false, object.width *1.03, object.height *1.03, MOUSEOVER_SPEED));
     this._linkable.setMouseOver();    
     this._linkable.addMouseOutAnimation(Animation.scale(game, object, false, object.width, object.height, MOUSEOVER_SPEED));
     this._linkable.setMouseOut();

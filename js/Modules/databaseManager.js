@@ -1,12 +1,15 @@
+/***************************************************************
+Handles database connection and interaction.
+Author: Md Tauseef
+***************************************************************/
 "use strict";
 
 var _instance = null;
 var _game = null;
-var _dbUrl = "http://mocking-birds.etc.cmu.edu:3000/";
+var _serverUrl = "http://mocking-birds.etc.cmu.edu/";
 var _userInteractionRoute = "addUserAction";
 var _createUserRoute = "createUser";
 var userId = null;
-var axios = require('axios');
 
 var useDatabase = true;
 
@@ -29,7 +32,7 @@ DatabaseManager.prototype.setUserId = function(generatedUserId) {
 DatabaseManager.prototype.createUser = function() {
     if(!useDatabase)
         return;
-  axios.get(_dbUrl + _createUserRoute)
+  axios.get(_serverUrl + _createUserRoute)
   .then(function(res) {
     userId = res.data;
   })
@@ -46,10 +49,10 @@ DatabaseManager.prototype.sendInteractionData = function(currentSceneName, tag) 
         sceneName: currentSceneName,
         interactionType: tag
       };
-      // var url = createUserInteractionUrl(_dbUrl, _userInteractionRoute, userInteractionData);
+      // var url = createUserInteractionUrl(_serverUrl, _userInteractionRoute, userInteractionData);
       // fetch(url)
       // .then(console.log.bind(this));
-      axios.post(_dbUrl + _userInteractionRoute, userInteractionData)
+      axios.post(_serverUrl + _userInteractionRoute, userInteractionData)
       .then(console.log.bind(this))
       .catch(console.error.bind(this));
     }

@@ -1,5 +1,6 @@
 /***************************************************************
 Movie scene state without interaction.
+Author: Christopher Weidya
 ***************************************************************/
 "use strict";
 

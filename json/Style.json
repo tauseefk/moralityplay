@@ -37,5 +37,11 @@
         "fill": "#7fd3d0",
         "boundsHeight": 100,
         "lineSpacing": -5
-    }
+    },
+    "thoughtBubbleImageKey": "thoughtBubbleSprite",
+    "pauseButtonImageKey": "pauseButton",
+    "subtitleButtonImageKey": "subtitleButton",
+    "subtitleDisabledButtonImageKey": "subtitleDisabledButton",
+    "overlayCloseButtonImageKey": "closeButton",
+    "overlayScrollBarImageKey": "scrollBar"
 }

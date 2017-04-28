@@ -1,5 +1,6 @@
 /****************************************************************
 Loads game fonts and tests user's connection.
+Author: Christopher Weidya
 ****************************************************************/
 
 "use_strict";
@@ -81,6 +82,8 @@ function CreateGlobalVars() {
 
     //Constants
     _game.global.constants = {};
+
+    //Image information viewing constants
     _game.global.constants.INFO_VIEW_MARGIN = 50; 
     _game.global.constants.INFO_VIEW_HEIGHT = _game.height - _game.global.constants.INFO_VIEW_MARGIN*2;
     _game.global.constants.SCROLLBAR_DIM = [30, _game.global.constants.INFO_VIEW_HEIGHT];    
@@ -88,6 +91,10 @@ function CreateGlobalVars() {
     _game.global.constants.SCROLLBAR_POS = [_game.width - _game.global.constants.INFO_VIEW_MARGIN - _game.global.constants.SCROLLBAR_DIM[0], 
         _game.global.constants.INFO_VIEW_MARGIN];
     _game.global.constants.SCROLLBAR_STROKEWIDTH = 2;
+    _game.global.constants.INFO_OVERLAY_COLOR = 0x000000;
+    _game.global.constants.INFO_OVERLAY_OPACITY = 0.7;
+    _game.global.constants.SCROLLBAR_WHEEL_SENSITIVITY = 10;
+
 }
 
 module.exports = {

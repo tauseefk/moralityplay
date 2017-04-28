@@ -1,5 +1,6 @@
 /***************************************************************
 Creates choice icons during interaction moments.
+Author: Christopher Weidya
 ***************************************************************/
 "use strict";
 
@@ -113,14 +114,14 @@ Fades out other choices and prompt.
 function FadeChoicesExcept(index){
     _text.forEach(function(text) {
         if(text.index != index) {
-            text.disableInput();
+            text.enableInput(false);
             text.fadeOut(_game);
         }
     });
 
     _choiceBg.forEach(function(choiceBg) {
         if(choiceBg.index != index) {
-            choiceBg.disableInput();
+            choiceBg.enableInput(false);
             choiceBg.fadeOut(_game);
         }
     });
@@ -136,8 +137,8 @@ function FadeChoiceAfterDelay(index, targetScene) {
     _game.time.events.add(Phaser.Timer.SECOND*FADE_DELAY, fadeChoice, this);
 
     function fadeChoice(){
-        _text[index].disableInput();
-        _choiceBg[index].disableInput();
+        _text[index].enableInput(false);
+        _choiceBg[index].enableInput(false);
         if(targetScene) {
             _text[index].fadeOut(_game, _game.global.gameManager.getChangeSceneSignal(), targetScene);
         }

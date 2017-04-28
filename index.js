@@ -13,7 +13,7 @@ app.use('/', express.static(__dirname));
 
 app.get('/generateDummyData', Routes.generateDummyData);
 app.post('/addUserAction', Routes.addUserAction);
-app.get('/updateUserInfo', Routes.updateUserInfo);
+app.post('/updateUserInfo', Routes.updateUserInfo);
 app.get('/userActions', Routes.getUserActions);
 app.get('/createUser', Routes.createUser);
 

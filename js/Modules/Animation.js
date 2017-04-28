@@ -1,6 +1,7 @@
 /***************************************************************
 Handles animation of game objects.
 Static functions takes in the game object and applies animation to it.
+Author: Christopher Weidya
 ***************************************************************/
 
 "use strict";

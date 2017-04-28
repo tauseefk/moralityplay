@@ -1,5 +1,6 @@
 /***************************************************************
 Utility state that selects next scene to go depending on scenes visited.
+Author: Christopher Weidya
 ***************************************************************/
 
 "use strict";

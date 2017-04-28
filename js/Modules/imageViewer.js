@@ -1,9 +1,14 @@
+/***************************************************************
+Handles information image viewing interaction.
+Author: Christopher Weidya
+***************************************************************/
 "use strict";
 
-//Initialized once
+//Dependencies
 const Text = require('./Text'),
     Image = require('./Image'),
-    Graphic = require('./Graphics');
+    Graphic = require('./Graphics'),
+    Utility = require('./Utility');
 
 var _instance = null;
 var _game = null;
@@ -18,12 +23,6 @@ var _overlayText = null;
 var _scrollbarBg = null;
 var _scrollbarDraggable = null;
 
-const thoughtsTextKeyEnum = 'TEXT_THOUGHTS';
-const closeOverlayImageKeyEnum = 'IMAGE_OVERLAY_CLOSE';
-const infoOverlayTextKeyEnum= 'TEXT_INFO_OVERLAY';
-const SCROLLBAR_IMAGE_KEY = 'scrollBar';
-const SCROLLBAR_WHEEL_SENSITIVITY = 10;
-
 var _effectiveScrollBarHeight = 0;
 var _effectiveImageHeight = 0;
 
@@ -36,11 +35,11 @@ function CreateInfoOverlay() {
 function CreateOverlayGraphic() {
     _overlayGraphicScrollBar = new Graphic(0, 0, Graphic.getEnum().Overlay);
     _overlayGraphicScrollBar.addGraphicToGame(_game);
-    _overlayGraphicScrollBar.changeGraphic(_game, _game.global.constants.INFO_VIEW_MARGIN, true);
+    _overlayGraphicScrollBar.changeGraphic(_game, true);
 
     _overlayGraphicNoScrollBar = new Graphic(0, 0, Graphic.getEnum().Overlay);
     _overlayGraphicNoScrollBar.addGraphicToGame(_game);
-    _overlayGraphicNoScrollBar.changeGraphic(_game, _game.global.constants.INFO_VIEW_MARGIN, false);
+    _overlayGraphicNoScrollBar.changeGraphic(_game, false);
 
     
     _scrollbarBg = new Graphic(0, 0, Graphic.getEnum().ScrollBarBackground);
@@ -60,19 +59,19 @@ function CreateOverlayGraphic() {
         */
 
     _scrollbarDraggable = new Image(_game.global.constants.SCROLLBAR_POS[0] + _game.global.constants.SCROLLBAR_DIM[0]/2
-        , _game.global.constants.SCROLLBAR_POS[1], SCROLLBAR_IMAGE_KEY, Image.getEnum().OverlayScrollBar);
+        , _game.global.constants.SCROLLBAR_POS[1], _game.global.style.overlayScrollBarImageKey, Image.getEnum().OverlayScrollBar);
     _scrollbarDraggable.addImageToGame(_game, _game.uiGroup);
     _scrollbarDraggable.changeImage(_game, _game.global.constants.SCROLLBAR_DIM[0]);
 }
 
 function CreateOverlayCrossButton() {
-    _overlayCloseButton = new Image(50, 50, 'closeButton', closeOverlayImageKeyEnum);
+    _overlayCloseButton = new Image(50, 50, _game.global.style.overlayCloseButtonImageKey, Image.getEnum().OverlayCloseImage);
     _overlayCloseButton.addImageToGame(_game, _game.uiGroup);
     _overlayCloseButton.changeImage(_game);
 }
 
 function CreateOverlayHelperText() {
-    _overlayText = new Text('Drag the image below to scroll', _game.world.centerX, 25, infoOverlayTextKeyEnum, 
+    _overlayText = new Text('Drag the image below to scroll', _game.world.centerX, 25, Text.getEnum().InfoOverlayText, 
         _game.global.style.questionTextProperties);
     _overlayText.addToGame(_game, _game.uiGroup);
     _overlayText.changeText(_game);
@@ -111,12 +110,12 @@ function HandleMouseWheel(enable) {
         var newY;
         var delta = _game.input.mouse.wheelDelta;
         if(delta > 0) {
-            newY = _scrollbarDraggable.getY() - SCROLLBAR_WHEEL_SENSITIVITY;
+            newY = _scrollbarDraggable.getY() - _game.global.constants.SCROLLBAR_WHEEL_SENSITIVITY;
             if(newY < _game.global.constants.INFO_VIEW_MARGIN)
                 newY = _game.global.constants.INFO_VIEW_MARGIN;
         }
         else if(delta < 0){
-            newY = _scrollbarDraggable.getY() + SCROLLBAR_WHEEL_SENSITIVITY;
+            newY = _scrollbarDraggable.getY() + _game.global.constants.SCROLLBAR_WHEEL_SENSITIVITY;
             if(newY > _effectiveScrollBarHeight + _game.global.constants.INFO_VIEW_MARGIN)
                 newY = _effectiveScrollBarHeight + _game.global.constants.INFO_VIEW_MARGIN;
         }
@@ -147,9 +146,7 @@ function ImageDragUpdate() {
 }
 
 function StartDragUpdate() {
-    //_scrollbarDraggable.getPhaserImage().events.onDragStart.add(ScrollBarDragStart);
     _scrollbarDraggable.getPhaserImage().events.onDragUpdate.add(ScrollBarDragUpdate);
-    //_currImage.getPhaserImage().events.onDragStart.add(ImageDragStart);
     _currImage.getPhaserImage().events.onDragUpdate.add(ImageDragUpdate);
 }
 
@@ -172,7 +169,7 @@ module.exports = {
         _overlayCloseButton.setVisible(value);
         if(value) {
             if(image) {
-                var scrollBarNeeded = image.checkIfScrollBarNeeded(_game);
+                var scrollBarNeeded = Utility.checkIfScrollBarNeeded(_game, image.getPhaserImage());
                 if(scrollBarNeeded) {
                     this.initializeScrollbar(image);
                     _overlayText.setVisible(true);

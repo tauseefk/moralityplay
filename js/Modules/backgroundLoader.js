@@ -1,5 +1,6 @@
 /***************************************************************
 Creates draggable backgrounds and icons that follow drag movement.
+Author: Christopher Weidya
 ***************************************************************/
 "use strict";
 

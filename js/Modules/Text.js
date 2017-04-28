@@ -174,8 +174,8 @@ Text.prototype.fadeIn = function(game, enableInput) {
     Animation.fade(game, this._text, 1, true);
 }
 
-Text.prototype.disableInput = function(game) {
-    this._text.inputEnabled = false;
+Text.prototype.enableInput = function(value) {
+    this._text.inputEnabled = value;
 }
 
 Text.prototype.destroy = function() {

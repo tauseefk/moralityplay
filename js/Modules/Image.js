@@ -1,9 +1,17 @@
+/***************************************************************
+Wraps Phaser image.
+All images/buttons/sprites in game goes is transformed and displayed here.
+Author: Christopher Weidya
+***************************************************************/
 "use strict";
 
+//Dependencies
 const Linkable = require('./Linkable'),
     Animation = require('./Animation'),
-    Graphic = require('./Graphics');
+    Graphic = require('./Graphics'),
+    Utility = require('./Utility');
 
+//Types of images/buttons/sprites in game
 var ImageTypeEnum = {
     Static: 'IMAGE_STATIC',
     ThoughtSprite: 'IMAGE_SPRITE_THOUGHT',
@@ -17,33 +25,35 @@ var ImageTypeEnum = {
     OverlayCloseImage: 'IMAGE_OVERLAY_CLOSE',
     OverlayScrollBar: 'IMAGE_SCROLLBAR',
     ExternalLink: 'IMAGE_BUTTON_EXTERNAL_LINK',
-    Pause: 'IMAGE_BUTTON_PAUSE',
-    Play: 'IMAGE_BUTTON_PLAY',
-    ToggleSubtitle: 'IMAGE_BUTTON_TOGGLE_SUBTITLE'
+    Button: 'IMAGE_BUTTON_GENERIC',
+    Play: 'IMAGE_BUTTON_PLAY'
 }
 
-//Image constructor
-var Image = function(xPos, yPos, key, type, properties) {
+/***************************************************************
+Image constructor. Needs position, key and type.
+***************************************************************/
+var Image = function(xPos, yPos, key, type) {
     this._type = type;
     this._xPos = xPos;
     this._yPos = yPos;
-    this._properties = properties;
     this._key = key;
     this._link = null;
-    this._image = this;
 }
 
+
+/***************************************************************
+Adds the phaser image/button.sprite to the game.
+***************************************************************/
 Image.prototype.addImageToGame = function(game, group) {
     switch(this._type) {
-        case ImageTypeEnum.Pause:
         case ImageTypeEnum.Play:
         case ImageTypeEnum.Thought:
         case ImageTypeEnum.SceneChange:
         case ImageTypeEnum.DisplayImage:
-        case ImageTypeEnum.ToggleSubtitle:
         case ImageTypeEnum.ChoiceBackground:
         case ImageTypeEnum.OverlayCloseImage:
         case ImageTypeEnum.ExternalLink:
+        case ImageTypeEnum.Button:
             this._image = game.add.button(this._xPos, this._yPos, this._key);
             break;
         case ImageTypeEnum.Static:
@@ -58,46 +68,63 @@ Image.prototype.addImageToGame = function(game, group) {
         default:
             console.warn("Invalid image type not added:" + this._type);
     }
-    if(group) {
+    this.addToGroup(game, group);   
+}
+
+/***************************************************************
+Adds image to group.
+***************************************************************/
+Image.prototype.addToGroup = function(game, group) {
+    if(group)
         group.add(this._image);
-    }
     else {
-        switch(this._type) {
-            case ImageTypeEnum.Pause:
-            case ImageTypeEnum.Play:
-            case ImageTypeEnum.InfoImage:
-            case ImageTypeEnum.OverlayScrollBar:
-            case ImageTypeEnum.ToggleSubtitle:
-            case ImageTypeEnum.OverlayCloseImage:
-                game.uiGroup.add(this._image);
-                break;
-            case ImageTypeEnum.Thought:
-            case ImageTypeEnum.SceneChange:
-            case ImageTypeEnum.DisplayImage:
-            case ImageTypeEnum.ChoiceBackground:
-            case ImageTypeEnum.ExternalLink:
-            case ImageTypeEnum.Static:
-            case ImageTypeEnum.Background:
-            case ImageTypeEnum.ThoughtSprite:
-                game.mediaGroup.add(this._image);
-                break;
-            default:
-                console.warn("Invalid image type not added to group:" + this._type);
-        }
+        this.addToDefaultGroup(game);
     }
 }
 
-//Assigns image change function depending on enum
+/***************************************************************
+Adds to a default predefined Phaser group.
+***************************************************************/
+Image.prototype.addToDefaultGroup = function(game) {
+    switch(this._type) {
+        case ImageTypeEnum.Play:
+        case ImageTypeEnum.InfoImage:
+        case ImageTypeEnum.OverlayScrollBar:
+        case ImageTypeEnum.OverlayCloseImage:
+        case ImageTypeEnum.Button:
+            game.uiGroup.add(this._image);
+            break;
+        case ImageTypeEnum.Thought:
+        case ImageTypeEnum.SceneChange:
+        case ImageTypeEnum.DisplayImage:
+        case ImageTypeEnum.ChoiceBackground:
+        case ImageTypeEnum.ExternalLink:
+        case ImageTypeEnum.Static:
+        case ImageTypeEnum.Background:
+        case ImageTypeEnum.ThoughtSprite:
+            game.mediaGroup.add(this._image);
+            break;
+        default:
+            console.warn("Invalid image type not added to group:" + this._type);
+    }
+}
+
+/***************************************************************
+Changes the image to the specified type.
+***************************************************************/
 Image.prototype.changeImage = function (game, arg1, arg2, arg3, arg4, arg5) {
     switch(this._type) {
         case ImageTypeEnum.Static:            
-            this.changeToStaticImage(game, arg1);
+            this.changeToStaticImage(game);
             break;
         case ImageTypeEnum.Background:
             this.changeToBgImage(game, arg1);
             break;
         case ImageTypeEnum.Thought:
-            this.changeToThoughtIcon(game, arg1, arg2, arg3);
+            this.changeToThoughtIcon(game, arg1, arg2);
+            break;
+        case ImageTypeEnum.ThoughtSprite:
+            this.changeToThoughtSprite(game, arg1, arg2, arg3);
             break;
         case ImageTypeEnum.SceneChange:
             this.changeToSceneChangeImage(game, arg1, arg2);
@@ -106,7 +133,7 @@ Image.prototype.changeImage = function (game, arg1, arg2, arg3, arg4, arg5) {
             this.changeToDisplayImage(game, arg1, arg2);
             break;
         case ImageTypeEnum.InfoImage:
-            this.changeToInfoImage(game, arg1, arg2, arg3);
+            this.changeToInfoImage(game, arg1);
             break;
         case ImageTypeEnum.ChoiceBackground:
             this.changeToChoiceBackgroundImage(game, arg1, arg2, arg3, arg4, arg5);
@@ -120,46 +147,30 @@ Image.prototype.changeImage = function (game, arg1, arg2, arg3, arg4, arg5) {
         case ImageTypeEnum.ExternalLink:
             this.changeToExternalLinkImage(game, arg1);
             break;
-        case ImageTypeEnum.Pause:
-            this.changeToPauseButton(game, arg1);
-            break;
         case ImageTypeEnum.Play:
             this.changeToPlayButton(game);
             break;
-        case ImageTypeEnum.ToggleSubtitle:
-            this.changeToPauseButton(game, arg1);
-            break;
-        case ImageTypeEnum.ThoughtSprite:
-            this.changeToThoughtSprite(game, arg1, arg2, arg3);
+        case ImageTypeEnum.Button:
+            this.changeToGenericButton(game, arg1);
             break;
         default:
             console.warn("Invalid Image Type.");
     }
 }
 
+/***************************************************************
+A generic static phaser image.
+***************************************************************/
 Image.prototype.changeToStaticImage = function(game) {
     this._image.anchor.setTo(0.5, 0.5);
 }
 
-Image.prototype.changeToThoughtSprite = function(game, thoughts, coords, choices) {
-    //this._image.width = 100;
-    //this._image.height = 100;
-    this._image.anchor.setTo(0.5, 0.5);
-    this._image.animations.add('think');
-    this._image.animations.play('think', 4, false);
-    this._image.inputEnabled = true;
-    this._image.input.useHandCursor = true;
-    this._link = new Linkable(game, this._image.events, game.global.gameManager.getCreateThoughtsSignal(), thoughts, coords, choices);
-    this._link.addOnClickAnimation(Animation.fade(game, this._image, 0, false));
-    this._link.addOnClickAnimation(Animation.scale(game, this._image, false));
-    this._link.setAsButton(true);
-    Animation.bob(game, this._image, true);
-}
-
-//Changes image to a horizontally draggable image
-//Scales and sets a rectangle container for Bg image to pan around
+/***************************************************************
+Changes image to a horizontally draggable image.
+Scales and sets a rectangle container for Bg image to pan around.
+Currently unused.
+***************************************************************/
 Image.prototype.changeToBgImage = function(game, draggable) {
-
     //Scales Bg image to fit game height, maintains Bg image aspect ratio
     var scale = game.height/this._image.height;
     this._image.height = Math.floor(this._image.height*scale);
@@ -167,42 +178,81 @@ Image.prototype.changeToBgImage = function(game, draggable) {
     //Initializes container for bg image to be dragged around
 
     if(draggable) {
-        this.makeDraggable(game, false, true, -this._image.width+game.width, 0, this._image.width*2-game.width, this._image.height);
+        this.makeDraggable(game, false, true, -this._image.width+game.width, 0, this._image.width*2-game.width, this._image.height).bind(this);
     }
 }
 
+/***************************************************************
+Changes image to a static thought bubble image.
+Currently unused.
+***************************************************************/
 Image.prototype.changeToThoughtIcon = function(game, thoughts, coords) {
+    //Display properties
     this._image.width = 100;
     this._image.height = 100;
     this._image.anchor.setTo(0.5, 0.5);
+
+    //Interactive properties
     this._link = new Linkable(game, this._image, game.global.gameManager.getCreateThoughtsSignal(), thoughts, coords, choices);
     this._link.addOnClickAnimation(Animation.fade(game, this._image, 0, false));
-    this._link.addOnClickAnimation(Animation.scale(game, this._image, false));
     this._link.setAsButton(true);
     Animation.bob(game, this._image, true);
 }
 
-Image.prototype.changeToSceneChangeImage = function(game, targetScene) {
-    this._target = targetScene;
+/***************************************************************
+Changes image to a spritesheet thought bubble image.
+***************************************************************/
+Image.prototype.changeToThoughtSprite = function(game, thoughts, coords, choices) {
+    //Display properties
     this._image.anchor.setTo(0.5, 0.5);
+    this._image.animations.add('think');
+    this._image.animations.play('think', 8, true);
+
+    //Interactive properties
+    this.inputEnabled(true);
+    this._image.input.useHandCursor = true;
+    this._link = new Linkable(game, this._image.events, game.global.gameManager.getCreateThoughtsSignal(), thoughts, coords, choices);
+    this._link.addOnClickAnimation(Animation.fade(game, this._image, 0, false));
+    this._link.addMouseOverScaleEffect(game, this._image);
+    this._link.setAsButton(true);
+    Animation.bob(game, this._image, true);
+}
+
+/***************************************************************
+This image changes game scene when clicked.
+***************************************************************/
+Image.prototype.changeToSceneChangeImage = function(game, targetScene) {
+    //Display properties
+    this._image.anchor.setTo(0.5, 0.5);
+
+    //Interaction properties
     this._link = new Linkable(game, this._image, game.global.gameManager.getChangeSceneSignal(), targetScene);
     this._link.setAsButton(true);    
     this._link.addMouseOverScaleEffect(game, this._image);
     Animation.bob(game, this._image, true, -1);
 }
 
+/***************************************************************
+This image reveals another image when clicked.
+***************************************************************/
 Image.prototype.changeToDisplayImage = function(game, target, clickedIndex) {
-    this._target = target;
+    //Display properties
     this._image.anchor.setTo(0.5, 0.5);
+
+    //Interaction properties
     this._link = new Linkable(game, this._image, game.global.gameManager.getDisplayImageSignal(), target, clickedIndex);
     this._link.setAsButton(false);
     this._link.addMouseOverScaleEffect(game, this._image);
     Animation.bob(game, this._image, true);
     //this._link.addOnClickAnimation(Animation.fade(game, this._image, 0,false, null, null, true));
- //   this._link.addSound('testSound');
+    //this._link.addSound('testSound');
 }
 
+/***************************************************************
+Information image.
+***************************************************************/
 Image.prototype.changeToInfoImage = function(game, target) {
+    //Display properties
     var MARGIN = game.global.constants.INFO_VIEW_MARGIN;
     var DISPLAY_WIDTH = game.global.constants.INFO_VIEW_WIDTH;    
     var DISPLAY_HEIGHT = game.global.constants.INFO_VIEW_HEIGHT;
@@ -211,53 +261,58 @@ Image.prototype.changeToInfoImage = function(game, target) {
     this._image.width = Math.floor(this._image.width*SCALE);
     this._image.x = MARGIN;
 
-    if(this.checkIfScrollBarNeeded(game)) {    
+    //Changes depending on scrollbar needed
+    if(Utility.checkIfScrollBarNeeded(game, this._image)) {    
         this._image.y = MARGIN;    
-        this._mask = game.add.graphics(0, 0);
-        //game.mediaGroup.add(this._mask);
-        this._mask.beginFill(0xffffff);
-        this._mask.drawRect(MARGIN, MARGIN, DISPLAY_WIDTH, game.global.constants.INFO_VIEW_HEIGHT);
-        this._mask.endFill();
-        this._image.mask = this._mask;
+        this._mask = new Graphic(0, 0, Graphic.getEnum().Rectangle);
+        this._mask.addGraphicToGame(game, game.uiGroup);
+        var rectangle = Graphic.createRectangle(MARGIN, MARGIN, DISPLAY_WIDTH, game.global.constants.INFO_VIEW_HEIGHT);
+        this._mask.changeGraphic(game, rectangle);
+        this._image.mask = this._mask.getGraphic();
 
+        //Interaction properties
         this.makeDraggable(game, true, false, MARGIN, -this._image.height+DISPLAY_HEIGHT+MARGIN, 
             DISPLAY_WIDTH, this._image.height*2-DISPLAY_HEIGHT);
-        console.log("here");
     }
     else{
         this._image.y = game.world.centerY;
         this._image.anchor.setTo(0, 0.5);
-    }
-    
+    }    
 }
 
+/***************************************************************
+Changes image to the background of choice buttons.
+Handles input and animation of text on it as well.
+***************************************************************/
 Image.prototype.changeToChoiceBackgroundImage = function(game, width, height, target, phaserText, tag) {
+    //Display properties
     this._image.alpha = 0;
     this._image.anchor.set(0.5, 0.5);
     this._image.width = width;
     this._image.height = height;
+    phaserText.bringToTop();
 
+    //Interaction properties
     this._link = new Linkable(game, this._image, game.global.gameManager.getEndInteractionSignal(), this, target, tag);
     this._link.setAsButton(true);        
     this._link.addMouseOverScaleEffect(game, this._image);
     this._link.addMouseOverScaleEffect(game, phaserText);
-
-    phaserText.bringToTop();
     this._image.input.priorityID = 1;
 
-    this.fadeIn(game);
-    
+    this.fadeIn(game);    
     //Animation.fade(game, this._image, 1, true);
     return this._image;
 }
 
+/***************************************************************
+Changes image to the close button of the overlay
+***************************************************************/
 Image.prototype.changeToOverlayCloseImage = function(game) {
+    //Display properties
     this.setVisible(false);
     this._image.anchor.set(0.5, 0.5);
 
-    //this._image.width = 50;
-    //his._image.height = 50;
-
+    //Interaction properties
     this._link = new Linkable(game, this._image, game.global.gameManager.getHideDisplayedImageSignal());
     this._link.setAsButton(false);        
     this._link2 = new Linkable(game, this._image, game.global.gameManager.getHideInfoOverlaySignal());
@@ -265,48 +320,46 @@ Image.prototype.changeToOverlayCloseImage = function(game) {
     this._link.addMouseOverScaleEffect(game, this._image);
 }
 
+/***************************************************************
+Changes image to the interactable scrollbar
+***************************************************************/
 Image.prototype.changeToOverlayScrollBar = function(game, width) {
+    //Display properties
     this.setVisible(false);
     this._image.width = width-2;
     this._image.anchor.set(0.5, 0);
-    this.makeDraggable(game, true, false, game.global.constants.SCROLLBAR_POS[0], game.global.constants.SCROLLBAR_POS[1],
-        game.global.constants.SCROLLBAR_DIM[0]+5, game.global.constants.SCROLLBAR_DIM[1]);
 
-    //this._link = new Linkable(game, this._image, game.global.gameManager.getHideDisplayedImageSignal());
-    //this._link.setAsButton(false);        
-    //this._link2 = new Linkable(game, this._image, game.global.gameManager.getHideInfoOverlaySignal());
-    //this._link2.setAsButton(false);    
-    //this._link.addMouseOverScaleEffect(game, this._image);
+    //Interaction properties
+    this.makeDraggable.call(this, game, true, false, game.global.constants.SCROLLBAR_POS[0], game.global.constants.SCROLLBAR_POS[1],
+        game.global.constants.SCROLLBAR_DIM[0]+5, game.global.constants.SCROLLBAR_DIM[1]);
 }
 
+/***************************************************************
+This image, when clicked, leads to an external site.
+***************************************************************/
 Image.prototype.changeToExternalLinkImage = function(game, target) {
     this._image.anchor.set(0.5, 0.5);
+
     this._link = new Linkable(game, this._image, game.global.gameManager.getGoToLinkSignal(), target);
     this._link.setAsButton(true);
     this._link.addMouseOverScaleEffect(game, this._image);
 }
 
-Image.prototype.changeToPauseButton = function(game, signal) {
-    this._link = new Linkable(game, this._image, signal);
-    this._link.setAsButton(false);
-}
-
+/***************************************************************
+Changes image to the play button (when game is paused).
+***************************************************************/
 Image.prototype.changeToPlayButton = function(game) {
     this._image.anchor.setTo(0.5, 0.5);
     this._image.height = 300;
     this._image.width = 300;
-    //this._link = new Linkable(this._image, signal);
-    //this._link.setAsButton(false);
 }
 
-Image.prototype.changeToToggleSubtitleButton = function(game, signal) {
+/***************************************************************
+A generic button that dispatched signal parameter when clicked.
+***************************************************************/
+Image.prototype.changeToGenericButton = function(game, signal) {    
     this._link = new Linkable(game, this._image, signal);
     this._link.setAsButton(false);
-}
-
-Image.prototype.createBgGraphics = function(game, margin) {
-    this._graphic = new Graphic(0, 0);
-    this._graphic.createOverlayBg(game, margin);
 }
 
 //Changes cursor image on mouseover
@@ -320,60 +373,71 @@ Image.prototype.changeCursorImage = function(game, cursorImageSrc) {
     }, this);
 }
 
+/***************************************************************
+Makes image draggable.
+Possible to lock axis.
+Possible to set bounding box.
+***************************************************************/
 Image.prototype.makeDraggable = function(game, lockHorizontal, lockVertical, boundsX, boundsY, boundsWidth, boundsHeight) {
-
-    //Enables drag interaction on the horizontal axis
-    this._image.inputEnabled = true;
+    this.enableInput(true);
+    //Sets bounding box for dragged object
     if(boundsX !== undefined && boundsX !== undefined) {
         var dragBounds = new Phaser.Rectangle(boundsX, boundsY, boundsWidth, boundsHeight);
         this._image.input.boundsRect = dragBounds;
     }
+    //Locks draggin in certain axes if specified
     this._image.input.draggable = true;
     this._image.input.allowVerticalDrag = !lockVertical;
     this._image.input.allowHorizontalDrag = !lockHorizontal;
+
     //Changes mouseover image
     this.changeCursorImage(game, 'url("./Images/UI/hand_2.png"), auto');
 }
 
-Image.prototype.checkIfScrollBarNeeded = function(game) {
-    var displayDimensionRatio = game.global.constants.INFO_VIEW_WIDTH/game.global.constants.INFO_VIEW_HEIGHT;
-    var imageDimensionRatio = this._image.width/this._image.height;
-    if(imageDimensionRatio > displayDimensionRatio)
-        return false;
-    else
-        return true;
-}
-
+/***************************************************************
+Destroys phaser image.
+***************************************************************/
 Image.prototype.destroy = function() {
     this._image.destroy();
 }
 
-Image.prototype.getPhaserImage = function() {
-    return this._image;
-}
-
+/***************************************************************
+Brings phaser image to top of group(or game).
+***************************************************************/
 Image.prototype.bringToTop = function() {
     this._image.bringToTop();
 }
 
+/***************************************************************
+Returns the phaser image.
+***************************************************************/
+Image.prototype.getPhaserImage = function() {
+    return this._image;
+}
+
+/***************************************************************
+Returns the phaser image height.
+***************************************************************/
 Image.prototype.getHeight = function() {
     return this._image.height;
 }
 
+/***************************************************************
+Returns y position of phaser image.
+***************************************************************/
 Image.prototype.getY = function() {
     return this._image.y;
 }
 
+/***************************************************************
+Gets image type based on ImageKeyEnum.
+***************************************************************/
 Image.prototype.getType = function() {
     return this._type;
 }
 
-Image.prototype.getTarget = function() {
-    return this._target;
-}
-
-Image.prototype.disableInput = function() {
-    this._image.inputEnabled = false;
+Image.prototype.enableInput = function(value) {
+    this._image.inputEnabled = value;
 }
 
 Image.prototype.setX = function(x){
@@ -395,15 +459,6 @@ Image.prototype.setHeight = function(height) {
 
 Image.prototype.setVisible = function(isVisible) {
     this._image.visible = isVisible;
-    if(this._chainImages) {
-        this._chainImages.forEach(function(image) {
-            image.setVisible(isVisible);
-        });
-    }
-}
-
-Image.prototype.setImage = function(key) {
-    this._key = key;
 }
 
 Image.prototype.fadeOut = function(game, chainSignal, arg1) {
@@ -421,16 +476,11 @@ Image.prototype.fadeIn = function(game) {
     Animation.fade(game, this._image, 1, true);
 }
 
+/***************************************************************
+Returns ImageTypeEnum
+***************************************************************/
 Image.getEnum = function() {
     return ImageTypeEnum;
-}
-
-function DebugRect(x, y, width, height, game) {
-    var bounds = new Phaser.Rectangle(x, y, width, height);
-    var graphics = game.add.graphics(bounds.x, bounds.y);
-    graphics.beginFill(0x000077);
-    graphics.drawRect(0, 0, bounds.width, bounds.height);
-    graphics.endFill();
 }
 
 module.exports = Image;
