@@ -298,24 +298,36 @@
             "fadeOut": false
         },
         "icons": {
-            "size": 2,
+            "size": 3,
             "type": [
                 "IMAGE_BUTTON_SCENECHANGE",
-                "IMAGE_BUTTON_DISPLAY_IMAGE"
+                "IMAGE_BUTTON_DISPLAY_IMAGE",
+                "IMAGE_BUTTON_SCENECHANGE"
             ],
             "key": [
                 "arrowBackward",
-                "infoButton"
+                "infoButton",
+                "endButtonSm"
             ],
             "coords": [
                 [ 100, 650 ],
-                [ 400, 350 ]
+                [ 400, 350 ],
+                [ 1130, 55 ]
             ],
             "targetImageIndexOrScene": [
                 "cmuCohonLocation",
-                0
-            ]
+                0,
+                "endingSceneSwitch"
+            ],
+            "unlockedByScenes": [
+                null,
+                null, 
+                [
+                    ["MK2good", "MK2bad"], ["li2bad","li2good"],["an2bad","an2good"]
+                ]
+            ] 
         },
+
          "linkedIcons": {
             "size": 1,
             "type": [
@@ -418,23 +430,34 @@
             "fadeOut": false
         },
         "icons": {
-            "size": 2,
+            "size": 3,
             "type": [
                 "IMAGE_BUTTON_SCENECHANGE",
-                "IMAGE_BUTTON_DISPLAY_IMAGE"
+                "IMAGE_BUTTON_DISPLAY_IMAGE",
+                "IMAGE_BUTTON_SCENECHANGE"
             ],
             "key": [
                 "arrowBackward",
-                "infoButton"
+                "infoButton",
+                "endButtonSm"
             ],
             "coords": [
                 [ 100, 620 ],
-                [ 500, 300]
+                [ 500, 300 ],
+                [ 1130, 55 ]
             ],
             "targetImageIndexOrScene": [
                 "cmuGatesLocation",
-                0
-            ]
+                0,
+                "endingSceneSwitch"
+            ],
+            "unlockedByScenes": [
+                null,
+                null, 
+                [
+                    ["MK2good", "MK2bad"], ["li2bad","li2good"],["an2bad","an2good"]
+                ]
+            ] 
         },
         "linkedIcons": {
             "size": 1,
@@ -539,30 +562,43 @@
             "fadeOut": false
         },
         "icons": {
-            "size": 3,
+            "size": 4,
             "type": [
                 "IMAGE_BUTTON_SCENECHANGE",
                 "IMAGE_BUTTON_DISPLAY_IMAGE",
-                "IMAGE_BUTTON_DISPLAY_IMAGE"
+                "IMAGE_BUTTON_DISPLAY_IMAGE",
+                "IMAGE_BUTTON_SCENECHANGE"
             ],
             "key": [
                 "arrowBackward",
                 "infoButton",
-                "infoButton"
+                "infoButton",
+                "endButtonSm"
             ],
             "coords": [
                 [ 100, 650 ],
                 [ 500, 400 ],
-                [ 850, 600 ]
+                [ 850, 600 ],
+                [ 1130, 55 ]
             ],
             "targetImageIndexOrScene": [
                 "cmuHuntLocation",
                 0,
-                1
+                1,
+                2
             ],
             "lockedByScenes": [
                 null
-            ]
+            ],
+            "unlockedByScenes": [
+                null,
+                null,
+                null, 
+                [
+                    ["MK2good", "MK2bad"], ["li2bad","li2good"],["an2bad","an2good"]
+                ]
+            ] 
+
         },
         "linkedIcons": {
             "size": 2,
