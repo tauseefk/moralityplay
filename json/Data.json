@@ -13,6 +13,7 @@
     "mainTitle": "./Images/UI/Title.png",
     "endBG":"./Images/UI/end_screen_bg.jpg",
     "endLearnMore": "./Images/UI/learnmore.png",
+    "reload": "./Images/UI/replay.png",
     "closeButton": "./Images/UI/cross.png",
     "infoButton": "./Images/UI/info_icon.png",
     "scrollBar": "./Images/UI/scrollbarRect.jpg",
@@ -46,9 +47,9 @@
     "infoPopupTest": "./Images/Info/test.jpg"
 },
 "spritesheets": {
-    "thoughtBubbleSprite": ["./Images/Sprites/ThoughBubble_spritesheet.png", 200, 117, 6],
-    "leftThoughtBubble": ["./Images/Sprites/ThoughBubble_Left_spritesheet.png", 200, 117, 6],
-    "rightThoughtBubble": ["./Images/Sprites/ThoughBubble_Right_spritesheet.png", 200, 117, 6]
+    "thoughtBubbleSprite": ["./Images/Sprites/ThoughBubble_spritesheetnew.png", 100, 97, 8],
+    "leftThoughtBubble": ["./Images/Sprites/ThoughBubble_Left_spritesheetnew.png", 100, 96, 8],
+    "rightThoughtBubble": ["./Images/Sprites/ThoughBubble_Right_spritesheetnew.png", 100, 97, 8]
 },
 "audio": {
     "cmuCutLocationSound": "./Audio/Sound/Main Campus Sounds_lo.ogg",
@@ -1022,7 +1023,7 @@
                     {
                         "size": 1,
                         "content": [
-                            "Not this again"
+                            "Not this again..."
                         ],
                         "destination": [
                             [ 300, 80 ]
@@ -1031,7 +1032,7 @@
                     {
                         "size": 1,
                         "content": [
-                            "I'm just trying to \nstart a conversation"
+                            "I'm just trying to \nstart a conversation..."
                         ],
                         "destination": [
                             [ 1000, 100 ]
@@ -1493,20 +1494,24 @@
             "fadeOut": true
         },
         "icons": {
-            "size": 2,
+            "size": 3,
             "type": [
                 "IMAGE_STATIC",
+                "IMAGE_BUTTON_RELOAD",
                 "IMAGE_BUTTON_EXTERNAL_LINK"
             ],
             "key": [
                 "endBG",
+                "reload",
                 "endLearnMore"
             ],
             "coords": [
                 [ 640, 250 ],
+                [ 100, 600],
                 [ 1000, 600 ]
             ],
             "targetImageIndexOrScene": [
+                null,
                 null,
                 "https://www.facebook.com/cmuMockingBirds/"
             ]

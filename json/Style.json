@@ -38,6 +38,7 @@
         "boundsHeight": 100,
         "lineSpacing": -5
     },
+    "startSceneName": "startScene",
     "thoughtBubbleImageKey": "thoughtBubbleSprite",
     "pauseButtonImageKey": "pauseButton",
     "subtitleButtonImageKey": "subtitleButton",
