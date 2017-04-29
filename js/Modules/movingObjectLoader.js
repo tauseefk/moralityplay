@@ -1,7 +1,9 @@
-//Dependency: choiceText
+/***************************************************************
+Attaches icons to a draggable background.
+Currently unused.
+***************************************************************/
 "use strict";
 
-//initializes once
 var _instance = null;
 var _game = null;
 var _text = [];
@@ -19,16 +21,9 @@ function createBgImage(key, draggable) {
     _bgImage.changeImage(_game, draggable);
 }
 
-function dragStart() {
-}
-
 function dragUpdate() {
     _group.x = _bgImage.getPhaserImage().x;
     _group.y = _bgImage.getPhaserImage().y;
-}
-
-function dragStop() {
-
 }
 
 module.exports = {

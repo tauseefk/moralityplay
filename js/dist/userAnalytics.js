@@ -5,6 +5,10 @@ var userAnalytics = (function(axios) {
   var _serverUrl = "http://mocking-birds.etc.cmu.edu/";
   var _getUserActions = "userActions";
 
+  /***
+    * Getting positive interactions for users that finished the experience.
+    *
+    */
   function _getInteractionResults() {
     return axios.get(_serverUrl + _getUserActions)
     .then(function(res) {
@@ -23,6 +27,10 @@ var userAnalytics = (function(axios) {
     });
   }
 
+  /***
+    * Getting positive interactions for users that finished the experience.
+    *
+    */
   function _getPositiveInteractions(userData) {
     return userData.filter(function(data) {
       return data.actions.length === 3;
@@ -42,6 +50,10 @@ var userAnalytics = (function(axios) {
     });
   }
 
+  /***
+    * Exposed API for user analytics
+    *
+    */
   return {
     getInteractionResults: _getInteractionResults
   }

@@ -1,5 +1,10 @@
+/***************************************************************
+Sound Manager. Handles playing of sounds in scenes.
+Author: Christopher Weidya
+***************************************************************/
 "use strict";
 
+//Dependencies
 const StateManager = require('../States/StateManager'),
     InteractState = require('../States/interactState'),
     LocationState = require('../States/locationState'),
@@ -12,24 +17,25 @@ const StateManager = require('../States/StateManager'),
 
 var _instance = null;
 var _game = null;
+
 var _bgMusic = null;
 var _bgMusicKey = null;
 var _soundHashSet = null;
 var _currTime = 0;
 
-
+//SoundManager singleton constructor
 var SoundManager = function(game) {
     if(_instance !== null)
         return _instance;
     _instance = this;
     _game = game;
+    _soundHashSet = {};
     return _instance;
 }
 
-SoundManager.prototype.init = function() {
-    _soundHashSet = {};
-}
-
+/***************************************************************
+Plays a sound.
+***************************************************************/
 SoundManager.prototype.playSound = function(soundKey) {
     if(!_soundHashSet[soundKey]) {
         _soundHashSet[soundKey] = _game.add.audio(soundKey);
@@ -37,12 +43,10 @@ SoundManager.prototype.playSound = function(soundKey) {
     _soundHashSet[soundKey].play();
 }
 
+/***************************************************************
+Plays background music.
+***************************************************************/
 SoundManager.prototype.playBackgroundMusic = function(musicKey) {
-  //  if(_bgMusicKey == musicKey) {
-   //     _bgMusic = _game.add.audio(musicKey);
-  //      _bgMusic.currentTime = _currTime;
- //   }
-    //else {
     if(musicKey &&_bgMusicKey != musicKey) {
         if(_bgMusic)
             _bgMusic.stop();
@@ -51,19 +55,24 @@ SoundManager.prototype.playBackgroundMusic = function(musicKey) {
         _bgMusic =_soundHashSet[musicKey];
         _bgMusicKey = musicKey;
         _bgMusic.loop = true;
-        _bgMusic.play(); 
-
+        _bgMusic.play();
     }
 }    
 
+/***************************************************************
+Stops background music.
+***************************************************************/
 SoundManager.prototype.stopBackgroundMusic = function() {
     if(_bgMusic)
         _bgMusic.stop();
 }
 
+/***************************************************************
+Sets current time of audio.
+Unused.
+***************************************************************/
 SoundManager.prototype.setCurrentTime = function(time) {
     _currTime = time;
 }
-
 
 module.exports = SoundManager;

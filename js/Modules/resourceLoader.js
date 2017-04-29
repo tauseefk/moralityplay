@@ -1,8 +1,12 @@
+/***************************************************************
+Loads resources from loaded Json files.
+Author: Christopher Weidya
+***************************************************************/
 "use strict";
-var Filter = require('./filter');
 var _instance = null;
 var _game = null;
-var _startSceneKey = 'startScene';
+
+//Data types
 var _data = null;
 var _videos = null;
 var _audio = null;
@@ -49,13 +53,14 @@ function loadSubs(subs) {
 
 module.exports = {
     init: function(game) {
+        //Singleton initialization
         if(_instance !== null)
             return _instance;
         _instance = this;
-    //    Filter.init(game);
         _game = game;
         _data = _game.cache.getJSON('data');
         _style = _game.cache.getJSON('style');
+
         _images = _data.images;
         _spritesheets = _data.spritesheets;
         _videos = _data.videos;
@@ -65,28 +70,16 @@ module.exports = {
         return _instance;
     },
     preload: function() {
-    //    Filter.preload();
         console.log("Loading resources");
         loadImages(_images);
         loadSpritesheets(_spritesheets);
         loadAudio(_audio);
         loadSubs(_subs);
-    //    loadVideos(videos);
-
     },
     getScene: function(name) {
         return _scenes[name];
     },
     getStyle: function() {
         return _style;
-    },
-    getVideoSrc: function() {
-        return _videos;
-    },
-    getStartSceneKey: function() {
-        return _startSceneKey;
-    },
-    setVisitedScene: function(name) {
-        _scenes[name].visited = true;
     }
 }

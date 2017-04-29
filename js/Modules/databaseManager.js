@@ -26,17 +26,16 @@ DatabaseManager.prototype.getUserId = function() {
   return this.userId;
 }
 
-DatabaseManager.prototype.setUserId = function(generatedUserId) {
-}
-
 DatabaseManager.prototype.createUser = function() {
     if(!useDatabase)
         return;
   axios.get(_serverUrl + _createUserRoute)
   .then(function(res) {
     userId = res.data;
+
+    // sets userId in userInfoActions module
+    userInfoActions.setUserId(userId);
   })
-  .then(console.log.bind(this))
   .catch(console.error.bind(this));
 }
 
@@ -44,16 +43,12 @@ DatabaseManager.prototype.sendInteractionData = function(currentSceneName, tag) 
     if(!useDatabase)
         return;
     if(tag != undefined && tag != null) {
-      var userInteractionData = {
+      var _userInteractionData = {
         id: userId,
         sceneName: currentSceneName,
         interactionType: tag
       };
-      // var url = createUserInteractionUrl(_serverUrl, _userInteractionRoute, userInteractionData);
-      // fetch(url)
-      // .then(console.log.bind(this));
-      axios.post(_serverUrl + _userInteractionRoute, userInteractionData)
-      .then(console.log.bind(this))
+      axios.post(_serverUrl + _userInteractionRoute, _userInteractionData)
       .catch(console.error.bind(this));
     }
 }

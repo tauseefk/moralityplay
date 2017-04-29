@@ -1,9 +1,16 @@
+/***************************************************************
+Helper module that checks for scene lock/unlock conditions.
+Author: Christopher Weidya
+***************************************************************/
 "use strict";
 
-//ScenePartser constructor
+//SceneParser constructor
 var SceneParser = function() {
 }
 
+/***************************************************************
+At least one scene visited in each set. 
+***************************************************************/
 SceneParser.VisitAtLeastOnceOfEach = function(game, sceneSetArray) {
     var unlocked = true;
     for(var j=0; j<sceneSetArray.length; j++) {
@@ -12,6 +19,9 @@ SceneParser.VisitAtLeastOnceOfEach = function(game, sceneSetArray) {
     return unlocked;
 }
 
+/***************************************************************
+At least one scene visited in this array.
+***************************************************************/
 SceneParser.OneSceneVisited = function(game, sceneArr) {
     if(sceneArr){
         for(var i=0; i<sceneArr.length; i++) {
@@ -23,6 +33,9 @@ SceneParser.OneSceneVisited = function(game, sceneArr) {
     return false;
 }
 
+/***************************************************************
+All scenes in the array visited.
+***************************************************************/
 SceneParser.AllSceneVisited = function(game, sceneArr) {
     if(sceneArr){
     	console.log(sceneArr);
@@ -39,6 +52,9 @@ SceneParser.AllSceneVisited = function(game, sceneArr) {
     	return false;
 }
 
+/***************************************************************
+Returns the index of the set that has all scenes inside visited.
+***************************************************************/
 SceneParser.GetIndexOfVisitedAll = function(game, sceneArr) {
     if(sceneArr){
         for(var i=0; i<sceneArr.length; i++) {

@@ -1,3 +1,7 @@
+/***************************************************************
+Using phaser input extension, to create input fields.
+Currently unused.
+***************************************************************/
 "use strict";
 
 var InputTypeEnum = {

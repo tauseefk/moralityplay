@@ -25,6 +25,7 @@ var ImageTypeEnum = {
     OverlayCloseImage: 'IMAGE_OVERLAY_CLOSE',
     OverlayScrollBar: 'IMAGE_SCROLLBAR',
     ExternalLink: 'IMAGE_BUTTON_EXTERNAL_LINK',
+    Reload: 'IMAGE_BUTTON_RELOAD',
     Button: 'IMAGE_BUTTON_GENERIC',
     Play: 'IMAGE_BUTTON_PLAY'
 }
@@ -53,6 +54,7 @@ Image.prototype.addImageToGame = function(game, group) {
         case ImageTypeEnum.ChoiceBackground:
         case ImageTypeEnum.OverlayCloseImage:
         case ImageTypeEnum.ExternalLink:
+        case ImageTypeEnum.Reload:
         case ImageTypeEnum.Button:
             this._image = game.add.button(this._xPos, this._yPos, this._key);
             break;
@@ -99,6 +101,7 @@ Image.prototype.addToDefaultGroup = function(game) {
         case ImageTypeEnum.DisplayImage:
         case ImageTypeEnum.ChoiceBackground:
         case ImageTypeEnum.ExternalLink:
+        case ImageTypeEnum.Reload:
         case ImageTypeEnum.Static:
         case ImageTypeEnum.Background:
         case ImageTypeEnum.ThoughtSprite:
@@ -146,6 +149,9 @@ Image.prototype.changeImage = function (game, arg1, arg2, arg3, arg4, arg5) {
             break;
         case ImageTypeEnum.ExternalLink:
             this.changeToExternalLinkImage(game, arg1);
+            break;
+        case ImageTypeEnum.Reload:
+            this.changeToReloadImage(game, arg1);
             break;
         case ImageTypeEnum.Play:
             this.changeToPlayButton(game);
@@ -209,7 +215,7 @@ Image.prototype.changeToThoughtSprite = function(game, thoughts, coords, choices
     this._image.animations.play('think', 8, true);
 
     //Interactive properties
-    this.inputEnabled(true);
+    this.enableInput(true);
     this._image.input.useHandCursor = true;
     this._link = new Linkable(game, this._image.events, game.global.gameManager.getCreateThoughtsSignal(), thoughts, coords, choices);
     this._link.addOnClickAnimation(Animation.fade(game, this._image, 0, false));
@@ -314,10 +320,10 @@ Image.prototype.changeToOverlayCloseImage = function(game) {
 
     //Interaction properties
     this._link = new Linkable(game, this._image, game.global.gameManager.getHideDisplayedImageSignal());
-    this._link.setAsButton(false);        
+    this._link.setAsButton(false);
+    this._link.addMouseOverScaleEffect(game, this._image);
     this._link2 = new Linkable(game, this._image, game.global.gameManager.getHideInfoOverlaySignal());
     this._link2.setAsButton(false);    
-    this._link.addMouseOverScaleEffect(game, this._image);
 }
 
 /***************************************************************
@@ -341,6 +347,17 @@ Image.prototype.changeToExternalLinkImage = function(game, target) {
     this._image.anchor.set(0.5, 0.5);
 
     this._link = new Linkable(game, this._image, game.global.gameManager.getGoToLinkSignal(), target);
+    this._link.setAsButton(true);
+    this._link.addMouseOverScaleEffect(game, this._image);
+}
+
+/***************************************************************
+This image, when clicked, reloads the page.
+***************************************************************/
+Image.prototype.changeToReloadImage = function(game, target) {
+    this._image.anchor.set(0.5, 0.5);
+
+    this._link = new Linkable(game, this._image, game.global.gameManager.getReloadSignal());
     this._link.setAsButton(true);
     this._link.addMouseOverScaleEffect(game, this._image);
 }

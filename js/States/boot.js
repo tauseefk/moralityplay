@@ -75,9 +75,7 @@ function CreateGlobalVars() {
 
     //Global managers
     _game.global.gameManager = new GameManager();
-    _game.global.gameManager.initSignals();
     _game.global.soundManager = new SoundManager(_game);
-    _game.global.soundManager.init();
     _game.global.databaseManager = new DatabaseManager(_game);
 
     //Constants
@@ -94,6 +92,10 @@ function CreateGlobalVars() {
     _game.global.constants.INFO_OVERLAY_COLOR = 0x000000;
     _game.global.constants.INFO_OVERLAY_OPACITY = 0.7;
     _game.global.constants.SCROLLBAR_WHEEL_SENSITIVITY = 10;
+
+    //Subtitle constants
+    _game.global.constants.SUBTITLE_Y_POS = 630;
+    _game.global.constants.SUBTITLE_SPACING = 5;
 
 }
 

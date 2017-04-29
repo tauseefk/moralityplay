@@ -1,5 +1,10 @@
 var userActionsModel = require('./Models/userActionsModel.js');
 
+/***
+  * Main route for the experience.
+  * Renders the homepage and the game canvas.
+  *
+  */
 exports.game = function(req, res) {
   let html =
     '<!DOCTYPE html>'
@@ -57,6 +62,11 @@ exports.game = function(req, res) {
            +'</div>'
          +'</div>'
        +'</div>'
+      //  +'<div class="banner-orientation bg-mockingbirds full-size">'
+      //    +'<div class="center">'
+      //     +'Please rotate your device to landscape mode.'
+      //    +'</div>'
+      //  +'</div>'
        +'<script src="/js/phaser.min.js"></script>'
        +'<script src="/js/Lib/jsmanipulate.min.js"></script>'
        +'<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.16.1/axios.min.js"></script>'
@@ -71,6 +81,14 @@ exports.game = function(req, res) {
        res.send(html);
 }
 
+/***************************************************************
+Database interaction routes
+****************************************************************/
+
+/***
+  * Create a user entry in the database and return the user id
+  *
+  */
 exports.createUser = function(req, res) {
   userActionsModel.addUserToDatabase()
   .then(function(response) {
@@ -79,33 +97,40 @@ exports.createUser = function(req, res) {
   .catch(console.error.bind(this));
 }
 
+/***
+  * Add user action to the user in the database
+  *
+  */
 exports.addUserAction = function(req, res) {
-  console.log(req.body);
   var userAction = {
     sceneName: req.body.sceneName,
     interactionType: req.body.interactionType
   }
   userActionsModel.addUserActionForUserId(req.body.id, userAction);
-  console.log(userAction);
   res.send("user action added!");
 }
 
+/***
+  * Update user's age, race, and gender information in the database
+  *
+  */
 exports.updateUserInfo = function(req, res) {
   var userInfo = {
     age: req.body.age,
     race: req.body.race,
     gender: req.body.gender
   }
-  console.log(userInfo);
   userActionsModel.updateUserInfoById(req.body.id, userInfo)
   .then(function() {
     res.send("User info updated!");
   })
   .catch(console.error.bind(this));
-  // console.log(userInfo);
-  // res.send("user info Updated!");
 }
 
+/***
+  * Fetch data for user interactions
+  *
+  */
 exports.getUserActions = function(req, res) {
   userActionsModel.getUserActionsTable()
   .then(function(collection) {
@@ -120,6 +145,10 @@ exports.getUserActions = function(req, res) {
   });
 }
 
+/***
+  * XXX: Depricated
+  *
+  */
 exports.generateDummyData = function(req, res) {
   userActionsModel.addDummyData();
   res.send("added dummy data!");

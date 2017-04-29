@@ -1,3 +1,7 @@
+/***************************************************************
+Loads input fields using phaser input extension.
+Currently unused.
+***************************************************************/
 "use strict";
 
 var _instance = null;

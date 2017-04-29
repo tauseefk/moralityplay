@@ -11,7 +11,7 @@ const Boot = require('./States/boot'),
     Preload = require('./States/preload'),
     StateManager = require('./States/StateManager'),
     ResourceLoader = require('./Modules/resourceLoader');
-    
+
 function initGame(Boot, Preload, StateManager, ResourceLoader) {
     var game = new Phaser.Game(1280, 720, Phaser.CANVAS, '', { init: init, preload: preload, create: create, update: update });
 
@@ -21,6 +21,7 @@ function initGame(Boot, Preload, StateManager, ResourceLoader) {
     function init() {
         console.log("Game initialized.");
         game.canvas.className += "center";
+        // game.canvas.className += " orientation-landscape";
         game.state.add("boot", Boot);
         game.state.add("preload", Preload);
         game.state.add("stateManager", StateManager);

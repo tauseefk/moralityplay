@@ -285,12 +285,14 @@ module.exports = {
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
+/***************************************************************
+Object that creates interactive properties of elements,
+such as mouse over animations, sounds, linking, etc.
+***************************************************************/
 
 
+//Dependencies
 const Animation = __webpack_require__(10);
-
-const FADE_SPEED = 700;
-const MOUSEOVER_SPEED = 300;
 
 //Linkable constructor
 var Linkable = function(game, event, signal, arg1, arg2, arg3) {
@@ -307,6 +309,9 @@ var Linkable = function(game, event, signal, arg1, arg2, arg3) {
     this._sound = [];
 }
 
+/***************************************************************
+Input up events, sets linkable to behave as button.
+***************************************************************/
 Linkable.prototype.setAsButton = function(once) {
     if(once) {
         this._event.onInputUp.addOnce(this.onTrigger, this);
@@ -318,15 +323,24 @@ Linkable.prototype.setAsButton = function(once) {
     this._event.onInputUp.add(this.playSound, this);
 }
 
+/***************************************************************
+Mouse over events.
+***************************************************************/
 Linkable.prototype.setMouseOver = function() {
     this._event.onInputOver.add(this.playOnMouseOverAnimations, this);
     this._event.onInputOver.add(this.playSound, this);
 }
 
+/***************************************************************
+Mouse out events.
+***************************************************************/
 Linkable.prototype.setMouseOut = function() {
     this._event.onInputOut.add(this.playOnMouseOutAnimations, this);
 }
 
+/***************************************************************
+Adds animation and sounds to each interaction.
+***************************************************************/
 Linkable.prototype.addOnClickAnimation = function(tween) {
     this._onClickAnimations.push(tween);
 }
@@ -343,38 +357,41 @@ Linkable.prototype.addSound = function(soundKey) {
     this._sound.push(soundKey);
 }
 
-Linkable.prototype.playOnClickAnimations = function() {    
-    var tween = null;
-    this._onClickAnimations.forEach(function(animation) {
-        tween = animation.start();
-    });
-    return tween;
+/***************************************************************
+Plays animations corresponding to different mouse events.
+***************************************************************/
+Linkable.prototype.playOnClickAnimations = function() {
+    return Linkable.playAnimations(this._onClickAnimations);
 }
 
-Linkable.prototype.playOnMouseOverAnimations = function() {    
-    var tween = null;
-    this._onMouseOverAnimations.forEach(function(animation) {
-        animation.reverse = false;
-        tween = animation.start();
-    });
-    return tween;
+Linkable.prototype.playOnMouseOverAnimations = function() {
+    return Linkable.playAnimations(this._onMouseOverAnimations);
 }
 
-Linkable.prototype.playOnMouseOutAnimations = function() {    
+Linkable.prototype.playOnMouseOutAnimations = function() {
+    return Linkable.playAnimations(this._onMouseOutAnimations);
+}
+
+/***************************************************************
+Static function that plays all animation in the array.
+***************************************************************/
+Linkable.playAnimations = function(animationArr) {
     var tween = null;
-    this._onMouseOutAnimations.forEach(function(animation) {
+    animationArr.forEach(function(animation) {
         tween = animation.start();
     });
     return tween;
 }
 
 Linkable.prototype.playSound = function() {
-    var game = this._game;
     this._sound.forEach(function(sound) {
-        game.global.soundManager.playSound(sound);
+        this._game.global.soundManager.playSound(sound);
     });
 }
 
+/***************************************************************
+Cleanup. Prevents button from being hoverable.
+***************************************************************/
 Linkable.prototype.removeInput = function() {
     if(this._event.inputEnabled)
         this._event.inputEnabled = false;
@@ -386,6 +403,9 @@ Linkable.prototype.removeInput = function() {
     } 
 }
 
+/***************************************************************
+Dispatches assigned signal when clicked.
+***************************************************************/
 Linkable.prototype.onTrigger = function() {
     var tween = this._linkable.playOnClickAnimations();
     if(tween)
@@ -394,10 +414,13 @@ Linkable.prototype.onTrigger = function() {
         this.dispatchSignal();
 }
 
+/***************************************************************
+A default mouseover animation preset.
+***************************************************************/
 Linkable.prototype.addMouseOverScaleEffect = function(game, object) {
-    this._linkable.addMouseOverAnimation(Animation.scale(game, object, false, object.width *1.03, object.height *1.03, MOUSEOVER_SPEED));
+    this._linkable.addMouseOverAnimation(Animation.scale(game, object, false, object.width *1.03, object.height *1.03));
     this._linkable.setMouseOver();    
-    this._linkable.addMouseOutAnimation(Animation.scale(game, object, false, object.width, object.height, MOUSEOVER_SPEED));
+    this._linkable.addMouseOutAnimation(Animation.scale(game, object, false, object.width, object.height));
     this._linkable.setMouseOut();
 }
 
@@ -405,8 +428,18 @@ Linkable.prototype.dispatchSignal = function() {
     this._signal.dispatch(this._arg1, this._arg2, this._arg3);
 }
 
+/***************************************************************
+External link functionality.
+***************************************************************/
 Linkable.goToLink = function(link) {
     window.open(link,'_blank');
+}
+
+/***************************************************************
+Reload functionality.
+***************************************************************/
+Linkable.reload = function() {
+    location.reload();
 }
 
 module.exports = Linkable;
@@ -442,15 +475,6 @@ var Text = function(content, xPos, yPos, type, properties) {
     this._text = null;
 }
 
-Text.prototype.setDefaultProperties = function() {
-    this._text.align = 'left';
-    this._text.font = 'Arial';
-    this._text.fontSize =30;
-    this._text.stroke = '#ffffff';
-    this._text.strokeThickness = 1;
-    this._text.padding.set(10, 0);
-}
-
 Text.prototype.setAdditionalProperties = function() {
     if(this._properties.lineSpacing) {
         this._text.lineSpacing = this._properties.lineSpacing;
@@ -465,11 +489,8 @@ Text.prototype.addToGame = function(game, group) {
     this._text = game.add.text(this._xPos, this._yPos, this._content, this._properties);
     this.setAdditionalProperties();
     group.add(this._text);
-    //this.setDefaultProperties();
 }
-//arg1 can be: xTo, targetScene, endFilterSignal
-//arg2 can be: yTo, changeSceneSignal
-//arg3 can be: filter
+
 Text.prototype.changeText = function(game, arg1, arg2, arg3, arg4, arg5, arg6) {
     switch(this._type) {
         case TextTypeEnum.Thoughts:
@@ -898,6 +919,7 @@ var ImageTypeEnum = {
     OverlayCloseImage: 'IMAGE_OVERLAY_CLOSE',
     OverlayScrollBar: 'IMAGE_SCROLLBAR',
     ExternalLink: 'IMAGE_BUTTON_EXTERNAL_LINK',
+    Reload: 'IMAGE_BUTTON_RELOAD',
     Button: 'IMAGE_BUTTON_GENERIC',
     Play: 'IMAGE_BUTTON_PLAY'
 }
@@ -926,6 +948,7 @@ Image.prototype.addImageToGame = function(game, group) {
         case ImageTypeEnum.ChoiceBackground:
         case ImageTypeEnum.OverlayCloseImage:
         case ImageTypeEnum.ExternalLink:
+        case ImageTypeEnum.Reload:
         case ImageTypeEnum.Button:
             this._image = game.add.button(this._xPos, this._yPos, this._key);
             break;
@@ -972,6 +995,7 @@ Image.prototype.addToDefaultGroup = function(game) {
         case ImageTypeEnum.DisplayImage:
         case ImageTypeEnum.ChoiceBackground:
         case ImageTypeEnum.ExternalLink:
+        case ImageTypeEnum.Reload:
         case ImageTypeEnum.Static:
         case ImageTypeEnum.Background:
         case ImageTypeEnum.ThoughtSprite:
@@ -1019,6 +1043,9 @@ Image.prototype.changeImage = function (game, arg1, arg2, arg3, arg4, arg5) {
             break;
         case ImageTypeEnum.ExternalLink:
             this.changeToExternalLinkImage(game, arg1);
+            break;
+        case ImageTypeEnum.Reload:
+            this.changeToReloadImage(game, arg1);
             break;
         case ImageTypeEnum.Play:
             this.changeToPlayButton(game);
@@ -1082,7 +1109,7 @@ Image.prototype.changeToThoughtSprite = function(game, thoughts, coords, choices
     this._image.animations.play('think', 8, true);
 
     //Interactive properties
-    this.inputEnabled(true);
+    this.enableInput(true);
     this._image.input.useHandCursor = true;
     this._link = new Linkable(game, this._image.events, game.global.gameManager.getCreateThoughtsSignal(), thoughts, coords, choices);
     this._link.addOnClickAnimation(Animation.fade(game, this._image, 0, false));
@@ -1187,10 +1214,10 @@ Image.prototype.changeToOverlayCloseImage = function(game) {
 
     //Interaction properties
     this._link = new Linkable(game, this._image, game.global.gameManager.getHideDisplayedImageSignal());
-    this._link.setAsButton(false);        
+    this._link.setAsButton(false);
+    this._link.addMouseOverScaleEffect(game, this._image);
     this._link2 = new Linkable(game, this._image, game.global.gameManager.getHideInfoOverlaySignal());
     this._link2.setAsButton(false);    
-    this._link.addMouseOverScaleEffect(game, this._image);
 }
 
 /***************************************************************
@@ -1214,6 +1241,17 @@ Image.prototype.changeToExternalLinkImage = function(game, target) {
     this._image.anchor.set(0.5, 0.5);
 
     this._link = new Linkable(game, this._image, game.global.gameManager.getGoToLinkSignal(), target);
+    this._link.setAsButton(true);
+    this._link.addMouseOverScaleEffect(game, this._image);
+}
+
+/***************************************************************
+This image, when clicked, reloads the page.
+***************************************************************/
+Image.prototype.changeToReloadImage = function(game, target) {
+    this._image.anchor.set(0.5, 0.5);
+
+    this._link = new Linkable(game, this._image, game.global.gameManager.getReloadSignal());
     this._link.setAsButton(true);
     this._link.addMouseOverScaleEffect(game, this._image);
 }
@@ -1746,7 +1784,7 @@ Author: Christopher Weidya
 
 
 
-const FADE_TIME_DEFAULT = 700;
+const FADE_TIME_DEFAULT = 500;
 const SCALE_TIME_DEFAULT = 300;
 const BOB_DELAY_INTERVAL = 700;
 
@@ -2341,11 +2379,15 @@ module.exports = {
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
+/***************************************************************
+Loads resources from loaded Json files.
+Author: Christopher Weidya
+***************************************************************/
 
-var Filter = __webpack_require__(22);
 var _instance = null;
 var _game = null;
-var _startSceneKey = 'startScene';
+
+//Data types
 var _data = null;
 var _videos = null;
 var _audio = null;
@@ -2392,13 +2434,14 @@ function loadSubs(subs) {
 
 module.exports = {
     init: function(game) {
+        //Singleton initialization
         if(_instance !== null)
             return _instance;
         _instance = this;
-    //    Filter.init(game);
         _game = game;
         _data = _game.cache.getJSON('data');
         _style = _game.cache.getJSON('style');
+
         _images = _data.images;
         _spritesheets = _data.spritesheets;
         _videos = _data.videos;
@@ -2408,29 +2451,17 @@ module.exports = {
         return _instance;
     },
     preload: function() {
-    //    Filter.preload();
         console.log("Loading resources");
         loadImages(_images);
         loadSpritesheets(_spritesheets);
         loadAudio(_audio);
         loadSubs(_subs);
-    //    loadVideos(videos);
-
     },
     getScene: function(name) {
         return _scenes[name];
     },
     getStyle: function() {
         return _style;
-    },
-    getVideoSrc: function() {
-        return _videos;
-    },
-    getStartSceneKey: function() {
-        return _startSceneKey;
-    },
-    setVisitedScene: function(name) {
-        _scenes[name].visited = true;
     }
 }
 
@@ -2543,7 +2574,7 @@ module.exports = {
     preload: function() {
     },
     create: function() {
-        _game.global.gameManager.getChangeSceneSignal().dispatch(Resources.getStartSceneKey());
+        _game.global.gameManager.getChangeSceneSignal().dispatch(_game.global.style.startSceneName);
     },
     changeScene: function(sceneName) {
         _game.mediaGroup.removeAll();
@@ -2560,12 +2591,19 @@ module.exports = {
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
+/***************************************************************
+Helper module that checks for scene lock/unlock conditions.
+Author: Christopher Weidya
+***************************************************************/
 
 
-//ScenePartser constructor
+//SceneParser constructor
 var SceneParser = function() {
 }
 
+/***************************************************************
+At least one scene visited in each set. 
+***************************************************************/
 SceneParser.VisitAtLeastOnceOfEach = function(game, sceneSetArray) {
     var unlocked = true;
     for(var j=0; j<sceneSetArray.length; j++) {
@@ -2574,6 +2612,9 @@ SceneParser.VisitAtLeastOnceOfEach = function(game, sceneSetArray) {
     return unlocked;
 }
 
+/***************************************************************
+At least one scene visited in this array.
+***************************************************************/
 SceneParser.OneSceneVisited = function(game, sceneArr) {
     if(sceneArr){
         for(var i=0; i<sceneArr.length; i++) {
@@ -2585,6 +2626,9 @@ SceneParser.OneSceneVisited = function(game, sceneArr) {
     return false;
 }
 
+/***************************************************************
+All scenes in the array visited.
+***************************************************************/
 SceneParser.AllSceneVisited = function(game, sceneArr) {
     if(sceneArr){
     	console.log(sceneArr);
@@ -2601,6 +2645,9 @@ SceneParser.AllSceneVisited = function(game, sceneArr) {
     	return false;
 }
 
+/***************************************************************
+Returns the index of the set that has all scenes inside visited.
+***************************************************************/
 SceneParser.GetIndexOfVisitedAll = function(game, sceneArr) {
     if(sceneArr){
         for(var i=0; i<sceneArr.length; i++) {
@@ -2950,105 +2997,66 @@ module.exports = {
 
 
 /***/ }),
-/* 22 */
-/***/ (function(module, exports) {
-
-/***************************************************************
-Unused. Intended to blur text.
-***************************************************************/
-const _instance = null,
-    _game = null,
-    _blur = null,
-    _blurNone = null;
-
-
-function createBlurFilter(x_amt, y_amt) {
-    var blurX = _game.add.filter('BlurX');
-    var blurY = _game.add.filter('BlurY');
-    blurX.blur = x_amt;
-    blurY.blur = y_amt;
-    _blur = [blurX, blurY];
-    var blurX_none = _game.add.filter('BlurX');
-    var blurY_none = _game.add.filter('BlurY');
-    blurX_none.blur = 0;
-    blurY_none.blur = 0;
-    _blurNone = [blurX_none, blurY_none];
-}
-
-module.exports = {
-    init: function(game) {
-        if(_instance !== null) {
-            return _instance;
-        }
-        _game = game;
-        _instance = this;
-        return _instance;
-    },
-    preload: function() {
-        _game.load.script('filterX', 'js/Lib/BlurX.js');
-        _game.load.script('filterY', 'js/Lib/BlurY.js');
-    },
-    create: function() {
-        createBlurFilter(5, 5);
-    },
-    getBlur: function() {
-        return _blur;
-    },
-    getBlurNone: function() {
-        return _blurNone;
-    }
-}
-
-
-/***/ }),
+/* 22 */,
 /* 23 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
+/***************************************************************
+Handles the showing of subtitles on screen.
+Author: Christopher Weidya
+***************************************************************/
 
 
+//Dependencies
 const Text = __webpack_require__(3);
 
 var _instance = null;
 var _game = null;
+
 var _textSlots = [null];
 var _subtitleVisible = false;
 
-const subtitleTextKeyEnum = 'TEXT_SUBTITLE';
-
-const SUBTITLE_Y_POS = 630;
-const SUBTITLE_SPACING = 5;
-
+/***************************************************************
+Creates subtitles from srt files.
+***************************************************************/
 function CreateSubs(video, subs) {
 	var srt = _game.cache.getText(subs);
 	var parsedSrt = fromSrt(srt, true);
 	AddSubEvents(parsedSrt, video);
 }
 
+/***************************************************************
+Adds subtitle events to show when video hits certain time.
+***************************************************************/
 function AddSubEvents(parsedSrt, video) {
 	parsedSrt.forEach(function(sub) {
-		//console.log(sub.startTime);
 		video.addEventListener("timeupdate", show, false);
 
 		function show() {
 			if(video.currentTime >= sub.startTime){
            		video.removeEventListener("timeupdate", show);
-	            var text = new Text(sub.text, 0, -500, subtitleTextKeyEnum, _game.global.style.subtitleTextProperties);
+           		//Adds text out of screen view. Will be realigned later depending on slots given
+	            var text = new Text(sub.text, 0, -500, Text.getEnum().Subtitle, _game.global.style.subtitleTextProperties);
 	            text.addToGame(_game, _game.mediaGroup);
 	            text.changeText(_game, _subtitleVisible);
 	            var slotIndex = FindSubtitleSlot(text);
+	            //Adds destroy event to destroy created text
 	            AddDestroyEvent(video, sub, text, slotIndex);
 	        }
 		}		
 	});
 }
 
+/***************************************************************
+Creates destroy event based on end time.
+***************************************************************/
 function AddDestroyEvent(video, sub, text, slotIndex) {
 	video.addEventListener("timeupdate", destroy, false);
 
 	function destroy() {
 		if(video.currentTime >= sub.endTime){
-			console.log("destroyed");
+			//console.log("destroyed");
        		video.removeEventListener("timeupdate", destroy); 
             text.destroy();
             _textSlots[slotIndex] = null;
@@ -3056,23 +3064,43 @@ function AddDestroyEvent(video, sub, text, slotIndex) {
 	}
 }
 
+/***************************************************************
+Finds an empty slot for the subtitle.
+Current slot is 1 due to feedback.
+***************************************************************/
 function FindSubtitleSlot(text) {
-	//if(!_textSlots[0]) {
+	//Forces previous subtitle to not be visible if a new subtitle enters.
 	if(_textSlots[0])
 		_textSlots[0].setVisible(false);
 	_textSlots[0] = text;
-	text.setY(SUBTITLE_Y_POS);
+	text.setY(_game.global.constants.SUBTITLE_Y_POS);
 	return 0;
-	/*}
-	else if(!_textSlots[1]) {
-		_textSlots[1] = text;
-		text.setY(SUBTITLE_Y_POS - text.getHeight() - SUBTITLE_SPACING);
-		return 1;
-	}*/
-	//else
-	//	console.warn("Max number of concurrent subtitles reached." + text);
 }
 
+/*
+//Unused. For 2 subtitle slots.
+function FindSubtitleSlot(text) {
+	if(!_textSlots[0]) {
+	
+	if(_textSlots[0])
+		_textSlots[0].setVisible(false);
+	_textSlots[0] = text;
+	text.setY(_game.global.constants.SUBTITLE_Y_POS);
+	return 0;
+	}
+	else if(!_textSlots[1]) {
+		_textSlots[1] = text;
+		text.setY(SUBTITLE_Y_POS - text.getHeight() - _game.global.constants.SUBTITLE_SPACING);
+		return 1;
+	}
+	else
+		console.warn("Max number of concurrent subtitles reached." + text);
+}
+*/
+
+/***************************************************************
+Toggles visibility of subtitle in slot.
+***************************************************************/
 function ToggleSubtitle() {
 	_subtitleVisible = !_subtitleVisible;
 	_textSlots.forEach(function(slot) {
@@ -3082,6 +3110,10 @@ function ToggleSubtitle() {
 	return _subtitleVisible;
 }
 
+/***************************************************************
+Parses srt file and returns data object.
+Taken from: https://www.npmjs.com/package/subtitles-parser
+***************************************************************/
 function fromSrt(data, ms) {
     var useMs = ms ? true : false;
 
@@ -3103,6 +3135,10 @@ function fromSrt(data, ms) {
     return items;
 };
 
+/***************************************************************
+Gets the time in ms from the srt time.
+Taken from: https://www.npmjs.com/package/subtitles-parser
+***************************************************************/
 function timeMs(val) {
     var regex = /(\d+):(\d{2}):(\d{2}),(\d{3})/;
     var parts = regex.exec(val);
@@ -3120,8 +3156,8 @@ function timeMs(val) {
     return parts[1] * 3600 + parts[2] * 60 + parts[3] + parts[4]/1000;
 };
 
-
 module.exports = {
+	//Singleton initialization
 	init: function (game) {
 		if(_instance)
 			return _instance;
@@ -3385,9 +3421,7 @@ function CreateGlobalVars() {
 
     //Global managers
     _game.global.gameManager = new GameManager();
-    _game.global.gameManager.initSignals();
     _game.global.soundManager = new SoundManager(_game);
-    _game.global.soundManager.init();
     _game.global.databaseManager = new DatabaseManager(_game);
 
     //Constants
@@ -3404,6 +3438,10 @@ function CreateGlobalVars() {
     _game.global.constants.INFO_OVERLAY_COLOR = 0x000000;
     _game.global.constants.INFO_OVERLAY_OPACITY = 0.7;
     _game.global.constants.SCROLLBAR_WHEEL_SENSITIVITY = 10;
+
+    //Subtitle constants
+    _game.global.constants.SUBTITLE_Y_POS = 630;
+    _game.global.constants.SUBTITLE_SPACING = 5;
 
 }
 
@@ -3491,6 +3529,10 @@ module.exports = {
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
+/***************************************************************
+Using phaser input extension, to create input fields.
+Currently unused.
+***************************************************************/
 
 
 var InputTypeEnum = {
@@ -3678,7 +3720,10 @@ var GameManager = function() {
 
     //Links to an external page
     this._goToLinkSignal = null;
+    //Reloads page
+    this._reloadSignal = null;
 
+    this.initSignals();
     return _instance;
 }
 
@@ -3730,9 +3775,11 @@ GameManager.prototype.initSignals = function() {
     this._toggleSubtitleSignal = new Phaser.Signal();
     this._toggleSubtitleSignal.add(UI.toggleSubtitle, this);
 
-    //Linkable
+    //Page related functions
     this._goToLinkSignal = new Phaser.Signal();
     this._goToLinkSignal.add(Linkable.goToLink, this);
+    this._reloadSignal = new Phaser.Signal();
+    this._reloadSignal.add(Linkable.reload, this);
 }
 
 /***************************************************************
@@ -3805,6 +3852,10 @@ GameManager.prototype.getGoToLinkSignal = function() {
     return this._goToLinkSignal;
 }
 
+GameManager.prototype.getReloadSignal = function() {
+    return this._reloadSignal;
+}
+
 module.exports = GameManager;
 
 
@@ -3828,9 +3879,11 @@ const Text = __webpack_require__(3),
 var _instance = null;
 var _game = null;
 
+//Helper variables
 var _currImage = null;
 var _heightFraction = null;
 
+//Graphic object variables
 var _overlayGraphicScrollBar = null;
 var _overlayGraphicNoScrollBar = null;
 var _overlayCloseButton = null;
@@ -3838,53 +3891,78 @@ var _overlayText = null;
 var _scrollbarBg = null;
 var _scrollbarDraggable = null;
 
+//Calculate scrollbar position helper variables
 var _effectiveScrollBarHeight = 0;
 var _effectiveImageHeight = 0;
 
+
+/***************************************************************
+Creates the overlay graphic, cross button and help text.
+***************************************************************/
 function CreateInfoOverlay() {    
     CreateOverlayGraphic();
     CreateOverlayCrossButton();
     CreateOverlayHelperText();
 }
 
-function CreateOverlayGraphic() {
+/***************************************************************
+Creates all overlay graphic elements.
+***************************************************************/
+function CreateOverlayGraphic() {  
+    CreateBlackOverlays();
+    CreateScrollBarBgGraphic();
+    CreateScrollBarImage();
+}
+
+/***************************************************************
+Creates black overlays.
+***************************************************************/
+function CreateBlackOverlays() {
+    //Black overlay for images that require scrollbar
     _overlayGraphicScrollBar = new Graphic(0, 0, Graphic.getEnum().Overlay);
     _overlayGraphicScrollBar.addGraphicToGame(_game);
     _overlayGraphicScrollBar.changeGraphic(_game, true);
 
+    //Black overlay for images that does not require scrollbar
     _overlayGraphicNoScrollBar = new Graphic(0, 0, Graphic.getEnum().Overlay);
     _overlayGraphicNoScrollBar.addGraphicToGame(_game);
     _overlayGraphicNoScrollBar.changeGraphic(_game, false);
+}
 
-    
+/***************************************************************
+Creates background graphic for scrollbar container.
+***************************************************************/
+function CreateScrollBarBgGraphic() {
     _scrollbarBg = new Graphic(0, 0, Graphic.getEnum().ScrollBarBackground);
     var rectangle = Graphic.createRectangle(_game.global.constants.SCROLLBAR_POS[0], _game.global.constants.SCROLLBAR_POS[1],
         _game.global.constants.SCROLLBAR_DIM[0], _game.global.constants.SCROLLBAR_DIM[1], 0x153b65, 0.8, 
         _game.global.constants.SCROLLBAR_STROKEWIDTH, 0xffffff);
     _scrollbarBg.addGraphicToGame(_game);
     _scrollbarBg.changeGraphic(_game, rectangle);
-    //_scrollbarBg.setVisible(false);
-    
-    /*
-    _scrollbarBg = new Graphic(0, 0);
-    _scrollbarBg.drawRect(_game, _game.global.constants.SCROLLBAR_POS[0], _game.global.constants.SCROLLBAR_POS[1],
-        _game.global.constants.SCROLLBAR_DIM[0], _game.global.constants.SCROLLBAR_DIM[1], 0x153b65, 1, 
-        _game.global.constants.SCROLLBAR_STROKEWIDTH, 0xffffff);
-    _scrollbarBg.setVisible(false);
-        */
+}
 
+/***************************************************************
+Creates draggable scrollbar image.
+***************************************************************/
+function CreateScrollBarImage() {
     _scrollbarDraggable = new Image(_game.global.constants.SCROLLBAR_POS[0] + _game.global.constants.SCROLLBAR_DIM[0]/2
         , _game.global.constants.SCROLLBAR_POS[1], _game.global.style.overlayScrollBarImageKey, Image.getEnum().OverlayScrollBar);
     _scrollbarDraggable.addImageToGame(_game, _game.uiGroup);
     _scrollbarDraggable.changeImage(_game, _game.global.constants.SCROLLBAR_DIM[0]);
 }
 
+/***************************************************************
+Creates cross button for overlay
+***************************************************************/
 function CreateOverlayCrossButton() {
     _overlayCloseButton = new Image(50, 50, _game.global.style.overlayCloseButtonImageKey, Image.getEnum().OverlayCloseImage);
     _overlayCloseButton.addImageToGame(_game, _game.uiGroup);
     _overlayCloseButton.changeImage(_game);
 }
 
+/***************************************************************
+Creates helper text for images that require draggin/scollbar
+***************************************************************/
 function CreateOverlayHelperText() {
     _overlayText = new Text('Drag the image below to scroll', _game.world.centerX, 25, Text.getEnum().InfoOverlayText, 
         _game.global.style.questionTextProperties);
@@ -3892,27 +3970,29 @@ function CreateOverlayHelperText() {
     _overlayText.changeText(_game);
 }
 
+/***************************************************************
+Sets up scrollbar image for scrolling.
+***************************************************************/
 function InitializeScrollbar(image) {
+    //Sets position of viewed image
     _currImage = image;
     _currImage.setPos(_game.global.constants.INFO_VIEW_MARGIN, _game.global.constants.INFO_VIEW_MARGIN);
-    var _heightFraction = _game.global.constants.INFO_VIEW_HEIGHT/_currImage.getHeight();
 
-/*
-_heightFraction = _game.global.constants.INFO_VIEW_HEIGHT/_currImage.getHeight();
-if(_heightFraction >= 1) {
-    console.warn('Images with a wider than 16:9 ratio is unsupported for proper viewing.')
-    return;
-}
-*/
+    //Scales scrollbar depending on viewed image height
+    var _heightFraction = _game.global.constants.INFO_VIEW_HEIGHT/_currImage.getHeight();
     _scrollbarDraggable.setHeight(_heightFraction*_game.global.constants.SCROLLBAR_DIM[1]);
+
+    //Resets position of scrollbar
     _scrollbarDraggable.setY(_game.global.constants.SCROLLBAR_POS[1]);
 
+    //Gets range of y values that the scrollbar should take for scrolling
     _effectiveScrollBarHeight = _game.global.constants.SCROLLBAR_DIM[1] - _scrollbarDraggable.getHeight();
     _effectiveImageHeight = _currImage.getHeight() - _game.global.constants.INFO_VIEW_HEIGHT;
-
-
 }
 
+/***************************************************************
+Enables mousewheel for scrolling.
+***************************************************************/
 function HandleMouseWheel(enable) {
     if(enable) {
         _game.input.mouse.mouseWheelCallback = MouseWheel;
@@ -3921,6 +4001,7 @@ function HandleMouseWheel(enable) {
         _game.input.mouse.mouseWheelCallback = null;
     }
 
+    //maps mousewheel to scrollbar height
     function MouseWheel(event) {
         var newY;
         var delta = _game.input.mouse.wheelDelta;
@@ -3936,36 +4017,67 @@ function HandleMouseWheel(enable) {
         }
         _scrollbarDraggable.setY(newY);
         ScrollBarDragUpdate();
-        //console.log(_game.input.mouse.wheelDelta);
     }
 }
 
-function ScrollBarDragStart() {
-
-}
-
+/***************************************************************
+When scrollbar is dragged, updates image position.
+***************************************************************/
 function ScrollBarDragUpdate() {
     _currImage.setY(_game.global.constants.INFO_VIEW_MARGIN - 
         (_scrollbarDraggable.getY() - _game.global.constants.INFO_VIEW_MARGIN)/_effectiveScrollBarHeight*_effectiveImageHeight);
 }
 
-function ImageDragStart() {
-
-}
-
+/***************************************************************
+When image is dragged, updates scrollbar position.
+***************************************************************/
 function ImageDragUpdate() {
-    //console.log(_scrollbarDraggable);
-    //console.log(_currImage);
     _scrollbarDraggable.setY(_game.global.constants.INFO_VIEW_MARGIN - 
         (_currImage.getY() - _game.global.constants.INFO_VIEW_MARGIN)/_effectiveImageHeight*_effectiveScrollBarHeight);
 }
 
+/***************************************************************
+Starts drag events
+***************************************************************/
 function StartDragUpdate() {
     _scrollbarDraggable.getPhaserImage().events.onDragUpdate.add(ScrollBarDragUpdate);
     _currImage.getPhaserImage().events.onDragUpdate.add(ImageDragUpdate);
 }
 
+/***************************************************************
+Decides which elements to set visible depending on scrollbar requirement.
+***************************************************************/
+function SetVisible(value, image) {
+    if(value && image) {
+        _overlayCloseButton.setVisible(true);
+        var scrollBarNeeded = Utility.checkIfScrollBarNeeded(_game, image.getPhaserImage());
+        if(scrollBarNeeded) {
+            this.initializeScrollbar(image);
+            _overlayText.setVisible(true);
+            _overlayGraphicScrollBar.setVisible(true);
+            _scrollbarBg.setVisible(true);
+            _scrollbarDraggable.setVisible(true);
+            HandleMouseWheel(true);
+        }
+        else {
+            _overlayGraphicNoScrollBar.setVisible(true);
+        }
+        image.bringToTop();
+        _overlayCloseButton.bringToTop();
+    }
+    else {
+        _overlayCloseButton.setVisible(false);
+        _overlayText.setVisible(false);
+        _scrollbarBg.setVisible(false);
+        _scrollbarDraggable.setVisible(false);
+        _overlayGraphicScrollBar.setVisible(false);
+        _overlayGraphicNoScrollBar.setVisible(false);
+        HandleMouseWheel(false);            
+    }
+}
+
 module.exports = {
+    //Singleton initialization
     init: function(game) {
         if(_instance !== null)
             return _instance;
@@ -3981,37 +4093,7 @@ module.exports = {
         StartDragUpdate();
     },
     setVisible: function(value, image) {
-        _overlayCloseButton.setVisible(value);
-        if(value) {
-            if(image) {
-                var scrollBarNeeded = Utility.checkIfScrollBarNeeded(_game, image.getPhaserImage());
-                if(scrollBarNeeded) {
-                    this.initializeScrollbar(image);
-                    _overlayText.setVisible(true);
-                    _overlayGraphicScrollBar.setVisible(true);
-                    _scrollbarBg.setVisible(true);
-                    _scrollbarDraggable.setVisible(true);
-                    HandleMouseWheel(true);
-                }
-                else {
-                    _overlayGraphicNoScrollBar.setVisible(true);
-                }
-                image.bringToTop();
-            }
-            _overlayCloseButton.bringToTop();
-        }
-        else {            
-            _overlayText.setVisible(false);
-            _scrollbarBg.setVisible(false);
-            _scrollbarDraggable.setVisible(false);
-            _overlayGraphicScrollBar.setVisible(false);
-            _overlayGraphicNoScrollBar.setVisible(false);
-            HandleMouseWheel(false);            
-        }
-    },
-    resetThoughtVariables: function() {
-        _text = [];
-        _currentIndex = 0;        
+        SetVisible.call(this, value, image);
     }
 }
 
@@ -4021,6 +4103,10 @@ module.exports = {
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
+/***************************************************************
+Loads input fields using phaser input extension.
+Currently unused.
+***************************************************************/
 
 
 var _instance = null;
@@ -4055,8 +4141,13 @@ module.exports = {
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
+/***************************************************************
+Sound Manager. Handles playing of sounds in scenes.
+Author: Christopher Weidya
+***************************************************************/
 
 
+//Dependencies
 const StateManager = __webpack_require__(16),
     InteractState = __webpack_require__(18),
     LocationState = __webpack_require__(19),
@@ -4069,24 +4160,25 @@ const StateManager = __webpack_require__(16),
 
 var _instance = null;
 var _game = null;
+
 var _bgMusic = null;
 var _bgMusicKey = null;
 var _soundHashSet = null;
 var _currTime = 0;
 
-
+//SoundManager singleton constructor
 var SoundManager = function(game) {
     if(_instance !== null)
         return _instance;
     _instance = this;
     _game = game;
+    _soundHashSet = {};
     return _instance;
 }
 
-SoundManager.prototype.init = function() {
-    _soundHashSet = {};
-}
-
+/***************************************************************
+Plays a sound.
+***************************************************************/
 SoundManager.prototype.playSound = function(soundKey) {
     if(!_soundHashSet[soundKey]) {
         _soundHashSet[soundKey] = _game.add.audio(soundKey);
@@ -4094,12 +4186,10 @@ SoundManager.prototype.playSound = function(soundKey) {
     _soundHashSet[soundKey].play();
 }
 
+/***************************************************************
+Plays background music.
+***************************************************************/
 SoundManager.prototype.playBackgroundMusic = function(musicKey) {
-  //  if(_bgMusicKey == musicKey) {
-   //     _bgMusic = _game.add.audio(musicKey);
-  //      _bgMusic.currentTime = _currTime;
- //   }
-    //else {
     if(musicKey &&_bgMusicKey != musicKey) {
         if(_bgMusic)
             _bgMusic.stop();
@@ -4108,20 +4198,25 @@ SoundManager.prototype.playBackgroundMusic = function(musicKey) {
         _bgMusic =_soundHashSet[musicKey];
         _bgMusicKey = musicKey;
         _bgMusic.loop = true;
-        _bgMusic.play(); 
-
+        _bgMusic.play();
     }
 }    
 
+/***************************************************************
+Stops background music.
+***************************************************************/
 SoundManager.prototype.stopBackgroundMusic = function() {
     if(_bgMusic)
         _bgMusic.stop();
 }
 
+/***************************************************************
+Sets current time of audio.
+Unused.
+***************************************************************/
 SoundManager.prototype.setCurrentTime = function(time) {
     _currTime = time;
 }
-
 
 module.exports = SoundManager;
 

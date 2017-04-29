@@ -6,7 +6,7 @@ Author: Christopher Weidya
 
 "use strict";
 
-const FADE_TIME_DEFAULT = 700;
+const FADE_TIME_DEFAULT = 500;
 const SCALE_TIME_DEFAULT = 300;
 const BOB_DELAY_INTERVAL = 700;
 

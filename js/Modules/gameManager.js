@@ -63,7 +63,10 @@ var GameManager = function() {
 
     //Links to an external page
     this._goToLinkSignal = null;
+    //Reloads page
+    this._reloadSignal = null;
 
+    this.initSignals();
     return _instance;
 }
 
@@ -115,9 +118,11 @@ GameManager.prototype.initSignals = function() {
     this._toggleSubtitleSignal = new Phaser.Signal();
     this._toggleSubtitleSignal.add(UI.toggleSubtitle, this);
 
-    //Linkable
+    //Page related functions
     this._goToLinkSignal = new Phaser.Signal();
     this._goToLinkSignal.add(Linkable.goToLink, this);
+    this._reloadSignal = new Phaser.Signal();
+    this._reloadSignal.add(Linkable.reload, this);
 }
 
 /***************************************************************
@@ -188,6 +193,10 @@ GameManager.prototype.getToggleSubtitleSignal = function() {
 
 GameManager.prototype.getGoToLinkSignal = function() {
     return this._goToLinkSignal;
+}
+
+GameManager.prototype.getReloadSignal = function() {
+    return this._reloadSignal;
 }
 
 module.exports = GameManager;

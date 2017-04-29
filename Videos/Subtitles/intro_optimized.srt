@@ -4,11 +4,11 @@ Hey!
 
 2
 00:00:02,730 --> 00:00:04,090
-How's going?
+How's it going?
 
 3
 00:00:06,510 --> 00:00:07,360
-Yeah. I feel that.
+Ha, yeah, I feel that.
 
 4
 00:00:07,520 --> 00:00:07,860
@@ -20,21 +20,12 @@ Sorry...
 
 6
 00:00:10,970 --> 00:00:12,560
-Oh, OK. I have to go.
+Oh, okay, I have to go.
 
 7
 00:00:12,560 --> 00:00:13,530
-But we are meeting later. Right?
+We're meeting later, right?
 
 8
 00:00:15,110 --> 00:00:15,860
-OK. Awsome. See you then.
-
-9
-00:00:00,000 --> 00:00:00,000
-
-
-10
-00:00:00,000 --> 00:00:00,000
-
-
+Okay, awesome. See you then.

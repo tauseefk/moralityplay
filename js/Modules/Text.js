@@ -23,15 +23,6 @@ var Text = function(content, xPos, yPos, type, properties) {
     this._text = null;
 }
 
-Text.prototype.setDefaultProperties = function() {
-    this._text.align = 'left';
-    this._text.font = 'Arial';
-    this._text.fontSize =30;
-    this._text.stroke = '#ffffff';
-    this._text.strokeThickness = 1;
-    this._text.padding.set(10, 0);
-}
-
 Text.prototype.setAdditionalProperties = function() {
     if(this._properties.lineSpacing) {
         this._text.lineSpacing = this._properties.lineSpacing;
@@ -46,11 +37,8 @@ Text.prototype.addToGame = function(game, group) {
     this._text = game.add.text(this._xPos, this._yPos, this._content, this._properties);
     this.setAdditionalProperties();
     group.add(this._text);
-    //this.setDefaultProperties();
 }
-//arg1 can be: xTo, targetScene, endFilterSignal
-//arg2 can be: yTo, changeSceneSignal
-//arg3 can be: filter
+
 Text.prototype.changeText = function(game, arg1, arg2, arg3, arg4, arg5, arg6) {
     switch(this._type) {
         case TextTypeEnum.Thoughts:

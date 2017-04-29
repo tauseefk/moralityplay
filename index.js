@@ -7,11 +7,10 @@ const express = require('express'),
 app.set('port', (process.env.NODE_PORT || 3000));
 
 app.use(cors());
-// app.use(bodyParser.urlencoded());
 app.use(bodyParser.json());
 app.use('/', express.static(__dirname));
 
-app.get('/generateDummyData', Routes.generateDummyData);
+// app.get('/generateDummyData', Routes.generateDummyData);
 app.post('/addUserAction', Routes.addUserAction);
 app.post('/updateUserInfo', Routes.updateUserInfo);
 app.get('/userActions', Routes.getUserActions);
