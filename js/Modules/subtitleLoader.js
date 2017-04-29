@@ -34,7 +34,7 @@ function AddSubEvents(parsedSrt, video) {
            		video.removeEventListener("timeupdate", show);
            		//Adds text out of screen view. Will be realigned later depending on slots given
 	            var text = new Text(sub.text, 0, -500, Text.getEnum().Subtitle, _game.global.style.subtitleTextProperties);
-	            text.addToGame(_game, _game.mediaGroup);
+	            text.addTextToGame(_game, _game.mediaGroup);
 	            text.changeText(_game, _subtitleVisible);
 	            var slotIndex = FindSubtitleSlot(text);
 	            //Adds destroy event to destroy created text

@@ -1,6 +1,6 @@
 /***************************************************************
 Wraps Phaser image.
-All images/buttons/sprites in game goes is transformed and displayed here.
+All images/buttons/sprites in game is transformed and displayed from here.
 Author: Christopher Weidya
 ***************************************************************/
 "use strict";
@@ -234,6 +234,7 @@ Image.prototype.changeToSceneChangeImage = function(game, targetScene) {
     //Interaction properties
     this._link = new Linkable(game, this._image, game.global.gameManager.getChangeSceneSignal(), targetScene);
     this._link.setAsButton(true);    
+    this._link.addSound(game.global.mapping.buttonClickSound);
     this._link.addMouseOverScaleEffect(game, this._image);
     Animation.bob(game, this._image, true, -1);
 }
@@ -250,8 +251,6 @@ Image.prototype.changeToDisplayImage = function(game, target, clickedIndex) {
     this._link.setAsButton(false);
     this._link.addMouseOverScaleEffect(game, this._image);
     Animation.bob(game, this._image, true);
-    //this._link.addOnClickAnimation(Animation.fade(game, this._image, 0,false, null, null, true));
-    //this._link.addSound('testSound');
 }
 
 /***************************************************************
@@ -303,6 +302,7 @@ Image.prototype.changeToChoiceBackgroundImage = function(game, width, height, ta
     this._link.setAsButton(true);        
     this._link.addMouseOverScaleEffect(game, this._image);
     this._link.addMouseOverScaleEffect(game, phaserText);
+    this._link.addSound(game.global.mapping.buttonClickSound);
     this._image.input.priorityID = 1;
 
     this.fadeIn(game);    
@@ -322,6 +322,7 @@ Image.prototype.changeToOverlayCloseImage = function(game) {
     this._link = new Linkable(game, this._image, game.global.gameManager.getHideDisplayedImageSignal());
     this._link.setAsButton(false);
     this._link.addMouseOverScaleEffect(game, this._image);
+    this._link.addSound(game.global.mapping.buttonClickSound);
     this._link2 = new Linkable(game, this._image, game.global.gameManager.getHideInfoOverlaySignal());
     this._link2.setAsButton(false);    
 }
@@ -348,6 +349,7 @@ Image.prototype.changeToExternalLinkImage = function(game, target) {
 
     this._link = new Linkable(game, this._image, game.global.gameManager.getGoToLinkSignal(), target);
     this._link.setAsButton(true);
+    this._link.addSound(game.global.mapping.buttonClickSound);
     this._link.addMouseOverScaleEffect(game, this._image);
 }
 
@@ -359,6 +361,7 @@ Image.prototype.changeToReloadImage = function(game, target) {
 
     this._link = new Linkable(game, this._image, game.global.gameManager.getReloadSignal());
     this._link.setAsButton(true);
+    this._link.addSound(game.global.mapping.buttonClickSound);
     this._link.addMouseOverScaleEffect(game, this._image);
 }
 
@@ -376,6 +379,7 @@ A generic button that dispatched signal parameter when clicked.
 ***************************************************************/
 Image.prototype.changeToGenericButton = function(game, signal) {    
     this._link = new Linkable(game, this._image, signal);
+    this._link.addSound(game.global.mapping.buttonClickSound);
     this._link.setAsButton(false);
 }
 

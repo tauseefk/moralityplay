@@ -328,7 +328,7 @@ Mouse over events.
 ***************************************************************/
 Linkable.prototype.setMouseOver = function() {
     this._event.onInputOver.add(this.playOnMouseOverAnimations, this);
-    this._event.onInputOver.add(this.playSound, this);
+    //this._event.onInputOver.add(this.playSound, this);
 }
 
 /***************************************************************
@@ -384,8 +384,9 @@ Linkable.playAnimations = function(animationArr) {
 }
 
 Linkable.prototype.playSound = function() {
+    var game = this._game;
     this._sound.forEach(function(sound) {
-        this._game.global.soundManager.playSound(sound);
+        game.global.soundManager.playSound(sound);
     });
 }
 
@@ -450,22 +451,29 @@ module.exports = Linkable;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
+/***************************************************************
+Wraps Phaser text.
+All text in game is transformed and displayed from here.
+Author: Christopher Weidya
+***************************************************************/
 
 
+//Dependencies
 const Linkable = __webpack_require__(2),
     Animation = __webpack_require__(10);
 
-const PADDING = 10;
-
+/***************************************************************
+Different types of text.
+***************************************************************/
 var TextTypeEnum = {
     Thoughts: 'TEXT_THOUGHTS',
-    MeaningfulChoices: 'TEXT_MEANINGFUL_CHOICES',
-    MeaninglessChoices: 'TEXT_MEANINGLESS_CHOICES',    
+    Choices: 'TEXT_CHOICES',   
     Question: 'TEXT_QUESTION',
     Subtitle: 'TEXT_SUBTITLE',
     InfoOverlayText: 'TEXT_INFO_OVERLAY'
 }
 
+//Text constructor
 var Text = function(content, xPos, yPos, type, properties) {
     this._type = type;
     this._xPos = xPos;
@@ -475,6 +483,9 @@ var Text = function(content, xPos, yPos, type, properties) {
     this._text = null;
 }
 
+/***************************************************************
+Parses properties set in Style.json and applies them.
+***************************************************************/
 Text.prototype.setAdditionalProperties = function() {
     if(this._properties.lineSpacing) {
         this._text.lineSpacing = this._properties.lineSpacing;
@@ -485,22 +496,25 @@ Text.prototype.setAdditionalProperties = function() {
     }
 }
 
-Text.prototype.addToGame = function(game, group) {
+/***************************************************************
+Adds text to game and applies properties and assigns to the group specified.
+***************************************************************/
+Text.prototype.addTextToGame = function(game, group) {
     this._text = game.add.text(this._xPos, this._yPos, this._content, this._properties);
     this.setAdditionalProperties();
     group.add(this._text);
 }
 
+/***************************************************************
+Changes text to the specified type.
+***************************************************************/
 Text.prototype.changeText = function(game, arg1, arg2, arg3, arg4, arg5, arg6) {
     switch(this._type) {
         case TextTypeEnum.Thoughts:
-            this.changeToThoughts(game, arg1, arg2, arg3);
+            this.changeToThoughts(game, arg1, arg2);
             break;
-        case TextTypeEnum.MeaningfulChoices:
-            this.changeToMeaningfulChoices(game, arg1, arg2, arg3, arg4, arg5, arg6);
-            break;
-        case TextTypeEnum.MeaninglessChoices:
-            this.changeToMeaninglessChoices(game, arg1, arg2, arg3, arg4, arg5);
+        case TextTypeEnum.Choices:
+            this.changeToChoiceText(game, arg1);
             break;
         case TextTypeEnum.Question:
             this.changeToQuestion(game);
@@ -516,59 +530,29 @@ Text.prototype.changeText = function(game, arg1, arg2, arg3, arg4, arg5, arg6) {
     }
 }
 
-Text.prototype.changeToThoughts = function(game, xTo, yTo, filter) {
+/***************************************************************
+Text shown after clicking thought bubble.
+***************************************************************/
+Text.prototype.changeToThoughts = function(game, xTo, yTo) {
     this._text.anchor.setTo(0.5);
     this._text.alpha = 0;
     this.addInterpolationTween(game, xTo, yTo);    
     Animation.fade(game, this._text, 1, true);
 }
 
-Text.prototype.changeToMeaningfulChoices = function(game, boundsY, totalChoices) {
-    /*
-    if(totalChoices > 2)
-        this._text.fontSize -= 5;
-    if(totalChoices > 1)
-        this._text.fontSize -= 5;
-    */
+/***************************************************************
+Text displayed in choices.
+***************************************************************/
+Text.prototype.changeToChoiceText = function(game, boundsY) {
     this._text.anchor.set(0.5, 0.5);
     this._text.y = boundsY;
-    this._text.alpha = 0;
-    this.fadeIn(game);
-    //this._text.inputEnabled = false;
-    //this._text.input.useHandCursor = true;
-    //this._text.boundsAlignV = "middle";
-    //this._text.setTextBounds(0, boundsY, boundsWidth, boundsHeight);
-    /*
-    this._link = new Linkable(game, this._text.events, endInteractionSignal, this, targetScene);
-    this._link.setAsButton(true);    
-    this._link.addMouseOverScaleEffect(game, this._text);
-    */
-    //Animation.fade(game, this._text, 1, true);
+    this._text.alpha = 0;    
+    Animation.fade(game, this._text, 1, true);
 }
 
-Text.prototype.changeToMeaninglessChoices = function(game, boundsY, totalChoices) {
-    /*
-    if(totalChoices > 2)
-        this._text.fontSize -= 5;
-    if(totalChoices > 1)
-        this._text.fontSize -= 5;
-    */
-    this._text.anchor.set(0.5, 0.5);
-    this._text.y = boundsY;
-    this._text.alpha = 0;
-    this.fadeIn(game);
-    //this._text.inputEnabled = false;
-    //this._text.input.useHandCursor = true;
-    //this._text.setTextBounds(0, boundsY, boundsWidth, boundsHeight);
-    //this._text.boundsAlignV = "middle";
-    /*
-    this._link = new Linkable(game, this._text.events, endInteractionSignal, this);
-    this._link.setAsButton(true);
-    this._link.addMouseOverScaleEffect(game, this._text);
-    */
-    //Animation.fade(game, this._text, 1, true);
-}
-
+/***************************************************************
+Question/prompt text
+***************************************************************/
 Text.prototype.changeToQuestion = function(game) {
     this._text.anchor.set(0.5, 0.5);
     this._text.x = game.width/2;    
@@ -576,18 +560,28 @@ Text.prototype.changeToQuestion = function(game) {
     Animation.fade(game, this._text, 1, true);
 }
 
+/***************************************************************
+Helper text in overlay.
+***************************************************************/
 Text.prototype.changeToInfoOverlayText = function(game) {    
     this._text.anchor.set(0.5, 0.5);
     this._text.x = game.width/2;
     this.setVisible(false);
 }
 
+/***************************************************************
+Subtitle text.
+***************************************************************/
 Text.prototype.changeToSubtitle = function(game, isVisible) {
     this._text.anchor.x = 0.5
     this._text.x = game.width/2;
     this.setVisible(isVisible);
 }
 
+/***************************************************************
+Allows for text to take a curved path instead of a linear one to its destination.
+Many hard coded values. Probably not needed.
+***************************************************************/
 Text.prototype.addInterpolationTween = function(game, xTo, yTo) {
     var points = {x: [ this._xPos,  this._xPos + (xTo- this._xPos)/2,  xTo-(xTo- this._xPos)/8, xTo], y: [ this._yPos,  this._yPos-10, yTo-10, yTo]};
     return game.add.tween(this._text).to({x: points.x, y: points.y}, 1000, Phaser.Easing.Quadratic.Out, true, 0 , 0).interpolation(function(v, k){
@@ -595,6 +589,9 @@ Text.prototype.addInterpolationTween = function(game, xTo, yTo) {
         });
 }
 
+/***************************************************************
+Fades out text, dispatching a signal at the end if specified.
+***************************************************************/
 Text.prototype.fadeOut = function(game, chainSignal, arg1) {
     if(chainSignal) {
         this._link = new Linkable(game, this._text.events, chainSignal, arg1);
@@ -606,22 +603,23 @@ Text.prototype.fadeOut = function(game, chainSignal, arg1) {
     }
 }
 
-Text.prototype.fadeIn = function(game, enableInput) {
-    if(enableInput) {
-        this._text.inputEnabled = true;
-        this._text.input.useHandCursor = true;
-    }
-    Animation.fade(game, this._text, 1, true);
-}
-
+/***************************************************************
+Enables/disables input on text.
+***************************************************************/
 Text.prototype.enableInput = function(value) {
     this._text.inputEnabled = value;
 }
 
+/***************************************************************
+Destroys phaser text.
+***************************************************************/
 Text.prototype.destroy = function() {
     this._text.destroy();
 }
 
+/***************************************************************
+Getters
+***************************************************************/
 Text.prototype.getPhaserText = function() {
     return this._text;
 }
@@ -630,6 +628,9 @@ Text.prototype.getHeight = function() {
     return this._text.height;
 }
 
+/***************************************************************
+Setters
+***************************************************************/
 Text.prototype.setVisible = function(isVisible) {
     this._text.visible = isVisible;
 }
@@ -638,6 +639,9 @@ Text.prototype.setY = function(val) {
     this._text.y = val;
 }
 
+/***************************************************************
+Returns enum containing all text types.
+***************************************************************/
 Text.getEnum = function() {
     return TextTypeEnum;
 }
@@ -741,19 +745,19 @@ const toggleSubtitleButtonImageKeyEnum = 'IMAGE_BUTTON_TOGGLE_SUBTITLE';
 
 function DrawPauseButton() {
     if(!_pauseImage)
-        _pauseImage = new Image(10, 10, _game.global.style.pauseButtonImageKey, Image.getEnum().Button);
+        _pauseImage = new Image(10, 10, _game.global.mapping.pauseButtonImageKey, Image.getEnum().Button);
     _pauseImage.addImageToGame(_game, _game.uiGroup);
     _pauseImage.changeImage(_game, _game.global.gameManager.getPauseSignal());
 }
 
 function DrawSubtitleButtons() {
     if(!_subtitleImage)        
-        _subtitleImage = new Image(10, 100, _game.global.style.subtitleButtonImageKey, Image.getEnum().Button);    
+        _subtitleImage = new Image(10, 100, _game.global.mapping.subtitleButtonImageKey, Image.getEnum().Button);    
     _subtitleImage.addImageToGame(_game, _game.uiGroup);
     _subtitleImage.changeImage(_game, _game.global.gameManager.getToggleSubtitleSignal());
 
     if(!_subtitleDisabledImage)        
-        _subtitleDisabledImage = new Image(10, 100, _game.global.style.subtitleDisabledButtonImageKey, Image.getEnum().Button);    
+        _subtitleDisabledImage = new Image(10, 100, _game.global.mapping.subtitleDisabledButtonImageKey, Image.getEnum().Button);    
     _subtitleDisabledImage.addImageToGame(_game, _game.uiGroup);
     _subtitleDisabledImage.changeImage(_game, _game.global.gameManager.getToggleSubtitleSignal());
 
@@ -894,7 +898,7 @@ module.exports = {
 "use strict";
 /***************************************************************
 Wraps Phaser image.
-All images/buttons/sprites in game goes is transformed and displayed here.
+All images/buttons/sprites in game is transformed and displayed from here.
 Author: Christopher Weidya
 ***************************************************************/
 
@@ -1128,6 +1132,7 @@ Image.prototype.changeToSceneChangeImage = function(game, targetScene) {
     //Interaction properties
     this._link = new Linkable(game, this._image, game.global.gameManager.getChangeSceneSignal(), targetScene);
     this._link.setAsButton(true);    
+    this._link.addSound(game.global.mapping.buttonClickSound);
     this._link.addMouseOverScaleEffect(game, this._image);
     Animation.bob(game, this._image, true, -1);
 }
@@ -1144,8 +1149,6 @@ Image.prototype.changeToDisplayImage = function(game, target, clickedIndex) {
     this._link.setAsButton(false);
     this._link.addMouseOverScaleEffect(game, this._image);
     Animation.bob(game, this._image, true);
-    //this._link.addOnClickAnimation(Animation.fade(game, this._image, 0,false, null, null, true));
-    //this._link.addSound('testSound');
 }
 
 /***************************************************************
@@ -1197,6 +1200,7 @@ Image.prototype.changeToChoiceBackgroundImage = function(game, width, height, ta
     this._link.setAsButton(true);        
     this._link.addMouseOverScaleEffect(game, this._image);
     this._link.addMouseOverScaleEffect(game, phaserText);
+    this._link.addSound(game.global.mapping.buttonClickSound);
     this._image.input.priorityID = 1;
 
     this.fadeIn(game);    
@@ -1216,6 +1220,7 @@ Image.prototype.changeToOverlayCloseImage = function(game) {
     this._link = new Linkable(game, this._image, game.global.gameManager.getHideDisplayedImageSignal());
     this._link.setAsButton(false);
     this._link.addMouseOverScaleEffect(game, this._image);
+    this._link.addSound(game.global.mapping.buttonClickSound);
     this._link2 = new Linkable(game, this._image, game.global.gameManager.getHideInfoOverlaySignal());
     this._link2.setAsButton(false);    
 }
@@ -1242,6 +1247,7 @@ Image.prototype.changeToExternalLinkImage = function(game, target) {
 
     this._link = new Linkable(game, this._image, game.global.gameManager.getGoToLinkSignal(), target);
     this._link.setAsButton(true);
+    this._link.addSound(game.global.mapping.buttonClickSound);
     this._link.addMouseOverScaleEffect(game, this._image);
 }
 
@@ -1253,6 +1259,7 @@ Image.prototype.changeToReloadImage = function(game, target) {
 
     this._link = new Linkable(game, this._image, game.global.gameManager.getReloadSignal());
     this._link.setAsButton(true);
+    this._link.addSound(game.global.mapping.buttonClickSound);
     this._link.addMouseOverScaleEffect(game, this._image);
 }
 
@@ -1270,6 +1277,7 @@ A generic button that dispatched signal parameter when clicked.
 ***************************************************************/
 Image.prototype.changeToGenericButton = function(game, signal) {    
     this._link = new Linkable(game, this._image, signal);
+    this._link.addSound(game.global.mapping.buttonClickSound);
     this._link.setAsButton(false);
 }
 
@@ -1462,7 +1470,7 @@ var _displayedIconIndex = null;
 Creates thought bubble icons.
 ***************************************************************/
 function CreateThoughtIcon(coords, thoughts) {
-    var button = new Image(coords[0], coords[1], _game.global.style.thoughtBubbleImageKey, Image.getEnum().ThoughtSprite);
+    var button = new Image(coords[0], coords[1], _game.global.mapping.thoughtBubbleImageKey, Image.getEnum().ThoughtSprite);
     button.addImageToGame(_game, _game.mediaGroup);
     button.changeImage(_game, thoughts, coords);
     //_icons.push(button);
@@ -2183,7 +2191,7 @@ Creates answer texts for choice buttons.
 ***************************************************************/
 function CreateChoicePrompt(question, yPos) {
     _question = new Text(question, 0, yPos, Text.getEnum().Question, _game.global.style.questionTextProperties);
-    _question.addToGame(_game, _game.mediaGroup);
+    _question.addTextToGame(_game, _game.mediaGroup);
     _question.changeText(_game, Text.getEnum().Question);
 }
 
@@ -2207,9 +2215,9 @@ Creates choice answer text.
 ***************************************************************/
 function CreateAnswers(currIndex, choices) {
     _text.push(new Text(choices.content[currIndex], GetXPos(choices.size, currIndex), 0, 
-        Text.getEnum().MeaningfulChoices, _game.global.style.choicesTextProperties));
+        Text.getEnum().Choices, _game.global.style.choicesTextProperties));
     _text[currIndex].index = currIndex;
-    _text[currIndex].addToGame(_game, _game.mediaGroup);
+    _text[currIndex].addTextToGame(_game, _game.mediaGroup);
 }
 
 /***************************************************************
@@ -2357,7 +2365,7 @@ module.exports = {
     create: function(info, coords) {
         for(var i=0; i < info.size; i++) {
             _text.push(new Text(info.content[i], coords[0], coords[1], thoughtsTextKeyEnum, _game.global.style.thoughtsTextProperties));
-            _text[_currentIndex].addToGame(_game, _game.mediaGroup);
+            _text[_currentIndex].addTextToGame(_game, _game.mediaGroup);
             _text[_currentIndex].changeText(_game, info.destination[i][0], info.destination[i][1]);
             _currentIndex++;
         };
@@ -2395,6 +2403,7 @@ var _images = null;
 var _spritesheets = null;
 var _scenes = null;
 var _subs = null;
+var _mapping = null;
 var _style = null;
 
 function loadVideos(videos) {
@@ -2440,14 +2449,15 @@ module.exports = {
         _instance = this;
         _game = game;
         _data = _game.cache.getJSON('data');
+        _scenes = _game.cache.getJSON('scenes').scenes;
         _style = _game.cache.getJSON('style');
 
         _images = _data.images;
         _spritesheets = _data.spritesheets;
         _videos = _data.videos;
         _audio = _data.audio;
-        _scenes = _data.scenes;
         _subs = _data.subtitles;
+        _mapping = _data.mapping;
         return _instance;
     },
     preload: function() {
@@ -2459,6 +2469,9 @@ module.exports = {
     },
     getScene: function(name) {
         return _scenes[name];
+    },
+    getMapping: function() {
+        return _mapping;
     },
     getStyle: function() {
         return _style;
@@ -2574,7 +2587,7 @@ module.exports = {
     preload: function() {
     },
     create: function() {
-        _game.global.gameManager.getChangeSceneSignal().dispatch(_game.global.style.startSceneName);
+        _game.global.gameManager.getChangeSceneSignal().dispatch(_game.global.mapping.startSceneName);
     },
     changeScene: function(sceneName) {
         _game.mediaGroup.removeAll();
@@ -3038,7 +3051,7 @@ function AddSubEvents(parsedSrt, video) {
            		video.removeEventListener("timeupdate", show);
            		//Adds text out of screen view. Will be realigned later depending on slots given
 	            var text = new Text(sub.text, 0, -500, Text.getEnum().Subtitle, _game.global.style.subtitleTextProperties);
-	            text.addToGame(_game, _game.mediaGroup);
+	            text.addTextToGame(_game, _game.mediaGroup);
 	            text.changeText(_game, _subtitleVisible);
 	            var slotIndex = FindSubtitleSlot(text);
 	            //Adds destroy event to destroy created text
@@ -3519,6 +3532,7 @@ module.exports = {
     create: function() {
         //Gets UI information
         _game.global.style = Resources.getStyle();
+        _game.global.mapping = Resources.getMapping();
         _game.state.start("stateManager");
     }
 }
@@ -3599,17 +3613,16 @@ DatabaseManager.prototype.getUserId = function() {
   return this.userId;
 }
 
-DatabaseManager.prototype.setUserId = function(generatedUserId) {
-}
-
 DatabaseManager.prototype.createUser = function() {
     if(!useDatabase)
         return;
   axios.get(_serverUrl + _createUserRoute)
   .then(function(res) {
     userId = res.data;
+
+    // sets userId in userInfoActions module
+    userInfoActions.setUserId(userId);
   })
-  .then(console.log.bind(this))
   .catch(console.error.bind(this));
 }
 
@@ -3617,16 +3630,12 @@ DatabaseManager.prototype.sendInteractionData = function(currentSceneName, tag) 
     if(!useDatabase)
         return;
     if(tag != undefined && tag != null) {
-      var userInteractionData = {
+      var _userInteractionData = {
         id: userId,
         sceneName: currentSceneName,
         interactionType: tag
       };
-      // var url = createUserInteractionUrl(_serverUrl, _userInteractionRoute, userInteractionData);
-      // fetch(url)
-      // .then(console.log.bind(this));
-      axios.post(_serverUrl + _userInteractionRoute, userInteractionData)
-      .then(console.log.bind(this))
+      axios.post(_serverUrl + _userInteractionRoute, _userInteractionData)
       .catch(console.error.bind(this));
     }
 }
@@ -3946,7 +3955,7 @@ Creates draggable scrollbar image.
 ***************************************************************/
 function CreateScrollBarImage() {
     _scrollbarDraggable = new Image(_game.global.constants.SCROLLBAR_POS[0] + _game.global.constants.SCROLLBAR_DIM[0]/2
-        , _game.global.constants.SCROLLBAR_POS[1], _game.global.style.overlayScrollBarImageKey, Image.getEnum().OverlayScrollBar);
+        , _game.global.constants.SCROLLBAR_POS[1], _game.global.mapping.overlayScrollBarImageKey, Image.getEnum().OverlayScrollBar);
     _scrollbarDraggable.addImageToGame(_game, _game.uiGroup);
     _scrollbarDraggable.changeImage(_game, _game.global.constants.SCROLLBAR_DIM[0]);
 }
@@ -3955,7 +3964,7 @@ function CreateScrollBarImage() {
 Creates cross button for overlay
 ***************************************************************/
 function CreateOverlayCrossButton() {
-    _overlayCloseButton = new Image(50, 50, _game.global.style.overlayCloseButtonImageKey, Image.getEnum().OverlayCloseImage);
+    _overlayCloseButton = new Image(50, 50, _game.global.mapping.overlayCloseButtonImageKey, Image.getEnum().OverlayCloseImage);
     _overlayCloseButton.addImageToGame(_game, _game.uiGroup);
     _overlayCloseButton.changeImage(_game);
 }
@@ -3966,7 +3975,7 @@ Creates helper text for images that require draggin/scollbar
 function CreateOverlayHelperText() {
     _overlayText = new Text('Drag the image below to scroll', _game.world.centerX, 25, Text.getEnum().InfoOverlayText, 
         _game.global.style.questionTextProperties);
-    _overlayText.addToGame(_game, _game.uiGroup);
+    _overlayText.addTextToGame(_game, _game.uiGroup);
     _overlayText.changeText(_game);
 }
 
@@ -4460,7 +4469,7 @@ const Boot = __webpack_require__(31),
     Preload = __webpack_require__(32),
     StateManager = __webpack_require__(16),
     ResourceLoader = __webpack_require__(15);
-    
+
 function initGame(Boot, Preload, StateManager, ResourceLoader) {
     var game = new Phaser.Game(1280, 720, Phaser.CANVAS, '', { init: init, preload: preload, create: create, update: update });
 
@@ -4470,6 +4479,7 @@ function initGame(Boot, Preload, StateManager, ResourceLoader) {
     function init() {
         console.log("Game initialized.");
         game.canvas.className += "center";
+        // game.canvas.className += " orientation-landscape";
         game.state.add("boot", Boot);
         game.state.add("preload", Preload);
         game.state.add("stateManager", StateManager);
@@ -4479,7 +4489,8 @@ function initGame(Boot, Preload, StateManager, ResourceLoader) {
     Loads Json Files and loading images
     ****************************************************************/
     function preload () {
-        game.load.json('data', 'json/Data.json');
+        game.load.json('data', 'json/Data.json');        
+        game.load.json('scenes', 'json/Scenes.json');
         game.load.json('style', 'json/Style.json');
         game.load.image('progressSceneBackground', './Images/Loading/progress_bg.png');
         game.load.image('progressBarFillFg', './Images/Loading/progressbar.png');

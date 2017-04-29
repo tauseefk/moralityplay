@@ -19,7 +19,7 @@ var _displayedIconIndex = null;
 Creates thought bubble icons.
 ***************************************************************/
 function CreateThoughtIcon(coords, thoughts) {
-    var button = new Image(coords[0], coords[1], _game.global.style.thoughtBubbleImageKey, Image.getEnum().ThoughtSprite);
+    var button = new Image(coords[0], coords[1], _game.global.mapping.thoughtBubbleImageKey, Image.getEnum().ThoughtSprite);
     button.addImageToGame(_game, _game.mediaGroup);
     button.changeImage(_game, thoughts, coords);
     //_icons.push(button);

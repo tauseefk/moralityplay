@@ -30,19 +30,19 @@ const toggleSubtitleButtonImageKeyEnum = 'IMAGE_BUTTON_TOGGLE_SUBTITLE';
 
 function DrawPauseButton() {
     if(!_pauseImage)
-        _pauseImage = new Image(10, 10, _game.global.style.pauseButtonImageKey, Image.getEnum().Button);
+        _pauseImage = new Image(10, 10, _game.global.mapping.pauseButtonImageKey, Image.getEnum().Button);
     _pauseImage.addImageToGame(_game, _game.uiGroup);
     _pauseImage.changeImage(_game, _game.global.gameManager.getPauseSignal());
 }
 
 function DrawSubtitleButtons() {
     if(!_subtitleImage)        
-        _subtitleImage = new Image(10, 100, _game.global.style.subtitleButtonImageKey, Image.getEnum().Button);    
+        _subtitleImage = new Image(10, 100, _game.global.mapping.subtitleButtonImageKey, Image.getEnum().Button);    
     _subtitleImage.addImageToGame(_game, _game.uiGroup);
     _subtitleImage.changeImage(_game, _game.global.gameManager.getToggleSubtitleSignal());
 
     if(!_subtitleDisabledImage)        
-        _subtitleDisabledImage = new Image(10, 100, _game.global.style.subtitleDisabledButtonImageKey, Image.getEnum().Button);    
+        _subtitleDisabledImage = new Image(10, 100, _game.global.mapping.subtitleDisabledButtonImageKey, Image.getEnum().Button);    
     _subtitleDisabledImage.addImageToGame(_game, _game.uiGroup);
     _subtitleDisabledImage.changeImage(_game, _game.global.gameManager.getToggleSubtitleSignal());
 

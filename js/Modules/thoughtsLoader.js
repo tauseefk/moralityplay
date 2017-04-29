@@ -23,7 +23,7 @@ module.exports = {
     create: function(info, coords) {
         for(var i=0; i < info.size; i++) {
             _text.push(new Text(info.content[i], coords[0], coords[1], thoughtsTextKeyEnum, _game.global.style.thoughtsTextProperties));
-            _text[_currentIndex].addToGame(_game, _game.mediaGroup);
+            _text[_currentIndex].addTextToGame(_game, _game.mediaGroup);
             _text[_currentIndex].changeText(_game, info.destination[i][0], info.destination[i][1]);
             _currentIndex++;
         };

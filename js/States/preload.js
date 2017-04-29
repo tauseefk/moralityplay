@@ -48,6 +48,7 @@ module.exports = {
     create: function() {
         //Gets UI information
         _game.global.style = Resources.getStyle();
+        _game.global.mapping = Resources.getMapping();
         _game.state.start("stateManager");
     }
 }

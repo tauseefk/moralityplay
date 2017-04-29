@@ -37,7 +37,7 @@ Creates answer texts for choice buttons.
 ***************************************************************/
 function CreateChoicePrompt(question, yPos) {
     _question = new Text(question, 0, yPos, Text.getEnum().Question, _game.global.style.questionTextProperties);
-    _question.addToGame(_game, _game.mediaGroup);
+    _question.addTextToGame(_game, _game.mediaGroup);
     _question.changeText(_game, Text.getEnum().Question);
 }
 
@@ -61,9 +61,9 @@ Creates choice answer text.
 ***************************************************************/
 function CreateAnswers(currIndex, choices) {
     _text.push(new Text(choices.content[currIndex], GetXPos(choices.size, currIndex), 0, 
-        Text.getEnum().MeaningfulChoices, _game.global.style.choicesTextProperties));
+        Text.getEnum().Choices, _game.global.style.choicesTextProperties));
     _text[currIndex].index = currIndex;
-    _text[currIndex].addToGame(_game, _game.mediaGroup);
+    _text[currIndex].addTextToGame(_game, _game.mediaGroup);
 }
 
 /***************************************************************

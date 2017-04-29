@@ -14,6 +14,7 @@ var _images = null;
 var _spritesheets = null;
 var _scenes = null;
 var _subs = null;
+var _mapping = null;
 var _style = null;
 
 function loadVideos(videos) {
@@ -59,14 +60,15 @@ module.exports = {
         _instance = this;
         _game = game;
         _data = _game.cache.getJSON('data');
+        _scenes = _game.cache.getJSON('scenes').scenes;
         _style = _game.cache.getJSON('style');
 
         _images = _data.images;
         _spritesheets = _data.spritesheets;
         _videos = _data.videos;
         _audio = _data.audio;
-        _scenes = _data.scenes;
         _subs = _data.subtitles;
+        _mapping = _data.mapping;
         return _instance;
     },
     preload: function() {
@@ -78,6 +80,9 @@ module.exports = {
     },
     getScene: function(name) {
         return _scenes[name];
+    },
+    getMapping: function() {
+        return _mapping;
     },
     getStyle: function() {
         return _style;

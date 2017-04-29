@@ -31,7 +31,8 @@ function initGame(Boot, Preload, StateManager, ResourceLoader) {
     Loads Json Files and loading images
     ****************************************************************/
     function preload () {
-        game.load.json('data', 'json/Data.json');
+        game.load.json('data', 'json/Data.json');        
+        game.load.json('scenes', 'json/Scenes.json');
         game.load.json('style', 'json/Style.json');
         game.load.image('progressSceneBackground', './Images/Loading/progress_bg.png');
         game.load.image('progressBarFillFg', './Images/Loading/progressbar.png');

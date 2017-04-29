@@ -41,7 +41,7 @@ Mouse over events.
 ***************************************************************/
 Linkable.prototype.setMouseOver = function() {
     this._event.onInputOver.add(this.playOnMouseOverAnimations, this);
-    this._event.onInputOver.add(this.playSound, this);
+    //this._event.onInputOver.add(this.playSound, this);
 }
 
 /***************************************************************
@@ -97,8 +97,9 @@ Linkable.playAnimations = function(animationArr) {
 }
 
 Linkable.prototype.playSound = function() {
+    var game = this._game;
     this._sound.forEach(function(sound) {
-        this._game.global.soundManager.playSound(sound);
+        game.global.soundManager.playSound(sound);
     });
 }
 

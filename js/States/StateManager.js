@@ -101,7 +101,7 @@ module.exports = {
     preload: function() {
     },
     create: function() {
-        _game.global.gameManager.getChangeSceneSignal().dispatch(_game.global.style.startSceneName);
+        _game.global.gameManager.getChangeSceneSignal().dispatch(_game.global.mapping.startSceneName);
     },
     changeScene: function(sceneName) {
         _game.mediaGroup.removeAll();

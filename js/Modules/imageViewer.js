@@ -80,7 +80,7 @@ Creates draggable scrollbar image.
 ***************************************************************/
 function CreateScrollBarImage() {
     _scrollbarDraggable = new Image(_game.global.constants.SCROLLBAR_POS[0] + _game.global.constants.SCROLLBAR_DIM[0]/2
-        , _game.global.constants.SCROLLBAR_POS[1], _game.global.style.overlayScrollBarImageKey, Image.getEnum().OverlayScrollBar);
+        , _game.global.constants.SCROLLBAR_POS[1], _game.global.mapping.overlayScrollBarImageKey, Image.getEnum().OverlayScrollBar);
     _scrollbarDraggable.addImageToGame(_game, _game.uiGroup);
     _scrollbarDraggable.changeImage(_game, _game.global.constants.SCROLLBAR_DIM[0]);
 }
@@ -89,7 +89,7 @@ function CreateScrollBarImage() {
 Creates cross button for overlay
 ***************************************************************/
 function CreateOverlayCrossButton() {
-    _overlayCloseButton = new Image(50, 50, _game.global.style.overlayCloseButtonImageKey, Image.getEnum().OverlayCloseImage);
+    _overlayCloseButton = new Image(50, 50, _game.global.mapping.overlayCloseButtonImageKey, Image.getEnum().OverlayCloseImage);
     _overlayCloseButton.addImageToGame(_game, _game.uiGroup);
     _overlayCloseButton.changeImage(_game);
 }
@@ -100,7 +100,7 @@ Creates helper text for images that require draggin/scollbar
 function CreateOverlayHelperText() {
     _overlayText = new Text('Drag the image below to scroll', _game.world.centerX, 25, Text.getEnum().InfoOverlayText, 
         _game.global.style.questionTextProperties);
-    _overlayText.addToGame(_game, _game.uiGroup);
+    _overlayText.addTextToGame(_game, _game.uiGroup);
     _overlayText.changeText(_game);
 }
 
