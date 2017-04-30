@@ -63,10 +63,14 @@ module.exports = {
             Video.create(videoSrc, _stateInfo.getTransitionInfo().fadeOut, _stateInfo.getVideoFilter());
         else
             Background.create(_stateInfo.getBgImageKey(), _stateInfo.getDraggable());
-        
+
         //Create Icons
         Icons.createClickableIcons(_stateInfo.getIconsInfo());
 
+        //Executes when scene is of this name
+        if(_game.global.currentSceneName === _game.global.mapping.postEndingSceneName)
+            console.log("executed post ending stuff");
+        
         if(_stateInfo.getTransitionInfo().fadeIn)
             this.game.global.gameManager.getFadeInTransitionSignal().dispatch();
     },

@@ -4,17 +4,6 @@ Author: Christopher Weidya
 ***************************************************************/
 "use strict";
 
-//Dependencies
-const StateManager = require('../States/StateManager'),
-    InteractState = require('../States/interactState'),
-    LocationState = require('../States/locationState'),
-    Icons = require('./iconsLoader'),
-    Choices = require('./choiceLoader'),
-    Thoughts = require('./thoughtsLoader'),
-    Transition = require('./transition'),
-    UI = require('./uiLoader'),
-    Video = require('./videoLoader');
-
 var _instance = null;
 var _game = null;
 

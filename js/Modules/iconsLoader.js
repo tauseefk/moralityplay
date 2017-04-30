@@ -5,8 +5,8 @@ Author: Christopher Weidya
 "use strict";
 
 //Dependencies
-const Image = require('./Image'),
-    SceneParser = require('./SceneParser');
+const Image = require('./Objects/Image'),
+    SceneParser = require('./Objects/SceneParser');
 
 var _instance = null;
 var _game = null;

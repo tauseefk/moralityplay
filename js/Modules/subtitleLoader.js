@@ -5,7 +5,7 @@ Author: Christopher Weidya
 "use strict";
 
 //Dependencies
-const Text = require('./Text');
+const Text = require('./Objects/Text');
 
 var _instance = null;
 var _game = null;

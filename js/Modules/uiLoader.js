@@ -1,33 +1,33 @@
-//Dependency: Nonde
+/***************************************************************
+In charge of creating fade in/out transitions between scenes.
+Currently fade out is not implemented.
+Author: Christopher Weidya
+***************************************************************/
 "use strict";
 
-const Image = require('./Image'),
-    Text = require('./Text'),
-    Graphic = require('./Graphics'),
+//Dependencies
+const Image = require('./Objects/Image'),
+    Text = require('./Objects/Text'),
+    Graphic = require('./Objects/Graphics'),
     Video = require('./videoLoader'),
     ImageViewer = require('./imageViewer'),
     Subtitle = require('./subtitleLoader');
 
 var _instance = null;
 var _game = null;
-var _graphics = null;
+
+var _graphicOverlay = null;
 var _pauseImage = null;
 var _playImage = null;
 var _subtitleImage = null;
 var _subtitleDisabledImage = null;
-var _pausedByEngine = false;
-
-var _overlayGraphic = null;
-var _overlayCloseButton = null;
-var _overlayText = null;
 
 var _uiVisible = true;
 var _subsVisible = true;
 
-const pauseButtonImageKeyEnum = 'IMAGE_BUTTON_PAUSE';
-const playButtonImageKeyEnum = 'IMAGE_BUTTON_PLAY';
-const toggleSubtitleButtonImageKeyEnum = 'IMAGE_BUTTON_TOGGLE_SUBTITLE';
-
+/***************************************************************
+Draws pause UI image button.
+***************************************************************/
 function DrawPauseButton() {
     if(!_pauseImage)
         _pauseImage = new Image(10, 10, _game.global.mapping.pauseButtonImageKey, Image.getEnum().Button);
@@ -35,6 +35,9 @@ function DrawPauseButton() {
     _pauseImage.changeImage(_game, _game.global.gameManager.getPauseSignal());
 }
 
+/***************************************************************
+Draws both subtitle images, for on/off.
+***************************************************************/
 function DrawSubtitleButtons() {
     if(!_subtitleImage)        
         _subtitleImage = new Image(10, 100, _game.global.mapping.subtitleButtonImageKey, Image.getEnum().Button);    
@@ -46,43 +49,58 @@ function DrawSubtitleButtons() {
     _subtitleDisabledImage.addImageToGame(_game, _game.uiGroup);
     _subtitleDisabledImage.changeImage(_game, _game.global.gameManager.getToggleSubtitleSignal());
 
+    //Gets visibility status from subtitle loader
     if(Subtitle.getSubtitleVisible())
         _subtitleDisabledImage.setVisible(false);
     else        
         _subtitleImage.setVisible(false);
 }
 
+/***************************************************************
+Draws play UI image button.
+***************************************************************/
 function DrawPlayButton() {
     if(!_playImage)
-        _playImage = new Image(_game.world.centerX, _game.world.centerY, 'playButton', playButtonImageKeyEnum);
+        _playImage = new Image(_game.world.centerX, _game.world.centerY,  _game.global.mapping.playButtonImageKey, Image.getEnum().Play);
     _playImage.addImageToGame(_game, _game.uiGroup);
     _playImage.changeImage(_game);
     _playImage.setVisible(false);
 }
 
+/***************************************************************
+Pauses game, checks whether video is already paused before firing.
+***************************************************************/
 function Pause() {
     if(!Video.paused()) {
         _game.paused = true;
         Video.stop();
-        if(_graphics) {
-            _graphics.setVisible(true);;
+        if(_graphicOverlay) {
+            _graphicOverlay.setVisible(true);;
         }
         if(_playImage) {
             _playImage.setVisible(true);
         }
+        //Adds event to resume game
         _game.input.onDown.addOnce(Play, self);
     }
 }
 
+/***************************************************************
+Checks that the video is paused by the UI before unpausing.
+Prevents conflict when video is paused by engine during interaction moment.
+***************************************************************/
 function Play() {
     if(!Video.isPausedByGame()) {
         Video.play();
         _game.paused = false;
-        _graphics.setVisible(false);
+        _graphicOverlay.setVisible(false);
         _playImage.setVisible(false);
     }
 }
 
+/***************************************************************
+Hides the UI during interaction moment.
+***************************************************************/
 function HideUI() {
     _uiVisible = false;
     _pauseImage.setVisible(_uiVisible);
@@ -90,6 +108,9 @@ function HideUI() {
     _subtitleDisabledImage.setVisible(_uiVisible);
 }
 
+/***************************************************************
+Shows the UI.
+***************************************************************/
 function ShowUI() {
     _uiVisible = true;
     _pauseImage.setVisible(_uiVisible);
@@ -99,25 +120,31 @@ function ShowUI() {
         _subtitleDisabledImage.setVisible(_uiVisible);
 }
 
+/***************************************************************
+Draws semi-transparent black overlay when game is paused.
+***************************************************************/
 function DrawPauseOverlay() {
-    _graphics = new Graphic(0, 0, Graphic.getEnum().Rectangle);
+    _graphicOverlay = new Graphic(0, 0, Graphic.getEnum().Rectangle);
     var rectangle = Graphic.createRectangle(0, 0, _game.width, _game.height, 0x000000, 0.8);
-    _graphics.addGraphicToGame(_game);
-    _graphics.changeGraphic(_game, rectangle);
-    _graphics.setVisible(false);
-    _game.uiGroup.add(_graphics.getGraphic());
+    _graphicOverlay.addGraphicToGame(_game);
+    _graphicOverlay.changeGraphic(_game, rectangle);
+    _graphicOverlay.setVisible(false);
+    _game.uiGroup.add(_graphicOverlay.getGraphic());
 }
 
+/*
+//Unused, intended for nameplates.
 function drawUI() {
-    _graphics = _game.add.graphics(0, 0);
+    _graphicOverlay = _game.add.graphics(0, 0);
     drawName();
 }
 
 function drawName() {
     _game.add.text(0, 0, 'Chris', {})
-    _graphics.beginFill(0x000000);
-    _graphics.drawRoundedRect(0, 0, _game.width, _game.height, 10);
+    _graphicOverlay.beginFill(0x000000);
+    _graphicOverlay.drawRoundedRect(0, 0, _game.width, _game.height, 10);
 }
+*/
 
 module.exports = {
     init: function(game) {
@@ -128,8 +155,6 @@ module.exports = {
         _instance = this;
         _game = game;
         return _instance;
-    },
-    preload: function() {
     },
     create: function(drawPause, drawSubtitles) {
         _uiVisible = true;

@@ -7,7 +7,8 @@ Currently unused.
 var _instance = null;
 var _game = null;
 var _input = null;
-var Input = require('./Input');
+
+var Input = require('./Objects/Input');
 
 module.exports = {
     init: function(game) {

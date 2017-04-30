@@ -1,14 +1,17 @@
+/***************************************************************
+Creates text that appears after clicking thought bubbles.
+Author: Christopher Weidya
+***************************************************************/
 "use strict";
 
-//Initialized once
-const Text = require('./Text');
+//Dependencies
+const Text = require('./Objects/Text');
 
-var _instance = null,
-    _game = null,
-    _text = [],
-    _currentIndex = 0;
+var _instance = null;
+var _game = null;
 
-const thoughtsTextKeyEnum = 'TEXT_THOUGHTS';
+var _text = [];
+var _currentIndex = 0;
 
 module.exports = {
     init: function(game) {
@@ -22,7 +25,7 @@ module.exports = {
     },
     create: function(info, coords) {
         for(var i=0; i < info.size; i++) {
-            _text.push(new Text(info.content[i], coords[0], coords[1], thoughtsTextKeyEnum, _game.global.style.thoughtsTextProperties));
+            _text.push(new Text(info.content[i], coords[0], coords[1], Text.getEnum().Thoughts, _game.global.style.thoughtsTextProperties));
             _text[_currentIndex].addTextToGame(_game, _game.mediaGroup);
             _text[_currentIndex].changeText(_game, info.destination[i][0], info.destination[i][1]);
             _currentIndex++;

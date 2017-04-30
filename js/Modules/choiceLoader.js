@@ -5,8 +5,8 @@ Author: Christopher Weidya
 "use strict";
 
 //Dependencies
-const Text = require('./Text'),
-    Image = require('./Image');
+const Text = require('./Objects/Text'),
+    Image = require('./Objects/Image');
 
 const BACKGROUND_IMAGE_KEY = 'choiceBg';
 

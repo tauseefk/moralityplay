@@ -1,7 +1,12 @@
+/***************************************************************
+Draws bitmap overlays/underlays from video.
+Author: Christopher Weidya
+***************************************************************/
 "use strict";
 
-const Linkable = require('./Linkable'),
-    Animation = require('./Animation');
+//Dependencies
+const Linkable = require('./Objects/Linkable'),
+    Animation = require('./Objects/Animation');
 
 var _instance = null;
 var _game = null;
@@ -19,33 +24,33 @@ var _framebuffer = null;
 
 var _effect = null;
 var _filter = null;
-var _fadeOutSignal = null;
 
-const REFRESH_TIME_MS = 10;
-const FADE_IN_TIME_MS = 2000;
-
+/***************************************************************
+Initializes bitmap overlay that will hold the video effect.
+***************************************************************/
 function InitializeBitmapOverlay(game) {
     _bitmapCanvas = game.add.bitmapData(game.width, game.height);
     _bitmapSprite = game.add.sprite(game.width/2, game.height/2, _bitmapCanvas);
-    //_bitmapSprite = _bitmapCanvas.addToWorld(game.width/2, game.height/2);
     game.mediaGroup.add(_bitmapSprite);
     _bitmapSprite.alpha = 0;
     _bitmapSprite.anchor.setTo(0.5, 0.5);
     _context = _bitmapCanvas.context;
 }
 
+/***************************************************************
+Initializes bitmap background that will capture video frame.
+***************************************************************/
 function InitializeBitmapBg(game){    
     _frameHolderBitmapCanvas = game.add.bitmapData(game.width, game.height);
     _frameHolderBitmapSprite = game.add.sprite(game.width/2, game.height/2, _frameHolderBitmapCanvas);
-    _frameHolderBitmapSprite = game.stage.addChildAt(_frameHolderBitmapSprite, 0);  
-    //console.log(game.stage); 
-    //_frameHolderBitmapSprite = _frameHolderBitmapCanvas.addToWorld(0, 0);
-    //game.mediaGroup.add(_frameHolderBitmapSprite);    
-    //_frameHolderBitmapSprite.alpha = 0;    
+    _frameHolderBitmapSprite = game.stage.addChildAt(_frameHolderBitmapSprite, 0);
     _frameHolderBitmapSprite.anchor.setTo(0.5, 0.5);
     _contextBitmap = _frameHolderBitmapCanvas.context;
 }
 
+/***************************************************************
+Fades in bitmap overlay during interaction moments.
+***************************************************************/
 function StartFilterFadeIn(signal) {
     var linkable = new Linkable(_game, _bitmapSprite, signal);
     linkable.addOnClickAnimation(Animation.fade(_game, _bitmapSprite, 1, false));
@@ -53,27 +58,25 @@ function StartFilterFadeIn(signal) {
     linkable.onTrigger();
 }
 
-function EndFilter(targetScene) {
-    //var linkable = new Linkable(_game, _game.global.gameManager.getToggleUISignal());
-    //linkable.addAnimation(Animation.fade(_game, _bitmapSprite, 0, false));
-    //if(targetScene)
-    //    _frameHolderBitmapSprite.alpha = 0;
+/***************************************************************
+Fades out bitmap overlay at the end of interaction moments.
+***************************************************************/
+function EndFilter() {
     Animation.fade(_game, _bitmapSprite, 0, true);
-    //linkable.onTrigger();
-    //linkable.triggerSignal(true);
 }
 
+/***************************************************************
+Starts rendering of video filter.
+***************************************************************/
 function CreateVideoFilter() {
-     //   _game.time.reset();
     Render();
-
-    //_contextBitmap.drawImage(_videoHTML, 0, 0, _video.width,
-      //  _video.height, 0, 0, _game.width, _game.height);
-    //_game.time.events.repeat(10, 1, render, this);
 };
 
+/***************************************************************
+Sets repeating function that draws on the bitmap overlay.
+***************************************************************/
 function Render() {
-    _game.time.events.repeat(REFRESH_TIME_MS, 1, Render, this);
+    _game.time.events.repeat(_game.global.constants.FILTER_REFRESH_INTERVAL, 1, Render, this);
     if(_video.video.paused || _bitmapSprite.alpha > 0) {
         RenderFrame();
     }
@@ -84,9 +87,11 @@ function Render() {
     */
 };
 
+/***************************************************************
+Applies the special effect on the bitmap overlay.
+Relies of JSManipulate library to perform effect.
+***************************************************************/
 function RenderFrame() {
-    //if(_bitmapSprite.alpha == 0)
-     //   return;
     _context.drawImage(_videoHTML, 0, 0, _video.width,
         _video.height, 0, 0, _game.width, _game.height);
     var data = _context.getImageData(0, 0, _game.width, _game.height);
@@ -112,6 +117,7 @@ module.exports = {
         if(_instance !== null)
             return _instance;
 
+        //Gets html video elements and game canvas
         _instance = this;
         _game = game;
         _video = video;
@@ -120,6 +126,7 @@ module.exports = {
 
         InitializeBitmapBg(_game);
 
+        //Creates html canvas to store bitmap data
         _framebuffer = document.createElement("canvas");
         _framebuffer.width = _game.width;
         _framebuffer.height = _game.height;
@@ -138,13 +145,7 @@ module.exports = {
     startFilterFade: function(signal) {
         StartFilterFadeIn(signal);
     },
-    endFilter: function(targetScene) {
-        EndFilter(targetScene);
-    },
-    stop: function() {
-        _video.stop();
-    },
-    getPaused: function() {
-        return _video.paused;
+    endFilter: function() {
+        EndFilter();
     }
 }

@@ -5,13 +5,13 @@ Author: Christopher Weidya
 "use strict";
 
 //Dependencies
-const StateManager = require('../States/StateManager'),
-    InteractState = require('../States/interactState'),
-    LocationState = require('../States/locationState'),
-    Transition = require('./transition'),
-    UI = require('./uiLoader'),
-    Video = require('./videoLoader'),
-    Linkable = require('./Linkable');
+const StateManager = require('../../States/StateManager'),
+    InteractState = require('../../States/interactState'),
+    LocationState = require('../../States/locationState'),
+    Transition = require('../transition'),
+    UI = require('../uiLoader'),
+    Video = require('../videoLoader'),
+    Linkable = require('../Objects/Linkable');
 
 var _instance = null;
 var _game = null;

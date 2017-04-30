@@ -5,10 +5,10 @@ Author: Christopher Weidya
 "use strict";
 
 //Dependencies
-const Text = require('./Text'),
-    Image = require('./Image'),
-    Graphic = require('./Graphics'),
-    Utility = require('./Utility');
+const Text = require('./Objects/Text'),
+    Image = require('./Objects/Image'),
+    Graphic = require('./Objects/Graphics'),
+    Utility = require('./Objects/Utility');
 
 var _instance = null;
 var _game = null;

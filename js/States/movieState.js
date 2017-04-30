@@ -10,7 +10,7 @@ const Group = require('../Modules/groupLoader'),
     Video = require('../Modules/videoLoader'),
     State = require('./State'),
     Background = require('../Modules/backgroundLoader'),
-    SceneParser = require('../Modules/SceneParser');
+    SceneParser = require('../Modules/Objects/SceneParser');
 
 var _instance = null;
 var _game = null;
@@ -65,7 +65,7 @@ module.exports = {
         if(_stateInfo.getTransitionInfo().fadeIn)
             this.game.global.gameManager.getFadeInTransitionSignal().dispatch();
         
-        if(_game.global.currentSceneName !== START_SCENE_NAME)
+        if(_game.global.currentSceneName !== _game.global.mapping.startSceneName)
             UI.create(true, true);
     }
 }

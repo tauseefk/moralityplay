@@ -72,8 +72,10 @@
 },
 "mapping": {    
     "startSceneName": "startScene",
+    "postEndingSceneName": "postEndingMenu",
     "thoughtBubbleImageKey": "thoughtBubbleSprite",
     "pauseButtonImageKey": "pauseButton",
+    "playButtonImageKey": "playButton",
     "subtitleButtonImageKey": "subtitleButton",
     "subtitleDisabledButtonImageKey": "subtitleDisabledButton",
     "overlayCloseButtonImageKey": "closeButton",

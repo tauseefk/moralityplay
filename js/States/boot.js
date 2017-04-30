@@ -7,9 +7,9 @@ Author: Christopher Weidya
 
 //Dependencies
 const ConnectionChecker = require('../Modules/connectionChecker'), 
-    GameManager = require('../Modules/gameManager'),
-    SoundManager = require('../Modules/soundManager'),
-    DatabaseManager = require('../Modules/databaseManager');
+    GameManager = require('../Modules/Managers/gameManager'),
+    SoundManager = require('../Modules/Managers/soundManager'),
+    DatabaseManager = require('../Modules/Managers/databaseManager');
 
 var _instance = null
 var _game = null;
@@ -81,6 +81,12 @@ function CreateGlobalVars() {
     //Constants
     _game.global.constants = {};
 
+    //Filter refresh interval
+    _game.global.constants.FILTER_REFRESH_INTERVAL = 10;
+
+    //Video timestsamp check interval in ms
+    _game.global.constants.VIDEO_CHECK_INTERVAL = 100;
+
     //Image information viewing constants
     _game.global.constants.INFO_VIEW_MARGIN = 50; 
     _game.global.constants.INFO_VIEW_HEIGHT = _game.height - _game.global.constants.INFO_VIEW_MARGIN*2;
@@ -97,6 +103,8 @@ function CreateGlobalVars() {
     _game.global.constants.SUBTITLE_Y_POS = 630;
     _game.global.constants.SUBTITLE_SPACING = 5;
 
+    //Transition constants
+    _game.global.constants.TRANSITION_COLOR = 0xFFFFFF;
 }
 
 module.exports = {

@@ -10,8 +10,8 @@ var _text = [];
 var _choiceFont = null;
 var _bgImage = null;
 var _group = null;
-var Text = require('./Text'),
-    Image = require('./Image');
+var Text = require('./Objects/Text'),
+    Image = require('./Objects/Image');
 
 const bgImageKeyEnum = 'IMAGE_BACKGROUND';
 

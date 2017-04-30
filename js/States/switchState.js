@@ -7,7 +7,7 @@ Author: Christopher Weidya
 
 //Dependencies
 const State = require('./State'),
-    SceneParser = require('../Modules/SceneParser');
+    SceneParser = require('../Modules/Objects/SceneParser');
 
 var _instance = null;
 var _stateInfo = null;
