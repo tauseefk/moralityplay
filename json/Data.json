@@ -47,16 +47,16 @@
     "infoPopupTest": "./Images/Info/test.jpg"
 },
 "spritesheets": {
-    "thoughtBubbleSprite": ["./Images/Sprites/ThoughBubble_spritesheetnew.png", 100, 97, 8],
-    "leftThoughtBubble": ["./Images/Sprites/ThoughBubble_Left_spritesheetnew.png", 100, 96, 8],
-    "rightThoughtBubble": ["./Images/Sprites/ThoughBubble_Right_spritesheetnew.png", 100, 97, 8]
+    "thoughtBubbleSprite": ["./Images/Sprites/ThoughBubble_spritesheetnew.png", 100, 100, 8],
+    "leftThoughtBubble": ["./Images/Sprites/ThoughBubble_Left_spritesheetnew.png", 100, 100, 8],
+    "rightThoughtBubble": ["./Images/Sprites/ThoughBubble_Right_spritesheetnew.png", 100, 100, 8]
 },
 "audio": {
     "cmuCutLocationSound": "./Audio/Sound/Main Campus Sounds_lo.ogg",
     "huntIndoorSound": "./Audio/Sound/HuntIndoor_lo.ogg",
     "gatesIndoorSound": "./Audio/Sound/GatesIndoor_lo.ogg",
     "cohonIndoorSound": "./Audio/Sound/CohonIndoor_lo.ogg",
-    "buttonSound": "./Audio/Sound/button7.ogg"
+    "buttonSound": "./Audio/Sound/buttonDan.wav"
 },
 "subtitles": {
     "introScenesub": "./Videos/Subtitles/intro_optimized.srt",

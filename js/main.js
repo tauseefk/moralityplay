@@ -21,6 +21,7 @@ function initGame(Boot, Preload, StateManager, ResourceLoader) {
     function init() {
         console.log("Game initialized.");
         game.canvas.className += "center";
+        game.canvas.id = "canvas";
         // game.canvas.className += " orientation-landscape";
         game.state.add("boot", Boot);
         game.state.add("preload", Preload);

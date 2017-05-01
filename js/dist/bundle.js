@@ -96,6 +96,8 @@ var _interactionTimeStamps = null;
 var _loopEventEnabled = false;
 var _pausedByGame = false;
 
+var _firstVideo = true;
+
 /***************************************************************
 Switches video sources and adds events on specified timestamps.
 ***************************************************************/
@@ -134,8 +136,8 @@ function AddVideoAndFilter(doFadeOut, sub, nextScene) {
     _video.onChangeSource.addOnce(OnVideoLoad, this);
 
     function OnVideoLoad() {
-        _video.play();
-        HandleVideoEnd(nextScene) 
+        VideoTextureClick(_videoTexture);
+        HandleVideoEnd(nextScene);
         if(sub)
             Subtitle.create(_video.video, sub);
         if(_videoFilter != null && _videoFilter != 'none') {
@@ -234,6 +236,23 @@ function LoopVideo() {
             console.log('looped');
         }
     }, false);
+}
+
+/***************************************************************
+Android click to play workaround.
+***************************************************************/
+function VideoTextureClick(texture) {
+    if(_firstVideo) {
+        _videoTexture.inputEnabled = true;
+        _videoTexture.input.useHandCursor = true;
+        _videoTexture.events.onInputUp.addOnce(function() {
+            _video.play();
+        }, this);
+        _firstVideo = false;
+    }
+    else {
+        _video.play();
+    }
 }
 
 module.exports = {
@@ -2882,6 +2901,7 @@ function initGame(Boot, Preload, StateManager, ResourceLoader) {
     function init() {
         console.log("Game initialized.");
         game.canvas.className += "center";
+        game.canvas.id = "canvas";
         // game.canvas.className += " orientation-landscape";
         game.state.add("boot", Boot);
         game.state.add("preload", Preload);
