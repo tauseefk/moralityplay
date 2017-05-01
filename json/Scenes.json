@@ -270,7 +270,7 @@
                 "IMAGE_INFO"
             ],
             "key": [
-                "infoPopupNatureNurture"
+                "infoS3"
             ],
             "coords": [
                 [0, 0]
@@ -401,7 +401,7 @@
                 "IMAGE_INFO"
             ],
             "key": [
-                "infoPopupSystemRacism"
+                "infoPopup"
             ],
             "coords": [
                 [0, 0]
@@ -543,8 +543,8 @@
                 "IMAGE_INFO"
             ],
             "key": [
-                "infoPopupDemographic",
-                "infoPopupMicroaggression"
+                "infopopupStereotype",
+                "infoPopupSystemRacism"
             ],
             "coords": [
                 [0, 0],
@@ -621,20 +621,20 @@
                 "thoughtBubbles": {
                     "size": 3,
                     "thoughtIconKey": [
+                        "rightThoughtBubble",
                         "thoughtBubbleSprite",
-                        "thoughtBubbleSprite",
-                        "thoughtBubbleSprite"
+                        "leftThoughtBubble"
                     ],
                     "coords": [
-                        [ 1050, 60],
+                        [ 1100, 60],
                         [ 800, 100 ],
-                        [ 300, 60 ]                      
+                        [ 250, 60 ]                      
                     ],
                     "thoughts": [
                     {
                         "size": 1,
                         "content": [
-                            "Whatever they decide, I don't mind"
+                            "Whatever they decide, \nI don't mind"
                         ],
                         "destination": [
                             [ 1050, 50 ]
@@ -646,13 +646,13 @@
                             "This is frustrating."
                         ],
                         "destination": [
-                            [ 650, 100 ]
+                            [ 700, 100 ]
                         ]
                     },
                     {
                         "size": 1,
                         "content": [
-                            "We can be done with this in no time"
+                            "We can be done \nwith this in no time"
                         ],
                         "destination": [
                             [ 300, 50 ]
@@ -796,6 +796,7 @@
             {
                 "timeStamp": 85,
                 "choices": {
+                    "question": "\"Choose what to say:\"",                       
                     "size": 2,
                     "content": [
                         "What are you talking about?",
@@ -816,12 +817,12 @@
                 "thoughtBubbles": {
                     "size": 2,
                     "thoughtIconKey": [
-                        "thoughtBubbleSprite",
-                        "thoughtBubbleSprite"
+                        "leftThoughtBubble",
+                        "rightThoughtBubble"
                     ],
                     "coords": [
-                        [ 400, 70 ],
-                        [ 950, 100 ]
+                        [ 320, 60 ],
+                        [ 1030, 120 ]
                     ],
                     "thoughts": [
                     {
@@ -830,7 +831,7 @@
                             "I just wanted to calm him down..."
                         ],
                         "destination": [
-                            [ 300, 50 ]
+                            [ 330, 50 ]
                         ]
                     },
                     {
@@ -839,7 +840,7 @@
                             "I wish she didn't mention that."
                         ],
                         "destination": [
-                            [ 1000, 50 ]
+                            [ 1050, 50 ]
                         ]
                     }
                     ]
@@ -942,12 +943,12 @@
                 "thoughtBubbles": {
                     "size": 2,
                     "thoughtIconKey": [
-                        "thoughtBubbleSprite",
-                        "thoughtBubbleSprite"
+                        "leftThoughtBubble",
+                        "rightThoughtBubble"
                     ],
                     "coords": [
-                        [ 400, 100 ],
-                        [ 1000, 100 ]
+                        [ 300, 130 ],
+                        [ 1050, 150 ]
                     ],
                     "thoughts": [
                     {
@@ -965,7 +966,7 @@
                             "I'm just trying to \nstart a conversation..."
                         ],
                         "destination": [
-                            [ 1000, 100 ]
+                            [ 1100, 100 ]
                         ]
                     }
                     ]
