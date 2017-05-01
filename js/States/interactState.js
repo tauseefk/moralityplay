@@ -36,7 +36,7 @@ function CreateThoughtBubbles() {
     var thoughtBubbles = _stateInfo.getThoughtBubble(_interactionCount);
     if(thoughtBubbles) {
         for(var i=0; i<thoughtBubbles.size; i++) {
-            Icons.createThoughtIcon(thoughtBubbles.coords[i], thoughtBubbles.thoughts[i]);
+            Icons.createThoughtIcon(thoughtBubbles.coords[i], thoughtBubbles.thoughts[i], thoughtBubbles.thoughtIconKey[i]);
         }      
     }
 }

@@ -623,8 +623,10 @@ var _displayedIconIndex = null;
 /***************************************************************
 Creates thought bubble icons.
 ***************************************************************/
-function CreateThoughtIcon(coords, thoughts) {
-    var button = new Image(coords[0], coords[1], _game.global.mapping.thoughtBubbleImageKey, Image.getEnum().ThoughtSprite);
+function CreateThoughtIcon(coords, thoughts, key) {
+    if(!key)
+        key = _game.global.mapping.thoughtBubbleImageKey;
+    var button = new Image(coords[0], coords[1], key, Image.getEnum().ThoughtSprite);
     button.addImageToGame(_game, _game.mediaGroup);
     button.changeImage(_game, thoughts, coords);
     //_icons.push(button);
@@ -774,8 +776,8 @@ module.exports = {
         _instance = this;
         return _instance;
     },
-    createThoughtIcon: function(coords, thoughts) {
-        CreateThoughtIcon(coords, thoughts);
+    createThoughtIcon: function(coords, thoughts, key) {
+        CreateThoughtIcon(coords, thoughts, key);
     },
     createClickableIcons: function(icons) {
         CreateClickableIcons(icons);
@@ -1516,7 +1518,7 @@ function CreateThoughtBubbles() {
     var thoughtBubbles = _stateInfo.getThoughtBubble(_interactionCount);
     if(thoughtBubbles) {
         for(var i=0; i<thoughtBubbles.size; i++) {
-            Icons.createThoughtIcon(thoughtBubbles.coords[i], thoughtBubbles.thoughts[i]);
+            Icons.createThoughtIcon(thoughtBubbles.coords[i], thoughtBubbles.thoughts[i], thoughtBubbles.thoughtIconKey[i]);
         }      
     }
 }
@@ -2638,7 +2640,7 @@ Author: Christopher Weidya
 ***************************************************************/
 
 
-const Group = __webpack_require__(7), 
+const Group = __webpack_require__(7),
     Input = __webpack_require__(37),
     Transition = __webpack_require__(4),
     State = __webpack_require__(9),
@@ -2673,7 +2675,7 @@ module.exports = {
 
         //Initializes game variables
         Group.initializeGroups();
-                
+
         //Intitalize singleton variables
         if(_instance !== null)
             return _instance;
@@ -2692,7 +2694,7 @@ module.exports = {
         _input = [];
 
         //Creates video or background image depending on source
-        var videoSrc = _stateInfo.getMovieSrc(_game.global.quality);        
+        var videoSrc = _stateInfo.getMovieSrc(_game.global.quality);
         if(videoSrc)
             Video.create(videoSrc, _stateInfo.getTransitionInfo().fadeOut, _stateInfo.getVideoFilter());
         else
@@ -2703,8 +2705,8 @@ module.exports = {
 
         //Executes when scene is of this name
         if(_game.global.currentSceneName === _game.global.mapping.postEndingSceneName)
-            console.log("executed post ending stuff");
-        
+            $('#userInfoModal').modal('show');
+
         if(_stateInfo.getTransitionInfo().fadeIn)
             this.game.global.gameManager.getFadeInTransitionSignal().dispatch();
     },
@@ -4497,6 +4499,7 @@ GameManager.prototype.getVideoSeekSignal = function() {
 GameManager.prototype.getCreateThoughtsSignal = function() {
     return this._createThoughtsSignal;
 }
+
 GameManager.prototype.getDisplayImageSignal = function() {
     return this._displayImageSignal;
 }

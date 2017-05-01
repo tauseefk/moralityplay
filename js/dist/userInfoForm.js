@@ -1,5 +1,14 @@
 ;
 var userInfoActions = (function (document, $) {
+  /***
+    * Plain JavaScript module to render user action analytics
+    * after the user fills the information form.
+    * @author Md Tauseef
+    *
+    * @param document: HTML document for the page
+    * @param $: jQuery for handling bootstrap Modal
+    *
+    */
   'use strict';
 
   $(document).ready(function() {
@@ -8,6 +17,7 @@ var userInfoActions = (function (document, $) {
     /***
       * Click handler for user information form.
       * It fetches the data from the server, hides the form, and renders the chart.
+      * @param e(vent): click event for the submit button.
       *
       */
     $('.j-userInfoSubmit').on('click', function(e) {
@@ -31,6 +41,7 @@ var userInfoActions = (function (document, $) {
 
   /***
     * Creates the chart for positive interactions.
+    * @param data: data to populate the charts.
     *
     */
   function createPositiveInteractionsChart(data) {
@@ -77,6 +88,9 @@ var userInfoActions = (function (document, $) {
 
     /***
       * Utility function factory to hide/show an element.
+      * @param el: the element to be toggled
+      * @return anonymous fn that takes a string 'show' or 'hide' to
+      * toggle the element.
       *
       */
     function toggleElement(el) {
@@ -95,7 +109,8 @@ var userInfoActions = (function (document, $) {
     var toggleUserInfoForm = toggleElement(document.querySelector(".form-user-info"));
 
     /***
-      * Utility function factory to hide/show an element.
+      * Setter for userId
+      * @param id: user's id
       *
       */
     function setUserId(id) {

@@ -1,7 +1,12 @@
-'use strict';
-
+;
 var userAnalytics = (function(axios) {
-
+  /***
+    * Plain JavaScript module to analyze user action data from the database.
+    * @author Md Tauseef
+    * @param axios: axios module for ajax requests
+    *
+    */
+  'use strict';
   var _serverUrl = "http://mocking-birds.etc.cmu.edu/";
   var _getUserActions = "userActions";
 
@@ -12,26 +17,32 @@ var userAnalytics = (function(axios) {
   function _getInteractionResults() {
     return axios.get(_serverUrl + _getUserActions)
     .then(function(res) {
-      var _positiveInteractions = _getPositiveInteractions(res.data);
-      return {
-        allPositives: _positiveInteractions.filter(function(positiveCount) {
-          return positiveCount === 3;
-        }).length,
-        twoPositives: _positiveInteractions.filter(function(positiveCount) {
-          return positiveCount === 2;
-        }).length,
-        onePositive: _positiveInteractions.filter(function(positiveCount) {
-          return positiveCount === 1;
-        }).length
-      }
-    });
+      return res.data;
+    })
+    .then(_countPositiveInteractions)
+    .then(_filterPositiveInteractionData)
+    .catch(console.error.bind(this));
+  }
+
+  function _filterPositiveInteractionData(_positiveInteractions) {
+    return {
+      allPositives: _positiveInteractions.filter(function(positiveCount) {
+        return positiveCount === 3;
+      }).length,
+      twoPositives: _positiveInteractions.filter(function(positiveCount) {
+        return positiveCount === 2;
+      }).length,
+      onePositive: _positiveInteractions.filter(function(positiveCount) {
+        return positiveCount === 1;
+      }).length
+    }
   }
 
   /***
     * Getting positive interactions for users that finished the experience.
     *
     */
-  function _getPositiveInteractions(userData) {
+  function _countPositiveInteractions(userData) {
     return userData.filter(function(data) {
       return data.actions.length === 3;
     })

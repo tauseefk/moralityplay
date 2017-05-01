@@ -155,6 +155,7 @@ GameManager.prototype.getVideoSeekSignal = function() {
 GameManager.prototype.getCreateThoughtsSignal = function() {
     return this._createThoughtsSignal;
 }
+
 GameManager.prototype.getDisplayImageSignal = function() {
     return this._displayImageSignal;
 }

@@ -4,7 +4,7 @@ Author: Christopher Weidya
 ***************************************************************/
 "use strict";
 
-const Group = require('../Modules/groupLoader'), 
+const Group = require('../Modules/groupLoader'),
     Input = require('../Modules/inputLoader'),
     Transition = require('../Modules/transition'),
     State = require('./State'),
@@ -39,7 +39,7 @@ module.exports = {
 
         //Initializes game variables
         Group.initializeGroups();
-                
+
         //Intitalize singleton variables
         if(_instance !== null)
             return _instance;
@@ -58,7 +58,7 @@ module.exports = {
         _input = [];
 
         //Creates video or background image depending on source
-        var videoSrc = _stateInfo.getMovieSrc(_game.global.quality);        
+        var videoSrc = _stateInfo.getMovieSrc(_game.global.quality);
         if(videoSrc)
             Video.create(videoSrc, _stateInfo.getTransitionInfo().fadeOut, _stateInfo.getVideoFilter());
         else
@@ -69,8 +69,8 @@ module.exports = {
 
         //Executes when scene is of this name
         if(_game.global.currentSceneName === _game.global.mapping.postEndingSceneName)
-            console.log("executed post ending stuff");
-        
+            $('#userInfoModal').modal('show');
+
         if(_stateInfo.getTransitionInfo().fadeIn)
             this.game.global.gameManager.getFadeInTransitionSignal().dispatch();
     },

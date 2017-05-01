@@ -18,8 +18,10 @@ var _displayedIconIndex = null;
 /***************************************************************
 Creates thought bubble icons.
 ***************************************************************/
-function CreateThoughtIcon(coords, thoughts) {
-    var button = new Image(coords[0], coords[1], _game.global.mapping.thoughtBubbleImageKey, Image.getEnum().ThoughtSprite);
+function CreateThoughtIcon(coords, thoughts, key) {
+    if(!key)
+        key = _game.global.mapping.thoughtBubbleImageKey;
+    var button = new Image(coords[0], coords[1], key, Image.getEnum().ThoughtSprite);
     button.addImageToGame(_game, _game.mediaGroup);
     button.changeImage(_game, thoughts, coords);
     //_icons.push(button);
@@ -169,8 +171,8 @@ module.exports = {
         _instance = this;
         return _instance;
     },
-    createThoughtIcon: function(coords, thoughts) {
-        CreateThoughtIcon(coords, thoughts);
+    createThoughtIcon: function(coords, thoughts, key) {
+        CreateThoughtIcon(coords, thoughts, key);
     },
     createClickableIcons: function(icons) {
         CreateClickableIcons(icons);
