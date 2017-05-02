@@ -11,7 +11,9 @@
         "fontSize": 30,
         "align": "center",
         "font": "Kadwa",
-        "fill": "#b3e4e6",
+        "fill": "#ffffff",
+        "stroke":"#000000",
+        "strokeThickness":2,
         "shadow": [0, 3, "rgba(0,21,36,1)", 13]
     },
     "thoughtsTextProperties": {
