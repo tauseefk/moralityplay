@@ -73,7 +73,7 @@
             {
                 "timeStamp": 14,
                 "choices": {
-                    "question": "\"We are meeting later, right?\"",
+                    "question": "\"We're meeting later, right?\"",
                     "size": 3,
                     "content": [
                         "Yep, we have\n a project meeting.",
@@ -148,7 +148,6 @@
 
         }
     },
-
 
     "cmuCohonLocation": {
         "stateType": "LocationState",
@@ -270,7 +269,7 @@
                 "IMAGE_INFO"
             ],
             "key": [
-                "infoS3"
+                "infoPopupMicroaggression"
             ],
             "coords": [
                 [0, 0]
@@ -280,7 +279,6 @@
             ]
         }       
     },
-
 
     "cmuGatesLocation": {
         "stateType": "LocationState",
@@ -366,52 +364,60 @@
             "fadeOut": false
         },
         "icons": {
-            "size": 3,
+            "size": 4,
             "type": [
                 "IMAGE_BUTTON_SCENECHANGE",
+                "IMAGE_BUTTON_DISPLAY_IMAGE",
                 "IMAGE_BUTTON_DISPLAY_IMAGE",
                 "IMAGE_BUTTON_SCENECHANGE"
             ],
             "key": [
                 "arrowBackward",
                 "infoButton",
+                "infoButton",
                 "endButtonSm"
             ],
             "coords": [
                 [ 100, 620 ],
                 [ 500, 300 ],
+                [ 300, 350 ],
                 [ 1130, 55 ]
             ],
             "targetImageIndexOrScene": [
                 "cmuGatesLocation",
                 0,
+                1,
                 "endingSceneSwitch"
             ],
             "unlockedByScenes": [
                 null,
                 null, 
+                null,
                 [
                     ["MK2good", "MK2bad"], ["li2bad","li2good"],["an2bad","an2good"]
                 ]
             ] 
         },
         "linkedIcons": {
-            "size": 1,
+            "size": 2,
             "type": [
+                "IMAGE_INFO",
                 "IMAGE_INFO"
             ],
             "key": [
-                "infoPopup"
+                "infoPopupaffirmative",
+                "infoPopupSystemRacism"
             ],
             "coords": [
+                [0, 0],
                 [0, 0]
             ],
             "targetImageIndexOrScene": [
+                null,
                 null
             ]
         }
     },
-
 
     "cmuHuntLocation": {
         "stateType": "LocationState",
@@ -521,7 +527,7 @@
                 "cmuHuntLocation",
                 0,
                 1,
-                2
+                "endingSceneSwitch"
             ],
             "lockedByScenes": [
                 null
@@ -543,8 +549,8 @@
                 "IMAGE_INFO"
             ],
             "key": [
-                "infopopupStereotype",
-                "infoPopupSystemRacism"
+                "infoPopupStereotype",
+                "infoPopupSeven"
             ],
             "coords": [
                 [0, 0],
@@ -698,6 +704,7 @@
         "stateType": "MovieState",
         "movieSrcHD": "./Videos/Li2_good_optimized.mp4",
         "movieSrcSD": "./Videos/Li2_good_optimized_lo.mp4",
+        "sub": "l12goodsub",
         "transition": {
             "fadeIn": false,
             "fadeOut": false
@@ -708,6 +715,7 @@
         "stateType": "MovieState",
         "movieSrcHD": "./Videos/Li2_bad_optimized.mp4",
         "movieSrcSD": "./Videos/Li2_bad_optimized_lo.mp4",
+        "sub": "l12badsub",
         "transition": {
             "fadeIn": false,
             "fadeOut": false
@@ -909,6 +917,7 @@
         "movieSrcHD": "./Videos/An1_optimized.mp4",
         "movieSrcSD": "./Videos/An1_optimized_lo.mp4",
         "stateType": "InteractState",
+        "sub": "an1sub",
         "transition": {
             "fadeIn": true,
             "fadeOut": false
@@ -1011,6 +1020,7 @@
         "movieSrcHD": "./Videos/An2_good_optimized.mp4",
         "movieSrcSD": "./Videos/An2_good_optimized_lo.mp4",
         "stateType": "InteractState",
+        "sub":"an2goodsub",
         "transition": {
             "fadeIn": false,
             "fadeOut": false
@@ -1019,7 +1029,7 @@
             "size": 1,
             "choiceMomentsProperties": [
             {
-                "timeStamp": 73,
+                "timeStamp": 71,
                 "choices":  {
                     "question": "\"I don't think it is for you\"",
                     "size": 2,
@@ -1032,8 +1042,8 @@
                         615
                     ],
                     "bounds": [
-                        [ 650, 200 ],
-                        [ 650, 200 ]
+                        [ 590, 200 ],
+                        [ 590, 200 ]
                     ]
                 }
             }
@@ -1045,6 +1055,7 @@
         "stateType": "MovieState",
         "movieSrcHD": "./Videos/An2_bad_optimized.mp4",
         "movieSrcSD": "./Videos/An2_bad_optimized_lo.mp4",
+        "sub": "an2badsub",
         "transition": {
             "fadeIn": false,
             "fadeOut": false
@@ -1123,8 +1134,8 @@
                         615
                     ],
                     "bounds": [
-                        [ 650, 200 ],
-                        [ 650, 200 ]
+                        [ 590, 200 ],
+                        [ 590, 200 ]
                     ]
                 }
             },
@@ -1134,7 +1145,7 @@
                     "question": "\"Choose what to say:\"",
                     "size": 2,
                     "content": [
-                        "I think Li could have contribuited more.",
+                        "I think Li could have\ncontribuited more.",
                         "I think Li was a little ignored."
                     ],
                     "y": [
@@ -1142,13 +1153,13 @@
                         615
                     ],
                     "bounds": [
-                        [ 650, 200 ],
-                        [ 650, 200 ]
+                        [ 590, 200 ],
+                        [ 590, 200 ]
                     ]
                 }
             },
             {
-                "timeStamp": 28,
+                "timeStamp": 27.5,
                 "choices": {
                     "question": "\"See you tomorrow.\"",
                     "size": 3,
@@ -1192,7 +1203,7 @@
                 "timeStamp": 3,
                 "choices": {
                     "question": "\"Hey! Done for today?\"",
-                    "size": 3,
+                    "size": 2,
                     "content": [
                         "Yes.",
                         "I'm on my way home."
@@ -1202,8 +1213,8 @@
                         615
                     ],
                     "bounds": [
-                        [ 650, 200 ],
-                        [ 650, 200 ]
+                        [ 590, 200 ],
+                        [ 590, 200 ]
                     ]
                 }
             },
@@ -1306,8 +1317,8 @@
                         615
                     ],
                     "bounds": [
-                        [ 650, 200 ],
-                        [ 650, 200 ]
+                        [ 590, 200 ],
+                        [ 590, 200 ]
                     ]
                 }
             },
@@ -1444,7 +1455,7 @@
             "targetImageIndexOrScene": [
                 null,
                 null,
-                "https://www.facebook.com/cmuMockingBirds/"
+                "https://www.facebook.com/cmuMindField/"
             ]
         }
     },

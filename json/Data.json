@@ -41,10 +41,11 @@
     "infoS3": "./Images/UI/scene3_infobox.png",
 
     "infoPopupMicroaggression": "./Images/Info/microaggression.png",
-    "infoPopupSystemRacism": "./Images/Info/systemracism.jpg",
+    "infoPopupSystemRacism": "./Images/Info/systemracism.png",
     "infoPopupaffirmative": "./Images/Info/affirmativeaction.png",
-    "infopopupStereotype": "./Images/Info/Stereotype.jpg",
-    "infoPopupTest": "./Images/Info/test.jpg"
+    "infoPopupStereotype": "./Images/Info/Stereotype.png",
+    "infoPopupSeven": "./Images/Info/seventypesofracism.png"
+
 },
 "spritesheets": {
     "thoughtBubbleSprite": ["./Images/Sprites/ThoughBubble_spritesheetnew.png", 100, 100, 8],
@@ -56,11 +57,16 @@
     "buttonSound": "./Audio/Sound/button7.ogg"
 },
 "subtitles": {
-    "introScenesub": "./Videos/Subtitles/intro_optimized.srt",
-    "li1sub": "./Videos/Subtitles/Li1_optimized.srt",
-    "MK1sub": "./Videos/Subtitles/MK1_optimized.srt",
-    "MK2goodsub": "./Videos/Subtitles/MK2_bad_optimized.srt",
-    "MK2badsub": "./Videos/Subtitles/MK2_good_optimized.srt",
+    "introScenesub": "./Videos/Subtitles/intro.srt",
+    "li1sub": "./Videos/Subtitles/Li1.srt",
+    "l12goodsub": "./Videos/Subtitles/Li2_good.srt",
+    "l12badsub": "./Videos/Subtitles/Li2_bad.srt",    
+    "MK1sub": "./Videos/Subtitles/MK1.srt",
+    "MK2badsub": "./Videos/Subtitles/MK2_bad.srt",
+    "MK2goodsub": "./Videos/Subtitles/MK2_good.srt",
+    "an1sub": "./Videos/Subtitles/an1.srt",
+    "an2badsub": "./Videos/Subtitles/an2bad.srt",
+    "an2goodsub": "./Videos/Subtitles/an2good.srt",
     "ed1":"./Videos/Subtitles/Ending1.srt",
     "ed2":"./Videos/Subtitles/Ending2.srt",
     "ed3":"./Videos/Subtitles/Ending3.srt",
