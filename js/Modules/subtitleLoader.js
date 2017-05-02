@@ -55,7 +55,6 @@ function AddDestroyEvent(video, sub, text, slotIndex) {
 			//console.log("destroyed");
        		video.removeEventListener("timeupdate", destroy); 
             text.destroy();
-            _textSlots[slotIndex] = null;
         }
 	}
 }
@@ -66,8 +65,9 @@ Current slot is 1 due to feedback.
 ***************************************************************/
 function FindSubtitleSlot(text) {
 	//Forces previous subtitle to not be visible if a new subtitle enters.
-	if(_textSlots[0])
-		_textSlots[0].setVisible(false);
+	if(_textSlots[0]) {
+		_textSlots[0].setVisible(_subtitleVisible);
+	}
 	_textSlots[0] = text;
 	text.setY(_game.global.constants.SUBTITLE_Y_POS);
 	return 0;
@@ -100,8 +100,9 @@ Toggles visibility of subtitle in slot.
 function ToggleSubtitle() {
 	_subtitleVisible = !_subtitleVisible;
 	_textSlots.forEach(function(slot) {
-		if(slot)
+		if(slot) {
 			slot.setVisible(_subtitleVisible);
+		}
 	});
 	return _subtitleVisible;
 }

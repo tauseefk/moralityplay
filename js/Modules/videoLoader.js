@@ -18,11 +18,9 @@ var _video = null
 var _videoTexture = null;
 var _videoFilter = null;
 var _interactionTimeStamps = null;
-
-var _loopEventEnabled = false;
-var _pausedByGame = false;
-
 var _firstVideo = true;
+
+var _pausedByGame = false;
 
 /***************************************************************
 Switches video sources and adds events on specified timestamps.
@@ -92,8 +90,8 @@ function TriggerMoment() {
     console.log(_video.video.currentTime);
     //Ensure game is not paused to pause scenario properly
     _game.global.gameManager.getPlaySignal().dispatch();
-    _video.video.pause();
     _pausedByGame = true;
+    _video.video.pause();
     _game.global.gameManager.getHideUISignal().dispatch();
     VideoFilter.startFilterFade(_game.global.gameManager.getTriggerInteractionSignal());
 }
@@ -123,7 +121,7 @@ Creates a self removing event that activates when video reaches specified timest
 ***************************************************************/
 function checkVideoDuration(time) {
     var interval = setInterval(function() {
-        if(_video.video.currentTime >= time) {
+        if(!_video.video.paused && _video.video.currentTime >= time) {
             clearInterval(interval);
             TriggerMoment();
             AddNextInteractionEvent();
@@ -155,7 +153,6 @@ Manual video looping.
 Currently unused.
 ***************************************************************/
 function LoopVideo() {
-    _loopEventEnabled = true;
     _video.video.addEventListener("timeupdate", function loop() {        
         if(_video.video.currentTime >= _video.video.duration - 0.5){
             _video.video.currentTime = 0.5;
