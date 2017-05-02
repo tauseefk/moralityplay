@@ -77,7 +77,7 @@ Sets repeating function that draws on the bitmap overlay.
 ***************************************************************/
 function Render() {
     _game.time.events.repeat(_game.global.constants.FILTER_REFRESH_INTERVAL, 1, Render, this);
-    if(_video.video.paused || _bitmapSprite.alpha > 0) {
+    if(_bitmapSprite.alpha > 0 && _bitmapSprite.alpha < 1) {
         RenderFrame();
     }
     /*

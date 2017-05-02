@@ -92,11 +92,9 @@ var _video = null
 var _videoTexture = null;
 var _videoFilter = null;
 var _interactionTimeStamps = null;
-
-var _loopEventEnabled = false;
-var _pausedByGame = false;
-
 var _firstVideo = true;
+
+var _pausedByGame = false;
 
 /***************************************************************
 Switches video sources and adds events on specified timestamps.
@@ -166,8 +164,8 @@ function TriggerMoment() {
     console.log(_video.video.currentTime);
     //Ensure game is not paused to pause scenario properly
     _game.global.gameManager.getPlaySignal().dispatch();
-    _video.video.pause();
     _pausedByGame = true;
+    _video.video.pause();
     _game.global.gameManager.getHideUISignal().dispatch();
     VideoFilter.startFilterFade(_game.global.gameManager.getTriggerInteractionSignal());
 }
@@ -197,7 +195,7 @@ Creates a self removing event that activates when video reaches specified timest
 ***************************************************************/
 function checkVideoDuration(time) {
     var interval = setInterval(function() {
-        if(_video.video.currentTime >= time) {
+        if(!_video.video.paused && _video.video.currentTime >= time) {
             clearInterval(interval);
             TriggerMoment();
             AddNextInteractionEvent();
@@ -229,7 +227,6 @@ Manual video looping.
 Currently unused.
 ***************************************************************/
 function LoopVideo() {
-    _loopEventEnabled = true;
     _video.video.addEventListener("timeupdate", function loop() {        
         if(_video.video.currentTime >= _video.video.duration - 0.5){
             _video.video.currentTime = 0.5;
@@ -1891,7 +1888,6 @@ function AddDestroyEvent(video, sub, text, slotIndex) {
 			//console.log("destroyed");
        		video.removeEventListener("timeupdate", destroy); 
             text.destroy();
-            _textSlots[slotIndex] = null;
         }
 	}
 }
@@ -1902,8 +1898,9 @@ Current slot is 1 due to feedback.
 ***************************************************************/
 function FindSubtitleSlot(text) {
 	//Forces previous subtitle to not be visible if a new subtitle enters.
-	if(_textSlots[0])
-		_textSlots[0].setVisible(false);
+	if(_textSlots[0]) {
+		_textSlots[0].setVisible(_subtitleVisible);
+	}
 	_textSlots[0] = text;
 	text.setY(_game.global.constants.SUBTITLE_Y_POS);
 	return 0;
@@ -1936,8 +1933,9 @@ Toggles visibility of subtitle in slot.
 function ToggleSubtitle() {
 	_subtitleVisible = !_subtitleVisible;
 	_textSlots.forEach(function(slot) {
-		if(slot)
+		if(slot) {
 			slot.setVisible(_subtitleVisible);
+		}
 	});
 	return _subtitleVisible;
 }
@@ -2093,7 +2091,7 @@ Sets repeating function that draws on the bitmap overlay.
 ***************************************************************/
 function Render() {
     _game.time.events.repeat(_game.global.constants.FILTER_REFRESH_INTERVAL, 1, Render, this);
-    if(_video.video.paused || _bitmapSprite.alpha > 0) {
+    if(_bitmapSprite.alpha > 0 && _bitmapSprite.alpha < 1) {
         RenderFrame();
     }
     /*
@@ -2233,8 +2231,11 @@ function CreateLoadingVisuals() {
 Sets game bg color and ensures application runs even when out of focus.
 ****************************************************************/
 function SetGameProperties() {
+    //Ensures program runs even when browser tab is out of focus
     _game.stage.disableVisibilityChange = true;
     _game.stage.backgroundColor = "#ffffff";
+    //Prevent multitouch issues
+    _game.input.maxPointers = 1;
 }
 
 
@@ -2261,10 +2262,10 @@ function CreateGlobalVars() {
     _game.global.constants = {};
 
     //Filter refresh interval
-    _game.global.constants.FILTER_REFRESH_INTERVAL = 10;
+    _game.global.constants.FILTER_REFRESH_INTERVAL = 20;
 
     //Video timestsamp check interval in ms
-    _game.global.constants.VIDEO_CHECK_INTERVAL = 100;
+    _game.global.constants.VIDEO_CHECK_INTERVAL = 150;
 
     //Image information viewing constants
     _game.global.constants.INFO_VIEW_MARGIN = 50; 

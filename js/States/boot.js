@@ -54,8 +54,11 @@ function CreateLoadingVisuals() {
 Sets game bg color and ensures application runs even when out of focus.
 ****************************************************************/
 function SetGameProperties() {
+    //Ensures program runs even when browser tab is out of focus
     _game.stage.disableVisibilityChange = true;
     _game.stage.backgroundColor = "#ffffff";
+    //Prevent multitouch issues
+    _game.input.maxPointers = 1;
 }
 
 
@@ -82,10 +85,10 @@ function CreateGlobalVars() {
     _game.global.constants = {};
 
     //Filter refresh interval
-    _game.global.constants.FILTER_REFRESH_INTERVAL = 10;
+    _game.global.constants.FILTER_REFRESH_INTERVAL = 20;
 
     //Video timestsamp check interval in ms
-    _game.global.constants.VIDEO_CHECK_INTERVAL = 100;
+    _game.global.constants.VIDEO_CHECK_INTERVAL = 150;
 
     //Image information viewing constants
     _game.global.constants.INFO_VIEW_MARGIN = 50; 
