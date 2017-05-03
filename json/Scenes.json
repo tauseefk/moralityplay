@@ -780,7 +780,7 @@
                 }
             },
             {
-                "timeStamp": 63,
+                "timeStamp": 63.6,
                 "choices": {
                     "question": "Choose what to say:",
                     "size": 3,
@@ -802,7 +802,7 @@
                 }
             },
             {
-                "timeStamp": 85,
+                "timeStamp": 85.5,
                 "choices": {
                     "question": "\"Choose what to say:\"",                       
                     "size": 2,
