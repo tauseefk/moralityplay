@@ -168,6 +168,9 @@ module.exports = {
 	toggleSubtitle: function() {
 		return ToggleSubtitle();
 	},
+	hideSubtitleForMoment:function() {
+		_textSlots[0].setVisible(false);
+	},
 	getSubtitleVisible: function() {
 		return _subtitleVisible;
 	}

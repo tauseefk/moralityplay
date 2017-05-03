@@ -479,6 +479,7 @@ function HideUI() {
     _pauseImage.setVisible(_uiVisible);
     _subtitleImage.setVisible(_uiVisible);
     _subtitleDisabledImage.setVisible(_uiVisible);
+    Subtitle.hideSubtitleForMoment();
 }
 
 /***************************************************************
@@ -2001,6 +2002,9 @@ module.exports = {
 	toggleSubtitle: function() {
 		return ToggleSubtitle();
 	},
+	hideSubtitleForMoment:function() {
+		_textSlots[0].setVisible(false);
+	},
 	getSubtitleVisible: function() {
 		return _subtitleVisible;
 	}
@@ -2280,7 +2284,7 @@ function CreateGlobalVars() {
     _game.global.constants.SCROLLBAR_WHEEL_SENSITIVITY = 10;
 
     //Subtitle constants
-    _game.global.constants.SUBTITLE_Y_POS = 630;
+    _game.global.constants.SUBTITLE_Y_POS = 620;
     _game.global.constants.SUBTITLE_SPACING = 5;
 
     //Transition constants
@@ -3200,6 +3204,9 @@ module.exports = Linkable;
 /***************************************************************
 Wraps Phaser text.
 All text in game is transformed and displayed from here.
+Current supported properties: 
+1. Phaser text properties in construction: https://phaser.io/docs/2.6.2/Phaser.Text.html
+2. Line height and drop shadow. Examples seen in style.json
 Author: Christopher Weidya
 ***************************************************************/
 
@@ -3873,6 +3880,7 @@ Image.prototype.changeToDisplayImage = function(game, target, clickedIndex) {
     this._link = new Linkable(game, this._image, game.global.gameManager.getDisplayImageSignal(), target, clickedIndex);
     this._link.setAsButton(false);
     this._link.addMouseOverScaleEffect(game, this._image);
+    this._link.addSound(game.global.mapping.buttonClickSound);
     Animation.bob(game, this._image, true);
 }
 
@@ -4627,8 +4635,10 @@ SoundManager.prototype.playBackgroundMusic = function(musicKey) {
 Stops background music.
 ***************************************************************/
 SoundManager.prototype.stopBackgroundMusic = function() {
-    if(_bgMusic)
+    if(_bgMusic) {
+        _bgMusicKey = null;
         _bgMusic.stop();
+    }
 }
 
 /***************************************************************

@@ -11,9 +11,15 @@ var userInfoActions = (function (document, $) {
     */
   'use strict';
 
+  var userId = null;
+  var chartElementIds = [
+    'userAnalysisChart1',
+    'userAnalysisChart2',
+    'userAnalysisChart3'
+  ];
   $(document).ready(function() {
 
-    var userId = null;
+
     /***
       * Click handler for user information form.
       * It fetches the data from the server, hides the form, and renders the chart.
@@ -30,11 +36,20 @@ var userInfoActions = (function (document, $) {
         id: userInfoActions.userId
       };
       e.preventDefault();
+
       axios.post(_serverUrl + _updateUserInfoUrl, _userInfo)
       .then(toggleUserInfoForm('hide'))
-      .then(toggleCharts('show'))
-      .then(userAnalytics.getInteractionResults)
-      .then(createPositiveInteractionsChart)
+      .then(toggleCharts.map(function(toggleChart) {
+        toggleChart('show')
+      }))
+      // .then(userAnalytics.getInteractionResults)
+      // .then(createPositiveInteractionsChart)
+      .then(userAnalytics.getSceneBasedInteractionResults)
+      .then(function(data) {
+        data.forEach(function(scenario, idx) {
+          createChartFor(scenario, chartElementIds[idx]);
+        })
+      })
       .catch(console.error.bind(this));
     });
   });
@@ -46,7 +61,7 @@ var userInfoActions = (function (document, $) {
     */
   function createPositiveInteractionsChart(data) {
     var ctx = document.getElementById("userAnalysisChart");
-    var data = {
+    var chartData = {
       labels: [
         "All positives",
         "Two positives",
@@ -69,7 +84,7 @@ var userInfoActions = (function (document, $) {
       };
       var userAnalysisChart = new Chart(ctx, {
         type: 'pie',
-        data: data,
+        data: chartData,
         options: {
           title: {
             display: true,
@@ -85,6 +100,73 @@ var userInfoActions = (function (document, $) {
         }
       });
     }
+
+    /***
+      * Creates the chart for positive interactions.
+      * @param data: data to populate the charts.
+      *
+      */
+    function createChartFor(scenario, el) {
+      return new Chart(el, {
+        type: 'pie',
+        data: createChartData(scenario, ['Positives', 'Negatives']),
+        options: {
+          title: {
+            display: true,
+            text: 'User interactions for ' + scenario.title,
+            fontColor: "#FFF",
+            fontSize: 18
+          },
+          legend: {
+            labels: {
+              fontColor: "#FFF"
+            }
+          }
+        }
+      });
+    }
+
+    function createChartData(data, labels) {
+      return {
+        labels: labels,
+        datasets: [
+          {
+            data: [data.positives, data.total - data.positives],
+            backgroundColor: [
+              '#FFA276',
+              '#56B0AE',
+              '#C6DFE6'
+            ],
+            hoverBackgroundColor: [
+              '#FFA276',
+              '#56B0AE',
+              '#C6DFE6'
+            ]
+          }
+        ]
+      }
+    }
+
+    function createSceneBasedInteractionCharts(data) {
+      var ctx = document.getElementById("userAnalysisChart");
+        var userAnalysisChart = new Chart(ctx, {
+          type: 'pie',
+          data: data,
+          options: {
+            title: {
+              display: true,
+              text: 'User interactions for all scenarios',
+              fontColor: "#FFF",
+              fontSize: 18
+            },
+            legend: {
+              labels: {
+                fontColor: "#FFF"
+              }
+            }
+          }
+        });
+      }
 
     /***
       * Utility function factory to hide/show an element.
@@ -105,7 +187,9 @@ var userInfoActions = (function (document, $) {
       }
     }
 
-    var toggleCharts = toggleElement(document.getElementById("userAnalysisChart"));
+    var toggleCharts = chartElementIds.map(function(chartElement) {
+      return toggleElement(document.getElementById(chartElement));
+    });
     var toggleUserInfoForm = toggleElement(document.querySelector(".form-user-info"));
 
     /***

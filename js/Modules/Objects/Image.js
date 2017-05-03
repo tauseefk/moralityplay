@@ -250,6 +250,7 @@ Image.prototype.changeToDisplayImage = function(game, target, clickedIndex) {
     this._link = new Linkable(game, this._image, game.global.gameManager.getDisplayImageSignal(), target, clickedIndex);
     this._link.setAsButton(false);
     this._link.addMouseOverScaleEffect(game, this._image);
+    this._link.addSound(game.global.mapping.buttonClickSound);
     Animation.bob(game, this._image, true);
 }
 

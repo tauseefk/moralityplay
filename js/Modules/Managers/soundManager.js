@@ -52,8 +52,10 @@ SoundManager.prototype.playBackgroundMusic = function(musicKey) {
 Stops background music.
 ***************************************************************/
 SoundManager.prototype.stopBackgroundMusic = function() {
-    if(_bgMusic)
+    if(_bgMusic) {
+        _bgMusicKey = null;
         _bgMusic.stop();
+    }
 }
 
 /***************************************************************

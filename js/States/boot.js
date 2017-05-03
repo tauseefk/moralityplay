@@ -103,7 +103,7 @@ function CreateGlobalVars() {
     _game.global.constants.SCROLLBAR_WHEEL_SENSITIVITY = 10;
 
     //Subtitle constants
-    _game.global.constants.SUBTITLE_Y_POS = 630;
+    _game.global.constants.SUBTITLE_Y_POS = 620;
     _game.global.constants.SUBTITLE_SPACING = 5;
 
     //Transition constants

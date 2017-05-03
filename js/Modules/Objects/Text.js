@@ -1,6 +1,9 @@
 /***************************************************************
 Wraps Phaser text.
 All text in game is transformed and displayed from here.
+Current supported properties: 
+1. Phaser text properties in construction: https://phaser.io/docs/2.6.2/Phaser.Text.html
+2. Line height and drop shadow. Examples seen in style.json
 Author: Christopher Weidya
 ***************************************************************/
 "use strict";

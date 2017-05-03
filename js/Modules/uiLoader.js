@@ -106,6 +106,7 @@ function HideUI() {
     _pauseImage.setVisible(_uiVisible);
     _subtitleImage.setVisible(_uiVisible);
     _subtitleDisabledImage.setVisible(_uiVisible);
+    Subtitle.hideSubtitleForMoment();
 }
 
 /***************************************************************

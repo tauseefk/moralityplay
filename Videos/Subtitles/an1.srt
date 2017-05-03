@@ -4,7 +4,7 @@ My favorite....
 
 2
 00:00:03,072 --> 00:00:05,632
-Hey I'm organizing a bake sale you want to help out?
+Hey I'm organizing a bake sale do you want to help out?
 
 3
 00:00:06,912 --> 00:00:08,000
@@ -40,11 +40,11 @@ Where're they from?
 
 11
 00:00:20,224 --> 00:00:21,760
-It looks like 2 hours from here.
+They live like 2 hours from here.
 
 12
 00:00:22,272 --> 00:00:25,600
-But that's not where they're originally from, right?
+Oh, but that's not where they're originally from, right?
 
 13
 00:00:25,856 --> 00:00:26,136
