@@ -4,7 +4,8 @@ My favorite....
 
 2
 00:00:03,072 --> 00:00:05,632
-Hey I'm organizing a bake sale do you want to help out?
+Hey I'm organizing a bake sale. 
+Do you want to help out?
 
 3
 00:00:06,912 --> 00:00:08,000
@@ -28,7 +29,8 @@ No, it looks good.
 
 8
 00:00:13,056 --> 00:00:16,150
-Oh, cool! You live right next to my parents. 
+Oh, cool! 
+You live right next to my parents. 
 
 9
 00:00:16,158 --> 00:00:18,944
@@ -44,7 +46,8 @@ They live like 2 hours from here.
 
 12
 00:00:22,272 --> 00:00:25,600
-Oh, but that's not where they're originally from, right?
+Oh, but that's not where 
+they're originally from, right?
 
 13
 00:00:25,856 --> 00:00:26,136

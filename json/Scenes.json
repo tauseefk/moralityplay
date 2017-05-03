@@ -581,7 +581,7 @@
             {
                 "timeStamp": 5,
                 "choices": {
-                    "question": "Hi!",
+                    "question": "\"Hi!\"",
                     "size": 2,
                     "content": [
                         "Hi! I hope I'm not too late.",
@@ -601,7 +601,7 @@
             {
                 "timeStamp": 54,
                 "choices": {
-                    "question": "What do you think?",
+                    "question": "\"What do you think?\"",
                     "size": 3,
                     "content": [
                         "I am not sure \nwhat's missing.",
@@ -804,7 +804,7 @@
             {
                 "timeStamp": 85.5,
                 "choices": {
-                    "question": "\"Choose what to say:\"",                       
+                    "question": "Choose what to say:",                       
                     "size": 2,
                     "content": [
                         "What are you talking about?",
@@ -855,7 +855,7 @@
                 },
                 "choices": 
                 {
-                    "question": "\"You know I am just trying to help\".",
+                    "question": "\"You know I am just trying to help.\"",
                     "size": 3,
                     "content": [
                         "Michael, don't overthink it.\nShe means well.",

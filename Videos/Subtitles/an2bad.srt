@@ -12,7 +12,8 @@ Oh, cool.
 
 4
 00:00:07,541 --> 00:00:09,728
-Yeah, I'm going to be late to class.
+Yeah, I'm going to be late for class.
+
 
 5
 00:00:09,984 --> 00:00:12,288
@@ -34,7 +35,7 @@ I remember the 4th of July fireworks.
 
 9
 00:00:26,296 --> 00:00:29,634
-My dad lifting me onto his shoulders 
+My dad lifted me onto his shoulders 
 so I can see better.
 
 10
@@ -43,39 +44,39 @@ I'm proud of my heritage
 but this is my home.
 
 11
-00:00:33,500 --> 00:00:39,035
-Once in a while someone thinks I don't fit 
+00:00:33,430 --> 00:00:38,500
+Once in awhile someone thinks I don't fit 
 the definition of how an American should look.
 
 12
-00:00:39,035 --> 00:00:39,864
+00:00:38,500 --> 00:00:39,300
 They ask..
 
 13
-00:00:40,000 --> 00:00:41,650
-but where are you really from?
+00:00:39,400 --> 00:00:41,476
+But where are you really from?
 
 14
-00:00:41,650 --> 00:00:43,546
+00:00:41,476 --> 00:00:43,546
 Because you can't be from here.
 
 15
-00:00:43,731 --> 00:00:46,264
-America isn't just one race.
+00:00:43,731 --> 00:00:45,662
+America isn't Just One race.
 
 16
-00:00:46,520 --> 00:00:48,312
+00:00:45,662 --> 00:00:48,118
 We all come from different places.
 
 17
-00:00:48,568 --> 00:00:51,563 
+00:00:48,118 --> 00:00:51,563 
 I love telling my family story.
 
 18
-00:00:51,563 --> 00:00:54,712
+00:00:51,563 --> 00:00:54,182
 Why can't they ask about that 
 instead of making me feel like
 
 19
-00:00:54,968 --> 00:00:55,736
+00:00:54,214 --> 00:00:55,400
 I don't belong.
