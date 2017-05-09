@@ -109,7 +109,7 @@ var userInfoActions = (function (document, $) {
     function createChartFor(scenario, el) {
       return new Chart(el, {
         type: 'pie',
-        data: createChartData(scenario, ['Positives', 'Negatives']),
+        data: createChartData(scenario, [scenario.labelPositive, scenario.labelNegative]),
         options: {
           title: {
             display: true,
@@ -133,13 +133,13 @@ var userInfoActions = (function (document, $) {
           {
             data: [data.positives, data.total - data.positives],
             backgroundColor: [
-              '#FFA276',
               '#56B0AE',
+              '#FFA276',
               '#C6DFE6'
             ],
             hoverBackgroundColor: [
-              '#FFA276',
               '#56B0AE',
+              '#FFA276',
               '#C6DFE6'
             ]
           }

@@ -85,7 +85,7 @@ function CreateGlobalVars() {
     _game.global.constants = {};
 
     //Filter refresh interval
-    _game.global.constants.FILTER_REFRESH_INTERVAL = 20;
+    _game.global.constants.FILTER_REFRESH_INTERVAL = 10;
 
     //Video timestsamp check interval in ms
     _game.global.constants.VIDEO_CHECK_INTERVAL = 150;

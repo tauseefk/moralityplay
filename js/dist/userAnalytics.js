@@ -69,7 +69,9 @@ var userAnalytics = (function(axios) {
                 .concatAll()
                 .reduce(_countPositives, 0),
           total: finishedExperienceData.length,
-          title: 'bake sale'
+          title: 'bake sale',
+          labelPositive: "Asked why",
+          labelNegative: "Thought she was just friendly"
         },
         {
           sceneName: 'li1',
@@ -78,7 +80,9 @@ var userAnalytics = (function(axios) {
                 .concatAll()
                 .reduce(_countPositives, 0),
           total: finishedExperienceData.length,
-          title: 'study group'
+          title: 'study group',
+          labelPositive: "Spoke up",
+          labelNegative: "Let it go"
         },
         {
           sceneName: 'MK1',
@@ -87,7 +91,9 @@ var userAnalytics = (function(axios) {
                 .concatAll()
                 .reduce(_countPositives, 0),
           total: finishedExperienceData.length,
-          title: 'lunch'
+          title: 'lunch',
+          labelPositive: "Asked Rebecca why",
+          labelNegative: "Supported Rebecca"
         }
       ]
     })

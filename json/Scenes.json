@@ -103,7 +103,6 @@
         "movieSrcHD": "./Videos/cmu_cut_optimized.mp4",
         "movieSrcSD": "./Videos/cmu_cut_optimized_lo.mp4",
         "bgImageKey": "cmu_cut",
-        "videoFilter": "none",
         "transition": {
             "fadeIn": false,
             "fadeOut": false
@@ -780,7 +779,7 @@
                 }
             },
             {
-                "timeStamp": 63.6,
+                "timeStamp": 63.5,
                 "choices": {
                     "question": "Choose what to say:",
                     "size": 3,
@@ -802,7 +801,7 @@
                 }
             },
             {
-                "timeStamp": 85.5,
+                "timeStamp": 86,
                 "choices": {
                     "question": "Choose what to say:",                       
                     "size": 2,

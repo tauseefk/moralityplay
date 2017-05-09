@@ -18,6 +18,7 @@ exports.game = function(req, res) {
        +'<title>Mind Field</title>'
        +'<meta name="viewport" content="width=device-width, initial-scale=1.0,maximum-scale=1.0">'
        +'<meta charset="UTF-8">'
+       +'<meta name="apple-mobile-web-app-capable" content="yes">'
        +'<meta name="description" content="Mind Field is an interactive film that aims to highlight different scenarios of microagression and stereotype threat in a college environment. The decisions you make affect the people you meet.">'
        +'<meta name="keywords" content="interactive, experience, web, film, carnegie mellon, CMU, CMU ETC, student project, racism">'
        +'<meta property="fb:app_id" content="1046151882152788" />'
@@ -29,6 +30,7 @@ exports.game = function(req, res) {
        +'<link rel="icon" href="favicon.ico" type="image/x-icon" />'
        +'<link rel="stylesheet" type="text/css" href="/css/bootstrap.min.css">'
        +'<link rel="stylesheet" type="text/css" href="/css/main.css">'
+       +'<link rel="manifest" href="/manifest.json">'
        +'</head>'
        +'<body class="bg-dark">'
        +'<div id="app">'
@@ -93,6 +95,7 @@ exports.game = function(req, res) {
       //  +'</div>'
        +'<script src="/js/phaser.min.js"></script>'
        +'<script src="/js/Lib/jsmanipulate.min.js"></script>'
+       +'<script src="https://cdnjs.cloudflare.com/ajax/libs/screenfull.js/3.2.0/screenfull.min.js"></script>'
        +'<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.16.1/axios.min.js"></script>'
        +'<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>'
        +'<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>'
@@ -100,6 +103,9 @@ exports.game = function(req, res) {
        +'<script src="/js/dist/userInfoForm.js"></script>'
        +'<script src="/js/Lib/bootstrap.min.js"></script>'
        +'<script src="/js/dist/bundle.js"></script>'
+       +'<script>'
+       +'if (screenfull.enabled) {screenfull.request();}'
+       +'</script>'
        +'</body>'
        +'</html>';
        res.send(html);

@@ -106,7 +106,7 @@ function VideoZoom() {
 /*
 //Timeupdate is less sensitive.
 function checkVideoDuration(time) {
-    _video.video.addEventListener("timeupdate", function trigger() {        
+    _video.video.addEventListener("timeupdate", function trigger() {
         if(_video.video.currentTime >= time){
             _video.video.removeEventListener("timeupdate", trigger);
             TriggerMoment();
@@ -142,7 +142,7 @@ function ChangeScene(nextScene) {
 Seeks to specified time in video.
 Currently unused.
 ***************************************************************/
-function SeekTo(time) {    
+function SeekTo(time) {
     _video.video.currentTime = time;
     _game.global.gameManager.getShowUISignal().dispatch();
     _instance.play(false);
@@ -153,7 +153,7 @@ Manual video looping.
 Currently unused.
 ***************************************************************/
 function LoopVideo() {
-    _video.video.addEventListener("timeupdate", function loop() {        
+    _video.video.addEventListener("timeupdate", function loop() {
         if(_video.video.currentTime >= _video.video.duration - 0.5){
             _video.video.currentTime = 0.5;
             console.log('looped');
@@ -221,8 +221,8 @@ module.exports = {
     isPausedByGame: function() {
         return _pausedByGame;
     },
-    endFilter: function(targetScene) {        
-        if(!targetScene) { 
+    endFilter: function(targetScene) {
+        if(!targetScene) {
             this.play(false);
             _game.global.gameManager.getShowUISignal().dispatch();
         }
@@ -231,7 +231,7 @@ module.exports = {
     clearFilterBg:function() {
         VideoFilter.clearBg();
     },
-    resetVideoVariables() {        
+    resetVideoVariables: function() {        
         _interactionTimeStamps = null;
         _pausedByGame = false;
     }

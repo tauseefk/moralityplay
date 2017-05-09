@@ -42,9 +42,9 @@ function CreateClickableIcons(icons) {
 Creates a single clickable icon.
 ***************************************************************/
 function CreateClickableIcon(key, coords, target, type, index) {
-    var button = new Image(coords[0], coords[1], key, type);    
+    var button = new Image(coords[0], coords[1], key, type);
     button.addImageToGame(_game, _game.mediaGroup);
-    button.changeImage(_game, target, index);    
+    button.changeImage(_game, target, index);
     _icons.push(button);
 }
 
@@ -54,7 +54,7 @@ Creates icons that are linked by other icons and hides them.
 function CreateLinkedIcons(linkedIcons) {
     for(var i=0; i<linkedIcons.size; i++) {
         CreateLinkedIcon(linkedIcons.key[i], linkedIcons.coords[i], linkedIcons.targetImageIndexOrScene[i], linkedIcons.type[i]);
-    } 
+    }
     HideLinkedIcons();
 }
 
@@ -80,7 +80,7 @@ function HideLockedIcons(sceneConditions) {
             }
         };
     }
-    else 
+    else
         console.log("No locked buttons in this scene.")
 }
 
@@ -158,7 +158,7 @@ function ShowPreviouslyClickedIcon() {
 Hides displayed linked icon.
 ***************************************************************/
 function HideDisplayedIcon() {
-    if(_displayedIconIndex != null)        
+    if(_displayedIconIndex != null)
         _linkedIcons[_displayedIconIndex].setVisible(false);
 }
 
@@ -180,7 +180,7 @@ module.exports = {
     },
     //Location state icons
     createNavigationIcons: function(icons, linkedIcons) {
-        if(linkedIcons)  
+        if(linkedIcons)
             CreateLinkedIcons(linkedIcons);
         CreateClickableIcons(icons);
     },
@@ -190,8 +190,8 @@ module.exports = {
     displayIcon: function(targetIndex, clickedIndex) {
         DisplayIcon(targetIndex, clickedIndex)
     },
-    hideDisplayedIcon() {
-        HideDisplayedIcon();        
+    hideDisplayedIcon: function() {
+        HideDisplayedIcon();
         ShowPreviouslyClickedIcon();
         _displayedIconIndex = null;
         _clickedIconIndex = null;

@@ -24,9 +24,9 @@ var FileTypeEnum = {
 Adds load start and on load complete functions.
 Starts load process of selected file and times it.
 ***************************************************************/
-function CheckConnection() {    
+function CheckConnection() {
     _game.load.onFileComplete.add(LoadComplete, this);
-    _game.load.onLoadStart.add(StartLoading, this);    
+    _game.load.onLoadStart.add(StartLoading, this);
     _game.load.start();
 }
 
@@ -41,9 +41,9 @@ function StartLoading() {
 /***************************************************************
 Gets connection speed and starts preload state.
 ***************************************************************/
-function LoadComplete() {    
+function LoadComplete() {
     _timer.stop();
-    SetVideoQuality(CalculateConnectionSpeed());  
+    SetVideoQuality(CalculateConnectionSpeed());
     _game.load.onFileComplete.remove(LoadComplete, this);
 
     //Starts preload state
@@ -68,7 +68,7 @@ function SetVideoQuality(speed) {
         _game.global.quality = 'HD';
     else
         _game.global.quality = 'SD';
-    console.log('Connection speed: ' + speed + ' Mb/s. Quality: ' +  _game.global.quality);  
+    console.log('Connection speed: ' + speed + ' Mb/s. Quality: ' +  _game.global.quality);
 }
 
 /***************************************************************
@@ -95,7 +95,7 @@ module.exports = {
     init: function(game) {
         //Singleton initialization
         if(_instance !== null)
-            return _instance;        
+            return _instance;
         _file = null;
         _game = game;
         _instance = this;
@@ -113,7 +113,7 @@ module.exports = {
     checkConnection: function() {
         CheckConnection();
     },
-    startPreload() {
+    startPreload: function() {
         StartPreloadState();
     }
 }

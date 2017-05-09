@@ -39,20 +39,20 @@ function DrawPauseButton() {
 Draws both subtitle images, for on/off.
 ***************************************************************/
 function DrawSubtitleButtons() {
-    if(!_subtitleImage)        
-        _subtitleImage = new Image(10, 100, _game.global.mapping.subtitleButtonImageKey, Image.getEnum().Button);    
+    if(!_subtitleImage)
+        _subtitleImage = new Image(10, 100, _game.global.mapping.subtitleButtonImageKey, Image.getEnum().Button);
     _subtitleImage.addImageToGame(_game, _game.uiGroup);
     _subtitleImage.changeImage(_game, _game.global.gameManager.getToggleSubtitleSignal());
 
-    if(!_subtitleDisabledImage)        
-        _subtitleDisabledImage = new Image(10, 100, _game.global.mapping.subtitleDisabledButtonImageKey, Image.getEnum().Button);    
+    if(!_subtitleDisabledImage)
+        _subtitleDisabledImage = new Image(10, 100, _game.global.mapping.subtitleDisabledButtonImageKey, Image.getEnum().Button);
     _subtitleDisabledImage.addImageToGame(_game, _game.uiGroup);
     _subtitleDisabledImage.changeImage(_game, _game.global.gameManager.getToggleSubtitleSignal());
 
     //Gets visibility status from subtitle loader
     if(Subtitle.getSubtitleVisible())
         _subtitleDisabledImage.setVisible(false);
-    else        
+    else
         _subtitleImage.setVisible(false);
 }
 
@@ -117,7 +117,7 @@ function ShowUI() {
     _pauseImage.setVisible(_uiVisible);
     if(Subtitle.getSubtitleVisible())
         _subtitleImage.setVisible(_uiVisible);
-    else        
+    else
         _subtitleDisabledImage.setVisible(_uiVisible);
 }
 
@@ -182,21 +182,21 @@ module.exports = {
     toggleSubtitle: function() {
         _subsVisible = Subtitle.toggleSubtitle();
         if(_subsVisible) {
-            _subtitleImage.setVisible(true);            
+            _subtitleImage.setVisible(true);
             _subtitleDisabledImage.setVisible(false);
         }
         else {
-            _subtitleImage.setVisible(false);            
+            _subtitleImage.setVisible(false);
             _subtitleDisabledImage.setVisible(true);
         }
-    },    
-    createInfoOverlay() {
+    },
+    createInfoOverlay: function() {
         ImageViewer.createOverlay();
     },
-    showInfoOverlay(image) {
+    showInfoOverlay: function(image) {
         ImageViewer.setVisible(true, image);
     },
-    hideInfoOverlay() {
+    hideInfoOverlay: function() {
         ImageViewer.setVisible(false);
     }
 }
