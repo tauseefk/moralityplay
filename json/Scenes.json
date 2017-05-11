@@ -1364,7 +1364,7 @@
             "size": 2,
             "choiceMomentsProperties": [
             {
-                "timeStamp": 8,
+                "timeStamp": 8.5,
                 "choices": {
                     "question": "\"It's kind of a long day.\"",
                     "size": 3,
@@ -1419,7 +1419,7 @@
         "movieSrcHD": "./Videos/credit.mp4",
         "movieSrcSD": "./Videos/credit_lo.mp4",        
         "transition": {
-            "fadeIn": true,
+            "fadeIn": false,
             "fadeOut": false
         },
         "nextScene": "postEndingMenu"
