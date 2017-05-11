@@ -639,7 +639,7 @@
                     {
                         "size": 1,
                         "content": [
-                            "Whatever they decide, \nI don't mind"
+                            "Whatever they decide, \nI don't mind."
                         ],
                         "destination": [
                             [ 1050, 50 ]
@@ -657,7 +657,7 @@
                     {
                         "size": 1,
                         "content": [
-                            "We can be done \nwith this in no time"
+                            "We can be done \nwith this in no time."
                         ],
                         "destination": [
                             [ 300, 50 ]
