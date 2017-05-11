@@ -1,1 +1,4614 @@
-!function(t){function e(i){if(n[i])return n[i].exports;var a=n[i]={i:i,l:!1,exports:{}};return t[i].call(a.exports,a,a.exports,e),a.l=!0,a.exports}var n={};e.m=t,e.c=n,e.i=function(t){return t},e.d=function(exports,t,n){e.o(exports,t)||Object.defineProperty(exports,t,{configurable:!1,enumerable:!0,get:n})},e.n=function(t){var n=t&&t.__esModule?function(){return t.default}:function(){return t};return e.d(n,"a",n),n},e.o=function(t,e){return Object.prototype.hasOwnProperty.call(t,e)},e.p="",e(e.s=34)}([function(t,exports,e){"use strict";const n=e(2);var i=function(t,e,n,i,a,o){this._game=t,this._linkable=this,this._event=e,this._signal=n,this._arg1=i,this._arg2=a,this._arg3=o,this._onClickAnimations=[],this._onMouseOverAnimations=[],this._onMouseOutAnimations=[],this._sound=[]};i.prototype.setAsButton=function(t){t?(this._event.onInputUp.addOnce(this.onTrigger,this),this._event.onInputUp.addOnce(this.removeInput,this)):this._event.onInputUp.add(this.onTrigger,this),this._event.onInputUp.add(this.playSound,this)},i.prototype.setMouseOver=function(){this._event.onInputOver.add(this.playOnMouseOverAnimations,this)},i.prototype.setMouseOut=function(){this._event.onInputOut.add(this.playOnMouseOutAnimations,this)},i.prototype.addOnClickAnimation=function(t){this._onClickAnimations.push(t)},i.prototype.addMouseOverAnimation=function(t){this._onMouseOverAnimations.push(t)},i.prototype.addMouseOutAnimation=function(t){this._onMouseOutAnimations.push(t)},i.prototype.addSound=function(t){this._sound.push(t)},i.prototype.playOnClickAnimations=function(){return i.playAnimations(this._onClickAnimations)},i.prototype.playOnMouseOverAnimations=function(){return i.playAnimations(this._onMouseOverAnimations)},i.prototype.playOnMouseOutAnimations=function(){return i.playAnimations(this._onMouseOutAnimations)},i.playAnimations=function(t){var e=null;return t.forEach(function(t){e=t.start()}),e},i.prototype.playSound=function(){var t=this._game;this._sound.forEach(function(e){t.global.soundManager.playSound(e)})},i.prototype.removeInput=function(){this._event.inputEnabled?this._event.inputEnabled=!1:this._event.parent&&this._event.parent.inputEnabled&&(this._event.parent.inputEnabled=!1),this._event.input&&(this._event.input.useHandCursor=!1)},i.prototype.onTrigger=function(){var t=this._linkable.playOnClickAnimations();t?t.onComplete.add(this.dispatchSignal,this):this.dispatchSignal()},i.prototype.addMouseOverScaleEffect=function(t,e){this._linkable.addMouseOverAnimation(n.scale(t,e,!1,1.03*e.width,1.03*e.height)),this._linkable.setMouseOver(),this._linkable.addMouseOutAnimation(n.scale(t,e,!1,e.width,e.height)),this._linkable.setMouseOut()},i.prototype.dispatchSignal=function(){this._signal.dispatch(this._arg1,this._arg2,this._arg3)},i.goToLink=function(t){window.open(t,"_blank")},i.reload=function(){location.reload()},t.exports=i},function(t,exports,e){"use strict";function n(t,e,n,o,s){f=f.changeSource(t,!1),a(e,o,n),I&&i()}function i(){var t=I.shift();t&&r(t)}function a(t,e,n){function i(){g(_),o(n),e&&h.create(f.video,e),null!=m&&"none"!=m&&u.createOverlay(m)}_=f.addToWorld(0,0,0,0),p.mediaGroup.add(_),f.onChangeSource.addOnce(i,this)}function o(t){t?(f.loop=!1,f.onComplete.addOnce(l(t),this)):f.loop=!0}function s(){p.global.gameManager.getPlaySignal().dispatch(),b=!0,f.video.pause(),p.global.gameManager.getHideUISignal().dispatch(),u.startFilterFade(p.global.gameManager.getTriggerInteractionSignal())}function r(t){var e=setInterval(function(){!f.video.paused&&f.video.currentTime>=t&&(clearInterval(e),s(),i())},p.global.constants.VIDEO_CHECK_INTERVAL)}function l(t){return function(){d.clearFilterBg(),p.global.gameManager.getChangeSceneSignal().dispatch(t)}}function c(t){f.video.currentTime=t,p.global.gameManager.getShowUISignal().dispatch(),d.play(!1)}function g(t){S?(_.inputEnabled=!0,_.input.useHandCursor=!0,_.events.onInputUp.addOnce(function(){f.play()},this),S=!1):f.play()}const u=e(17),h=(e(0),e(14));var d=null,p=null,f=null,_=null,m=null,I=null,S=!0,b=!1;t.exports={init:function(t){return null!==d?d:(p=t,d=this,f=p.add.video("start","emptyVideo"),f.video.setAttribute("playsinline","playsinline"),u.init(t,f),d)},create:function(t,e,i,a,o,s){t&&(m=i,I=s,n(t,e,a,o,s))},stop:function(){f&&f.stop()},play:function(t){0==t&&(b=t),f&&f.play()},seekTo:function(t){c(t)},paused:function(){if(f)return f.video.paused},isPausedByGame:function(){return b},endFilter:function(t){t||(this.play(!1),p.global.gameManager.getShowUISignal().dispatch()),u.endFilter()},clearFilterBg:function(){u.clearBg()},resetVideoVariables:function(){I=null,b=!1}}},function(t,exports,e){"use strict";var n=function(){};n.scale=function(t,e,n,i,a,o){return o||(o=300),t.add.tween(e).to({width:i,height:a},o,Phaser.Easing.Linear.None,n,0,0)},n.fade=function(t,e,n,i,a){return a||(a=500),t.add.tween(e).to({alpha:n},a,Phaser.Easing.Linear.None,i,0,0,!1)},n.bob=function(t,e,n,i){i||(i=-5),i=i.toString();var a=t.add.tween(e).to({y:i},200,Phaser.Easing.Quadratic.InOut,n,0,-1,!0);return a.repeatDelay(700),a},t.exports=n},function(t,exports,e){"use strict";const n=e(0),i=e(2),a=e(9),o=e(16);var s={Static:"IMAGE_STATIC",ThoughtSprite:"IMAGE_SPRITE_THOUGHT",SceneChange:"IMAGE_BUTTON_SCENECHANGE",DisplayImage:"IMAGE_BUTTON_DISPLAY_IMAGE",InfoImage:"IMAGE_INFO",Thought:"IMAGE_BUTTON_THOUGHT",Transition:"IMAGE_TRANSITION",Background:"IMAGE_BACKGROUND",ChoiceBackground:"IMAGE_CHOICE_BACKGROUND",OverlayCloseImage:"IMAGE_OVERLAY_CLOSE",OverlayScrollBar:"IMAGE_SCROLLBAR",ExternalLink:"IMAGE_BUTTON_EXTERNAL_LINK",Reload:"IMAGE_BUTTON_RELOAD",Button:"IMAGE_BUTTON_GENERIC",Play:"IMAGE_BUTTON_PLAY"},r=function(t,e,n,i){this._type=i,this._xPos=t,this._yPos=e,this._key=n,this._link=null};r.prototype.addImageToGame=function(t,e){switch(this._type){case s.Play:case s.Thought:case s.SceneChange:case s.DisplayImage:case s.ChoiceBackground:case s.OverlayCloseImage:case s.ExternalLink:case s.Reload:case s.Button:this._image=t.add.button(this._xPos,this._yPos,this._key);break;case s.Static:case s.Background:case s.InfoImage:case s.OverlayScrollBar:this._image=t.add.image(this._xPos,this._yPos,this._key);break;case s.ThoughtSprite:this._image=t.add.sprite(this._xPos,this._yPos,this._key)}this.addToGroup(t,e)},r.prototype.addToGroup=function(t,e){e?e.add(this._image):this.addToDefaultGroup(t)},r.prototype.addToDefaultGroup=function(t){switch(this._type){case s.Play:case s.InfoImage:case s.OverlayScrollBar:case s.OverlayCloseImage:case s.Button:t.uiGroup.add(this._image);break;case s.Thought:case s.SceneChange:case s.DisplayImage:case s.ChoiceBackground:case s.ExternalLink:case s.Reload:case s.Static:case s.Background:case s.ThoughtSprite:t.mediaGroup.add(this._image)}},r.prototype.changeImage=function(t,e,n,i,a,o){switch(this._type){case s.Static:this.changeToStaticImage(t);break;case s.Background:this.changeToBgImage(t,e);break;case s.Thought:this.changeToThoughtIcon(t,e,n);break;case s.ThoughtSprite:this.changeToThoughtSprite(t,e,n,i);break;case s.SceneChange:this.changeToSceneChangeImage(t,e,n);break;case s.DisplayImage:this.changeToDisplayImage(t,e,n);break;case s.InfoImage:this.changeToInfoImage(t,e);break;case s.ChoiceBackground:this.changeToChoiceBackgroundImage(t,e,n,i,a,o);break;case s.OverlayCloseImage:this.changeToOverlayCloseImage(t,e,n);break;case s.OverlayScrollBar:this.changeToOverlayScrollBar(t,e,n);break;case s.ExternalLink:this.changeToExternalLinkImage(t,e);break;case s.Reload:this.changeToReloadImage(t,e);break;case s.Play:this.changeToPlayButton(t);break;case s.Button:this.changeToGenericButton(t,e)}},r.prototype.changeToStaticImage=function(t){this._image.anchor.setTo(.5,.5)},r.prototype.changeToBgImage=function(t,e){var n=t.height/this._image.height;this._image.height=Math.floor(this._image.height*n),this._image.width=Math.floor(this._image.width*n),e&&this.makeDraggable(t,!1,!0,-this._image.width+t.width,0,2*this._image.width-t.width,this._image.height).bind(this)},r.prototype.changeToThoughtIcon=function(t,e,a){this._image.width=100,this._image.height=100,this._image.anchor.setTo(.5,.5),this._link=new n(t,this._image,t.global.gameManager.getCreateThoughtsSignal(),e,a,choices),this._link.addOnClickAnimation(i.fade(t,this._image,0,!1)),this._link.setAsButton(!0),i.bob(t,this._image,!0)},r.prototype.changeToThoughtSprite=function(t,e,a,o){this._image.anchor.setTo(.5,.5),this._image.animations.add("think"),this._image.animations.play("think",8,!0),this.enableInput(!0),this._image.input.useHandCursor=!0,this._link=new n(t,this._image.events,t.global.gameManager.getCreateThoughtsSignal(),e,a,o),this._link.addOnClickAnimation(i.fade(t,this._image,0,!1)),this._link.addMouseOverScaleEffect(t,this._image),this._link.setAsButton(!0),i.bob(t,this._image,!0)},r.prototype.changeToSceneChangeImage=function(t,e){this._image.anchor.setTo(.5,.5),this._link=new n(t,this._image,t.global.gameManager.getChangeSceneSignal(),e),this._link.setAsButton(!0),this._link.addSound(t.global.mapping.buttonClickSound),this._link.addMouseOverScaleEffect(t,this._image),i.bob(t,this._image,!0,-1)},r.prototype.changeToDisplayImage=function(t,e,a){this._image.anchor.setTo(.5,.5),this._link=new n(t,this._image,t.global.gameManager.getDisplayImageSignal(),e,a),this._link.setAsButton(!1),this._link.addMouseOverScaleEffect(t,this._image),this._link.addSound(t.global.mapping.buttonClickSound),i.bob(t,this._image,!0)},r.prototype.changeToInfoImage=function(t,e){var n=t.global.constants.INFO_VIEW_MARGIN,i=t.global.constants.INFO_VIEW_WIDTH,s=t.global.constants.INFO_VIEW_HEIGHT,r=i/this._image.width;if(this._image.height=Math.floor(this._image.height*r),this._image.width=Math.floor(this._image.width*r),this._image.x=n,o.checkIfScrollBarNeeded(t,this._image)){this._image.y=n,this._mask=new a(0,0,a.getEnum().Rectangle),this._mask.addGraphicToGame(t,t.uiGroup);var l=a.createRectangle(n,n,i,t.global.constants.INFO_VIEW_HEIGHT);this._mask.changeGraphic(t,l),this._image.mask=this._mask.getGraphic(),this.makeDraggable(t,!0,!1,n,-this._image.height+s+n,i,2*this._image.height-s)}else this._image.y=t.world.centerY,this._image.anchor.setTo(0,.5)},r.prototype.changeToChoiceBackgroundImage=function(t,e,i,a,o,s){return this._image.alpha=0,this._image.anchor.set(.5,.5),this._image.width=e,this._image.height=i,o.bringToTop(),this._link=new n(t,this._image,t.global.gameManager.getEndInteractionSignal(),this,a,s),this._link.setAsButton(!0),this._link.addMouseOverScaleEffect(t,this._image),this._link.addMouseOverScaleEffect(t,o),this._link.addSound(t.global.mapping.buttonClickSound),this._image.input.priorityID=1,this.fadeIn(t),this._image},r.prototype.changeToOverlayCloseImage=function(t){this.setVisible(!1),this._image.anchor.set(.5,.5),this._link=new n(t,this._image,t.global.gameManager.getHideDisplayedImageSignal()),this._link.setAsButton(!1),this._link.addMouseOverScaleEffect(t,this._image),this._link.addSound(t.global.mapping.buttonClickSound),this._link2=new n(t,this._image,t.global.gameManager.getHideInfoOverlaySignal()),this._link2.setAsButton(!1)},r.prototype.changeToOverlayScrollBar=function(t,e){this.setVisible(!1),this._image.width=e-2,this._image.anchor.set(.5,0),this.makeDraggable.call(this,t,!0,!1,t.global.constants.SCROLLBAR_POS[0],t.global.constants.SCROLLBAR_POS[1],t.global.constants.SCROLLBAR_DIM[0]+5,t.global.constants.SCROLLBAR_DIM[1])},r.prototype.changeToExternalLinkImage=function(t,e){this._image.anchor.set(.5,.5),this._link=new n(t,this._image,t.global.gameManager.getGoToLinkSignal(),e),this._link.setAsButton(!0),this._link.addSound(t.global.mapping.buttonClickSound),this._link.addMouseOverScaleEffect(t,this._image)},r.prototype.changeToReloadImage=function(t,e){this._image.anchor.set(.5,.5),this._link=new n(t,this._image,t.global.gameManager.getReloadSignal()),this._link.setAsButton(!0),this._link.addSound(t.global.mapping.buttonClickSound),this._link.addMouseOverScaleEffect(t,this._image)},r.prototype.changeToPlayButton=function(t){this._image.anchor.setTo(.5,.5),this._image.height=300,this._image.width=300},r.prototype.changeToGenericButton=function(t,e){this._link=new n(t,this._image,e),this._link.addSound(t.global.mapping.buttonClickSound),this._link.setAsButton(!1)},r.prototype.changeCursorImage=function(t,e){this._image.events.onInputOver.add(function(){t.canvas.style.cursor=e},this),this._image.events.onInputOut.add(function(){t.canvas.style.cursor="default"},this)},r.prototype.makeDraggable=function(t,e,n,i,a,o,s){if(this.enableInput(!0),void 0!==i&&void 0!==i){var r=new Phaser.Rectangle(i,a,o,s);this._image.input.boundsRect=r}this._image.input.draggable=!0,this._image.input.allowVerticalDrag=!n,this._image.input.allowHorizontalDrag=!e,this.changeCursorImage(t,'url("./Images/UI/hand_2.png"), auto')},r.prototype.destroy=function(){this._image.destroy()},r.prototype.bringToTop=function(){this._image.bringToTop()},r.prototype.getPhaserImage=function(){return this._image},r.prototype.getHeight=function(){return this._image.height},r.prototype.getY=function(){return this._image.y},r.prototype.getType=function(){return this._type},r.prototype.enableInput=function(t){this._image.inputEnabled=t},r.prototype.setX=function(t){this._image.x=t},r.prototype.setY=function(t){this._image.y=t},r.prototype.setPos=function(t,e){this.setX(t),this.setY(e)},r.prototype.setHeight=function(t){this._image.height=t},r.prototype.setVisible=function(t){this._image.visible=t},r.prototype.fadeOut=function(t,e,a){e?(this._link=new n(t,this._image,e,a),this._link.addOnClickAnimation(i.fade(t,this._image,0,!0)),this._link.onTrigger()):i.fade(t,this._image,0,!0)},r.prototype.fadeIn=function(t){i.fade(t,this._image,1,!0)},r.getEnum=function(){return s},t.exports=r},function(t,exports,e){"use strict";const n=e(0),i=e(2);var a={Thoughts:"TEXT_THOUGHTS",Choices:"TEXT_CHOICES",Question:"TEXT_QUESTION",Subtitle:"TEXT_SUBTITLE",InfoOverlayText:"TEXT_INFO_OVERLAY"},o=function(t,e,n,i,a){this._type=i,this._xPos=e,this._yPos=n,this._content=t,this._properties=a,this._text=null};o.prototype.setAdditionalProperties=function(){if(this._properties.lineSpacing&&(this._text.lineSpacing=this._properties.lineSpacing),this._properties.shadow){var t=this._properties.shadow;this._text.setShadow(t[0],t[1],t[2],t[3])}},o.prototype.addTextToGame=function(t,e){this._text=t.add.text(this._xPos,this._yPos,this._content,this._properties),this.setAdditionalProperties(),e.add(this._text)},o.prototype.changeText=function(t,e,n,i,o,s,r){switch(this._type){case a.Thoughts:this.changeToThoughts(t,e,n);break;case a.Choices:this.changeToChoiceText(t,e);break;case a.Question:this.changeToQuestion(t);break;case a.InfoOverlayText:this.changeToInfoOverlayText(t);break;case a.Subtitle:this.changeToSubtitle(t,e)}},o.prototype.changeToThoughts=function(t,e,n){this._text.anchor.setTo(.5),this._text.alpha=0,this.addInterpolationTween(t,e,n),i.fade(t,this._text,1,!0)},o.prototype.changeToChoiceText=function(t,e){this._text.anchor.set(.5,.5),this._text.y=e,this._text.alpha=0,i.fade(t,this._text,1,!0)},o.prototype.changeToQuestion=function(t){this._text.anchor.set(.5,.5),this._text.x=t.width/2,this._text.alpha=0,i.fade(t,this._text,1,!0)},o.prototype.changeToInfoOverlayText=function(t){this._text.anchor.set(.5,.5),this._text.x=t.width/2,this.setVisible(!1)},o.prototype.changeToSubtitle=function(t,e){this._text.anchor.x=.5,this._text.x=t.width/2,this.setVisible(e)},o.prototype.addInterpolationTween=function(t,e,n){var i={x:[this._xPos,this._xPos+(e-this._xPos)/2,e-(e-this._xPos)/8,e],y:[this._yPos,this._yPos-10,n-10,n]};return t.add.tween(this._text).to({x:i.x,y:i.y},1e3,Phaser.Easing.Quadratic.Out,!0,0,0).interpolation(function(t,e){return Phaser.Math.bezierInterpolation(t,e)})},o.prototype.fadeOut=function(t,e,a){e?(this._link=new n(t,this._text.events,e,a),this._link.addOnClickAnimation(i.fade(t,this._text,0,!0)),this._link.onTrigger()):i.fade(t,this._text,0,!0)},o.prototype.enableInput=function(t){this._text.inputEnabled=t},o.prototype.destroy=function(){this._text.destroy()},o.prototype.getPhaserText=function(){return this._text},o.prototype.getHeight=function(){return this._text.height},o.prototype.setVisible=function(t){this._text.visible=t},o.prototype.setY=function(t){this._text.y=t},o.getEnum=function(){return a},t.exports=o},function(t,exports,e){"use strict";function n(){a.mediaGroup=a.add.group(),a.uiGroup=a.add.group()}var i=null,a=null;t.exports={init:function(t){return null!==i?i:(a=t,i=this)},initializeGroups:function(){n()}}},function(t,exports,e){"use strict";function n(t){var e=0;t&&(e=1),r=new i(0,0,i.getEnum().Transition);var n=i.createRectangle(0,0,s.width,s.height,s.global.constants.TRANSITION_COLOR);r.addGraphicToGame(s),r.changeGraphic(s,n,e)}const i=e(9),a=e(17);var o=null,s=null,r=null;t.exports={init:function(t){return null!==o?o:(o=this,s=t,o)},fadeInTransition:function(){a.clearBg(),n(!0)},fadeOutTransition:function(){n(!1)}}},function(t,exports,e){"use strict";function n(){I||(I=new g(10,10,_.global.mapping.pauseButtonImageKey,g.getEnum().Button)),I.addImageToGame(_,_.uiGroup),I.changeImage(_,_.global.gameManager.getPauseSignal())}function i(){b||(b=new g(10,100,_.global.mapping.subtitleButtonImageKey,g.getEnum().Button)),b.addImageToGame(_,_.uiGroup),b.changeImage(_,_.global.gameManager.getToggleSubtitleSignal()),y||(y=new g(10,100,_.global.mapping.subtitleDisabledButtonImageKey,g.getEnum().Button)),y.addImageToGame(_,_.uiGroup),y.changeImage(_,_.global.gameManager.getToggleSubtitleSignal()),p.getSubtitleVisible()?y.setVisible(!1):b.setVisible(!1)}function a(){S||(S=new g(_.world.centerX,_.world.centerY,_.global.mapping.playButtonImageKey,g.getEnum().Play)),S.addImageToGame(_,_.uiGroup),S.changeImage(_),S.setVisible(!1)}function o(){h.paused()||(_.paused=!0,h.stop(),m&&m.setVisible(!0),S&&S.setVisible(!0),_.input.onDown.addOnce(s,self))}function s(){h.isPausedByGame()||(h.play(),_.paused=!1,m.setVisible(!1),S.setVisible(!1))}function r(){T=!1,I.setVisible(T),b.setVisible(T),y.setVisible(T),p.hideSubtitleForMoment()}function l(){T=!0,I.setVisible(T),p.getSubtitleVisible()?b.setVisible(T):y.setVisible(T)}function c(){m=new u(0,0,u.getEnum().Rectangle);var t=u.createRectangle(0,0,_.width,_.height,0,.8);m.addGraphicToGame(_),m.changeGraphic(_,t),m.setVisible(!1),_.uiGroup.add(m.getGraphic())}const g=e(3),u=(e(4),e(9)),h=e(1),d=e(28),p=e(14);var f=null,_=null,m=null,I=null,S=null,b=null,y=null,T=!0,v=!0;t.exports={init:function(t){return null!==f?f:(p.init(t),d.init(t),f=this,_=t,f)},create:function(t,e){T=!0,e&&i(),t&&(n(),c(),a())},pause:function(t){o()},play:function(){s()},showUI:function(){l()},hideUI:function(){r()},toggleSubtitle:function(){v=p.toggleSubtitle(),v?(b.setVisible(!0),y.setVisible(!1)):(b.setVisible(!1),y.setVisible(!0))},createInfoOverlay:function(){d.createOverlay()},showInfoOverlay:function(t){d.setVisible(!0,t)},hideInfoOverlay:function(){d.setVisible(!1)}}},function(t,exports,e){"use strict";var n=function(t){this._scene=t};n.prototype.setStateScene=function(t){this._scene=t},n.prototype.getMovieKey=function(){return this._scene.movieKey},n.prototype.getChoiceMoments=function(){return this._scene.choiceMoments},n.prototype.getTimestamps=function(){for(var t=[],e=0;e<this._scene.choiceMoments.size;e++)t.push(this._scene.choiceMoments.choiceMomentsProperties[e].timeStamp);return t},n.prototype.getThoughtBubble=function(t){return this._scene.choiceMoments.choiceMomentsProperties[t].thoughtBubbles},n.prototype.getChoices=function(t){return this._scene.choiceMoments.choiceMomentsProperties[t].choices},n.prototype.getBgImageKey=function(){return this._scene.bgImageKey},n.prototype.getIconsInfo=function(){return this._scene.icons},n.prototype.getLinkedIconsInfo=function(){return this._scene.linkedIcons},n.prototype.getInputInfo=function(){return this._scene.input},n.prototype.getSrcList=function(){return!(!this._scene.movieReqs||!this._scene.movieSrcArr)&&[this._scene.movieReqs,this._scene.movieSrcArr]},n.prototype.getMovieSrc=function(t,e){if("number"==typeof e){if("HD"==t)return this._scene.movieSrcArr[e][0];if("SD"==t)return this._scene.movieSrcArr[e][1]}else{if("HD"==t)return this._scene.movieSrcHD;if("SD"==t)return this._scene.movieSrcSD}},n.prototype.getSceneReqs=function(){return this._scene.sceneReqs},n.prototype.getSceneTargetNames=function(){return this._scene.sceneTargetNames},n.prototype.getMovieSubKey=function(){return this._scene.sub},n.prototype.getBackgroundMusic=function(){return this._scene.backgroundMusic},n.prototype.getTransitionInfo=function(){return this._scene.transition},n.prototype.getVideoFilter=function(){return this._scene.videoFilter},n.prototype.getNextScenes=function(){return this._scene.nextScene},n.prototype.getDraggable=function(){return this._scene.draggable},t.exports=n},function(t,exports,e){"use strict";const n=e(0),i=e(2);var a={Overlay:"GRAPHIC_INFO_OVERLAY",ScrollBarBackground:"GRAPHIC_SCROLLBAR_BG",Transition:"GRAPHIC_TRANSITION",Rectangle:"GRAPHIC_RECTANGLE"},o=function(t,e,n){this._xPos=t,this._yPos=e,this._type=n};o.prototype.addGraphicToGame=function(t,e){this._graphic=t.add.graphics(this._xPos,this._yPos),this.addToGroup(t,e)},o.prototype.addToGroup=function(t,e){e?e.add(this._graphic):this.addToDefaultGroup(t)},o.prototype.addToDefaultGroup=function(t){switch(this._type){case a.Overlay:case a.ScrollBarBackground:case a.Transition:t.uiGroup.add(this._graphic);break;case a.Rectangle:t.mediaGroup.add(this._graphic)}},o.prototype.changeGraphic=function(t,e,n,i,o,s){switch(this._type){case a.Overlay:this.changeToInfoOverlayGraphic(t,e,n);break;case a.ScrollBarBackground:this.changeToScrollBarBackgroundGraphic(t,e);break;case a.Transition:this.changeToTransitionGraphic(t,e,n);break;case a.Rectangle:this.changeToRectangle(t,e)}},o.prototype.changeToInfoOverlayGraphic=function(t,e){var i=t.global.constants.INFO_VIEW_MARGIN;this._graphic.beginFill(t.global.constants.INFO_OVERLAY_COLOR,t.global.constants.INFO_OVERLAY_OPACITY),this._graphic.inputEnabled=!0,e?(this._graphic.drawRect(0,0,i,t.height),this._graphic.drawRect(t.width-i,0,i,t.height),this._graphic.drawRect(i,0,t.width-(i<<1),i),this._graphic.drawRect(i,t.height-i,t.width-(i<<1),i),this._graphic.input.priorityID=1,this._graphic.input.useHandCursor=!0):this._graphic.drawRect(0,0,t.width,t.height),this._graphic.endFill(),this._graphic.visible=!1,new n(t,this._graphic.events,t.global.gameManager.getHideDisplayedImageSignal()).setAsButton(!1),new n(t,this._graphic.events,t.global.gameManager.getHideInfoOverlaySignal()).setAsButton(!1)},o.prototype.changeToScrollBarBackgroundGraphic=function(t,e){this._graphic.beginFill(e.color,e.opacity),this._graphic.lineStyle(e.strokeWidth,e.lineColor),this._graphic.drawRect(e.x,e.y,e.width,e.height),this._graphic.endFill(),this._graphic.visible=!1},o.prototype.changeToTransitionGraphic=function(t,e,n){this._graphic.beginFill(e.color,e.opacity),this._graphic.drawRect(e.x,e.y,e.width,e.height),this._graphic.endFill(),this._graphic.alpha=n,i.fade(t,this._graphic,1-n,!0)},o.prototype.changeToRectangle=function(t,e){this._graphic.beginFill(e.color,e.opacity),e.strokeWidth&&this._graphic.lineStyle(e.strokeWidth,e.lineColor,e.strokeOpacity),this._graphic.drawRect(e.x,e.y,e.width,e.height),this._graphic.endFill()},o.prototype.setVisible=function(t){this._graphic.visible=t},o.prototype.getGraphic=function(){return this._graphic},o.createRectangle=function(t,e,n,i,a,o,s,r,l){var c={};return c.x=t,c.y=e,c.width=n,c.height=i,a||(a=0),c.color=a,o||(o=1),c.opacity=o,s&&(c.strokeWidth=s,r||(r=0),c.lineColor=r,l||(l=1),c.strokeOpacity=l),c},o.getEnum=function(){return a},t.exports=o},function(t,exports,e){"use strict";function n(t,e){c=new s(0,0,t,u),c.addImageToGame(l,l.mediaGroup),c.changeImage(l,e)}function i(t){g=l.add.group(),l.mediaGroup.add(g),t.forEach(function(t){g.add(t.getPhaserImage())})}function a(){c.getPhaserImage().events.onDragUpdate.add(o),g.x=c.getPhaserImage().x,g.y=c.getPhaserImage().y}function o(){g.x=c.getPhaserImage().x,g.y=c.getPhaserImage().y}const s=e(3);var r=null,l=null,c=null,g=null;const u="IMAGE_BACKGROUND";t.exports={init:function(t){return null!==r?r:(l=t,r=this)},preload:function(){},create:function(t,e){t&&n(t,e)},attachIconsToBg:function(t){i(group),a()}}},function(t,exports,e){"use strict";function n(t){for(var e in t)r.load.audio(e,g[e])}function i(t){for(var e in t)r.load.image(e,t[e])}function a(t){for(var e in t)r.load.spritesheet(e,t[e][0],t[e][1],t[e][2],t[e][3])}function o(t){for(var e in t)r.load.text(e,t[e])}var s=null,r=null,l=null,c=null,g=null,u=null,h=null,d=null,p=null,f=null,_=null;t.exports={init:function(t){return null!==s?s:(s=this,r=t,l=r.cache.getJSON("data"),d=r.cache.getJSON("scenes").scenes,_=r.cache.getJSON("style"),u=l.images,h=l.spritesheets,c=l.videos,g=l.audio,p=l.subtitles,f=l.mapping,s)},preload:function(){i(u),a(h),n(g),o(p)},getScene:function(t){return d[t]},getMapping:function(){return f},getStyle:function(){return _}}},function(t,exports,e){"use strict";var n=function(){};n.VisitAtLeastOnceOfEach=function(t,e){for(var i=!0,a=0;a<e.length;a++)i&=n.OneSceneVisited(t,e[a]);return i},n.OneSceneVisited=function(t,e){if(e)for(var n=0;n<e.length;n++)if(t.global.visitedScenes[e[n]])return!0;return!1},n.AllSceneVisited=function(t,e){if(e){for(var n=0;n<e.length;n++)if(!t.global.visitedScenes[e[n]])return!1;return!0}return!1},n.GetIndexOfVisitedAll=function(t,e){if(e)for(var i=0;i<e.length;i++)if(n.AllSceneVisited(t,e[i]))return i;return!1},t.exports=n},function(t,exports,e){"use strict";function n(t,e,n){n||(n=m.global.mapping.thoughtBubbleImageKey);var i=new p(t[0],t[1],n,p.getEnum().ThoughtSprite);i.addImageToGame(m,m.mediaGroup),i.changeImage(m,e,t)}function i(t){for(var e=0;e<t.size;e++)a(t.key[e],t.coords[e],t.targetImageIndexOrScene[e],t.type[e],e);r(t.lockedByScenes),l(t.unlockedByScenes)}function a(t,e,n,i,a){var o=new p(e[0],e[1],t,i);o.addImageToGame(m,m.mediaGroup),o.changeImage(m,n,a),I.push(o)}function o(t){for(var e=0;e<t.size;e++)s(t.key[e],t.coords[e],t.targetImageIndexOrScene[e],t.type[e]);g()}function s(t,e,n,i){var a=new p(e[0],e[1],t,i);a.addImageToGame(m),a.changeImage(m,n),S.push(a)}function r(t){if(t)for(var e=0;e<t.length;e++){var n=t[e];f.OneSceneVisited(m,n)&&I[e].setVisible(!1)}}function l(t){if(t)for(var e=0;e<t.length;e++){var n=t[e];n&&(f.VisitAtLeastOnceOfEach(m,n)?I[e].setVisible(!0):I[e].setVisible(!1))}}function c(){I.forEach(function(t){t.fadeOut(m)})}function g(){S.forEach(function(t){t.setVisible(!1)})}function u(t,e){d(),h(),y=t,S[y].bringToTop(),S[y].setVisible(!0),b=e,I[b].setVisible(!1),S[y].getType()==p.getEnum().InfoImage&&m.global.gameManager.getShowInfoOverlaySignal().dispatch(S[y])}function h(){null!=b&&I[b].setVisible(!0)}function d(){null!=y&&S[y].setVisible(!1)}const p=e(3),f=e(12);var _=null,m=null,I=[],S=[],b=null,y=null;t.exports={init:function(t){return null!==_?_:(m=t,_=this)},createThoughtIcon:function(t,e,i){n(t,e,i)},createClickableIcons:function(t){return i(t),I},createNavigationIcons:function(t,e){e&&o(e),i(t)},endInteraction:function(){c()},displayIcon:function(t,e){u(t,e)},hideDisplayedIcon:function(){d(),h(),y=null,b=null},destroy:function(){I.forEach(function(t){t.destroy()}),I=[],S.forEach(function(t){t.destroy()}),S=[]}}},function(t,exports,e){"use strict";function n(t,e){i(r(u.cache.getText(e),!0),t)}function i(t,e){t.forEach(function(t){function n(){if(e.currentTime>=t.startTime){e.removeEventListener("timeupdate",n);var i=new c(t.text,0,-500,c.getEnum().Subtitle,u.global.style.subtitleTextProperties);i.addTextToGame(u,u.mediaGroup),i.changeText(u,d);var s=o(i);a(e,t,i,s)}}e.addEventListener("timeupdate",n,!1)})}function a(t,e,n,i){function a(){t.currentTime>=e.endTime&&(t.removeEventListener("timeupdate",a),n.destroy())}t.addEventListener("timeupdate",a,!1)}function o(t){return h[0]&&h[0].setVisible(d),h[0]=t,t.setY(u.global.constants.SUBTITLE_Y_POS),0}function s(){return d=!d,h.forEach(function(t){t&&t.setVisible(d)}),d}function r(t,e){var n=!!e;t=t.replace(/\r/g,"");t=t.split(/(\d+)\n(\d{2}:\d{2}:\d{2},\d{3}) --> (\d{2}:\d{2}:\d{2},\d{3})/g),t.shift();for(var i=[],a=0;a<t.length;a+=4)i.push({id:t[a].trim(),startTime:n?l(t[a+1].trim()):t[a+1].trim(),endTime:n?l(t[a+2].trim()):t[a+2].trim(),text:t[a+3].trim()});return i}function l(t){var e=/(\d+):(\d{2}):(\d{2}),(\d{3})/,n=e.exec(t);if(null===n)return 0;for(var i=1;i<5;i++)n[i]=parseInt(n[i],10),isNaN(n[i])&&(n[i]=0);return 3600*n[1]+60*n[2]+n[3]+n[4]/1e3}const c=e(4);var g=null,u=null,h=[null],d=!1;t.exports={init:function(t){return g?g:(g=this,u=t,g)},create:function(t,e){n(t,e)},toggleSubtitle:function(){return s()},hideSubtitleForMoment:function(){h[0].setVisible(!1)},getSubtitleVisible:function(){return d}}},function(t,exports,e){"use strict";function n(t){var e=o.getScene(t);switch(e.stateType){case m.MenuState:case m.InteractState:case m.SwitchState:case m.MovieState:case m.LocationState:f.start(e.stateType,!0,!1,e)}}function i(){f.add(m.MenuState,c),f.add(m.LocationState,g),f.add(m.InteractState,u),f.add(m.SwitchState,h),f.add(m.MovieState,d)}function a(){_.global.visitedScenes.MK2bad=!0,_.global.visitedScenes.an2good=!0,_.global.visitedScenes.li2good=!0}const o=e(11),s=e(5),r=e(6),l=e(7),c=(e(1),e(31)),g=e(19),u=e(18),h=e(33),d=e(32),p=e(14);var f=null,_=null,m={MenuState:"MenuState",InteractState:"InteractState",SwitchState:"SwitchState",MovieState:"MovieState",LocationState:"LocationState"};t.exports={init:function(){return null!==f?f:(f=this.game.state,_=this.game,s.init(_),p.init(this.game),r.init(_),i(),l.init(_),f)},preload:function(){},create:function(){_.global.gameManager.getChangeSceneSignal().dispatch(_.global.mapping.startSceneName)},changeScene:function(t){_.mediaGroup.removeAll(),_.global.visitedScenes[t]=!0,_.global.currentSceneName=t,a(),n(t)}}},function(t,exports,e){"use strict";var n=function(){};n.checkIfScrollBarNeeded=function(t,e){var n=t.global.constants.INFO_VIEW_WIDTH/t.global.constants.INFO_VIEW_HEIGHT;return!(e.width/e.height>n)},t.exports=n},function(t,exports,e){"use strict";function n(t){f=t.add.bitmapData(t.width,t.height),_=t.add.sprite(t.width/2,t.height/2,f),t.mediaGroup.add(_),_.alpha=0,_.anchor.setTo(.5,.5),m=f.context}function i(t){I=t.add.bitmapData(t.width,t.height),S=t.add.sprite(t.width/2,t.height/2,I),S=t.stage.addChildAt(S,0),S.anchor.setTo(.5,.5),b=I.context}function a(t){var e=new c(h,_,t);e.addOnClickAnimation(g.fade(h,_,1,!1)),e.addOnClickAnimation(g.scale(h,_,!1,h.width,h.height)),e.onTrigger()}function o(){g.fade(h,_,0,!0)}function s(){r()}function r(){h.time.events.repeat(h.global.constants.FILTER_REFRESH_INTERVAL,1,r,this),_.alpha>0&&_.alpha<1&&l()}function l(){m.drawImage(p,0,0,d.width,d.height,0,0,h.width,h.height);var t=m.getImageData(0,0,h.width,h.height);b.putImageData(t,0,0);O.forEach(function(e){e[0]in JSManipulate&&(v=JSManipulate[e[0]],e[1]?v.filter(t,e[1]):v.filter(t,v.defaultValues))}),m.putImageData(t,0,0)}const c=e(0),g=e(2);var u=null,h=null,d=null,p=null,f=null,_=null,m=null,I=null,S=null,b=null,y=null,T=null,v=null,O=null;t.exports={init:function(t,e){return null!==u?u:(u=this,h=t,d=e,p=d.video,y=t.canvas,i(h),T=document.createElement("canvas"),T.width=h.width,T.height=h.height,T.context=T.getContext("2d"),u)},createOverlay:function(t){O=t,n(h),s()},clearBg:function(){I&&I.clear()},startFilterFade:function(t){a(t)},endFilter:function(){o()}}},function(t,exports,e){"use strict";function n(){i(),a()}function i(){var t=p.getThoughtBubble(m);if(t)for(var e=0;e<t.size;e++)c.createThoughtIcon(t.coords[e],t.thoughts[e],t.thoughtIconKey[e])}function a(){var t=null;t=p.getChoices(m),u.create(t),m++}function o(t,e,n){_.global.databaseManager.sendInteractionData(_.global.currentSceneName,n),c.endInteraction(),u.endInteraction(t,e),h.endInteraction(),l.endFilter(e)}const s=e(5),r=e(7),l=e(1),c=(e(6),e(13)),g=e(8),u=e(26),h=e(30),d=e(10);var p=null,f=null,_=null,m=null;t.exports={init:function(t){return p&&p.setStateScene(t),m=0,s.initializeGroups(),null!==f?f:(c.init(this.game),h.init(this.game),u.init(this.game),d.init(this.game),l.init(this.game),_=this.game,p=new g(t),f=this)},create:function(){_.global.soundManager.stopBackgroundMusic(),d.create(p.getBgImageKey(),p.getDraggable()),l.create(p.getMovieSrc(_.global.quality),p.getTransitionInfo().fadeOut,p.getVideoFilter(),p.getNextScenes(),p.getMovieSubKey(),p.getTimestamps()),p.getTransitionInfo().fadeIn&&this.game.global.gameManager.getFadeInTransitionSignal().dispatch(),r.create(!0,!0)},shutdown:function(){c.destroy(),l.resetVideoVariables(),h.resetThoughtVariables(),u.resetChoicesVariables()},createInteractionElements:function(){n()},createThoughts:function(t,e){h.create(t,e)},endInteraction:function(t,e,n){o(t,e,n)}}},function(t,exports,e){"use strict";const n=(e(6),e(5)),i=e(8),a=e(7),o=e(10),s=e(13),r=e(1);var l=null,c=null,g=null;t.exports={init:function(t){return null!==c&&c.setStateScene(t),n.initializeGroups(),null!==l?l:(s.init(this.game),o.init(this.game),r.init(this.game),g=this.game,c=new i(t),l=this)},preload:function(){},create:function(){r.clearFilterBg(),g.global.soundManager.playBackgroundMusic(c.getBackgroundMusic()),o.create(c.getBgImageKey(),c.getDraggable()),r.create(c.getMovieSrc(g.global.quality),c.getTransitionInfo().fadeOut,c.getVideoFilter(),c.getNextScenes());var t=s.createNavigationIcons(c.getIconsInfo(),c.getLinkedIconsInfo());c.getDraggable()&&o.attachIconsToBg(t),c.getTransitionInfo().fadeIn&&this.game.global.gameManager.getFadeInTransitionSignal().dispatch(),a.createInfoOverlay()},shutdown:function(){s.destroy(),r.resetVideoVariables()},displayImage:function(t,e){s.displayIcon(t,e)},hideDisplayedImage:function(){s.hideDisplayedIcon()}}},function(t,exports,e){"use_strict";function n(){o(),a(),i(),s.loadFile(u,h,d,p),s.checkConnection()}function i(){g.add.image(g.world.centerX,g.world.centerY,"connectionTestImage").anchor.setTo(.5,.5)}function a(){g.stage.disableVisibilityChange=!0,g.stage.backgroundColor="#000000",g.input.maxPointers=1}function o(){g.global={playerName:null,visitedScenes:{}},g.mediaGroup=g.add.group(),g.uiGroup=g.add.group(),g.global.gameManager=new r,g.global.soundManager=new l(g),g.global.databaseManager=new c(g),g.global.constants={},g.global.constants.FILTER_REFRESH_INTERVAL=10,g.global.constants.VIDEO_CHECK_INTERVAL=150,g.global.constants.INFO_VIEW_MARGIN=50,g.global.constants.INFO_VIEW_HEIGHT=g.height-2*g.global.constants.INFO_VIEW_MARGIN,g.global.constants.SCROLLBAR_DIM=[30,g.global.constants.INFO_VIEW_HEIGHT],g.global.constants.INFO_VIEW_WIDTH=g.width-2*g.global.constants.INFO_VIEW_MARGIN-g.global.constants.SCROLLBAR_DIM[0],g.global.constants.SCROLLBAR_POS=[g.width-g.global.constants.INFO_VIEW_MARGIN-g.global.constants.SCROLLBAR_DIM[0],g.global.constants.INFO_VIEW_MARGIN],g.global.constants.SCROLLBAR_STROKEWIDTH=2,g.global.constants.INFO_OVERLAY_COLOR=0,g.global.constants.INFO_OVERLAY_OPACITY=.7,g.global.constants.SCROLLBAR_WHEEL_SENSITIVITY=10,g.global.constants.SUBTITLE_Y_POS=620,g.global.constants.SUBTITLE_SPACING=5,g.global.constants.TRANSITION_COLOR=0}const s=e(27),r=e(23),l=e(24),c=e(22);var g=null;const u="pooh",h="./Images/Loading/pooh.jpg",d="IMAGE",p=1576132;WebFontConfig={active:function(){g.time.events.add(Phaser.Timer.SECOND,n,this)},google:{families:["Kadwa","Merienda One","Noto Sans"]}},t.exports={init:function(){return s.init(this.game),g=this.game,null},preload:function(){g.scale.scaleMode=Phaser.ScaleManager.SHOW_ALL,g.load.script("webfont","//ajax.googleapis.com/ajax/libs/webfont/1.4.7/webfont.js"),g.load.image("connectionTestImage","./Images/Loading/connectionTestImage.jpg")},create:function(){}}},function(t,exports,e){"use_strict";function n(){var t=(a.add.image(0,0,"progressSceneBackground"),a.add.image(a.world.centerX,a.world.centerY,"progressBarFillBg"));t.anchor.setTo(.5,.5),a.add.image(a.world.centerX,a.world.centerY,"progressBarFrame").anchor.setTo(.5,.5),a.add.image(a.world.centerX,a.world.centerY+80,"progressBarText").anchor.setTo(.5,.5);var e=a.add.sprite((a.width-t.width)/2,(a.height-t.height)/2,"progressBarFillFg");a.load.setPreloadSprite(e)}const i=e(11);var a=null;t.exports={init:function(){return a=this.game,i.init(a),null},preload:function(){n(),i.preload()},create:function(){a.global.style=i.getStyle(),a.global.mapping=i.getMapping(),a.state.start("stateManager")}}},function(t,exports,e){"use strict";var n=null,i="http://mocking-birds.etc.cmu.edu/",a=null,o=function(){return null!==n?n:(n=this,this.createUser(),n)};o.prototype.getUserId=function(){return this.userId},o.prototype.createUser=function(){axios.get(i+"createUser").then(function(t){a=t.data,userInfoActions.setUserId(a)}).catch(void 0)},o.prototype.sendInteractionData=function(t,e){if(void 0!=e&&null!=e){var n={id:a,sceneName:t,interactionType:e};axios.post(i+"addUserAction",n).catch(void 0)}},t.exports=o},function(t,exports,e){"use strict";const n=e(15),i=e(18),a=e(19),o=e(6),s=e(7),r=e(1),l=e(0);var c=null,g=function(){return null!==c?c:(c=this,this._changeSceneSignal=null,this._fadeInTransitionSignal=null,this._fadeOutTransitionSignal=null,this._createThoughtsSignal=null,this._triggerInteractionSignal=null,this._endInteractionSignal=null,this._displayImageSignal=null,this._hideDisplayedImageSignal=null,this._videoSeekSignal=null,this._showUISignal=null,this._hideUISignal=null,this._showInfoOverlaySignal=null,this._hideInfoOverlaySignal=null,this._pauseSignal=null,this._playSignal=null,this._toggleSubtitleSignal=null,this._goToLinkSignal=null,this._reloadSignal=null,this.initSignals(),c)};g.prototype.initSignals=function(){this._changeSceneSignal=new Phaser.Signal,this._changeSceneSignal.add(n.changeScene,this),this._fadeInTransitionSignal=new Phaser.Signal,this._fadeInTransitionSignal.add(o.fadeInTransition,this),this._fadeOutTransitionSignal=new Phaser.Signal,this._fadeOutTransitionSignal.add(o.fadeOutTransition,this),this._createThoughtsSignal=new Phaser.Signal,this._createThoughtsSignal.add(i.createThoughts,this),this._triggerInteractionSignal=new Phaser.Signal,this._triggerInteractionSignal.add(i.createInteractionElements,this),this._endInteractionSignal=new Phaser.Signal,this._endInteractionSignal.add(i.endInteraction,this),this._displayImageSignal=new Phaser.Signal,this._displayImageSignal.add(a.displayImage,this),this._hideDisplayedImageSignal=new Phaser.Signal,this._hideDisplayedImageSignal.add(a.hideDisplayedImage,this),this._videoSeekSignal=new Phaser.Signal,this._videoSeekSignal.add(r.seekTo,this),this._showUISignal=new Phaser.Signal,this._showUISignal.add(s.showUI,this),this._hideUISignal=new Phaser.Signal,this._hideUISignal.add(s.hideUI,this),this._showInfoOverlaySignal=new Phaser.Signal,this._showInfoOverlaySignal.add(s.showInfoOverlay,this),this._hideInfoOverlaySignal=new Phaser.Signal,this._hideInfoOverlaySignal.add(s.hideInfoOverlay,this),this._pauseSignal=new Phaser.Signal,this._pauseSignal.add(s.pause,this),this._playSignal=new Phaser.Signal,this._playSignal.add(s.play,this),this._toggleSubtitleSignal=new Phaser.Signal,this._toggleSubtitleSignal.add(s.toggleSubtitle,this),this._goToLinkSignal=new Phaser.Signal,this._goToLinkSignal.add(l.goToLink,this),this._reloadSignal=new Phaser.Signal,this._reloadSignal.add(l.reload,this)},g.prototype.getChangeSceneSignal=function(){return this._changeSceneSignal},g.prototype.getFadeInTransitionSignal=function(){return this._fadeInTransitionSignal},g.prototype.getFadeOutTransitionSignal=function(){return this._fadeOutTransitionSignal},g.prototype.getTriggerInteractionSignal=function(){return this._triggerInteractionSignal},g.prototype.getEndInteractionSignal=function(){return this._endInteractionSignal},g.prototype.getVideoSeekSignal=function(){return this._videoSeekSignal},g.prototype.getCreateThoughtsSignal=function(){return this._createThoughtsSignal},g.prototype.getDisplayImageSignal=function(){return this._displayImageSignal},g.prototype.getHideDisplayedImageSignal=function(){return this._hideDisplayedImageSignal},g.prototype.getShowUISignal=function(){return this._showUISignal},g.prototype.getHideUISignal=function(){return this._hideUISignal},g.prototype.getShowInfoOverlaySignal=function(){return this._showInfoOverlaySignal},g.prototype.getHideInfoOverlaySignal=function(){return this._hideInfoOverlaySignal},g.prototype.getPauseSignal=function(){return this._pauseSignal},g.prototype.getPlaySignal=function(){return this._playSignal},g.prototype.getToggleSubtitleSignal=function(){return this._toggleSubtitleSignal},g.prototype.getGoToLinkSignal=function(){return this._goToLinkSignal},g.prototype.getReloadSignal=function(){return this._reloadSignal},t.exports=g},function(t,exports,e){"use strict";var n=null,i=null,a=null,o=null,s=null,r=0,l=function(t){return null!==n?n:(n=this,i=t,s={},n)};l.prototype.playSound=function(t){s[t]||(s[t]=i.add.audio(t)),s[t].play()},l.prototype.playBackgroundMusic=function(t){t&&o!=t&&(a&&a.stop(),s[t]||(s[t]=i.add.audio(t)),a=s[t],o=t,a.loop=!0,a.play())},l.prototype.stopBackgroundMusic=function(){a&&(o=null,a.stop())},l.prototype.setCurrentTime=function(t){r=t},t.exports=l},function(t,exports,e){"use strict";var n=(e(0),function(t,e,n,i){this._xPos=e,this._yPos=n,this._content=t,this._properties=i,this._input=null});n.prototype.setDefaultProperties=function(){this._input.font="18px Roboto"},n.prototype.addToGame=function(t){this._input=t.add.inputField(this._xPos,this._yPos,this._properties),this.setDefaultProperties()},n.prototype.getInput=function(){return this._input},t.exports=n},function(t,exports,e){"use strict";function n(t,e,n,i,a,o,s){var r=new h(t,e,d,h.getEnum().ChoiceBackground);return r.addImageToGame(f,f.mediaGroup),r.changeImage(f,n,i,o,a,s),r}function i(t,e){_=new u(t,0,e,u.getEnum().Question,f.global.style.questionTextProperties),_.addTextToGame(f,f.mediaGroup),_.changeText(f,u.getEnum().Question)}function a(t){g(),i(t.question,t.y[0]-t.bounds[0][1]/2-b);for(var e=0;e<t.size;e++)o(e,t),s(e,t),m[e].changeText(f,I[e].getPhaserImage().y,t.size)}function o(t,e){m.push(new u(e.content[t],r(e.size,t),0,u.getEnum().Choices,f.global.style.choicesTextProperties)),m[t].index=t,m[t].addTextToGame(f,f.mediaGroup)}function s(t,e){var i;i=e.targetScene?n(r(e.size,t),e.y[t],e.bounds[t][0],e.bounds[t][1],m[t].getPhaserText(),e.targetScene[t],e.tag[t]):n(r(e.size,t),e.y[t],e.bounds[t][0],e.bounds[t][1],m[t].getPhaserText()),i.index=t,I.push(i)}function r(t,e){if(1==t)return f.world.centerX;if(2==t){if(0==e)return f.width/4;if(1==e)return f.width/4*3}else if(3==t){if(0==e)return f.width/6;if(1==e)return f.world.centerX;if(2==e)return f.width/6*5}return null}function l(t){m.forEach(function(e){e.index!=t&&(e.enableInput(!1),e.fadeOut(f))}),I.forEach(function(e){e.index!=t&&(e.enableInput(!1),e.fadeOut(f))}),_.fadeOut(f)}function c(t,e){function n(){m[t].enableInput(!1),I[t].enableInput(!1),e?m[t].fadeOut(f,f.global.gameManager.getChangeSceneSignal(),e):m[t].fadeOut(f),I[t].fadeOut(f)}f.time.events.add(Phaser.Timer.SECOND*S,n,this)}function g(){m=[],I=[],_=null}const u=e(4),h=e(3),d="choiceBg";var p=null,f=null,_=null,m=[],I=[];const S=1,b=30;t.exports={init:function(t){return null!==p?p:(f=t,p=this)},preload:function(){},create:function(t){a(t)},endInteraction:function(t,e){l(t.index),c(t.index,e)},resetChoicesVariables:function(){g()}}},function(t,exports,e){"use strict";function n(){c.load.onFileComplete.add(a,this),c.load.onLoadStart.add(i,this),c.load.start()}function i(){h=c.time.create(!0),h.start()}function a(){h.stop(),s(o()),c.load.onFileComplete.remove(a,this),c.state.start("preload")}function o(){var t=(h._now-h._started)/1e3;return t+=h.elapsed/1e3,u/t/1e6}function s(t){c.global.quality=t>d||t<0?"HD":"SD"}function r(t,e,n){switch(n){case p.Image:g=c.load.image(t,e);break;case p.Video:g=c.load.text(t,e);break;case p.Audio:g=c.load.audio(t,e)}return g}var l=null,c=null,g=null,u=null,h=null;const d=.36;var p={Image:"IMAGE",Video:"VIDEO",Audio:"AUDIO"};t.exports={init:function(t){return null!==l?l:(g=null,c=t,l=this)},loadFile:function(t,e,n,i){u=i,r(t,e,n)},checkConnection:function(){n()},startPreload:function(){StartPreloadState()}}},function(t,exports,e){"use strict";function n(){i(),r(),l()}function i(){a(),o(),s()}function a(){T=new m(0,0,m.getEnum().Overlay),T.addGraphicToGame(b),T.changeGraphic(b,!0),v=new m(0,0,m.getEnum().Overlay),v.addGraphicToGame(b),v.changeGraphic(b,!1)}function o(){E=new m(0,0,m.getEnum().ScrollBarBackground);var t=m.createRectangle(b.global.constants.SCROLLBAR_POS[0],b.global.constants.SCROLLBAR_POS[1],b.global.constants.SCROLLBAR_DIM[0],b.global.constants.SCROLLBAR_DIM[1],1391461,.8,b.global.constants.SCROLLBAR_STROKEWIDTH,16777215);E.addGraphicToGame(b),E.changeGraphic(b,t)}function s(){k=new _(b.global.constants.SCROLLBAR_POS[0]+b.global.constants.SCROLLBAR_DIM[0]/2,b.global.constants.SCROLLBAR_POS[1],b.global.mapping.overlayScrollBarImageKey,_.getEnum().OverlayScrollBar),k.addImageToGame(b,b.uiGroup),k.changeImage(b,b.global.constants.SCROLLBAR_DIM[0])}function r(){O=new _(50,50,b.global.mapping.overlayCloseButtonImageKey,_.getEnum().OverlayCloseImage),O.addImageToGame(b,b.uiGroup),O.changeImage(b)}function l(){w=new f("Drag the image below to scroll",b.world.centerX,25,f.getEnum().InfoOverlayText,b.global.style.questionTextProperties),w.addTextToGame(b,b.uiGroup),w.changeText(b)}function c(t){y=t,y.setPos(b.global.constants.INFO_VIEW_MARGIN,b.global.constants.INFO_VIEW_MARGIN);var e=b.global.constants.INFO_VIEW_HEIGHT/y.getHeight();k.setHeight(e*b.global.constants.SCROLLBAR_DIM[1]),k.setY(b.global.constants.SCROLLBAR_POS[1]),x=b.global.constants.SCROLLBAR_DIM[1]-k.getHeight(),M=y.getHeight()-b.global.constants.INFO_VIEW_HEIGHT}function g(t){function e(t){var e,n=b.input.mouse.wheelDelta;n>0?(e=k.getY()-b.global.constants.SCROLLBAR_WHEEL_SENSITIVITY)<b.global.constants.INFO_VIEW_MARGIN&&(e=b.global.constants.INFO_VIEW_MARGIN):n<0&&(e=k.getY()+b.global.constants.SCROLLBAR_WHEEL_SENSITIVITY)>x+b.global.constants.INFO_VIEW_MARGIN&&(e=x+b.global.constants.INFO_VIEW_MARGIN),k.setY(e),u()}b.input.mouse.mouseWheelCallback=t?e:null}function u(){y.setY(b.global.constants.INFO_VIEW_MARGIN-(k.getY()-b.global.constants.INFO_VIEW_MARGIN)/x*M)}function h(){k.setY(b.global.constants.INFO_VIEW_MARGIN-(y.getY()-b.global.constants.INFO_VIEW_MARGIN)/M*x)}function d(){k.getPhaserImage().events.onDragUpdate.add(u),y.getPhaserImage().events.onDragUpdate.add(h)}function p(t,e){if(t&&e){O.setVisible(!0);I.checkIfScrollBarNeeded(b,e.getPhaserImage())?(this.initializeScrollbar(e),w.setVisible(!0),T.setVisible(!0),E.setVisible(!0),k.setVisible(!0),g(!0)):v.setVisible(!0),e.bringToTop(),O.bringToTop()}else O.setVisible(!1),w.setVisible(!1),E.setVisible(!1),k.setVisible(!1),T.setVisible(!1),v.setVisible(!1),g(!1)}const f=e(4),_=e(3),m=e(9),I=e(16);var S=null,b=null,y=null,T=null,v=null,O=null,w=null,E=null,k=null,x=0,M=0;t.exports={init:function(t){return null!==S?S:(b=t,S=this)},createOverlay:function(){n()},initializeScrollbar:function(t){c(t),d()},setVisible:function(t,e){p.call(this,t,e)}}},function(t,exports,e){"use strict";var n=null,i=null,a=null,o=e(25);t.exports={init:function(t){return null!==n?n:(i=t,n=this)},preload:function(){},create:function(t){a=[];for(var e=0;e<t.size;e++)a.push(new o(t.name[e],t.coords[e][0],t.coords[e][1],t.properties[e])),a[e].addToGame(i);return a}}},function(t,exports,e){"use strict";const n=e(4);var i=null,a=null,o=[],s=0;t.exports={init:function(t){return null!==i?i:(a=t,i=this)},preload:function(){},create:function(t,e){for(var i=0;i<t.size;i++)o.push(new n(t.content[i],e[0],e[1],n.getEnum().Thoughts,a.global.style.thoughtsTextProperties)),o[s].addTextToGame(a,a.mediaGroup),o[s].changeText(a,t.destination[i][0],t.destination[i][1]),s++},endInteraction:function(){o.forEach(function(t){t.fadeOut(a)})},resetThoughtVariables:function(){o=[],s=0}}},function(t,exports,e){"use strict";const n=e(5),i=e(29),a=(e(6),e(8)),o=e(10),s=e(1),r=e(13);var l=null,c=null,g=null,u=[];t.exports={init:function(t){return null!==c&&c.setStateScene(t),n.initializeGroups(),null!==l?l:(o.init(this.game),r.init(this.game),i.init(this.game),g=this.game,l=this,c=new a(t),l)},preload:function(){},create:function(){u=[];var t=c.getMovieSrc(g.global.quality);t?s.create(t,c.getTransitionInfo().fadeOut,c.getVideoFilter()):o.create(c.getBgImageKey(),c.getDraggable()),r.createClickableIcons(c.getIconsInfo()),g.global.currentSceneName===g.global.mapping.postEndingSceneName&&$("#userInfoModal").modal("show"),c.getTransitionInfo().fadeIn&&this.game.global.gameManager.getFadeInTransitionSignal().dispatch()},shutdown:function(){r.destroy()},update:function(){u.forEach(function(t){t.getInput().update()})}}},function(t,exports,e){"use strict";function n(t){var e=t.getSrcList(),n=null;return e&&(n=l.GetIndexOfVisitedAll(g,e[0])),t.getMovieSrc(g.global.quality,n)}const i=e(5),a=e(7),o=e(1),s=e(8),r=e(10),l=e(12);var c=null,g=null,u=null;t.exports={init:function(t,e){return null!==u&&u.setStateScene(t),i.initializeGroups(),null!==c?c:(o.init(this.game,e),r.init(this.game),u=new s(t),g=this.game,c=this)},preload:function(){},create:function(){g.global.soundManager.stopBackgroundMusic(),r.create(u.getBgImageKey(),u.getDraggable()),o.create(n(u),u.getTransitionInfo().fadeOut,u.getVideoFilter(),u.getNextScenes(),u.getMovieSubKey()),u.getTransitionInfo().fadeIn&&this.game.global.gameManager.getFadeInTransitionSignal().dispatch(),g.global.currentSceneName!==g.global.mapping.startSceneName&&a.create(!0,!0)}}},function(t,exports,e){"use strict";function n(t){var e=t.getSceneReqs(),n=null;return e&&(n=a.GetIndexOfVisitedAll(r,e)),t.getSceneTargetNames()[n]}const i=e(8),a=e(12);var o=null,s=null,r=null;t.exports={init:function(t,e){return null!==s&&s.setStateScene(t),s=new i(t),o=this,r=this.game,o},preload:function(){},create:function(){var t=n(s);r.global.gameManager.getChangeSceneSignal().dispatch(t)}}},function(t,exports,e){"use strict";const n=e(20),i=e(21),a=e(15);e(11);!function(t,e,n,i){function a(){l.canvas.className+="center",l.canvas.id="canvas",l.state.add("boot",t),l.state.add("preload",e),l.state.add("stateManager",n)}function o(){l.load.json("data","json/Data.json"),l.load.json("scenes","json/Scenes.json"),l.load.json("style","json/Style.json"),l.load.image("progressSceneBackground","./Images/Loading/progress_bg.png"),l.load.image("progressBarFillFg","./Images/Loading/progressbar.png"),l.load.image("progressBarFillBg","./Images/Loading/progressbar_bg.png"),l.load.image("progressBarFrame","./Images/Loading/progressbar_frame.png"),l.load.image("progressBarText","./Images/Loading/progressbar_text.png")}function s(){l.state.start("boot")}function r(){}var l=new Phaser.Game(1280,720,Phaser.CANVAS,"",{init:a,preload:o,create:s,update:r})}(n,i,a)}]);
+/******/ (function(modules) { // webpackBootstrap
+/******/ 	// The module cache
+/******/ 	var installedModules = {};
+/******/
+/******/ 	// The require function
+/******/ 	function __webpack_require__(moduleId) {
+/******/
+/******/ 		// Check if module is in cache
+/******/ 		if(installedModules[moduleId]) {
+/******/ 			return installedModules[moduleId].exports;
+/******/ 		}
+/******/ 		// Create a new module (and put it into the cache)
+/******/ 		var module = installedModules[moduleId] = {
+/******/ 			i: moduleId,
+/******/ 			l: false,
+/******/ 			exports: {}
+/******/ 		};
+/******/
+/******/ 		// Execute the module function
+/******/ 		modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
+/******/
+/******/ 		// Flag the module as loaded
+/******/ 		module.l = true;
+/******/
+/******/ 		// Return the exports of the module
+/******/ 		return module.exports;
+/******/ 	}
+/******/
+/******/
+/******/ 	// expose the modules object (__webpack_modules__)
+/******/ 	__webpack_require__.m = modules;
+/******/
+/******/ 	// expose the module cache
+/******/ 	__webpack_require__.c = installedModules;
+/******/
+/******/ 	// identity function for calling harmony imports with the correct context
+/******/ 	__webpack_require__.i = function(value) { return value; };
+/******/
+/******/ 	// define getter function for harmony exports
+/******/ 	__webpack_require__.d = function(exports, name, getter) {
+/******/ 		if(!__webpack_require__.o(exports, name)) {
+/******/ 			Object.defineProperty(exports, name, {
+/******/ 				configurable: false,
+/******/ 				enumerable: true,
+/******/ 				get: getter
+/******/ 			});
+/******/ 		}
+/******/ 	};
+/******/
+/******/ 	// getDefaultExport function for compatibility with non-harmony modules
+/******/ 	__webpack_require__.n = function(module) {
+/******/ 		var getter = module && module.__esModule ?
+/******/ 			function getDefault() { return module['default']; } :
+/******/ 			function getModuleExports() { return module; };
+/******/ 		__webpack_require__.d(getter, 'a', getter);
+/******/ 		return getter;
+/******/ 	};
+/******/
+/******/ 	// Object.prototype.hasOwnProperty.call
+/******/ 	__webpack_require__.o = function(object, property) { return Object.prototype.hasOwnProperty.call(object, property); };
+/******/
+/******/ 	// __webpack_public_path__
+/******/ 	__webpack_require__.p = "";
+/******/
+/******/ 	// Load entry module and return exports
+/******/ 	return __webpack_require__(__webpack_require__.s = 34);
+/******/ })
+/************************************************************************/
+/******/ ([
+/* 0 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/***************************************************************
+Object that creates interactive properties of elements,
+such as mouse over animations, sounds, linking, etc.
+***************************************************************/
+
+
+//Dependencies
+const Animation = __webpack_require__(2);
+
+//Linkable constructor
+var Linkable = function(game, event, signal, arg1, arg2, arg3) {
+    this._game = game;
+    this._linkable = this;
+    this._event = event;
+    this._signal = signal;
+    this._arg1 = arg1;
+    this._arg2 = arg2;
+    this._arg3 = arg3;
+    this._onClickAnimations = [];
+    this._onMouseOverAnimations = [];
+    this._onMouseOutAnimations = [];
+    this._sound = [];
+}
+
+/***************************************************************
+Input up events, sets linkable to behave as button.
+***************************************************************/
+Linkable.prototype.setAsButton = function(once) {
+    if(once) {
+        this._event.onInputUp.addOnce(this.onTrigger, this);
+        this._event.onInputUp.addOnce(this.removeInput, this);
+    }
+    else {        
+        this._event.onInputUp.add(this.onTrigger, this);
+    }
+    this._event.onInputUp.add(this.playSound, this);
+}
+
+/***************************************************************
+Mouse over events.
+***************************************************************/
+Linkable.prototype.setMouseOver = function() {
+    this._event.onInputOver.add(this.playOnMouseOverAnimations, this);
+    //this._event.onInputOver.add(this.playSound, this);
+}
+
+/***************************************************************
+Mouse out events.
+***************************************************************/
+Linkable.prototype.setMouseOut = function() {
+    this._event.onInputOut.add(this.playOnMouseOutAnimations, this);
+}
+
+/***************************************************************
+Adds animation and sounds to each interaction.
+***************************************************************/
+Linkable.prototype.addOnClickAnimation = function(tween) {
+    this._onClickAnimations.push(tween);
+}
+
+Linkable.prototype.addMouseOverAnimation = function(tween) {
+    this._onMouseOverAnimations.push(tween);
+}
+
+Linkable.prototype.addMouseOutAnimation = function(tween) {
+    this._onMouseOutAnimations.push(tween);
+}
+
+Linkable.prototype.addSound = function(soundKey) {
+    this._sound.push(soundKey);
+}
+
+/***************************************************************
+Plays animations corresponding to different mouse events.
+***************************************************************/
+Linkable.prototype.playOnClickAnimations = function() {
+    return Linkable.playAnimations(this._onClickAnimations);
+}
+
+Linkable.prototype.playOnMouseOverAnimations = function() {
+    return Linkable.playAnimations(this._onMouseOverAnimations);
+}
+
+Linkable.prototype.playOnMouseOutAnimations = function() {
+    return Linkable.playAnimations(this._onMouseOutAnimations);
+}
+
+/***************************************************************
+Static function that plays all animation in the array.
+***************************************************************/
+Linkable.playAnimations = function(animationArr) {
+    var tween = null;
+    animationArr.forEach(function(animation) {
+        tween = animation.start();
+    });
+    return tween;
+}
+
+Linkable.prototype.playSound = function() {
+    var game = this._game;
+    this._sound.forEach(function(sound) {
+        game.global.soundManager.playSound(sound);
+    });
+}
+
+/***************************************************************
+Cleanup. Prevents button from being hoverable.
+***************************************************************/
+Linkable.prototype.removeInput = function() {
+    if(this._event.inputEnabled)
+        this._event.inputEnabled = false;
+    else if(this._event.parent && this._event.parent.inputEnabled) {
+        this._event.parent.inputEnabled = false;
+    }
+    if(this._event.input) {
+        this._event.input.useHandCursor = false;
+    } 
+}
+
+/***************************************************************
+Dispatches assigned signal when clicked.
+***************************************************************/
+Linkable.prototype.onTrigger = function() {
+    var tween = this._linkable.playOnClickAnimations();
+    if(tween)
+        tween.onComplete.add(this.dispatchSignal, this);
+    else
+        this.dispatchSignal();
+}
+
+/***************************************************************
+A default mouseover animation preset.
+***************************************************************/
+Linkable.prototype.addMouseOverScaleEffect = function(game, object) {
+    this._linkable.addMouseOverAnimation(Animation.scale(game, object, false, object.width *1.03, object.height *1.03));
+    this._linkable.setMouseOver();    
+    this._linkable.addMouseOutAnimation(Animation.scale(game, object, false, object.width, object.height));
+    this._linkable.setMouseOut();
+}
+
+Linkable.prototype.dispatchSignal = function() {
+    this._signal.dispatch(this._arg1, this._arg2, this._arg3);
+}
+
+/***************************************************************
+External link functionality.
+***************************************************************/
+Linkable.goToLink = function(link) {
+    window.open(link,'_blank');
+}
+
+/***************************************************************
+Reload functionality.
+***************************************************************/
+Linkable.reload = function() {
+    location.reload();
+}
+
+module.exports = Linkable;
+
+
+/***/ }),
+/* 1 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/***************************************************************
+Handles playing of video and manages it in experience.
+Currently, video is streamed and its source is changed constantly.
+Hence, users only have to tap once on phones to start.
+Author: Christopher Weidya
+***************************************************************/
+
+
+//Dependencies
+const VideoFilter = __webpack_require__(17),
+    Linkable = __webpack_require__(0),
+    Subtitle = __webpack_require__(14);
+
+var _instance = null;
+var _game = null;
+
+var _video = null
+var _videoTexture = null;
+var _videoFilter = null;
+var _interactionTimeStamps = null;
+var _firstVideo = true;
+
+var _pausedByGame = false;
+
+/***************************************************************
+Switches video sources and adds events on specified timestamps.
+***************************************************************/
+function CreateVideo(src, doFadeOut, nextScene, sub, interactionTimeStamps) {
+    _video = _video.changeSource(src, false);
+    AddVideoAndFilter(doFadeOut, sub, nextScene);
+    if(_interactionTimeStamps)
+        AddNextInteractionEvent();
+}
+
+/***************************************************************
+Checks video load progress.
+Unused.
+***************************************************************/
+function CheckProgress() {
+    var percentLoaded = parseInt(_video.video.buffered.end(0) / _video.video.duration * 100);
+    console.log(percentLoaded);
+}
+
+/***************************************************************
+Gets next timestamp and starts event.
+***************************************************************/
+function AddNextInteractionEvent() {
+    var timestamp = _interactionTimeStamps.shift();
+    if(timestamp)
+        checkVideoDuration(timestamp);
+}
+
+/***************************************************************
+Adds video to game.
+On video load after source swap, sets video parameters.
+***************************************************************/
+function AddVideoAndFilter(doFadeOut, sub, nextScene) {
+    _videoTexture = _video.addToWorld(0, 0, 0, 0);
+    _game.mediaGroup.add(_videoTexture);
+    _video.onChangeSource.addOnce(OnVideoLoad, this);
+
+    function OnVideoLoad() {
+        VideoTextureClick(_videoTexture);
+        HandleVideoEnd(nextScene);
+        if(sub)
+            Subtitle.create(_video.video, sub);
+        if(_videoFilter != null && _videoFilter != 'none') {
+            VideoFilter.createOverlay(_videoFilter);
+        }
+    }
+}
+
+/***************************************************************
+Loops video if no next scene is specified.
+***************************************************************/
+function HandleVideoEnd(nextScene) {
+    if(!nextScene)
+        _video.loop = true;
+    else {
+        _video.loop = false;
+        _video.onComplete.addOnce(ChangeScene(nextScene), this);
+    }
+}
+
+/***************************************************************
+Triggers interaction moment when timestamp is reached.
+***************************************************************/
+function TriggerMoment() {
+    console.log(_video.video.duration);
+    console.log(_video.video.currentTime);
+    //Ensure game is not paused to pause scenario properly
+    _game.global.gameManager.getPlaySignal().dispatch();
+    _pausedByGame = true;
+    _video.video.pause();
+    _game.global.gameManager.getHideUISignal().dispatch();
+    VideoFilter.startFilterFade(_game.global.gameManager.getTriggerInteractionSignal());
+}
+
+/***************************************************************
+Slight zoom in animation when filter starts.
+***************************************************************/
+function VideoZoom() {
+    Linkable.zoomIn(_game, _video, 1.5);
+}
+
+/*
+//Timeupdate is less sensitive.
+function checkVideoDuration(time) {
+    _video.video.addEventListener("timeupdate", function trigger() {
+        if(_video.video.currentTime >= time){
+            _video.video.removeEventListener("timeupdate", trigger);
+            TriggerMoment();
+            AddInteractionEvents();
+        }
+    }, false);
+}
+*/
+
+/***************************************************************
+Creates a self removing event that activates when video reaches specified timestamp.
+***************************************************************/
+function checkVideoDuration(time) {
+    var interval = setInterval(function() {
+        if(!_video.video.paused && _video.video.currentTime >= time) {
+            clearInterval(interval);
+            TriggerMoment();
+            AddNextInteractionEvent();
+        }
+    }, _game.global.constants.VIDEO_CHECK_INTERVAL);
+}
+
+/***************************************************************
+Changes game scene.
+***************************************************************/
+function ChangeScene(nextScene) {
+   return function() {
+        _instance.clearFilterBg();
+        _game.global.gameManager.getChangeSceneSignal().dispatch(nextScene);
+    }
+}
+
+/***************************************************************
+Seeks to specified time in video.
+Currently unused.
+***************************************************************/
+function SeekTo(time) {
+    _video.video.currentTime = time;
+    _game.global.gameManager.getShowUISignal().dispatch();
+    _instance.play(false);
+}
+
+/***************************************************************
+Manual video looping.
+Currently unused.
+***************************************************************/
+function LoopVideo() {
+    _video.video.addEventListener("timeupdate", function loop() {
+        if(_video.video.currentTime >= _video.video.duration - 0.5){
+            _video.video.currentTime = 0.5;
+            console.log('looped');
+        }
+    }, false);
+}
+
+/***************************************************************
+Android click to play workaround.
+***************************************************************/
+function VideoTextureClick(texture) {
+    if(_firstVideo) {
+        _videoTexture.inputEnabled = true;
+        _videoTexture.input.useHandCursor = true;
+        _videoTexture.events.onInputUp.addOnce(function() {
+            _video.play();
+        }, this);
+        _firstVideo = false;
+    }
+    else {
+        _video.play();
+    }
+}
+
+module.exports = {
+    init: function(game) {
+        console.log("Video initialized");
+        //stopVideo();
+        if(_instance !== null)
+            return _instance;
+        _game = game;
+        _instance = this;
+        _video = _game.add.video('start', 'emptyVideo');
+        _video.video.setAttribute('playsinline', 'playsinline');
+        VideoFilter.init(game, _video);
+        return _instance;
+    },
+    create: function(src, doFadeOut, videoFilter, nextScene, sub, interactionTimeStamps) {
+        if(src) {
+            _videoFilter = videoFilter;
+            _interactionTimeStamps = interactionTimeStamps;
+            CreateVideo(src, doFadeOut, nextScene, sub, interactionTimeStamps);
+        }
+        else {
+            console.warn("Undefined movie source.");
+        }
+    },
+    stop: function() {
+        if(_video)
+            _video.stop();
+    },
+    play: function(pausedByGame) {
+        if(pausedByGame == false)
+            _pausedByGame = pausedByGame;
+        if(_video)
+            _video.play();
+    },
+    seekTo: function(time) {
+        SeekTo(time);
+    },
+    paused: function() {
+        if(_video)
+            return _video.video.paused;
+    },
+    isPausedByGame: function() {
+        return _pausedByGame;
+    },
+    endFilter: function(targetScene) {
+        if(!targetScene) {
+            this.play(false);
+            _game.global.gameManager.getShowUISignal().dispatch();
+        }
+        VideoFilter.endFilter();
+    },
+    clearFilterBg:function() {
+        VideoFilter.clearBg();
+    },
+    resetVideoVariables: function() {        
+        _interactionTimeStamps = null;
+        _pausedByGame = false;
+    }
+}
+
+
+/***/ }),
+/* 2 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/***************************************************************
+Handles animation of game objects.
+Static functions takes in the game object and applies animation to it.
+Author: Christopher Weidya
+***************************************************************/
+
+
+
+const FADE_TIME_DEFAULT = 500;
+const SCALE_TIME_DEFAULT = 300;
+const BOB_DELAY_INTERVAL = 700;
+
+/***************************************************************
+Animation constructor
+***************************************************************/
+var Animation = function() {
+}
+
+/***************************************************************
+Adds scaling animaton for object.
+***************************************************************/
+Animation.scale = function(game, object, autoStart, targetWidth, targetHeight, timeTaken) {
+    if(!timeTaken)
+        timeTaken = SCALE_TIME_DEFAULT;
+
+    var tween = game.add.tween(object).to({width:targetWidth, height:targetHeight}, timeTaken, 
+        Phaser.Easing.Linear.None, autoStart, 0, 0);
+
+    return tween;
+}
+
+/***************************************************************
+Adds fade in/out animation for object.
+***************************************************************/
+Animation.fade = function(game, object, value, autoStart, timeTaken) {
+    if(!timeTaken)
+        timeTaken = FADE_TIME_DEFAULT;
+    var tween = game.add.tween(object).to({alpha:value}, timeTaken, Phaser.Easing.Linear.None, autoStart, 0, 0, false);
+
+    return tween;
+}
+
+/***************************************************************
+Adds bobbing up and down animation for object.
+***************************************************************/
+Animation.bob = function(game, object, autoStart, value) {
+    if(!value)
+        value = -5;
+    value = value.toString();
+
+    var tween = game.add.tween(object).to({y:value}, 200, Phaser.Easing.Quadratic.InOut, autoStart, 0, -1, true);
+    tween.repeatDelay(BOB_DELAY_INTERVAL);
+    
+    return tween;
+}
+
+module.exports = Animation;
+
+
+/***/ }),
+/* 3 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/***************************************************************
+Wraps Phaser image.
+All images/buttons/sprites in game is transformed and displayed from here.
+Author: Christopher Weidya
+***************************************************************/
+
+
+//Dependencies
+const Linkable = __webpack_require__(0),
+    Animation = __webpack_require__(2),
+    Graphic = __webpack_require__(9),
+    Utility = __webpack_require__(16);
+
+//Types of images/buttons/sprites in game
+var ImageTypeEnum = {
+    Static: 'IMAGE_STATIC',
+    ThoughtSprite: 'IMAGE_SPRITE_THOUGHT',
+    SceneChange: 'IMAGE_BUTTON_SCENECHANGE',
+    DisplayImage: 'IMAGE_BUTTON_DISPLAY_IMAGE',
+    InfoImage: 'IMAGE_INFO',
+    Thought: 'IMAGE_BUTTON_THOUGHT',
+    Transition: 'IMAGE_TRANSITION',
+    Background: 'IMAGE_BACKGROUND',
+    ChoiceBackground: 'IMAGE_CHOICE_BACKGROUND',
+    OverlayCloseImage: 'IMAGE_OVERLAY_CLOSE',
+    OverlayScrollBar: 'IMAGE_SCROLLBAR',
+    ExternalLink: 'IMAGE_BUTTON_EXTERNAL_LINK',
+    Reload: 'IMAGE_BUTTON_RELOAD',
+    Button: 'IMAGE_BUTTON_GENERIC',
+    Play: 'IMAGE_BUTTON_PLAY'
+}
+
+/***************************************************************
+Image constructor. Needs position, key and type.
+***************************************************************/
+var Image = function(xPos, yPos, key, type) {
+    this._type = type;
+    this._xPos = xPos;
+    this._yPos = yPos;
+    this._key = key;
+    this._link = null;
+}
+
+
+/***************************************************************
+Adds the phaser image/button.sprite to the game.
+***************************************************************/
+Image.prototype.addImageToGame = function(game, group) {
+    switch(this._type) {
+        case ImageTypeEnum.Play:
+        case ImageTypeEnum.Thought:
+        case ImageTypeEnum.SceneChange:
+        case ImageTypeEnum.DisplayImage:
+        case ImageTypeEnum.ChoiceBackground:
+        case ImageTypeEnum.OverlayCloseImage:
+        case ImageTypeEnum.ExternalLink:
+        case ImageTypeEnum.Reload:
+        case ImageTypeEnum.Button:
+            this._image = game.add.button(this._xPos, this._yPos, this._key);
+            break;
+        case ImageTypeEnum.Static:
+        case ImageTypeEnum.Background:
+        case ImageTypeEnum.InfoImage:
+        case ImageTypeEnum.OverlayScrollBar:
+            this._image = game.add.image(this._xPos, this._yPos, this._key);
+            break;
+        case ImageTypeEnum.ThoughtSprite:
+            this._image = game.add.sprite(this._xPos, this._yPos, this._key);
+            break;
+        default:
+            console.warn("Invalid image type not added:" + this._type);
+    }
+    this.addToGroup(game, group);   
+}
+
+/***************************************************************
+Adds image to group.
+***************************************************************/
+Image.prototype.addToGroup = function(game, group) {
+    if(group)
+        group.add(this._image);
+    else {
+        this.addToDefaultGroup(game);
+    }
+}
+
+/***************************************************************
+Adds to a default predefined Phaser group.
+***************************************************************/
+Image.prototype.addToDefaultGroup = function(game) {
+    switch(this._type) {
+        case ImageTypeEnum.Play:
+        case ImageTypeEnum.InfoImage:
+        case ImageTypeEnum.OverlayScrollBar:
+        case ImageTypeEnum.OverlayCloseImage:
+        case ImageTypeEnum.Button:
+            game.uiGroup.add(this._image);
+            break;
+        case ImageTypeEnum.Thought:
+        case ImageTypeEnum.SceneChange:
+        case ImageTypeEnum.DisplayImage:
+        case ImageTypeEnum.ChoiceBackground:
+        case ImageTypeEnum.ExternalLink:
+        case ImageTypeEnum.Reload:
+        case ImageTypeEnum.Static:
+        case ImageTypeEnum.Background:
+        case ImageTypeEnum.ThoughtSprite:
+            game.mediaGroup.add(this._image);
+            break;
+        default:
+            console.warn("Invalid image type not added to group:" + this._type);
+    }
+}
+
+/***************************************************************
+Changes the image to the specified type.
+***************************************************************/
+Image.prototype.changeImage = function (game, arg1, arg2, arg3, arg4, arg5) {
+    switch(this._type) {
+        case ImageTypeEnum.Static:            
+            this.changeToStaticImage(game);
+            break;
+        case ImageTypeEnum.Background:
+            this.changeToBgImage(game, arg1);
+            break;
+        case ImageTypeEnum.Thought:
+            this.changeToThoughtIcon(game, arg1, arg2);
+            break;
+        case ImageTypeEnum.ThoughtSprite:
+            this.changeToThoughtSprite(game, arg1, arg2, arg3);
+            break;
+        case ImageTypeEnum.SceneChange:
+            this.changeToSceneChangeImage(game, arg1, arg2);
+            break;
+        case ImageTypeEnum.DisplayImage:
+            this.changeToDisplayImage(game, arg1, arg2);
+            break;
+        case ImageTypeEnum.InfoImage:
+            this.changeToInfoImage(game, arg1);
+            break;
+        case ImageTypeEnum.ChoiceBackground:
+            this.changeToChoiceBackgroundImage(game, arg1, arg2, arg3, arg4, arg5);
+            break;
+        case ImageTypeEnum.OverlayCloseImage:
+            this.changeToOverlayCloseImage(game, arg1, arg2);
+            break;
+        case ImageTypeEnum.OverlayScrollBar:
+            this.changeToOverlayScrollBar(game, arg1, arg2);
+            break;
+        case ImageTypeEnum.ExternalLink:
+            this.changeToExternalLinkImage(game, arg1);
+            break;
+        case ImageTypeEnum.Reload:
+            this.changeToReloadImage(game, arg1);
+            break;
+        case ImageTypeEnum.Play:
+            this.changeToPlayButton(game);
+            break;
+        case ImageTypeEnum.Button:
+            this.changeToGenericButton(game, arg1);
+            break;
+        default:
+            console.warn("Invalid Image Type.");
+    }
+}
+
+/***************************************************************
+A generic static phaser image.
+***************************************************************/
+Image.prototype.changeToStaticImage = function(game) {
+    this._image.anchor.setTo(0.5, 0.5);
+}
+
+/***************************************************************
+Changes image to a horizontally draggable image.
+Scales and sets a rectangle container for Bg image to pan around.
+Currently unused.
+***************************************************************/
+Image.prototype.changeToBgImage = function(game, draggable) {
+    //Scales Bg image to fit game height, maintains Bg image aspect ratio
+    var scale = game.height/this._image.height;
+    this._image.height = Math.floor(this._image.height*scale);
+    this._image.width = Math.floor(this._image.width*scale);
+    //Initializes container for bg image to be dragged around
+
+    if(draggable) {
+        this.makeDraggable(game, false, true, -this._image.width+game.width, 0, this._image.width*2-game.width, this._image.height).bind(this);
+    }
+}
+
+/***************************************************************
+Changes image to a static thought bubble image.
+Currently unused.
+***************************************************************/
+Image.prototype.changeToThoughtIcon = function(game, thoughts, coords) {
+    //Display properties
+    this._image.width = 100;
+    this._image.height = 100;
+    this._image.anchor.setTo(0.5, 0.5);
+
+    //Interactive properties
+    this._link = new Linkable(game, this._image, game.global.gameManager.getCreateThoughtsSignal(), thoughts, coords, choices);
+    this._link.addOnClickAnimation(Animation.fade(game, this._image, 0, false));
+    this._link.setAsButton(true);
+    Animation.bob(game, this._image, true);
+}
+
+/***************************************************************
+Changes image to a spritesheet thought bubble image.
+***************************************************************/
+Image.prototype.changeToThoughtSprite = function(game, thoughts, coords, choices) {
+    //Display properties
+    this._image.anchor.setTo(0.5, 0.5);
+    this._image.animations.add('think');
+    this._image.animations.play('think', 8, true);
+
+    //Interactive properties
+    this.enableInput(true);
+    this._image.input.useHandCursor = true;
+    this._link = new Linkable(game, this._image.events, game.global.gameManager.getCreateThoughtsSignal(), thoughts, coords, choices);
+    this._link.addOnClickAnimation(Animation.fade(game, this._image, 0, false));
+    this._link.addMouseOverScaleEffect(game, this._image);
+    this._link.setAsButton(true);
+    Animation.bob(game, this._image, true);
+}
+
+/***************************************************************
+This image changes game scene when clicked.
+***************************************************************/
+Image.prototype.changeToSceneChangeImage = function(game, targetScene) {
+    //Display properties
+    this._image.anchor.setTo(0.5, 0.5);
+
+    //Interaction properties
+    this._link = new Linkable(game, this._image, game.global.gameManager.getChangeSceneSignal(), targetScene);
+    this._link.setAsButton(true);    
+    this._link.addSound(game.global.mapping.buttonClickSound);
+    this._link.addMouseOverScaleEffect(game, this._image);
+    Animation.bob(game, this._image, true, -1);
+}
+
+/***************************************************************
+This image reveals another image when clicked.
+***************************************************************/
+Image.prototype.changeToDisplayImage = function(game, target, clickedIndex) {
+    //Display properties
+    this._image.anchor.setTo(0.5, 0.5);
+
+    //Interaction properties
+    this._link = new Linkable(game, this._image, game.global.gameManager.getDisplayImageSignal(), target, clickedIndex);
+    this._link.setAsButton(false);
+    this._link.addMouseOverScaleEffect(game, this._image);
+    this._link.addSound(game.global.mapping.buttonClickSound);
+    Animation.bob(game, this._image, true);
+}
+
+/***************************************************************
+Information image.
+***************************************************************/
+Image.prototype.changeToInfoImage = function(game, target) {
+    //Display properties
+    var MARGIN = game.global.constants.INFO_VIEW_MARGIN;
+    var DISPLAY_WIDTH = game.global.constants.INFO_VIEW_WIDTH;    
+    var DISPLAY_HEIGHT = game.global.constants.INFO_VIEW_HEIGHT;
+    var SCALE = DISPLAY_WIDTH/this._image.width;
+    this._image.height = Math.floor(this._image.height*SCALE);
+    this._image.width = Math.floor(this._image.width*SCALE);
+    this._image.x = MARGIN;
+
+    //Changes depending on scrollbar needed
+    if(Utility.checkIfScrollBarNeeded(game, this._image)) {    
+        this._image.y = MARGIN;    
+        this._mask = new Graphic(0, 0, Graphic.getEnum().Rectangle);
+        this._mask.addGraphicToGame(game, game.uiGroup);
+        var rectangle = Graphic.createRectangle(MARGIN, MARGIN, DISPLAY_WIDTH, game.global.constants.INFO_VIEW_HEIGHT);
+        this._mask.changeGraphic(game, rectangle);
+        this._image.mask = this._mask.getGraphic();
+
+        //Interaction properties
+        this.makeDraggable(game, true, false, MARGIN, -this._image.height+DISPLAY_HEIGHT+MARGIN, 
+            DISPLAY_WIDTH, this._image.height*2-DISPLAY_HEIGHT);
+    }
+    else{
+        this._image.y = game.world.centerY;
+        this._image.anchor.setTo(0, 0.5);
+    }    
+}
+
+/***************************************************************
+Changes image to the background of choice buttons.
+Handles input and animation of text on it as well.
+***************************************************************/
+Image.prototype.changeToChoiceBackgroundImage = function(game, width, height, target, phaserText, tag) {
+    //Display properties
+    this._image.alpha = 0;
+    this._image.anchor.set(0.5, 0.5);
+    this._image.width = width;
+    this._image.height = height;
+    phaserText.bringToTop();
+
+    //Interaction properties
+    this._link = new Linkable(game, this._image, game.global.gameManager.getEndInteractionSignal(), this, target, tag);
+    this._link.setAsButton(true);        
+    this._link.addMouseOverScaleEffect(game, this._image);
+    this._link.addMouseOverScaleEffect(game, phaserText);
+    this._link.addSound(game.global.mapping.buttonClickSound);
+    this._image.input.priorityID = 1;
+
+    this.fadeIn(game);    
+    //Animation.fade(game, this._image, 1, true);
+    return this._image;
+}
+
+/***************************************************************
+Changes image to the close button of the overlay
+***************************************************************/
+Image.prototype.changeToOverlayCloseImage = function(game) {
+    //Display properties
+    this.setVisible(false);
+    this._image.anchor.set(0.5, 0.5);
+
+    //Interaction properties
+    this._link = new Linkable(game, this._image, game.global.gameManager.getHideDisplayedImageSignal());
+    this._link.setAsButton(false);
+    this._link.addMouseOverScaleEffect(game, this._image);
+    this._link.addSound(game.global.mapping.buttonClickSound);
+    this._link2 = new Linkable(game, this._image, game.global.gameManager.getHideInfoOverlaySignal());
+    this._link2.setAsButton(false);    
+}
+
+/***************************************************************
+Changes image to the interactable scrollbar
+***************************************************************/
+Image.prototype.changeToOverlayScrollBar = function(game, width) {
+    //Display properties
+    this.setVisible(false);
+    this._image.width = width-2;
+    this._image.anchor.set(0.5, 0);
+
+    //Interaction properties
+    this.makeDraggable.call(this, game, true, false, game.global.constants.SCROLLBAR_POS[0], game.global.constants.SCROLLBAR_POS[1],
+        game.global.constants.SCROLLBAR_DIM[0]+5, game.global.constants.SCROLLBAR_DIM[1]);
+}
+
+/***************************************************************
+This image, when clicked, leads to an external site.
+***************************************************************/
+Image.prototype.changeToExternalLinkImage = function(game, target) {
+    this._image.anchor.set(0.5, 0.5);
+
+    this._link = new Linkable(game, this._image, game.global.gameManager.getGoToLinkSignal(), target);
+    this._link.setAsButton(true);
+    this._link.addSound(game.global.mapping.buttonClickSound);
+    this._link.addMouseOverScaleEffect(game, this._image);
+}
+
+/***************************************************************
+This image, when clicked, reloads the page.
+***************************************************************/
+Image.prototype.changeToReloadImage = function(game, target) {
+    this._image.anchor.set(0.5, 0.5);
+
+    this._link = new Linkable(game, this._image, game.global.gameManager.getReloadSignal());
+    this._link.setAsButton(true);
+    this._link.addSound(game.global.mapping.buttonClickSound);
+    this._link.addMouseOverScaleEffect(game, this._image);
+}
+
+/***************************************************************
+Changes image to the play button (when game is paused).
+***************************************************************/
+Image.prototype.changeToPlayButton = function(game) {
+    this._image.anchor.setTo(0.5, 0.5);
+    this._image.height = 300;
+    this._image.width = 300;
+}
+
+/***************************************************************
+A generic button that dispatched signal parameter when clicked.
+***************************************************************/
+Image.prototype.changeToGenericButton = function(game, signal) {    
+    this._link = new Linkable(game, this._image, signal);
+    this._link.addSound(game.global.mapping.buttonClickSound);
+    this._link.setAsButton(false);
+}
+
+//Changes cursor image on mouseover
+Image.prototype.changeCursorImage = function(game, cursorImageSrc) {
+    this._image.events.onInputOver.add(function(){
+    game.canvas.style.cursor = cursorImageSrc;
+    }, this);
+
+    this._image.events.onInputOut.add(function(){
+    game.canvas.style.cursor = "default";
+    }, this);
+}
+
+/***************************************************************
+Makes image draggable.
+Possible to lock axis.
+Possible to set bounding box.
+***************************************************************/
+Image.prototype.makeDraggable = function(game, lockHorizontal, lockVertical, boundsX, boundsY, boundsWidth, boundsHeight) {
+    this.enableInput(true);
+    //Sets bounding box for dragged object
+    if(boundsX !== undefined && boundsX !== undefined) {
+        var dragBounds = new Phaser.Rectangle(boundsX, boundsY, boundsWidth, boundsHeight);
+        this._image.input.boundsRect = dragBounds;
+    }
+    //Locks draggin in certain axes if specified
+    this._image.input.draggable = true;
+    this._image.input.allowVerticalDrag = !lockVertical;
+    this._image.input.allowHorizontalDrag = !lockHorizontal;
+
+    //Changes mouseover image
+    this.changeCursorImage(game, 'url("./Images/UI/hand_2.png"), auto');
+}
+
+/***************************************************************
+Destroys phaser image.
+***************************************************************/
+Image.prototype.destroy = function() {
+    this._image.destroy();
+}
+
+/***************************************************************
+Brings phaser image to top of group(or game).
+***************************************************************/
+Image.prototype.bringToTop = function() {
+    this._image.bringToTop();
+}
+
+/***************************************************************
+Returns the phaser image.
+***************************************************************/
+Image.prototype.getPhaserImage = function() {
+    return this._image;
+}
+
+/***************************************************************
+Returns the phaser image height.
+***************************************************************/
+Image.prototype.getHeight = function() {
+    return this._image.height;
+}
+
+/***************************************************************
+Returns y position of phaser image.
+***************************************************************/
+Image.prototype.getY = function() {
+    return this._image.y;
+}
+
+/***************************************************************
+Gets image type based on ImageKeyEnum.
+***************************************************************/
+Image.prototype.getType = function() {
+    return this._type;
+}
+
+Image.prototype.enableInput = function(value) {
+    this._image.inputEnabled = value;
+}
+
+Image.prototype.setX = function(x){
+    this._image.x = x;
+}
+
+Image.prototype.setY = function(y){
+    this._image.y = y;
+}
+
+Image.prototype.setPos = function(x, y) {
+    this.setX(x);
+    this.setY(y);
+}
+
+Image.prototype.setHeight = function(height) {
+    this._image.height = height;
+}
+
+Image.prototype.setVisible = function(isVisible) {
+    this._image.visible = isVisible;
+}
+
+Image.prototype.fadeOut = function(game, chainSignal, arg1) {
+    if(chainSignal) {
+        this._link = new Linkable(game, this._image, chainSignal, arg1);
+        this._link.addOnClickAnimation(Animation.fade(game, this._image, 0, true));
+        this._link.onTrigger();
+    }
+    else {
+        Animation.fade(game, this._image, 0, true);
+    }
+}
+
+Image.prototype.fadeIn = function(game) {    
+    Animation.fade(game, this._image, 1, true);
+}
+
+/***************************************************************
+Returns ImageTypeEnum
+***************************************************************/
+Image.getEnum = function() {
+    return ImageTypeEnum;
+}
+
+module.exports = Image;
+
+
+/***/ }),
+/* 4 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/***************************************************************
+Wraps Phaser text.
+All text in game is transformed and displayed from here.
+Current supported properties: 
+1. Phaser text properties in construction: https://phaser.io/docs/2.6.2/Phaser.Text.html
+2. Line height and drop shadow. Examples seen in style.json
+Author: Christopher Weidya
+***************************************************************/
+
+
+//Dependencies
+const Linkable = __webpack_require__(0),
+    Animation = __webpack_require__(2);
+
+/***************************************************************
+Different types of text.
+***************************************************************/
+var TextTypeEnum = {
+    Thoughts: 'TEXT_THOUGHTS',
+    Choices: 'TEXT_CHOICES',   
+    Question: 'TEXT_QUESTION',
+    Subtitle: 'TEXT_SUBTITLE',
+    InfoOverlayText: 'TEXT_INFO_OVERLAY'
+}
+
+//Text constructor
+var Text = function(content, xPos, yPos, type, properties) {
+    this._type = type;
+    this._xPos = xPos;
+    this._yPos = yPos;
+    this._content = content;
+    this._properties = properties;
+    this._text = null;
+}
+
+/***************************************************************
+Parses properties set in Style.json and applies them.
+***************************************************************/
+Text.prototype.setAdditionalProperties = function() {
+    if(this._properties.lineSpacing) {
+        this._text.lineSpacing = this._properties.lineSpacing;
+    }
+    if(this._properties.shadow) {
+        var shadow = this._properties.shadow;
+        this._text.setShadow(shadow[0], shadow[1], shadow[2], shadow[3]);
+    }
+}
+
+/***************************************************************
+Adds text to game and applies properties and assigns to the group specified.
+***************************************************************/
+Text.prototype.addTextToGame = function(game, group) {
+    this._text = game.add.text(this._xPos, this._yPos, this._content, this._properties);
+    this.setAdditionalProperties();
+    group.add(this._text);
+}
+
+/***************************************************************
+Changes text to the specified type.
+***************************************************************/
+Text.prototype.changeText = function(game, arg1, arg2, arg3, arg4, arg5, arg6) {
+    switch(this._type) {
+        case TextTypeEnum.Thoughts:
+            this.changeToThoughts(game, arg1, arg2);
+            break;
+        case TextTypeEnum.Choices:
+            this.changeToChoiceText(game, arg1);
+            break;
+        case TextTypeEnum.Question:
+            this.changeToQuestion(game);
+            break;
+        case TextTypeEnum.InfoOverlayText:
+            this.changeToInfoOverlayText(game);
+            break;
+        case TextTypeEnum.Subtitle:
+            this.changeToSubtitle(game, arg1);
+            break;
+        default:
+            console.warn("Invalid Text Type.");
+    }
+}
+
+/***************************************************************
+Text shown after clicking thought bubble.
+***************************************************************/
+Text.prototype.changeToThoughts = function(game, xTo, yTo) {
+    this._text.anchor.setTo(0.5);
+    this._text.alpha = 0;
+    this.addInterpolationTween(game, xTo, yTo);    
+    Animation.fade(game, this._text, 1, true);
+}
+
+/***************************************************************
+Text displayed in choices.
+***************************************************************/
+Text.prototype.changeToChoiceText = function(game, boundsY) {
+    this._text.anchor.set(0.5, 0.5);
+    this._text.y = boundsY;
+    this._text.alpha = 0;    
+    Animation.fade(game, this._text, 1, true);
+}
+
+/***************************************************************
+Question/prompt text
+***************************************************************/
+Text.prototype.changeToQuestion = function(game) {
+    this._text.anchor.set(0.5, 0.5);
+    this._text.x = game.width/2;    
+    this._text.alpha = 0;
+    Animation.fade(game, this._text, 1, true);
+}
+
+/***************************************************************
+Helper text in overlay.
+***************************************************************/
+Text.prototype.changeToInfoOverlayText = function(game) {    
+    this._text.anchor.set(0.5, 0.5);
+    this._text.x = game.width/2;
+    this.setVisible(false);
+}
+
+/***************************************************************
+Subtitle text.
+***************************************************************/
+Text.prototype.changeToSubtitle = function(game, isVisible) {
+    this._text.anchor.x = 0.5
+    this._text.x = game.width/2;
+    this.setVisible(isVisible);
+}
+
+/***************************************************************
+Allows for text to take a curved path instead of a linear one to its destination.
+Many hard coded values. Probably not needed.
+***************************************************************/
+Text.prototype.addInterpolationTween = function(game, xTo, yTo) {
+    var points = {x: [ this._xPos,  this._xPos + (xTo- this._xPos)/2,  xTo-(xTo- this._xPos)/8, xTo], y: [ this._yPos,  this._yPos-10, yTo-10, yTo]};
+    return game.add.tween(this._text).to({x: points.x, y: points.y}, 1000, Phaser.Easing.Quadratic.Out, true, 0 , 0).interpolation(function(v, k){
+            return Phaser.Math.bezierInterpolation(v, k);
+        });
+}
+
+/***************************************************************
+Fades out text, dispatching a signal at the end if specified.
+***************************************************************/
+Text.prototype.fadeOut = function(game, chainSignal, arg1) {
+    if(chainSignal) {
+        this._link = new Linkable(game, this._text.events, chainSignal, arg1);
+        this._link.addOnClickAnimation(Animation.fade(game, this._text, 0, true));
+        this._link.onTrigger();
+    }
+    else {
+        Animation.fade(game, this._text, 0, true);
+    }
+}
+
+/***************************************************************
+Enables/disables input on text.
+***************************************************************/
+Text.prototype.enableInput = function(value) {
+    this._text.inputEnabled = value;
+}
+
+/***************************************************************
+Destroys phaser text.
+***************************************************************/
+Text.prototype.destroy = function() {
+    this._text.destroy();
+}
+
+/***************************************************************
+Getters
+***************************************************************/
+Text.prototype.getPhaserText = function() {
+    return this._text;
+}
+
+Text.prototype.getHeight = function() {
+    return this._text.height;
+}
+
+/***************************************************************
+Setters
+***************************************************************/
+Text.prototype.setVisible = function(isVisible) {
+    this._text.visible = isVisible;
+}
+
+Text.prototype.setY = function(val) {
+    this._text.y = val;
+}
+
+/***************************************************************
+Returns enum containing all text types.
+***************************************************************/
+Text.getEnum = function() {
+    return TextTypeEnum;
+}
+
+module.exports = Text;
+
+
+/***/ }),
+/* 5 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/***************************************************************
+Phaser groups that are used in the experience is here.
+Author: Christopher Weidya
+***************************************************************/
+
+
+var _instance = null;
+var _game = null;
+
+/***************************************************************
+Adds the groups to game.
+***************************************************************/
+function InitializeGroups() {        
+    _game.mediaGroup = _game.add.group();
+    _game.uiGroup = _game.add.group();
+}
+
+module.exports = {
+    init: function(game) {
+        //Singleton initialization
+        if(_instance !== null)
+            return _instance;
+        _game = game;
+        _instance = this;
+        return _instance;
+    },
+    initializeGroups: function() {
+        InitializeGroups();
+    }
+}
+
+
+
+
+/***/ }),
+/* 6 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/***************************************************************
+In charge of creating fade in/out transitions between scenes.
+Currently fade out is not implemented.
+Author: Christopher Weidya
+***************************************************************/
+
+
+//Dependencies
+const Graphic = __webpack_require__(9),
+	VideoFilter = __webpack_require__(17);
+
+var _instance = null;
+var _game = null;
+var _rectGraphic = null;
+
+/***************************************************************
+Fades in a generated graphic.
+***************************************************************/
+function fade(isFadeIn) {
+	var val = 0;
+	if(isFadeIn)
+		val = 1;
+	_rectGraphic = new Graphic(0, 0, Graphic.getEnum().Transition);
+	var rectangle = Graphic.createRectangle(0, 0, _game.width, _game.height, _game.global.constants.TRANSITION_COLOR);
+	_rectGraphic.addGraphicToGame(_game);
+	_rectGraphic.changeGraphic(_game, rectangle, val);
+}
+
+module.exports = {
+	init: function(game) {
+		if(_instance !== null)
+			return _instance;
+		_instance = this;
+		_game = game;
+		return _instance;
+	},
+	fadeInTransition: function() {
+		VideoFilter.clearBg();
+		fade(true);
+	},
+	//Unused
+	fadeOutTransition: function() {
+		fade(false);
+	}
+}
+
+
+/***/ }),
+/* 7 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/***************************************************************
+In charge of creating fade in/out transitions between scenes.
+Currently fade out is not implemented.
+Author: Christopher Weidya
+***************************************************************/
+
+
+//Dependencies
+const Image = __webpack_require__(3),
+    Text = __webpack_require__(4),
+    Graphic = __webpack_require__(9),
+    Video = __webpack_require__(1),
+    ImageViewer = __webpack_require__(28),
+    Subtitle = __webpack_require__(14);
+
+var _instance = null;
+var _game = null;
+
+var _graphicOverlay = null;
+var _pauseImage = null;
+var _playImage = null;
+var _subtitleImage = null;
+var _subtitleDisabledImage = null;
+
+var _uiVisible = true;
+var _subsVisible = true;
+
+/***************************************************************
+Draws pause UI image button.
+***************************************************************/
+function DrawPauseButton() {
+    if(!_pauseImage)
+        _pauseImage = new Image(10, 10, _game.global.mapping.pauseButtonImageKey, Image.getEnum().Button);
+    _pauseImage.addImageToGame(_game, _game.uiGroup);
+    _pauseImage.changeImage(_game, _game.global.gameManager.getPauseSignal());
+}
+
+/***************************************************************
+Draws both subtitle images, for on/off.
+***************************************************************/
+function DrawSubtitleButtons() {
+    if(!_subtitleImage)
+        _subtitleImage = new Image(10, 100, _game.global.mapping.subtitleButtonImageKey, Image.getEnum().Button);
+    _subtitleImage.addImageToGame(_game, _game.uiGroup);
+    _subtitleImage.changeImage(_game, _game.global.gameManager.getToggleSubtitleSignal());
+
+    if(!_subtitleDisabledImage)
+        _subtitleDisabledImage = new Image(10, 100, _game.global.mapping.subtitleDisabledButtonImageKey, Image.getEnum().Button);
+    _subtitleDisabledImage.addImageToGame(_game, _game.uiGroup);
+    _subtitleDisabledImage.changeImage(_game, _game.global.gameManager.getToggleSubtitleSignal());
+
+    //Gets visibility status from subtitle loader
+    if(Subtitle.getSubtitleVisible())
+        _subtitleDisabledImage.setVisible(false);
+    else
+        _subtitleImage.setVisible(false);
+}
+
+/***************************************************************
+Draws play UI image button.
+***************************************************************/
+function DrawPlayButton() {
+    if(!_playImage)
+        _playImage = new Image(_game.world.centerX, _game.world.centerY,  _game.global.mapping.playButtonImageKey, Image.getEnum().Play);
+    _playImage.addImageToGame(_game, _game.uiGroup);
+    _playImage.changeImage(_game);
+    _playImage.setVisible(false);
+}
+
+/***************************************************************
+Pauses game, checks whether video is already paused before firing.
+***************************************************************/
+function Pause() {
+    if(!Video.paused()) {
+        _game.paused = true;
+        Video.stop();
+        if(_graphicOverlay) {
+            _graphicOverlay.setVisible(true);;
+        }
+        if(_playImage) {
+            _playImage.setVisible(true);
+        }
+        //Adds event to resume game
+        _game.input.onDown.addOnce(Play, self);
+    }
+}
+
+/***************************************************************
+Checks that the video is paused by the UI before unpausing.
+Prevents conflict when video is paused by engine during interaction moment.
+***************************************************************/
+function Play() {
+    if(!Video.isPausedByGame()) {
+        Video.play();
+        _game.paused = false;
+        _graphicOverlay.setVisible(false);
+        _playImage.setVisible(false);
+    }
+}
+
+/***************************************************************
+Hides the UI during interaction moment.
+***************************************************************/
+function HideUI() {
+    _uiVisible = false;
+    _pauseImage.setVisible(_uiVisible);
+    _subtitleImage.setVisible(_uiVisible);
+    _subtitleDisabledImage.setVisible(_uiVisible);
+    Subtitle.hideSubtitleForMoment();
+}
+
+/***************************************************************
+Shows the UI.
+***************************************************************/
+function ShowUI() {
+    _uiVisible = true;
+    _pauseImage.setVisible(_uiVisible);
+    if(Subtitle.getSubtitleVisible())
+        _subtitleImage.setVisible(_uiVisible);
+    else
+        _subtitleDisabledImage.setVisible(_uiVisible);
+}
+
+/***************************************************************
+Draws semi-transparent black overlay when game is paused.
+***************************************************************/
+function DrawPauseOverlay() {
+    _graphicOverlay = new Graphic(0, 0, Graphic.getEnum().Rectangle);
+    var rectangle = Graphic.createRectangle(0, 0, _game.width, _game.height, 0x000000, 0.8);
+    _graphicOverlay.addGraphicToGame(_game);
+    _graphicOverlay.changeGraphic(_game, rectangle);
+    _graphicOverlay.setVisible(false);
+    _game.uiGroup.add(_graphicOverlay.getGraphic());
+}
+
+/*
+//Unused, intended for nameplates.
+function drawUI() {
+    _graphicOverlay = _game.add.graphics(0, 0);
+    drawName();
+}
+
+function drawName() {
+    _game.add.text(0, 0, 'Chris', {})
+    _graphicOverlay.beginFill(0x000000);
+    _graphicOverlay.drawRoundedRect(0, 0, _game.width, _game.height, 10);
+}
+*/
+
+module.exports = {
+    init: function(game) {
+        if(_instance !== null)
+            return _instance;
+        Subtitle.init(game);
+        ImageViewer.init(game);
+        _instance = this;
+        _game = game;
+        return _instance;
+    },
+    create: function(drawPause, drawSubtitles) {
+        _uiVisible = true;
+        if(drawSubtitles)
+            DrawSubtitleButtons();
+        if(drawPause) {
+            DrawPauseButton();
+            DrawPauseOverlay();
+            DrawPlayButton();
+        }
+    },
+    pause: function(byGame) {
+        Pause(byGame);
+    },
+    play: function() {
+        Play();
+    },
+    showUI: function() {
+        ShowUI();
+    },
+    hideUI: function() {
+        HideUI();
+    },
+    toggleSubtitle: function() {
+        _subsVisible = Subtitle.toggleSubtitle();
+        if(_subsVisible) {
+            _subtitleImage.setVisible(true);
+            _subtitleDisabledImage.setVisible(false);
+        }
+        else {
+            _subtitleImage.setVisible(false);
+            _subtitleDisabledImage.setVisible(true);
+        }
+    },
+    createInfoOverlay: function() {
+        ImageViewer.createOverlay();
+    },
+    showInfoOverlay: function(image) {
+        ImageViewer.setVisible(true, image);
+    },
+    hideInfoOverlay: function() {
+        ImageViewer.setVisible(false);
+    }
+}
+
+
+/***/ }),
+/* 8 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/***************************************************************
+State object, stores scene information.
+Getters to obtain scene information.
+Author: Christopher Weidya
+***************************************************************/
+
+
+
+var State = function(scene) {
+    this._scene = scene;
+};
+
+State.prototype.setStateScene = function(scene) {
+    this._scene = scene;
+};
+
+State.prototype.getMovieKey = function() {
+    return this._scene.movieKey;
+}
+
+State.prototype.getChoiceMoments = function() {
+    return this._scene.choiceMoments;
+}
+
+State.prototype.getTimestamps = function() {
+    var timeStamps = [];
+    console.log("Interaction Times:")
+    for(var i=0; i<this._scene.choiceMoments.size; i++) {
+        timeStamps.push(this._scene.choiceMoments.choiceMomentsProperties[i].timeStamp);
+        console.log(this._scene.choiceMoments.choiceMomentsProperties[i].timeStamp);
+    }
+    return timeStamps;
+}
+
+State.prototype.getThoughtBubble = function(index) {
+    return this._scene.choiceMoments.choiceMomentsProperties[index].thoughtBubbles;
+}
+
+State.prototype.getChoices = function(index){
+    return this._scene.choiceMoments.choiceMomentsProperties[index].choices;
+}
+
+State.prototype.getBgImageKey = function() {
+    return this._scene.bgImageKey;
+}
+
+State.prototype.getIconsInfo = function() {
+    return this._scene.icons;
+}
+
+State.prototype.getLinkedIconsInfo = function() {
+    return this._scene.linkedIcons;
+}
+
+State.prototype.getInputInfo = function() {
+    return this._scene.input;
+}
+
+State.prototype.getSrcList = function() {
+    if(!this._scene.movieReqs || !this._scene.movieSrcArr) 
+        return false;
+    else {
+        return [this._scene.movieReqs, this._scene.movieSrcArr];
+    }
+}
+
+State.prototype.getMovieSrc = function(definition, index) {
+    if(typeof(index) == 'number') {    
+        if(definition == 'HD')
+            return this._scene.movieSrcArr[index][0];
+        else if(definition == 'SD')       
+            return this._scene.movieSrcArr[index][1];
+    }
+    else {
+        if(definition == 'HD')
+            return this._scene.movieSrcHD;
+        else if(definition == 'SD')
+            return this._scene.movieSrcSD;
+    }
+}
+
+State.prototype.getSceneReqs = function() {
+    return this._scene.sceneReqs;
+}
+
+State.prototype.getSceneTargetNames = function() {
+    return this._scene.sceneTargetNames;
+}
+
+State.prototype.getMovieSubKey = function() {
+    return this._scene.sub;
+}
+
+State.prototype.getBackgroundMusic = function() {
+    return this._scene.backgroundMusic;
+}
+
+State.prototype.getTransitionInfo = function() {
+    return this._scene.transition;
+}
+
+State.prototype.getVideoFilter = function() {
+    return this._scene.videoFilter;
+}
+
+State.prototype.getNextScenes = function() {
+    return this._scene.nextScene;
+}
+
+State.prototype.getDraggable = function() {
+    return this._scene.draggable;
+}
+
+module.exports = State;
+
+
+/***/ }),
+/* 9 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/***************************************************************
+Phaser Graphics wrapper created here.
+Author: Christopher Weidya
+***************************************************************/
+
+
+//Dependencies
+const Linkable = __webpack_require__(0),
+    Animation = __webpack_require__(2);
+
+/***************************************************************
+Enum for different types of graphics.
+***************************************************************/
+var GraphicTypeEnum = {
+    Overlay: 'GRAPHIC_INFO_OVERLAY',
+    ScrollBarBackground: 'GRAPHIC_SCROLLBAR_BG',
+    Transition: 'GRAPHIC_TRANSITION',
+    Rectangle: 'GRAPHIC_RECTANGLE'
+}
+
+/***************************************************************
+Graphic constructor. Takes in position and type of graphic.
+***************************************************************/
+var Graphic = function(xPos, yPos, type) {
+    this._xPos = xPos;
+    this._yPos = yPos;
+    this._type = type;
+}
+
+/***************************************************************
+Adds graphic to game and a Phaser group.
+***************************************************************/
+Graphic.prototype.addGraphicToGame = function(game, group) {
+    this._graphic = game.add.graphics(this._xPos, this._yPos); 
+    this.addToGroup(game, group);
+}
+
+/***************************************************************
+Adds graphic to group.
+***************************************************************/
+Graphic.prototype.addToGroup = function(game, group) {
+    if(group)
+        group.add(this._graphic);
+    else {
+        this.addToDefaultGroup(game);
+    }
+}
+
+/***************************************************************
+Adds to a default predefined Phaser group.
+***************************************************************/
+Graphic.prototype.addToDefaultGroup = function(game) {
+    switch(this._type) {
+        case GraphicTypeEnum.Overlay:
+        case GraphicTypeEnum.ScrollBarBackground:
+        case GraphicTypeEnum.Transition:
+            game.uiGroup.add(this._graphic);
+            break;
+        case GraphicTypeEnum.Rectangle:
+            game.mediaGroup.add(this._graphic);
+            break;
+        default:
+            console.warn("Invalid graphic type not added to group:" + this._type);
+    }
+}
+
+
+/***************************************************************
+Changes graphic to the specified type in constructor.
+***************************************************************/
+Graphic.prototype.changeGraphic = function (game, arg1, arg2, arg3, arg4, arg5) {
+    switch(this._type) {
+        case GraphicTypeEnum.Overlay:            
+            this.changeToInfoOverlayGraphic(game, arg1, arg2);
+            break;
+        case GraphicTypeEnum.ScrollBarBackground:
+            this.changeToScrollBarBackgroundGraphic(game, arg1);
+            break;
+        case GraphicTypeEnum.Transition:
+            this.changeToTransitionGraphic(game, arg1, arg2);
+            break;
+        case GraphicTypeEnum.Rectangle:
+            this.changeToRectangle(game, arg1);
+            break;
+        default:
+            console.warn("Invalid Graphic Type.");
+    }
+}
+
+/***************************************************************
+Puts a black overlay when viewing images.
+For images that require scrollbar, a hacky 4 black rectangle graphic is drawn
+in order to block player input from selecting the graphic. 
+This is because although image is maskable by phaser, input is not.
+For images without need for scrolling, a black rectangle overlay is drawn.
+***************************************************************/
+Graphic.prototype.changeToInfoOverlayGraphic = function(game, scrollbarEnabled) {
+    var margin =  game.global.constants.INFO_VIEW_MARGIN;
+    this._graphic.beginFill(game.global.constants.INFO_OVERLAY_COLOR, 
+        game.global.constants.INFO_OVERLAY_OPACITY);
+    this._graphic.inputEnabled = true;
+
+    //Draws rectangles based on having scrollbar or not
+    if(scrollbarEnabled) {
+        this._graphic.drawRect(0, 0, margin, game.height);
+        this._graphic.drawRect(game.width-margin, 0, margin, game.height);
+        this._graphic.drawRect(margin, 0, game.width-(margin<<1), margin);
+        this._graphic.drawRect(margin, game.height-margin, game.width-(margin<<1), margin);   
+        this._graphic.input.priorityID = 1;
+        this._graphic.input.useHandCursor = true;
+    }
+    else {
+        this._graphic.drawRect(0, 0, game.width, game.height);
+    }
+
+    this._graphic.endFill();
+    this._graphic.visible = false;
+
+    //Clicking on overlay hides the displayed image and the overlay
+    var link = new Linkable(game, this._graphic.events, game.global.gameManager.getHideDisplayedImageSignal());
+    link.setAsButton(false);
+    var link2 = new Linkable(game, this._graphic.events, game.global.gameManager.getHideInfoOverlaySignal());
+    link2.setAsButton(false);
+}
+
+/***************************************************************
+Background rectangle graphic of scrollbar.
+***************************************************************/
+Graphic.prototype.changeToScrollBarBackgroundGraphic = function(game, rectangle) {
+    this._graphic.beginFill(rectangle.color, rectangle.opacity);
+    this._graphic.lineStyle(rectangle.strokeWidth, rectangle.lineColor);
+    this._graphic.drawRect(rectangle.x, rectangle.y, rectangle.width, rectangle.height);    
+    this._graphic.endFill();
+    this._graphic.visible = false;
+}
+
+/***************************************************************
+Draws fade in/out graphics between scenes.
+Fade out currently not used/implemented well.
+***************************************************************/
+Graphic.prototype.changeToTransitionGraphic = function(game, rectangle, val) {
+    this._graphic.beginFill(rectangle.color, rectangle.opacity);
+    this._graphic.drawRect(rectangle.x, rectangle.y, rectangle.width, rectangle.height);    
+    this._graphic.endFill();
+    this._graphic.alpha = val;
+    Animation.fade(game, this._graphic, 1-val, true);
+}
+
+/***************************************************************
+Generic rectangle graphic.
+***************************************************************/
+Graphic.prototype.changeToRectangle = function(game, rectangle) {
+    this._graphic.beginFill(rectangle.color, rectangle.opacity);
+    if(rectangle.strokeWidth) {
+        this._graphic.lineStyle(rectangle.strokeWidth, rectangle.lineColor, rectangle.strokeOpacity);
+    }
+    this._graphic.drawRect(rectangle.x, rectangle.y, rectangle.width, rectangle.height);    
+    this._graphic.endFill();
+}
+
+/***************************************************************
+Sets visibility of graphic.
+***************************************************************/
+Graphic.prototype.setVisible = function(value) {
+    this._graphic.visible = value;
+}
+
+/***************************************************************
+Gets Phaser graphic out of this graphic wrapper.
+***************************************************************/
+Graphic.prototype.getGraphic = function() {
+    return this._graphic;
+}
+
+/***************************************************************
+Creates rectangle object containing rectangle properties.
+***************************************************************/
+Graphic.createRectangle = function(x, y, width, height, color, opacity, strokeWidth, lineColor, strokeOpacity) {
+    var rectangle = {};
+
+    //Rectangle fill properties
+    rectangle.x = x;
+    rectangle.y = y;
+    rectangle.width = width;
+    rectangle.height = height;
+    if(!color)
+        color = 0x000000;
+    rectangle.color = color;
+    if(!opacity)
+        opacity = 1.0;
+    rectangle.opacity = opacity;
+
+    //Rectangle stroke properties
+    if(strokeWidth) {
+        rectangle.strokeWidth = strokeWidth;
+        if(!lineColor)
+            lineColor = 0x000000;
+        rectangle.lineColor = lineColor
+        if(!strokeOpacity)
+            strokeOpacity = 1.0;
+        rectangle.strokeOpacity = strokeOpacity;
+    }
+
+    return rectangle;
+}
+
+/***************************************************************
+Returns list of graphic types available.
+***************************************************************/
+Graphic.getEnum = function() {
+    return GraphicTypeEnum;
+}
+
+module.exports = Graphic;
+
+
+/***/ }),
+/* 10 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/***************************************************************
+Creates draggable backgrounds and icons that follow drag movement.
+Author: Christopher Weidya
+***************************************************************/
+
+
+//Dependencies
+const Image = __webpack_require__(3);
+
+var _instance = null;
+var _game = null;
+var _text = [];
+var _choiceFont = null;
+var _bgImage = null;
+var _iconGroup = null;
+
+const bgImageKeyEnum = 'IMAGE_BACKGROUND';
+
+/***************************************************************
+Creates background image.
+***************************************************************/
+function CreateBgImage(key, draggable) {
+    _bgImage = new Image(0, 0, key, bgImageKeyEnum);
+    _bgImage.addImageToGame(_game, _game.mediaGroup);
+    _bgImage.changeImage(_game, draggable);
+}
+
+/***************************************************************
+Adds images to group that follows dragged background position.
+***************************************************************/
+function AddIconsToGroup(icons) {
+    _iconGroup = _game.add.group();
+    _game.mediaGroup.add(_iconGroup);
+    icons.forEach(function(icon) {
+        _iconGroup.add(icon.getPhaserImage());
+    });
+}
+
+/***************************************************************
+Initializes drag follow for icon group.
+***************************************************************/
+function StartDragUpdate() {
+    _bgImage.getPhaserImage().events.onDragUpdate.add(dragUpdate);
+    _iconGroup.x = _bgImage.getPhaserImage().x;
+    _iconGroup.y = _bgImage.getPhaserImage().y;
+}
+
+/***************************************************************
+Icons follow dragged background position every update.
+***************************************************************/
+function dragUpdate() {
+    _iconGroup.x = _bgImage.getPhaserImage().x;
+    _iconGroup.y = _bgImage.getPhaserImage().y;
+}
+
+module.exports = {
+    init: function(game) {
+        //Initialize singleton variables.
+        if(_instance !== null)
+            return _instance;
+        _game = game;
+        _instance = this;
+        return _instance;
+    },
+    preload: function() {
+    },
+    create: function(bgKey, draggable) {
+        if(bgKey)
+            CreateBgImage(bgKey, draggable);
+    },
+    attachIconsToBg: function(icons) {
+        AddIconsToGroup(group);
+        StartDragUpdate();
+    }
+}
+
+
+/***/ }),
+/* 11 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/***************************************************************
+Loads resources from loaded Json files.
+Author: Christopher Weidya
+***************************************************************/
+
+var _instance = null;
+var _game = null;
+
+//Data types
+var _data = null;
+var _videos = null;
+var _audio = null;
+var _images = null;
+var _spritesheets = null;
+var _scenes = null;
+var _subs = null;
+var _mapping = null;
+var _style = null;
+
+function loadVideos(videos) {
+    console.log("Loading videos");
+    for (var key in _videos) {
+        _game.load.video(key, _videos[key]);
+    }
+}
+
+function loadAudio(audio) {
+    console.log("Loading audio");
+    for (var key in audio) {
+        _game.load.audio(key, _audio[key]);
+    }
+}
+
+function loadImages(images) {
+    console.log("Loading images");
+    for (var key in images) {
+        _game.load.image(key, images[key]);
+    }
+}
+
+function loadSpritesheets(spritesheet) {
+    console.log("Loading spritesheets");
+    for (var key in spritesheet) {
+        _game.load.spritesheet(key, spritesheet[key][0], spritesheet[key][1], spritesheet[key][2], spritesheet[key][3]);
+    }
+}
+
+function loadSubs(subs) {
+    console.log("Loading subs");
+    for (var key in subs) {
+        _game.load.text(key, subs[key]);
+    }
+}
+
+module.exports = {
+    init: function(game) {
+        //Singleton initialization
+        if(_instance !== null)
+            return _instance;
+        _instance = this;
+        _game = game;
+        _data = _game.cache.getJSON('data');
+        _scenes = _game.cache.getJSON('scenes').scenes;
+        _style = _game.cache.getJSON('style');
+
+        _images = _data.images;
+        _spritesheets = _data.spritesheets;
+        _videos = _data.videos;
+        _audio = _data.audio;
+        _subs = _data.subtitles;
+        _mapping = _data.mapping;
+        return _instance;
+    },
+    preload: function() {
+        console.log("Loading resources");
+        loadImages(_images);
+        loadSpritesheets(_spritesheets);
+        loadAudio(_audio);
+        loadSubs(_subs);
+    },
+    getScene: function(name) {
+        return _scenes[name];
+    },
+    getMapping: function() {
+        return _mapping;
+    },
+    getStyle: function() {
+        return _style;
+    }
+}
+
+
+/***/ }),
+/* 12 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/***************************************************************
+Helper module that checks for scene lock/unlock conditions.
+Author: Christopher Weidya
+***************************************************************/
+
+
+//SceneParser constructor
+var SceneParser = function() {
+}
+
+/***************************************************************
+At least one scene visited in each set. 
+***************************************************************/
+SceneParser.VisitAtLeastOnceOfEach = function(game, sceneSetArray) {
+    var unlocked = true;
+    for(var j=0; j<sceneSetArray.length; j++) {
+        unlocked &= SceneParser.OneSceneVisited(game, sceneSetArray[j]);
+    }
+    return unlocked;
+}
+
+/***************************************************************
+At least one scene visited in this array.
+***************************************************************/
+SceneParser.OneSceneVisited = function(game, sceneArr) {
+    if(sceneArr){
+        for(var i=0; i<sceneArr.length; i++) {
+            if(game.global.visitedScenes[sceneArr[i]]) {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+/***************************************************************
+All scenes in the array visited.
+***************************************************************/
+SceneParser.AllSceneVisited = function(game, sceneArr) {
+    if(sceneArr){
+    	console.log(sceneArr);
+        for(var i=0; i<sceneArr.length; i++) {
+            if(!game.global.visitedScenes[sceneArr[i]]) {
+            	console.log(sceneArr[i]);
+            	console.log(game.global.visitedScenes[sceneArr[i]]);
+                return false;
+            }
+        }
+        return true;
+    }
+    else
+    	return false;
+}
+
+/***************************************************************
+Returns the index of the set that has all scenes inside visited.
+***************************************************************/
+SceneParser.GetIndexOfVisitedAll = function(game, sceneArr) {
+    if(sceneArr){
+        for(var i=0; i<sceneArr.length; i++) {
+            if(SceneParser.AllSceneVisited(game, sceneArr[i])) {
+                return i;
+            }
+        }
+    }
+    return false;
+}
+
+module.exports = SceneParser;
+
+
+/***/ }),
+/* 13 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/***************************************************************
+Displays icons in scenes.
+Author: Christopher Weidya
+***************************************************************/
+
+
+//Dependencies
+const Image = __webpack_require__(3),
+    SceneParser = __webpack_require__(12);
+
+var _instance = null;
+var _game = null;
+var _icons = [];
+var _linkedIcons = [];
+var _clickedIconIndex = null;
+var _displayedIconIndex = null;
+
+/***************************************************************
+Creates thought bubble icons.
+***************************************************************/
+function CreateThoughtIcon(coords, thoughts, key) {
+    if(!key)
+        key = _game.global.mapping.thoughtBubbleImageKey;
+    var button = new Image(coords[0], coords[1], key, Image.getEnum().ThoughtSprite);
+    button.addImageToGame(_game, _game.mediaGroup);
+    button.changeImage(_game, thoughts, coords);
+    //_icons.push(button);
+}
+
+/***************************************************************
+Creates clickable icons and sets visibility depending on lock/unlock conditions.
+***************************************************************/
+function CreateClickableIcons(icons) {
+    for(var i=0; i<icons.size; i++) {
+        CreateClickableIcon(icons.key[i], icons.coords[i], icons.targetImageIndexOrScene[i], icons.type[i], i);
+    }
+    HideLockedIcons(icons.lockedByScenes);
+    ShowUnlockedIcons(icons.unlockedByScenes);
+}
+
+/***************************************************************
+Creates a single clickable icon.
+***************************************************************/
+function CreateClickableIcon(key, coords, target, type, index) {
+    var button = new Image(coords[0], coords[1], key, type);
+    button.addImageToGame(_game, _game.mediaGroup);
+    button.changeImage(_game, target, index);
+    _icons.push(button);
+}
+
+/***************************************************************
+Creates icons that are linked by other icons and hides them.
+***************************************************************/
+function CreateLinkedIcons(linkedIcons) {
+    for(var i=0; i<linkedIcons.size; i++) {
+        CreateLinkedIcon(linkedIcons.key[i], linkedIcons.coords[i], linkedIcons.targetImageIndexOrScene[i], linkedIcons.type[i]);
+    }
+    HideLinkedIcons();
+}
+
+/***************************************************************
+Creates a single linked icon.
+***************************************************************/
+function CreateLinkedIcon(key, coords, target, type) {
+    var image = new Image(coords[0], coords[1], key, type);
+    image.addImageToGame(_game);
+    image.changeImage(_game, target);
+    _linkedIcons.push(image);
+}
+
+/***************************************************************
+Hides locked clickable icons.
+***************************************************************/
+function HideLockedIcons(sceneConditions) {
+    if(sceneConditions) {
+        for(var i=0; i<sceneConditions.length; i++){
+            var currLockConditions = sceneConditions[i];
+            if(SceneParser.OneSceneVisited(_game, currLockConditions)) {
+                _icons[i].setVisible(false);
+            }
+        };
+    }
+    else
+        console.log("No locked buttons in this scene.")
+}
+
+/***************************************************************
+Shows unlocked clickable icons.
+***************************************************************/
+function ShowUnlockedIcons(sceneConditions) {
+    if(sceneConditions) {
+        for(var i=0; i<sceneConditions.length; i++) {
+            var currUnlockConditions = sceneConditions[i];
+            if(currUnlockConditions) {
+                if(SceneParser.VisitAtLeastOnceOfEach(_game, currUnlockConditions)) {
+                    _icons[i].setVisible(true);
+                }
+                else {
+                    _icons[i].setVisible(false);
+                }
+            }
+        }
+    }
+}
+
+/***************************************************************
+Called when interaction ends.
+Fades away clickable icons.
+***************************************************************/
+function EndInteraction() {
+    _icons.forEach(function(icon) {
+        icon.fadeOut(_game);
+    });
+}
+
+/***************************************************************
+By default, all linked icons are hidden.
+***************************************************************/
+function HideLinkedIcons() {
+    _linkedIcons.forEach(function(icon) {
+        icon.setVisible(false);
+    });
+}
+
+/***************************************************************
+Displays linked icon.
+Remembers the index of clicked icon and displayed icon.
+***************************************************************/
+function DisplayIcon(targetIndex, clickedIndex) {
+    HideDisplayedIcon();
+    ShowPreviouslyClickedIcon();
+
+    //Displays linked icon
+    _displayedIconIndex = targetIndex;
+    _linkedIcons[_displayedIconIndex].bringToTop();
+    _linkedIcons[_displayedIconIndex].setVisible(true);
+
+    //Hides clicked icon
+    _clickedIconIndex = clickedIndex;
+    _icons[_clickedIconIndex].setVisible(false);
+
+    //Triggers overlay if displayed image is an information image
+    if(_linkedIcons[_displayedIconIndex].getType() == Image.getEnum().InfoImage) {
+        _game.global.gameManager.getShowInfoOverlaySignal().dispatch(_linkedIcons[_displayedIconIndex]);
+    }
+}
+
+/***************************************************************
+Icons linking to another hidden icon will disappear on click.
+This function redisplays it when another clickable icon is clicked.
+***************************************************************/
+function ShowPreviouslyClickedIcon() {
+    if(_clickedIconIndex != null)
+        _icons[_clickedIconIndex].setVisible(true);
+}
+
+/***************************************************************
+Hides displayed linked icon.
+***************************************************************/
+function HideDisplayedIcon() {
+    if(_displayedIconIndex != null)
+        _linkedIcons[_displayedIconIndex].setVisible(false);
+}
+
+module.exports = {
+    init: function(game) {
+        //_icons = [];
+        if(_instance !== null)
+            return _instance;
+        _game = game;
+        _instance = this;
+        return _instance;
+    },
+    createThoughtIcon: function(coords, thoughts, key) {
+        CreateThoughtIcon(coords, thoughts, key);
+    },
+    createClickableIcons: function(icons) {
+        CreateClickableIcons(icons);
+        return _icons;
+    },
+    //Location state icons
+    createNavigationIcons: function(icons, linkedIcons) {
+        if(linkedIcons)
+            CreateLinkedIcons(linkedIcons);
+        CreateClickableIcons(icons);
+    },
+    endInteraction: function() {
+        EndInteraction();
+    },
+    displayIcon: function(targetIndex, clickedIndex) {
+        DisplayIcon(targetIndex, clickedIndex)
+    },
+    hideDisplayedIcon: function() {
+        HideDisplayedIcon();
+        ShowPreviouslyClickedIcon();
+        _displayedIconIndex = null;
+        _clickedIconIndex = null;
+    },
+    destroy: function() {
+        _icons.forEach(function(icon) {
+            icon.destroy();
+        });
+        _icons = [];
+        _linkedIcons.forEach(function(icon) {
+            icon.destroy();
+        });
+        _linkedIcons = [];
+    }
+}
+
+
+/***/ }),
+/* 14 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/***************************************************************
+Handles the showing of subtitles on screen.
+Author: Christopher Weidya
+***************************************************************/
+
+
+//Dependencies
+const Text = __webpack_require__(4);
+
+var _instance = null;
+var _game = null;
+
+var _textSlots = [null];
+var _subtitleVisible = false;
+
+/***************************************************************
+Creates subtitles from srt files.
+***************************************************************/
+function CreateSubs(video, subs) {
+	var srt = _game.cache.getText(subs);
+	var parsedSrt = fromSrt(srt, true);
+	AddSubEvents(parsedSrt, video);
+}
+
+/***************************************************************
+Adds subtitle events to show when video hits certain time.
+***************************************************************/
+function AddSubEvents(parsedSrt, video) {
+	parsedSrt.forEach(function(sub) {
+		video.addEventListener("timeupdate", show, false);
+
+		function show() {
+			if(video.currentTime >= sub.startTime){
+           		video.removeEventListener("timeupdate", show);
+           		//Adds text out of screen view. Will be realigned later depending on slots given
+	            var text = new Text(sub.text, 0, -500, Text.getEnum().Subtitle, _game.global.style.subtitleTextProperties);
+	            text.addTextToGame(_game, _game.mediaGroup);
+	            text.changeText(_game, _subtitleVisible);
+	            var slotIndex = FindSubtitleSlot(text);
+	            //Adds destroy event to destroy created text
+	            AddDestroyEvent(video, sub, text, slotIndex);
+	        }
+		}		
+	});
+}
+
+/***************************************************************
+Creates destroy event based on end time.
+***************************************************************/
+function AddDestroyEvent(video, sub, text, slotIndex) {
+	video.addEventListener("timeupdate", destroy, false);
+
+	function destroy() {
+		if(video.currentTime >= sub.endTime){
+			//console.log("destroyed");
+       		video.removeEventListener("timeupdate", destroy); 
+            text.destroy();
+        }
+	}
+}
+
+/***************************************************************
+Finds an empty slot for the subtitle.
+Current slot is 1 due to feedback.
+***************************************************************/
+function FindSubtitleSlot(text) {
+	//Forces previous subtitle to not be visible if a new subtitle enters.
+	if(_textSlots[0]) {
+		_textSlots[0].setVisible(_subtitleVisible);
+	}
+	_textSlots[0] = text;
+	text.setY(_game.global.constants.SUBTITLE_Y_POS);
+	return 0;
+}
+
+/*
+//Unused. For 2 subtitle slots.
+function FindSubtitleSlot(text) {
+	if(!_textSlots[0]) {
+	
+	if(_textSlots[0])
+		_textSlots[0].setVisible(false);
+	_textSlots[0] = text;
+	text.setY(_game.global.constants.SUBTITLE_Y_POS);
+	return 0;
+	}
+	else if(!_textSlots[1]) {
+		_textSlots[1] = text;
+		text.setY(SUBTITLE_Y_POS - text.getHeight() - _game.global.constants.SUBTITLE_SPACING);
+		return 1;
+	}
+	else
+		console.warn("Max number of concurrent subtitles reached." + text);
+}
+*/
+
+/***************************************************************
+Toggles visibility of subtitle in slot.
+***************************************************************/
+function ToggleSubtitle() {
+	_subtitleVisible = !_subtitleVisible;
+	_textSlots.forEach(function(slot) {
+		if(slot) {
+			slot.setVisible(_subtitleVisible);
+		}
+	});
+	return _subtitleVisible;
+}
+
+/***************************************************************
+Parses srt file and returns data object.
+Taken from: https://www.npmjs.com/package/subtitles-parser
+***************************************************************/
+function fromSrt(data, ms) {
+    var useMs = ms ? true : false;
+
+    data = data.replace(/\r/g, '');
+    var regex = /(\d+)\n(\d{2}:\d{2}:\d{2},\d{3}) --> (\d{2}:\d{2}:\d{2},\d{3})/g;
+    data = data.split(regex);
+    data.shift();
+
+    var items = [];
+    for (var i = 0; i < data.length; i += 4) {
+        items.push({
+            id: data[i].trim(),
+            startTime: useMs ? timeMs(data[i + 1].trim()) : data[i + 1].trim(),
+            endTime: useMs ? timeMs(data[i + 2].trim()) : data[i + 2].trim(),
+            text: data[i + 3].trim()
+        });
+    }
+
+    return items;
+};
+
+/***************************************************************
+Gets the time in ms from the srt time.
+Taken from: https://www.npmjs.com/package/subtitles-parser
+***************************************************************/
+function timeMs(val) {
+    var regex = /(\d+):(\d{2}):(\d{2}),(\d{3})/;
+    var parts = regex.exec(val);
+
+    if (parts === null) {
+        return 0;
+    }
+
+    for (var i = 1; i < 5; i++) {
+        parts[i] = parseInt(parts[i], 10);
+        if (isNaN(parts[i])) parts[i] = 0;
+    }
+
+    // hours + minutes + seconds + ms
+    return parts[1] * 3600 + parts[2] * 60 + parts[3] + parts[4]/1000;
+};
+
+module.exports = {
+	//Singleton initialization
+	init: function (game) {
+		if(_instance)
+			return _instance;
+		_instance = this;
+		_game = game;
+		return _instance;
+	},
+	create: function(video, subs) {
+		CreateSubs(video, subs);
+	},
+	toggleSubtitle: function() {
+		return ToggleSubtitle();
+	},
+	hideSubtitleForMoment:function() {
+		_textSlots[0].setVisible(false);
+	},
+	getSubtitleVisible: function() {
+		return _subtitleVisible;
+	}
+}
+
+
+/***/ }),
+/* 15 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/***************************************************************
+Manages creation and transitions between state types. 
+Author: Christopher Weidya
+***************************************************************/
+
+
+
+//Dependencies
+const Resources = __webpack_require__(11),
+    Group = __webpack_require__(5),
+    Transition = __webpack_require__(6),
+    UI = __webpack_require__(7),
+    Video = __webpack_require__(1),
+    MenuState = __webpack_require__(31),
+    LocationState = __webpack_require__(19),
+    InteractState = __webpack_require__(18),
+    SwitchState = __webpack_require__(33),
+    MovieState = __webpack_require__(32),
+    Subtitle = __webpack_require__(14);
+
+var _stateManagerInstance = null;
+var _transitionSignal = null;
+var _game = null;
+
+var StateEnum = {
+    MenuState: 'MenuState',
+    InteractState: 'InteractState',
+    SwitchState: 'SwitchState',
+    MovieState: 'MovieState',
+    LocationState: 'LocationState'
+}
+
+/***************************************************************
+Changes state according to scene name.
+***************************************************************/
+function ChangeScene(sceneName) {
+    var nextScene = Resources.getScene(sceneName);
+    if(nextScene === null)
+        console.warn("Scene: " + sceneName + "is undefined.");
+    else
+        console.log("Changing scene to: " + nextScene.stateType);
+    
+    switch(nextScene.stateType) {
+        case StateEnum.MenuState:
+        case StateEnum.InteractState:
+        case StateEnum.SwitchState:
+        case StateEnum.MovieState:
+        case StateEnum.LocationState:
+            _stateManagerInstance.start(nextScene.stateType, true, false, nextScene);
+            break;
+        default:
+            console.warn("Invalid State.");
+    }
+}
+
+/***************************************************************
+Adds all state types to manager.
+***************************************************************/
+function AddAllStates() {
+    _stateManagerInstance.add(StateEnum.MenuState, MenuState);
+    _stateManagerInstance.add(StateEnum.LocationState, LocationState);
+    _stateManagerInstance.add(StateEnum.InteractState, InteractState);
+    _stateManagerInstance.add(StateEnum.SwitchState, SwitchState);
+    _stateManagerInstance.add(StateEnum.MovieState, MovieState);
+}
+
+//Unused, phaser input extension
+function ChangePlayerName() {
+    return function() {
+        this.game.playerName = MenuState.getPlayerName();_input[0].getInput().text;
+        console.log("this.game.playerName");
+    };
+}
+
+/***************************************************************
+Test function for ending state switches
+***************************************************************/
+function SceneTestCase() {
+    _game.global.visitedScenes['MK2bad'] = true;
+    _game.global.visitedScenes['an2good'] = true;
+    _game.global.visitedScenes['li2good'] = true;
+    console.log(_game.global.visitedScenes);
+}
+
+module.exports = {
+    init: function() {
+        console.log("Initializing StateManager");
+
+        //Statemanager singleton initialization
+        if(_stateManagerInstance !== null)
+            return _stateManagerInstance;
+        _stateManagerInstance = this.game.state;
+        _game = this.game;
+        Group.init(_game);
+        Subtitle.init(this.game);
+        Transition.init(_game);
+        AddAllStates();
+        UI.init(_game);
+        return _stateManagerInstance;
+    },
+    preload: function() {
+    },
+    create: function() {
+        _game.global.gameManager.getChangeSceneSignal().dispatch(_game.global.mapping.startSceneName);
+    },
+    changeScene: function(sceneName) {
+        _game.mediaGroup.removeAll();
+        _game.global.visitedScenes[sceneName] = true;
+        _game.global.currentSceneName = sceneName;
+        //SceneTestCase();
+        ChangeScene(sceneName);
+    }
+}
+
+
+/***/ }),
+/* 16 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/***************************************************************
+Utility object that performs calculations.
+Author: Christopher Weidya
+***************************************************************/
+
+
+//Utility constructor
+var Utility = function() {
+}
+
+/***************************************************************
+Checks image dimensions against game dimenstions 
+and calculates whether a scrollbar is needed to view image.
+***************************************************************/
+Utility.checkIfScrollBarNeeded = function(game, image) {
+    var displayDimensionRatio = game.global.constants.INFO_VIEW_WIDTH/game.global.constants.INFO_VIEW_HEIGHT;
+    var imageDimensionRatio = image.width/image.height;
+    if(imageDimensionRatio > displayDimensionRatio)
+        return false;
+    else
+        return true;
+}
+
+module.exports = Utility;
+
+
+/***/ }),
+/* 17 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/***************************************************************
+Draws bitmap overlays/underlays from video.
+Author: Christopher Weidya
+***************************************************************/
+
+
+//Dependencies
+const Linkable = __webpack_require__(0),
+    Animation = __webpack_require__(2);
+
+var _instance = null;
+var _game = null;
+
+var _video = null;
+var _videoHTML = null;
+var _bitmapCanvas = null;
+var _bitmapSprite = null;
+var _context = null;
+var _frameHolderBitmapCanvas = null;
+var _frameHolderBitmapSprite = null;
+var _contextBitmap = null;
+var _canvas = null;
+var _framebuffer = null;
+
+var _effect = null;
+var _filter = null;
+
+/***************************************************************
+Initializes bitmap overlay that will hold the video effect.
+***************************************************************/
+function InitializeBitmapOverlay(game) {
+    _bitmapCanvas = game.add.bitmapData(game.width, game.height);
+    _bitmapSprite = game.add.sprite(game.width/2, game.height/2, _bitmapCanvas);
+    game.mediaGroup.add(_bitmapSprite);
+    _bitmapSprite.alpha = 0;
+    _bitmapSprite.anchor.setTo(0.5, 0.5);
+    _context = _bitmapCanvas.context;
+}
+
+/***************************************************************
+Initializes bitmap background that will capture video frame.
+***************************************************************/
+function InitializeBitmapBg(game){    
+    _frameHolderBitmapCanvas = game.add.bitmapData(game.width, game.height);
+    _frameHolderBitmapSprite = game.add.sprite(game.width/2, game.height/2, _frameHolderBitmapCanvas);
+    _frameHolderBitmapSprite = game.stage.addChildAt(_frameHolderBitmapSprite, 0);
+    _frameHolderBitmapSprite.anchor.setTo(0.5, 0.5);
+    _contextBitmap = _frameHolderBitmapCanvas.context;
+}
+
+/***************************************************************
+Fades in bitmap overlay during interaction moments.
+***************************************************************/
+function StartFilterFadeIn(signal) {
+    var linkable = new Linkable(_game, _bitmapSprite, signal);
+    linkable.addOnClickAnimation(Animation.fade(_game, _bitmapSprite, 1, false));
+    linkable.addOnClickAnimation(Animation.scale(_game, _bitmapSprite, false, _game.width, _game.height));
+    linkable.onTrigger();
+}
+
+/***************************************************************
+Fades out bitmap overlay at the end of interaction moments.
+***************************************************************/
+function EndFilter() {
+    Animation.fade(_game, _bitmapSprite, 0, true);
+}
+
+/***************************************************************
+Starts rendering of video filter.
+***************************************************************/
+function CreateVideoFilter() {
+    Render();
+};
+
+/***************************************************************
+Sets repeating function that draws on the bitmap overlay.
+***************************************************************/
+function Render() {
+    _game.time.events.repeat(_game.global.constants.FILTER_REFRESH_INTERVAL, 1, Render, this);
+    if(_bitmapSprite.alpha > 0 && _bitmapSprite.alpha < 1) {
+        RenderFrame();
+    }
+    /*
+    setTimeout(function() {
+        render();
+    }, 10)
+    */
+};
+
+/***************************************************************
+Applies the special effect on the bitmap overlay.
+Relies of JSManipulate library to perform effect.
+***************************************************************/
+function RenderFrame() {
+    _context.drawImage(_videoHTML, 0, 0, _video.width,
+        _video.height, 0, 0, _game.width, _game.height);
+    var data = _context.getImageData(0, 0, _game.width, _game.height);
+    _contextBitmap.putImageData(data, 0, 0);
+    var effect;
+    _filter.forEach(function(filter) {
+        if(filter[0] in JSManipulate) {
+            _effect = JSManipulate[filter[0]];
+            if(filter[1])
+                _effect.filter(data, filter[1]);
+            else
+                _effect.filter(data, _effect.defaultValues);
+        }
+    });
+    _context.putImageData(data, 0, 0);
+    return;
+};
+
+module.exports = {
+    init: function(game, video) {
+        console.log("Filter initialized");
+
+        if(_instance !== null)
+            return _instance;
+
+        //Gets html video elements and game canvas
+        _instance = this;
+        _game = game;
+        _video = video;
+        _videoHTML = _video.video;
+        _canvas = game.canvas;
+
+        InitializeBitmapBg(_game);
+
+        //Creates html canvas to store bitmap data
+        _framebuffer = document.createElement("canvas");
+        _framebuffer.width = _game.width;
+        _framebuffer.height = _game.height;
+        _framebuffer.context = _framebuffer.getContext("2d");
+        return _instance;
+    },
+    createOverlay: function(filter) {
+        _filter = filter;
+        InitializeBitmapOverlay(_game);
+        CreateVideoFilter();
+    },
+    clearBg: function() {
+        if(_frameHolderBitmapCanvas)
+            _frameHolderBitmapCanvas.clear();
+    },
+    startFilterFade: function(signal) {
+        StartFilterFadeIn(signal);
+    },
+    endFilter: function() {
+        EndFilter();
+    }
+}
+
+
+/***/ }),
+/* 18 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/***************************************************************
+State for interactive video scenes.
+Author: Christopher Weidya
+***************************************************************/
+
+
+
+//Dependencies
+const Group = __webpack_require__(5),
+    UI = __webpack_require__(7),
+    Video = __webpack_require__(1),
+    Transition = __webpack_require__(6),
+    Icons = __webpack_require__(13),
+    State = __webpack_require__(8),
+    Choices = __webpack_require__(26),
+    Thoughts = __webpack_require__(30),
+    Background = __webpack_require__(10);
+
+var _stateInfo = null;
+var _instance = null;
+var _game = null;
+var _interactionCount = null;
+
+/****************************************************************
+Creates interactive icons when game enters interaction mode, waits for player's input.
+****************************************************************/
+function CreateInteractionElements() {
+    CreateThoughtBubbles();
+    CreateChoices();
+}
+
+/****************************************************************
+Creates thought bubbles, if any.
+****************************************************************/
+function CreateThoughtBubbles() {    
+    var thoughtBubbles = _stateInfo.getThoughtBubble(_interactionCount);
+    if(thoughtBubbles) {
+        for(var i=0; i<thoughtBubbles.size; i++) {
+            Icons.createThoughtIcon(thoughtBubbles.coords[i], thoughtBubbles.thoughts[i], thoughtBubbles.thoughtIconKey[i]);
+        }      
+    }
+}
+
+/****************************************************************
+Creates question, choice buttons and choice texts.
+****************************************************************/
+function CreateChoices() {
+    var choices = null;
+
+    choices = _stateInfo.getChoices(_interactionCount);
+    Choices.create(choices);
+
+    _interactionCount++;
+}
+
+/****************************************************************
+Removes interactive elements and resumes video after user input.
+Sends interaction choice data to database.
+****************************************************************/
+function EndInteraction(lingeringChoice, targetScene, tag) {    
+    _game.global.databaseManager.sendInteractionData(_game.global.currentSceneName, tag);
+    Icons.endInteraction();
+    Choices.endInteraction(lingeringChoice, targetScene);
+    Thoughts.endInteraction();
+    Video.endFilter(targetScene);
+}
+
+module.exports = {
+    init: function(scene) {
+        //Sets new scene info
+        if(_stateInfo) {
+            _stateInfo.setStateScene(scene);
+        }
+
+        //Initializes game and state variables
+        _interactionCount = 0;
+        Group.initializeGroups(); 
+
+        //Singleton initialization 
+        if(_instance !== null)
+            return _instance;
+        Icons.init(this.game);          
+        Thoughts.init(this.game);
+        Choices.init(this.game);
+        Background.init(this.game);
+        Video.init(this.game);
+        _game = this.game;
+        _stateInfo = new State(scene);
+        _instance = this;
+        return _instance;
+    },
+    create: function() {
+        _game.global.soundManager.stopBackgroundMusic();
+
+        Background.create(_stateInfo.getBgImageKey(), _stateInfo.getDraggable());
+
+        Video.create(_stateInfo.getMovieSrc(_game.global.quality), _stateInfo.getTransitionInfo().fadeOut,
+            _stateInfo.getVideoFilter(), _stateInfo.getNextScenes(), _stateInfo.getMovieSubKey(), _stateInfo.getTimestamps());
+
+        if(_stateInfo.getTransitionInfo().fadeIn)
+            this.game.global.gameManager.getFadeInTransitionSignal().dispatch();
+
+        UI.create(true, true);
+    },
+    shutdown: function() {
+        Icons.destroy();
+        Video.resetVideoVariables();
+        Thoughts.resetThoughtVariables();
+        Choices.resetChoicesVariables();
+    },
+    createInteractionElements: function() {
+        CreateInteractionElements();
+    },
+    createThoughts: function(thoughts, coords) {
+        Thoughts.create(thoughts, coords);
+    },
+    endInteraction: function(lingeringChoice, targetScene, tag) {
+        EndInteraction(lingeringChoice, targetScene, tag);
+    }
+}
+
+
+/***/ }),
+/* 19 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/***************************************************************
+State for location scenes.
+Author: Christopher Weidya
+***************************************************************/
+
+
+
+const Transition = __webpack_require__(6),
+    Group = __webpack_require__(5),
+    State = __webpack_require__(8),
+    UI = __webpack_require__(7),
+    Background = __webpack_require__(10),
+    Icons = __webpack_require__(13),
+    Video = __webpack_require__(1);
+
+var _instance = null;
+var _stateInfo = null;
+var _game = null;
+var _overlayGraphic = null;
+
+module.exports = {
+    init: function(scene) {
+        //Sets new scene info
+        if(_stateInfo !== null)
+            _stateInfo.setStateScene(scene);
+
+        //Initialize game variables
+        Group.initializeGroups();
+
+        //Singleton initialization
+        if(_instance !== null)
+            return _instance;
+        Icons.init(this.game);
+        Background.init(this.game);        
+        Video.init(this.game);
+        _game = this.game;
+        _stateInfo = new State(scene);
+        _instance = this;
+        return _instance;
+    },
+    preload: function() {
+    },
+    create: function() {
+        Video.clearFilterBg();
+
+        _game.global.soundManager.playBackgroundMusic(_stateInfo.getBackgroundMusic());
+
+        Background.create(_stateInfo.getBgImageKey(), _stateInfo.getDraggable());
+
+        Video.create(_stateInfo.getMovieSrc(_game.global.quality), _stateInfo.getTransitionInfo().fadeOut, 
+            _stateInfo.getVideoFilter(), _stateInfo.getNextScenes());
+
+        var icons = Icons.createNavigationIcons(_stateInfo.getIconsInfo(), _stateInfo.getLinkedIconsInfo());
+
+        if(_stateInfo.getDraggable())
+            Background.attachIconsToBg(icons);
+
+        if(_stateInfo.getTransitionInfo().fadeIn)
+            this.game.global.gameManager.getFadeInTransitionSignal().dispatch();
+
+        UI.createInfoOverlay();
+    },
+    shutdown: function() {
+        Icons.destroy();
+        Video.resetVideoVariables();
+    },
+    displayImage: function(targetIndex, clickedIndex) {
+        Icons.displayIcon(targetIndex, clickedIndex);
+    },
+    hideDisplayedImage: function() {
+        Icons.hideDisplayedIcon();
+    }
+}
+
+
+/***/ }),
+/* 20 */
+/***/ (function(module, exports, __webpack_require__) {
+
+/****************************************************************
+Loads game fonts and tests user's connection.
+Author: Christopher Weidya
+****************************************************************/
+
+"use_strict";
+
+//Dependencies
+const ConnectionChecker = __webpack_require__(27), 
+    GameManager = __webpack_require__(23),
+    SoundManager = __webpack_require__(24),
+    DatabaseManager = __webpack_require__(22);
+
+var _instance = null
+var _game = null;
+
+const connectionTestFileKey = 'pooh',
+    connectionTestFileSrc = './Images/Loading/pooh.jpg',
+    connectionTestFileType = 'IMAGE',
+    connectionTestFileBytes = 1576132;
+
+/****************************************************************
+Loads google webfonts before initialization.
+****************************************************************/
+WebFontConfig = {
+    //Load fonts before creation, timer delay. Can be improved  in implementation.
+    active: function() { _game.time.events.add(Phaser.Timer.SECOND, DelayedCreate, this); },
+
+    google: {
+      families: ['Kadwa', 'Merienda One', 'Noto Sans'],
+    }
+};
+
+/****************************************************************
+Initializes game, sound and database managers.
+Performs connection test.
+Loads load visuals.
+****************************************************************/
+function DelayedCreate() {
+    CreateGlobalVars();
+    SetGameProperties();
+    CreateLoadingVisuals();
+    ConnectionChecker.loadFile(connectionTestFileKey, connectionTestFileSrc, connectionTestFileType, connectionTestFileBytes);
+    ConnectionChecker.checkConnection();
+}
+
+function CreateLoadingVisuals() {
+    var testConnectionImage = _game.add.image(_game.world.centerX, _game.world.centerY, 'connectionTestImage');
+    testConnectionImage.anchor.setTo(0.5, 0.5);
+}
+
+
+/****************************************************************
+Sets game bg color and ensures application runs even when out of focus.
+****************************************************************/
+function SetGameProperties() {
+    //Ensures program runs even when browser tab is out of focus
+    _game.stage.disableVisibilityChange = true;
+    _game.stage.backgroundColor = "#000000";
+    //Prevent multitouch issues
+    _game.input.maxPointers = 1;
+}
+
+
+/****************************************************************
+Global managers and variables initialized.
+****************************************************************/
+function CreateGlobalVars() {
+    //Global variables
+    _game.global = {
+        playerName: null,
+        visitedScenes: {}
+    }
+
+    //Global groups
+    _game.mediaGroup = _game.add.group();
+    _game.uiGroup = _game.add.group();
+
+    //Global managers
+    _game.global.gameManager = new GameManager();
+    _game.global.soundManager = new SoundManager(_game);
+    _game.global.databaseManager = new DatabaseManager(_game);
+
+    //Constants
+    _game.global.constants = {};
+
+    //Filter refresh interval
+    _game.global.constants.FILTER_REFRESH_INTERVAL = 10;
+
+    //Video timestsamp check interval in ms
+    _game.global.constants.VIDEO_CHECK_INTERVAL = 150;
+
+    //Image information viewing constants
+    _game.global.constants.INFO_VIEW_MARGIN = 50; 
+    _game.global.constants.INFO_VIEW_HEIGHT = _game.height - _game.global.constants.INFO_VIEW_MARGIN*2;
+    _game.global.constants.SCROLLBAR_DIM = [30, _game.global.constants.INFO_VIEW_HEIGHT];    
+    _game.global.constants.INFO_VIEW_WIDTH = _game.width - _game.global.constants.INFO_VIEW_MARGIN*2 - _game.global.constants.SCROLLBAR_DIM[0];   
+    _game.global.constants.SCROLLBAR_POS = [_game.width - _game.global.constants.INFO_VIEW_MARGIN - _game.global.constants.SCROLLBAR_DIM[0], 
+        _game.global.constants.INFO_VIEW_MARGIN];
+    _game.global.constants.SCROLLBAR_STROKEWIDTH = 2;
+    _game.global.constants.INFO_OVERLAY_COLOR = 0x000000;
+    _game.global.constants.INFO_OVERLAY_OPACITY = 0.7;
+    _game.global.constants.SCROLLBAR_WHEEL_SENSITIVITY = 10;
+
+    //Subtitle constants
+    _game.global.constants.SUBTITLE_Y_POS = 620;
+    _game.global.constants.SUBTITLE_SPACING = 5;
+
+    //Transition constants
+    _game.global.constants.TRANSITION_COLOR = 0x000000;
+}
+
+module.exports = {
+    init: function() {
+        console.log("Boot State");
+        if(_instance !== null)
+            return _instance;
+        ConnectionChecker.init(this.game);
+        _game = this.game;
+        return _instance;
+    },
+    preload: function() {
+        //Tries to full screen on browser
+        _game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
+        _game.load.script('webfont', '//ajax.googleapis.com/ajax/libs/webfont/1.4.7/webfont.js');
+        _game.load.image('connectionTestImage', './Images/Loading/connectionTestImage.jpg');
+    },
+    create: function() {
+    }
+}
+
+
+/***/ }),
+/* 21 */
+/***/ (function(module, exports, __webpack_require__) {
+
+/***************************************************************
+Loads resources including images, sprites, sound.
+Since videos are streamed, it's not loaded here.
+Author: Christopher Weidya
+***************************************************************/
+
+"use_strict";
+
+//Dependencies
+const Resources = __webpack_require__(11);
+
+var _instance = null,
+    _game = null;
+
+/***************************************************************
+Draws loading visuals.
+***************************************************************/
+function CreateLoadingVisuals() {
+    //var text = _game.add.text(_game.world.centerX, _game.world.centerY - 50, "Loading assets...");
+    //text.anchor.setTo(0.5, 0.5);
+    var background = _game.add.image(0, 0, 'progressSceneBackground');
+    var progressBarBackground = _game.add.image(_game.world.centerX, _game.world.centerY, 'progressBarFillBg');
+    progressBarBackground.anchor.setTo(0.5,0.5);
+    var progressBarFrame = _game.add.image(_game.world.centerX, _game.world.centerY, 'progressBarFrame');
+    progressBarFrame.anchor.setTo(0.5,0.5);
+    var progressBarText = _game.add.image(_game.world.centerX, _game.world.centerY+80, 'progressBarText');
+    progressBarText.anchor.setTo(0.5,0.5);
+
+    var preloadImage = _game.add.sprite((_game.width-progressBarBackground.width)/2, 
+        (_game.height-progressBarBackground.height)/2, 'progressBarFillFg');
+    _game.load.setPreloadSprite(preloadImage);
+}
+
+module.exports = {
+    init: function() {
+        //Singleton initialization
+        if( _instance !== null)
+            return _instance;
+        _game = this.game;
+        Resources.init(_game);
+        return _instance;
+    },
+    preload: function() {
+        CreateLoadingVisuals();
+        //Load game assets
+        Resources.preload();
+    },
+    create: function() {
+        //Gets UI information
+        _game.global.style = Resources.getStyle();
+        _game.global.mapping = Resources.getMapping();
+        _game.state.start("stateManager");
+    }
+}
+
+
+/***/ }),
+/* 22 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/***************************************************************
+Handles database connection and interaction.
+Author: Md Tauseef
+***************************************************************/
+
+
+var _instance = null;
+var _game = null;
+var _serverUrl = "http://mocking-birds.etc.cmu.edu/";
+var _userInteractionRoute = "addUserAction";
+var _createUserRoute = "createUser";
+var userId = null;
+
+var useDatabase = true;
+
+var DatabaseManager = function() {
+    if(_instance !== null)
+        return _instance;
+
+    _instance = this;
+    this.createUser();
+    return _instance;
+}
+
+DatabaseManager.prototype.getUserId = function() {
+  return this.userId;
+}
+
+DatabaseManager.prototype.createUser = function() {
+    if(!useDatabase)
+        return;
+  axios.get(_serverUrl + _createUserRoute)
+  .then(function(res) {
+    userId = res.data;
+
+    // sets userId in userInfoActions module
+    userInfoActions.setUserId(userId);
+  })
+  .catch(console.error.bind(this));
+}
+
+DatabaseManager.prototype.sendInteractionData = function(currentSceneName, tag) {
+    if(!useDatabase)
+        return;
+    if(tag != undefined && tag != null) {
+      var _userInteractionData = {
+        id: userId,
+        sceneName: currentSceneName,
+        interactionType: tag
+      };
+      axios.post(_serverUrl + _userInteractionRoute, _userInteractionData)
+      .catch(console.error.bind(this));
+    }
+}
+
+function createUserInteractionUrl(url, route, data) {
+  var tempUrl = url + route;
+  var isFirstParam = true;
+  for(var key in data) {
+    if(data.hasOwnProperty(key)) {
+      if(isFirstParam) {
+        tempUrl += "?" + key + "=" + data[key];
+        isFirstParam = false;
+      } else {
+        tempUrl += "&" + key + "=" + data[key];
+      }
+    }
+  }
+  return tempUrl;
+}
+
+module.exports = DatabaseManager;
+
+
+/***/ }),
+/* 23 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/***************************************************************
+All game signals go through here.
+Author: Christopher Weidya
+***************************************************************/
+
+
+//Dependencies
+const StateManager = __webpack_require__(15),
+    InteractState = __webpack_require__(18),
+    LocationState = __webpack_require__(19),
+    Transition = __webpack_require__(6),
+    UI = __webpack_require__(7),
+    Video = __webpack_require__(1),
+    Linkable = __webpack_require__(0);
+
+var _instance = null;
+var _game = null;
+
+/***************************************************************
+Signals declaration. Singleton.
+***************************************************************/
+var GameManager = function() {
+    if(_instance !== null)
+        return _instance;    
+    _instance = this;
+
+    //Changes game scene
+    this._changeSceneSignal = null;
+
+    //Triggers transition effects between scenes
+    this._fadeInTransitionSignal = null;
+    //Fade out unused currently
+    this._fadeOutTransitionSignal = null;
+
+    //Creates thought words
+    this._createThoughtsSignal = null;
+    //Starts thought/choice moments
+    this._triggerInteractionSignal = null;
+    //Called when thought/choice moments ends
+    this._endInteractionSignal = null;
+
+    //Reveals image hidden by another displayed image
+    this._displayImageSignal = null;
+    //Hides previously hidden but currently shown image
+    this._hideDisplayedImageSignal = null;
+
+    //Seeks to time specified for current video, currently unused
+    this._videoSeekSignal = null;
+
+    //Explains itself T.T
+    this._showUISignal = null;
+    //Explains itself T.T
+    this._hideUISignal = null;
+    //Shows/hides overlay graphics for displaying information images
+    this._showInfoOverlaySignal = null;
+    this._hideInfoOverlaySignal = null;
+    //Pauses the experience
+    this._pauseSignal = null;
+    //Resumes the experience
+    this._playSignal = null;
+    //Explains itself!
+    this._toggleSubtitleSignal = null;
+
+    //Links to an external page
+    this._goToLinkSignal = null;
+    //Reloads page
+    this._reloadSignal = null;
+
+    this.initSignals();
+    return _instance;
+}
+
+/***************************************************************
+Allocates functions from corresponding modules to each signal.
+***************************************************************/
+GameManager.prototype.initSignals = function() {
+    //StateManager 
+    this._changeSceneSignal = new Phaser.Signal();
+    this._changeSceneSignal.add(StateManager.changeScene, this);
+
+    //Transition
+    this._fadeInTransitionSignal = new Phaser.Signal();
+    this._fadeInTransitionSignal.add(Transition.fadeInTransition, this);
+    this._fadeOutTransitionSignal = new Phaser.Signal();
+    this._fadeOutTransitionSignal.add(Transition.fadeOutTransition, this);
+
+    //InteractState
+    this._createThoughtsSignal = new Phaser.Signal();
+    this._createThoughtsSignal.add(InteractState.createThoughts, this);
+    this._triggerInteractionSignal = new Phaser.Signal();
+    this._triggerInteractionSignal.add(InteractState.createInteractionElements, this);
+    this._endInteractionSignal = new Phaser.Signal();
+    this._endInteractionSignal.add(InteractState.endInteraction, this);
+
+    //LocationState
+    this._displayImageSignal = new Phaser.Signal();
+    this._displayImageSignal.add(LocationState.displayImage, this);
+    this._hideDisplayedImageSignal = new Phaser.Signal();
+    this._hideDisplayedImageSignal.add(LocationState.hideDisplayedImage, this);
+
+    //Video
+    this._videoSeekSignal = new Phaser.Signal();
+    this._videoSeekSignal.add(Video.seekTo, this);
+
+    //UI
+    this._showUISignal = new Phaser.Signal();
+    this._showUISignal.add(UI.showUI, this);
+    this._hideUISignal = new Phaser.Signal();
+    this._hideUISignal.add(UI.hideUI, this);
+    this._showInfoOverlaySignal = new Phaser.Signal();
+    this._showInfoOverlaySignal.add(UI.showInfoOverlay, this);    
+    this._hideInfoOverlaySignal = new Phaser.Signal();
+    this._hideInfoOverlaySignal.add(UI.hideInfoOverlay, this);
+    this._pauseSignal = new Phaser.Signal();
+    this._pauseSignal.add(UI.pause, this);    
+    this._playSignal = new Phaser.Signal();
+    this._playSignal.add(UI.play, this);
+    this._toggleSubtitleSignal = new Phaser.Signal();
+    this._toggleSubtitleSignal.add(UI.toggleSubtitle, this);
+
+    //Page related functions
+    this._goToLinkSignal = new Phaser.Signal();
+    this._goToLinkSignal.add(Linkable.goToLink, this);
+    this._reloadSignal = new Phaser.Signal();
+    this._reloadSignal.add(Linkable.reload, this);
+}
+
+/***************************************************************
+Getters
+***************************************************************/
+GameManager.prototype.getChangeSceneSignal = function() {
+    return this._changeSceneSignal;
+}
+
+GameManager.prototype.getFadeInTransitionSignal = function() {
+    return this._fadeInTransitionSignal;
+}
+
+GameManager.prototype.getFadeOutTransitionSignal = function() {
+    return this._fadeOutTransitionSignal;
+}
+
+GameManager.prototype.getTriggerInteractionSignal = function() {
+    return this._triggerInteractionSignal;
+}
+
+GameManager.prototype.getEndInteractionSignal = function() {
+    return this._endInteractionSignal;
+}
+
+GameManager.prototype.getVideoSeekSignal = function() {
+    return this._videoSeekSignal;
+}
+
+GameManager.prototype.getCreateThoughtsSignal = function() {
+    return this._createThoughtsSignal;
+}
+
+GameManager.prototype.getDisplayImageSignal = function() {
+    return this._displayImageSignal;
+}
+
+GameManager.prototype.getHideDisplayedImageSignal = function() {
+    return this._hideDisplayedImageSignal;
+}
+
+GameManager.prototype.getShowUISignal = function() {
+    return this._showUISignal;
+}
+
+GameManager.prototype.getHideUISignal = function() {
+    return this._hideUISignal;
+}
+
+GameManager.prototype.getShowInfoOverlaySignal = function() {
+    return this._showInfoOverlaySignal;
+}
+
+GameManager.prototype.getHideInfoOverlaySignal = function() {
+    return this._hideInfoOverlaySignal;
+}
+
+GameManager.prototype.getPauseSignal = function() {
+    return this._pauseSignal;
+}
+
+GameManager.prototype.getPlaySignal = function() {
+    return this._playSignal;
+}
+
+GameManager.prototype.getToggleSubtitleSignal = function() {
+    return this._toggleSubtitleSignal;
+}
+
+GameManager.prototype.getGoToLinkSignal = function() {
+    return this._goToLinkSignal;
+}
+
+GameManager.prototype.getReloadSignal = function() {
+    return this._reloadSignal;
+}
+
+module.exports = GameManager;
+
+
+/***/ }),
+/* 24 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/***************************************************************
+Sound Manager. Handles playing of sounds in scenes.
+Author: Christopher Weidya
+***************************************************************/
+
+
+var _instance = null;
+var _game = null;
+
+var _bgMusic = null;
+var _bgMusicKey = null;
+var _soundHashSet = null;
+var _currTime = 0;
+
+//SoundManager singleton constructor
+var SoundManager = function(game) {
+    if(_instance !== null)
+        return _instance;
+    _instance = this;
+    _game = game;
+    _soundHashSet = {};
+    return _instance;
+}
+
+/***************************************************************
+Plays a sound.
+***************************************************************/
+SoundManager.prototype.playSound = function(soundKey) {
+    if(!_soundHashSet[soundKey]) {
+        _soundHashSet[soundKey] = _game.add.audio(soundKey);
+    }
+    _soundHashSet[soundKey].play();
+}
+
+/***************************************************************
+Plays background music.
+***************************************************************/
+SoundManager.prototype.playBackgroundMusic = function(musicKey) {
+    if(musicKey &&_bgMusicKey != musicKey) {
+        if(_bgMusic)
+            _bgMusic.stop();
+        if(!_soundHashSet[musicKey]) 
+            _soundHashSet[musicKey] = _game.add.audio(musicKey);
+        _bgMusic =_soundHashSet[musicKey];
+        _bgMusicKey = musicKey;
+        _bgMusic.loop = true;
+        _bgMusic.play();
+    }
+}    
+
+/***************************************************************
+Stops background music.
+***************************************************************/
+SoundManager.prototype.stopBackgroundMusic = function() {
+    if(_bgMusic) {
+        _bgMusicKey = null;
+        _bgMusic.stop();
+    }
+}
+
+/***************************************************************
+Sets current time of audio.
+Unused.
+***************************************************************/
+SoundManager.prototype.setCurrentTime = function(time) {
+    _currTime = time;
+}
+
+module.exports = SoundManager;
+
+
+/***/ }),
+/* 25 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/***************************************************************
+Using phaser input extension, to create input fields.
+Currently unused.
+***************************************************************/
+
+
+var InputTypeEnum = {
+    NameInput: 'INPUT_TEXT',
+    Choices: 'TEXT_CHOICES'
+}
+var Linkable = __webpack_require__(0);
+
+var Input = function(content, xPos, yPos, properties) {
+    this._xPos = xPos;
+    this._yPos = yPos;
+    this._content = content;
+    this._properties = properties;
+    this._input = null;
+}
+
+Input.prototype.setDefaultProperties = function() {
+    this._input.font = '18px Roboto';
+}
+
+Input.prototype.addToGame = function(game) {
+    this._input = game.add.inputField(this._xPos, this._yPos, this._properties);
+    this.setDefaultProperties();
+}
+
+Input.prototype.getInput = function() {
+    return this._input;
+}
+
+
+module.exports = Input;
+
+
+/***/ }),
+/* 26 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/***************************************************************
+Creates choice icons during interaction moments.
+Author: Christopher Weidya
+***************************************************************/
+
+
+//Dependencies
+const Text = __webpack_require__(4),
+    Image = __webpack_require__(3);
+
+const BACKGROUND_IMAGE_KEY = 'choiceBg';
+
+//Singleton variables
+var _instance = null;
+var _game = null;
+
+//Holds created game objects
+var _question = null;
+var _text = [];
+var _choiceBg = [];
+
+const FADE_DELAY = 1;
+const QUESTION_Y_OFFSET = 30;
+
+/***************************************************************
+Creates background for choice buttons.
+***************************************************************/
+function CreateButtonBackground(x, y, width, height, phaserText, target, tag) {
+    var choiceBg = new Image(x, y, BACKGROUND_IMAGE_KEY, Image.getEnum().ChoiceBackground);
+    choiceBg.addImageToGame(_game, _game.mediaGroup);
+    choiceBg.changeImage(_game, width, height, target, phaserText, tag);
+    return choiceBg;
+}
+
+/***************************************************************
+Creates answer texts for choice buttons.
+***************************************************************/
+function CreateChoicePrompt(question, yPos) {
+    _question = new Text(question, 0, yPos, Text.getEnum().Question, _game.global.style.questionTextProperties);
+    _question.addTextToGame(_game, _game.mediaGroup);
+    _question.changeText(_game, Text.getEnum().Question);
+}
+
+/***************************************************************
+Creates choice buttons.
+***************************************************************/
+function CreateChoices(choices) {
+    ResetChoicesVariables();
+    CreateChoicePrompt(choices.question, choices.y[0] - choices.bounds[0][1]/2 - QUESTION_Y_OFFSET);
+
+    for(var i=0; i < choices.size; i++) {
+        CreateAnswers(i, choices);    
+        CreateBackgroundImage(i, choices);
+        //Aligns choice text to choice background
+        _text[i].changeText(_game, _choiceBg[i].getPhaserImage().y, choices.size);
+    };
+}
+
+/***************************************************************
+Creates choice answer text.
+***************************************************************/
+function CreateAnswers(currIndex, choices) {
+    _text.push(new Text(choices.content[currIndex], GetXPos(choices.size, currIndex), 0, 
+        Text.getEnum().Choices, _game.global.style.choicesTextProperties));
+    _text[currIndex].index = currIndex;
+    _text[currIndex].addTextToGame(_game, _game.mediaGroup);
+}
+
+/***************************************************************
+Creates choice background and passes it corresponding answer text.
+***************************************************************/
+function CreateBackgroundImage(currIndex, choices) {
+    var choiceBackgroundImage;
+    if(choices.targetScene)
+        choiceBackgroundImage = CreateButtonBackground(GetXPos(choices.size, currIndex), choices.y[currIndex], 
+            choices.bounds[currIndex][0], choices.bounds[currIndex][1], _text[currIndex].getPhaserText(), 
+            choices.targetScene[currIndex], choices.tag[currIndex]);
+    else
+        choiceBackgroundImage = CreateButtonBackground(GetXPos(choices.size, currIndex), choices.y[currIndex], 
+            choices.bounds[currIndex][0], choices.bounds[currIndex][1], _text[currIndex].getPhaserText());
+    choiceBackgroundImage.index = currIndex;
+    _choiceBg.push(choiceBackgroundImage);
+}
+
+/***************************************************************
+Partitions game width depending on number of choices.
+Returns x value of middle of each partition.
+***************************************************************/
+function GetXPos(choiceCount, index) {
+    if(choiceCount == 1)
+        return _game.world.centerX;
+    else if(choiceCount == 2) {
+        if(index == 0)
+            return _game.width/4;
+        if(index == 1)
+            return _game.width/4*3;
+    }
+    else if(choiceCount == 3) {
+        if(index == 0)
+            return _game.width/6;
+        if(index == 1)
+            return _game.world.centerX;        
+        if(index == 2)
+            return _game.width/6*5;
+    }
+    console.warn("1, 2 or 3 choices allowed.");
+    return null;
+}
+
+/***************************************************************
+Allows selected choice to linger for a while before fading.
+Fades out other choices and prompt.
+***************************************************************/
+function FadeChoicesExcept(index){
+    _text.forEach(function(text) {
+        if(text.index != index) {
+            text.enableInput(false);
+            text.fadeOut(_game);
+        }
+    });
+
+    _choiceBg.forEach(function(choiceBg) {
+        if(choiceBg.index != index) {
+            choiceBg.enableInput(false);
+            choiceBg.fadeOut(_game);
+        }
+    });
+
+    _question.fadeOut(_game);
+}
+
+/***************************************************************
+Starts a timer event that fades out selected choice.
+Goes to next scene upon fading out, if defined.
+***************************************************************/
+function FadeChoiceAfterDelay(index, targetScene) {
+    _game.time.events.add(Phaser.Timer.SECOND*FADE_DELAY, fadeChoice, this);
+
+    function fadeChoice(){
+        _text[index].enableInput(false);
+        _choiceBg[index].enableInput(false);
+        if(targetScene) {
+            _text[index].fadeOut(_game, _game.global.gameManager.getChangeSceneSignal(), targetScene);
+        }
+        else
+            _text[index].fadeOut(_game);
+        _choiceBg[index].fadeOut(_game);
+    }
+}
+
+/***************************************************************
+Resets vaiables containing elements.
+***************************************************************/
+function ResetChoicesVariables() {
+    _text = [];
+    _choiceBg = [];
+    _question = null;
+}
+
+module.exports = {
+    init: function(game) {
+        //Singleton initialization.
+        if(_instance !== null)
+            return _instance;
+        _game = game;
+        _instance = this;
+        return _instance;
+    },
+    preload: function() {
+    },
+    create: function(choices) {
+        CreateChoices(choices);
+    },
+    endInteraction: function(lingeringChoice, targetScene) {
+        FadeChoicesExcept(lingeringChoice.index);
+        FadeChoiceAfterDelay(lingeringChoice.index, targetScene);
+    },
+    resetChoicesVariables: function() {
+        ResetChoicesVariables();
+    }
+}
+
+
+/***/ }),
+/* 27 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/***************************************************************
+Checks user's connection
+Author: Christopher Weidya
+***************************************************************/
+
+
+//initializes once
+var _instance = null;
+var _game = null;
+var _file = null;
+var _bytes = null;
+var _timer = null;
+
+const SLOW_DOWNLOAD_THRESHOLD_MBPS = 0.36;
+
+//Type of file for connection test
+var FileTypeEnum = {
+    Image: 'IMAGE',
+    Video: 'VIDEO',
+    Audio: 'AUDIO'
+}
+
+/***************************************************************
+Adds load start and on load complete functions.
+Starts load process of selected file and times it.
+***************************************************************/
+function CheckConnection() {
+    _game.load.onFileComplete.add(LoadComplete, this);
+    _game.load.onLoadStart.add(StartLoading, this);
+    _game.load.start();
+}
+
+/***************************************************************
+Creates timer.
+***************************************************************/
+function StartLoading() {
+    _timer = _game.time.create(true);
+    _timer.start();
+}
+
+/***************************************************************
+Gets connection speed and starts preload state.
+***************************************************************/
+function LoadComplete() {
+    _timer.stop();
+    SetVideoQuality(CalculateConnectionSpeed());
+    _game.load.onFileComplete.remove(LoadComplete, this);
+
+    //Starts preload state
+    _game.state.start("preload");
+}
+
+/***************************************************************
+Calculates connection speed and returns it.
+***************************************************************/
+function CalculateConnectionSpeed() {
+    var elapsedSeconds = (_timer._now - _timer._started)/1000;
+    elapsedSeconds += _timer.elapsed/1000;
+    var connectionSpeedMbps = _bytes/(elapsedSeconds)/ 1000000;
+    return connectionSpeedMbps;
+}
+
+/***************************************************************
+Decides video quality for the rest of the experience.
+***************************************************************/
+function SetVideoQuality(speed) {
+    if(speed > SLOW_DOWNLOAD_THRESHOLD_MBPS || speed < 0)
+        _game.global.quality = 'HD';
+    else
+        _game.global.quality = 'SD';
+    console.log('Connection speed: ' + speed + ' Mb/s. Quality: ' +  _game.global.quality);
+}
+
+/***************************************************************
+Prepares selected file for connection test.
+***************************************************************/
+function Load(key, src, type) {
+    switch (type) {
+        case FileTypeEnum.Image:
+            _file = _game.load.image(key, src);
+            break;
+        case FileTypeEnum.Video:
+            _file = _game.load.text(key, src);
+            break;
+        case FileTypeEnum.Audio:
+            _file = _game.load.audio(key, src);
+            break;
+        default:
+            console.warn('Not a valid file type for loading check.');
+    }
+    return _file;
+}
+
+module.exports = {
+    init: function(game) {
+        //Singleton initialization
+        if(_instance !== null)
+            return _instance;
+        _file = null;
+        _game = game;
+        _instance = this;
+        return _instance;
+    },
+    /***************************************************************
+    Prepares selected file for connection testing.
+    ***************************************************************/
+    loadFile: function(key, src, type, bytes) {
+        _bytes = bytes;
+        if(!_bytes)
+            console.warn("Error, file bytes not specified for connection testing.")
+        Load(key, src, type);
+    },
+    checkConnection: function() {
+        CheckConnection();
+    },
+    startPreload: function() {
+        StartPreloadState();
+    }
+}
+
+
+/***/ }),
+/* 28 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/***************************************************************
+Handles information image viewing interaction.
+Author: Christopher Weidya
+***************************************************************/
+
+
+//Dependencies
+const Text = __webpack_require__(4),
+    Image = __webpack_require__(3),
+    Graphic = __webpack_require__(9),
+    Utility = __webpack_require__(16);
+
+var _instance = null;
+var _game = null;
+
+//Helper variables
+var _currImage = null;
+var _heightFraction = null;
+
+//Graphic object variables
+var _overlayGraphicScrollBar = null;
+var _overlayGraphicNoScrollBar = null;
+var _overlayCloseButton = null;
+var _overlayText = null;
+var _scrollbarBg = null;
+var _scrollbarDraggable = null;
+
+//Calculate scrollbar position helper variables
+var _effectiveScrollBarHeight = 0;
+var _effectiveImageHeight = 0;
+
+
+/***************************************************************
+Creates the overlay graphic, cross button and help text.
+***************************************************************/
+function CreateInfoOverlay() {    
+    CreateOverlayGraphic();
+    CreateOverlayCrossButton();
+    CreateOverlayHelperText();
+}
+
+/***************************************************************
+Creates all overlay graphic elements.
+***************************************************************/
+function CreateOverlayGraphic() {  
+    CreateBlackOverlays();
+    CreateScrollBarBgGraphic();
+    CreateScrollBarImage();
+}
+
+/***************************************************************
+Creates black overlays.
+***************************************************************/
+function CreateBlackOverlays() {
+    //Black overlay for images that require scrollbar
+    _overlayGraphicScrollBar = new Graphic(0, 0, Graphic.getEnum().Overlay);
+    _overlayGraphicScrollBar.addGraphicToGame(_game);
+    _overlayGraphicScrollBar.changeGraphic(_game, true);
+
+    //Black overlay for images that does not require scrollbar
+    _overlayGraphicNoScrollBar = new Graphic(0, 0, Graphic.getEnum().Overlay);
+    _overlayGraphicNoScrollBar.addGraphicToGame(_game);
+    _overlayGraphicNoScrollBar.changeGraphic(_game, false);
+}
+
+/***************************************************************
+Creates background graphic for scrollbar container.
+***************************************************************/
+function CreateScrollBarBgGraphic() {
+    _scrollbarBg = new Graphic(0, 0, Graphic.getEnum().ScrollBarBackground);
+    var rectangle = Graphic.createRectangle(_game.global.constants.SCROLLBAR_POS[0], _game.global.constants.SCROLLBAR_POS[1],
+        _game.global.constants.SCROLLBAR_DIM[0], _game.global.constants.SCROLLBAR_DIM[1], 0x153b65, 0.8, 
+        _game.global.constants.SCROLLBAR_STROKEWIDTH, 0xffffff);
+    _scrollbarBg.addGraphicToGame(_game);
+    _scrollbarBg.changeGraphic(_game, rectangle);
+}
+
+/***************************************************************
+Creates draggable scrollbar image.
+***************************************************************/
+function CreateScrollBarImage() {
+    _scrollbarDraggable = new Image(_game.global.constants.SCROLLBAR_POS[0] + _game.global.constants.SCROLLBAR_DIM[0]/2
+        , _game.global.constants.SCROLLBAR_POS[1], _game.global.mapping.overlayScrollBarImageKey, Image.getEnum().OverlayScrollBar);
+    _scrollbarDraggable.addImageToGame(_game, _game.uiGroup);
+    _scrollbarDraggable.changeImage(_game, _game.global.constants.SCROLLBAR_DIM[0]);
+}
+
+/***************************************************************
+Creates cross button for overlay
+***************************************************************/
+function CreateOverlayCrossButton() {
+    _overlayCloseButton = new Image(50, 50, _game.global.mapping.overlayCloseButtonImageKey, Image.getEnum().OverlayCloseImage);
+    _overlayCloseButton.addImageToGame(_game, _game.uiGroup);
+    _overlayCloseButton.changeImage(_game);
+}
+
+/***************************************************************
+Creates helper text for images that require draggin/scollbar
+***************************************************************/
+function CreateOverlayHelperText() {
+    _overlayText = new Text('Drag the image below to scroll', _game.world.centerX, 25, Text.getEnum().InfoOverlayText, 
+        _game.global.style.questionTextProperties);
+    _overlayText.addTextToGame(_game, _game.uiGroup);
+    _overlayText.changeText(_game);
+}
+
+/***************************************************************
+Sets up scrollbar image for scrolling.
+***************************************************************/
+function InitializeScrollbar(image) {
+    //Sets position of viewed image
+    _currImage = image;
+    _currImage.setPos(_game.global.constants.INFO_VIEW_MARGIN, _game.global.constants.INFO_VIEW_MARGIN);
+
+    //Scales scrollbar depending on viewed image height
+    var _heightFraction = _game.global.constants.INFO_VIEW_HEIGHT/_currImage.getHeight();
+    _scrollbarDraggable.setHeight(_heightFraction*_game.global.constants.SCROLLBAR_DIM[1]);
+
+    //Resets position of scrollbar
+    _scrollbarDraggable.setY(_game.global.constants.SCROLLBAR_POS[1]);
+
+    //Gets range of y values that the scrollbar should take for scrolling
+    _effectiveScrollBarHeight = _game.global.constants.SCROLLBAR_DIM[1] - _scrollbarDraggable.getHeight();
+    _effectiveImageHeight = _currImage.getHeight() - _game.global.constants.INFO_VIEW_HEIGHT;
+}
+
+/***************************************************************
+Enables mousewheel for scrolling.
+***************************************************************/
+function HandleMouseWheel(enable) {
+    if(enable) {
+        _game.input.mouse.mouseWheelCallback = MouseWheel;
+    }
+    else {
+        _game.input.mouse.mouseWheelCallback = null;
+    }
+
+    //maps mousewheel to scrollbar height
+    function MouseWheel(event) {
+        var newY;
+        var delta = _game.input.mouse.wheelDelta;
+        if(delta > 0) {
+            newY = _scrollbarDraggable.getY() - _game.global.constants.SCROLLBAR_WHEEL_SENSITIVITY;
+            if(newY < _game.global.constants.INFO_VIEW_MARGIN)
+                newY = _game.global.constants.INFO_VIEW_MARGIN;
+        }
+        else if(delta < 0){
+            newY = _scrollbarDraggable.getY() + _game.global.constants.SCROLLBAR_WHEEL_SENSITIVITY;
+            if(newY > _effectiveScrollBarHeight + _game.global.constants.INFO_VIEW_MARGIN)
+                newY = _effectiveScrollBarHeight + _game.global.constants.INFO_VIEW_MARGIN;
+        }
+        _scrollbarDraggable.setY(newY);
+        ScrollBarDragUpdate();
+    }
+}
+
+/***************************************************************
+When scrollbar is dragged, updates image position.
+***************************************************************/
+function ScrollBarDragUpdate() {
+    _currImage.setY(_game.global.constants.INFO_VIEW_MARGIN - 
+        (_scrollbarDraggable.getY() - _game.global.constants.INFO_VIEW_MARGIN)/_effectiveScrollBarHeight*_effectiveImageHeight);
+}
+
+/***************************************************************
+When image is dragged, updates scrollbar position.
+***************************************************************/
+function ImageDragUpdate() {
+    _scrollbarDraggable.setY(_game.global.constants.INFO_VIEW_MARGIN - 
+        (_currImage.getY() - _game.global.constants.INFO_VIEW_MARGIN)/_effectiveImageHeight*_effectiveScrollBarHeight);
+}
+
+/***************************************************************
+Starts drag events
+***************************************************************/
+function StartDragUpdate() {
+    _scrollbarDraggable.getPhaserImage().events.onDragUpdate.add(ScrollBarDragUpdate);
+    _currImage.getPhaserImage().events.onDragUpdate.add(ImageDragUpdate);
+}
+
+/***************************************************************
+Decides which elements to set visible depending on scrollbar requirement.
+***************************************************************/
+function SetVisible(value, image) {
+    if(value && image) {
+        _overlayCloseButton.setVisible(true);
+        var scrollBarNeeded = Utility.checkIfScrollBarNeeded(_game, image.getPhaserImage());
+        if(scrollBarNeeded) {
+            this.initializeScrollbar(image);
+            _overlayText.setVisible(true);
+            _overlayGraphicScrollBar.setVisible(true);
+            _scrollbarBg.setVisible(true);
+            _scrollbarDraggable.setVisible(true);
+            HandleMouseWheel(true);
+        }
+        else {
+            _overlayGraphicNoScrollBar.setVisible(true);
+        }
+        image.bringToTop();
+        _overlayCloseButton.bringToTop();
+    }
+    else {
+        _overlayCloseButton.setVisible(false);
+        _overlayText.setVisible(false);
+        _scrollbarBg.setVisible(false);
+        _scrollbarDraggable.setVisible(false);
+        _overlayGraphicScrollBar.setVisible(false);
+        _overlayGraphicNoScrollBar.setVisible(false);
+        HandleMouseWheel(false);            
+    }
+}
+
+module.exports = {
+    //Singleton initialization
+    init: function(game) {
+        if(_instance !== null)
+            return _instance;
+        _game = game;
+        _instance = this;
+        return _instance;
+    },
+    createOverlay: function() {
+        CreateInfoOverlay();
+    },
+    initializeScrollbar: function(image) {
+        InitializeScrollbar(image);
+        StartDragUpdate();
+    },
+    setVisible: function(value, image) {
+        SetVisible.call(this, value, image);
+    }
+}
+
+
+/***/ }),
+/* 29 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/***************************************************************
+Loads input fields using phaser input extension.
+Currently unused.
+***************************************************************/
+
+
+var _instance = null;
+var _game = null;
+var _input = null;
+
+var Input = __webpack_require__(25);
+
+module.exports = {
+    init: function(game) {
+        if(_instance !== null)
+            return _instance;
+        _game = game;
+        _instance = this;
+        return _instance;
+    },
+    preload: function() {
+    },
+    create: function(input) {
+        _input = [];
+        for(var i=0; i<input.size; i++) {
+            console.log("added");
+            _input.push(new Input(input.name[i], input.coords[i][0], input.coords[i][1], input.properties[i]));
+            _input[i].addToGame(_game);
+        }
+        return _input;
+    }
+}
+
+
+/***/ }),
+/* 30 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/***************************************************************
+Creates text that appears after clicking thought bubbles.
+Author: Christopher Weidya
+***************************************************************/
+
+
+//Dependencies
+const Text = __webpack_require__(4);
+
+var _instance = null;
+var _game = null;
+
+var _text = [];
+var _currentIndex = 0;
+
+module.exports = {
+    init: function(game) {
+        if(_instance !== null)
+            return _instance;
+        _game = game;
+        _instance = this;
+        return _instance;
+    },
+    preload: function() {
+    },
+    create: function(info, coords) {
+        for(var i=0; i < info.size; i++) {
+            _text.push(new Text(info.content[i], coords[0], coords[1], Text.getEnum().Thoughts, _game.global.style.thoughtsTextProperties));
+            _text[_currentIndex].addTextToGame(_game, _game.mediaGroup);
+            _text[_currentIndex].changeText(_game, info.destination[i][0], info.destination[i][1]);
+            _currentIndex++;
+        };
+    },
+    endInteraction: function() {
+        _text.forEach(function(text) {
+            text.fadeOut(_game);
+        });
+    },
+    resetThoughtVariables: function() {
+        _text = [];
+        _currentIndex = 0;        
+    }
+}
+
+
+/***/ }),
+/* 31 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/***************************************************************
+Manu scene
+Author: Christopher Weidya
+***************************************************************/
+
+
+const Group = __webpack_require__(5),
+    Input = __webpack_require__(29),
+    Transition = __webpack_require__(6),
+    State = __webpack_require__(8),
+    Background = __webpack_require__(10),
+    Video = __webpack_require__(1),
+    Icons = __webpack_require__(13);
+
+var _instance = null;
+var _stateInfo = null;
+var _game = null;
+var _input = [];
+
+//Unused, for phaser input extension.
+function setPlayerName(game) {
+    if(_input[0])
+        return function() {game.global.playerName = _input[0].getInput().text._text;};
+    else {
+        "Input not eneabled.";
+    }
+}
+
+//Unused, for phaser input extension.
+function updatePlayerNameCallback(game) {
+    game.state.onShutDownCallback = setPlayerName(game);
+}
+
+module.exports = {
+    init: function(scene) {
+        //Sets new scene information
+        if(_stateInfo !== null)
+            _stateInfo.setStateScene(scene);
+
+        //Initializes game variables
+        Group.initializeGroups();
+
+        //Intitalize singleton variables
+        if(_instance !== null)
+            return _instance;
+        Background.init(this.game);
+        Icons.init(this.game);
+        Input.init(this.game);
+        _game = this.game;
+        _instance = this;
+        _stateInfo = new State(scene);
+        return _instance;
+    },
+    preload: function() {
+    },
+    create: function() {
+        //Unused input reset
+        _input = [];
+
+        //Creates video or background image depending on source
+        var videoSrc = _stateInfo.getMovieSrc(_game.global.quality);
+        if(videoSrc)
+            Video.create(videoSrc, _stateInfo.getTransitionInfo().fadeOut, _stateInfo.getVideoFilter());
+        else
+            Background.create(_stateInfo.getBgImageKey(), _stateInfo.getDraggable());
+
+        //Create Icons
+        Icons.createClickableIcons(_stateInfo.getIconsInfo());
+
+        //Executes when scene is of this name
+        if(_game.global.currentSceneName === _game.global.mapping.postEndingSceneName)
+            $('#userInfoModal').modal('show');
+
+        if(_stateInfo.getTransitionInfo().fadeIn)
+            this.game.global.gameManager.getFadeInTransitionSignal().dispatch();
+    },
+    shutdown: function() {
+        Icons.destroy();
+    },
+    //Unused, for phaser input extension
+    update: function() {
+        _input.forEach(function(element) {
+            element.getInput().update();
+        });
+    }
+}
+
+
+/***/ }),
+/* 32 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/***************************************************************
+Movie scene state without interaction.
+Author: Christopher Weidya
+***************************************************************/
+
+
+//Dependencies
+const Group = __webpack_require__(5),
+    UI = __webpack_require__(7),
+    Video = __webpack_require__(1),
+    State = __webpack_require__(8),
+    Background = __webpack_require__(10),
+    SceneParser = __webpack_require__(12);
+
+var _instance = null;
+var _game = null;
+var _stateInfo = null;
+
+const START_SCENE_NAME = 'startScene';
+
+/***************************************************************
+Selects movie source depending on scenes visited.
+***************************************************************/
+function GetMovieSrc(state) {
+    var SrcList = state.getSrcList();
+    var index = null;
+    if(SrcList) {
+        index = SceneParser.GetIndexOfVisitedAll(_game, SrcList[0]);
+        if(typeof(index) != 'number')
+            console.warn("No valid requirements met for movie source selection.");
+        console.log(index);
+    }
+    return state.getMovieSrc(_game.global.quality, index);
+}
+
+module.exports = {
+    init: function(scene, signal) {
+        //Sets new scene information
+        if(_stateInfo !== null)
+            _stateInfo.setStateScene(scene);
+
+        //Initialize game variables
+        Group.initializeGroups();
+
+        //Singleton variable initialization
+        if(_instance !== null)
+            return _instance;
+        Video.init(this.game, signal);
+        Background.init(this.game);
+        _stateInfo = new State(scene);
+        _game = this.game;
+        _instance = this;
+        return _instance;
+    },
+    preload: function() {
+    },
+    create: function() {
+        _game.global.soundManager.stopBackgroundMusic();
+
+        Background.create(_stateInfo.getBgImageKey(), _stateInfo.getDraggable());
+
+        Video.create(GetMovieSrc(_stateInfo), _stateInfo.getTransitionInfo().fadeOut, 
+            _stateInfo.getVideoFilter(), _stateInfo.getNextScenes(), _stateInfo.getMovieSubKey());
+
+        if(_stateInfo.getTransitionInfo().fadeIn)
+            this.game.global.gameManager.getFadeInTransitionSignal().dispatch();
+        
+        if(_game.global.currentSceneName !== _game.global.mapping.startSceneName)
+            UI.create(true, true);
+    }
+}
+
+
+/***/ }),
+/* 33 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/***************************************************************
+Utility state that selects next scene to go depending on scenes visited.
+Author: Christopher Weidya
+***************************************************************/
+
+
+
+//Dependencies
+const State = __webpack_require__(8),
+    SceneParser = __webpack_require__(12);
+
+var _instance = null;
+var _stateInfo = null;
+var _game = null;
+
+/***************************************************************
+Checks scene requirements against scenes visited and selects scene to go to.
+***************************************************************/
+function GetSceneNameFromReqs(stateInfo) {
+    var sceneReqs = stateInfo.getSceneReqs();    
+    var index = null;
+    if(sceneReqs) {
+        index = SceneParser.GetIndexOfVisitedAll(_game, sceneReqs);
+        if(typeof(index) != 'number')
+            console.warn("No valid requirements met for movie source selection.");
+        console.log(index);
+    }
+    return stateInfo.getSceneTargetNames()[index];
+}
+
+module.exports = {
+    init: function(scene, signal) {
+        //Singleton variables initialization
+        if(_stateInfo !== null)
+            _stateInfo.setStateScene(scene);
+        _stateInfo = new State(scene);
+        _instance = this;
+        _game = this.game;
+        return _instance;
+    },
+    preload: function() {
+    },
+    create: function() {
+        var targetSceneName =GetSceneNameFromReqs(_stateInfo);
+        _game.global.gameManager.getChangeSceneSignal().dispatch(targetSceneName);
+    }
+}
+
+
+/***/ }),
+/* 34 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/***************************************************************
+Game startup.
+The experience runs on Phaser v2.6.2
+Author: Christopher Weidya
+****************************************************************/
+
+
+
+//Dependencies
+const Boot = __webpack_require__(20),
+    Preload = __webpack_require__(21),
+    StateManager = __webpack_require__(15),
+    ResourceLoader = __webpack_require__(11);
+
+function initGame(Boot, Preload, StateManager, ResourceLoader) {
+    var game = new Phaser.Game(1280, 720, Phaser.CANVAS, '', { init: init, preload: preload, create: create, update: update });
+
+    /***************************************************************
+    Creates initializing states
+    ****************************************************************/
+    function init() {
+        console.log("Game initialized.");
+        game.canvas.className += "center";
+        game.canvas.id = "canvas";
+        // game.canvas.className += " orientation-landscape";
+        game.state.add("boot", Boot);
+        game.state.add("preload", Preload);
+        game.state.add("stateManager", StateManager);
+    }
+
+    /***************************************************************
+    Loads Json Files and loading images
+    ****************************************************************/
+    function preload () {
+        game.load.json('data', 'json/Data.json');        
+        game.load.json('scenes', 'json/Scenes.json');
+        game.load.json('style', 'json/Style.json');
+        game.load.image('progressSceneBackground', './Images/Loading/progress_bg.png');
+        game.load.image('progressBarFillFg', './Images/Loading/progressbar.png');
+        game.load.image('progressBarFillBg', './Images/Loading/progressbar_bg.png');
+        game.load.image('progressBarFrame', './Images/Loading/progressbar_frame.png');
+        game.load.image('progressBarText', './Images/Loading/progressbar_text.png');
+    }
+
+    /***************************************************************
+    Starts boot state
+    ****************************************************************/
+    function create() {
+        game.state.start("boot");
+    }
+
+    function update() {
+
+    }
+}
+
+initGame(Boot, Preload, StateManager, ResourceLoader);
+
+
+/***/ })
+/******/ ]);

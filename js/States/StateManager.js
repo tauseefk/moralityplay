@@ -107,7 +107,7 @@ module.exports = {
         _game.mediaGroup.removeAll();
         _game.global.visitedScenes[sceneName] = true;
         _game.global.currentSceneName = sceneName;
-        SceneTestCase();
+        //SceneTestCase();
         ChangeScene(sceneName);
     }
 }
