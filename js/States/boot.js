@@ -56,7 +56,7 @@ Sets game bg color and ensures application runs even when out of focus.
 function SetGameProperties() {
     //Ensures program runs even when browser tab is out of focus
     _game.stage.disableVisibilityChange = true;
-    _game.stage.backgroundColor = "#ffffff";
+    _game.stage.backgroundColor = "#000000";
     //Prevent multitouch issues
     _game.input.maxPointers = 1;
 }
@@ -107,7 +107,7 @@ function CreateGlobalVars() {
     _game.global.constants.SUBTITLE_SPACING = 5;
 
     //Transition constants
-    _game.global.constants.TRANSITION_COLOR = 0xFFFFFF;
+    _game.global.constants.TRANSITION_COLOR = 0x000000;
 }
 
 module.exports = {
