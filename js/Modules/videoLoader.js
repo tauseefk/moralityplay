@@ -134,6 +134,7 @@ Changes game scene.
 ***************************************************************/
 function ChangeScene(nextScene) {
    return function() {
+        _instance.clearFilterBg();
         _game.global.gameManager.getChangeSceneSignal().dispatch(nextScene);
     }
 }
