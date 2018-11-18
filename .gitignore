@@ -1,2 +1,5 @@
 phaser/
 node_modules/
+.DS_Store
+MindField*.zip
+MindField*/

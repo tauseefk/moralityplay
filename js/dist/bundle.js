@@ -3088,7 +3088,7 @@ Author: Christopher Weidya
 "use_strict";
 
 //Dependencies
-const ConnectionChecker = __webpack_require__(27), 
+const ConnectionChecker = __webpack_require__(27),
     GameManager = __webpack_require__(23),
     SoundManager = __webpack_require__(24),
     DatabaseManager = __webpack_require__(22);
@@ -3097,7 +3097,7 @@ var _instance = null
 var _game = null;
 
 const connectionTestFileKey = 'pooh',
-    connectionTestFileSrc = './Images/Loading/pooh.jpg',
+    connectionTestFileSrc = 'Images/Loading/pooh.jpg',
     connectionTestFileType = 'IMAGE',
     connectionTestFileBytes = 1576132;
 
@@ -3106,10 +3106,10 @@ Loads google webfonts before initialization.
 ****************************************************************/
 WebFontConfig = {
     //Load fonts before creation, timer delay. Can be improved  in implementation.
-    active: function() { _game.time.events.add(Phaser.Timer.SECOND, DelayedCreate, this); },
+    active: function () { _game.time.events.add(Phaser.Timer.SECOND, DelayedCreate, this); },
 
     google: {
-      families: ['Kadwa', 'Merienda One', 'Noto Sans'],
+        families: ['Kadwa', 'Merienda One', 'Noto Sans'],
     }
 };
 
@@ -3173,12 +3173,12 @@ function CreateGlobalVars() {
     _game.global.constants.VIDEO_CHECK_INTERVAL = 150;
 
     //Image information viewing constants
-    _game.global.constants.INFO_VIEW_MARGIN = 50; 
-    _game.global.constants.INFO_VIEW_HEIGHT = _game.height - _game.global.constants.INFO_VIEW_MARGIN*2;
-    _game.global.constants.SCROLLBAR_DIM = [30, _game.global.constants.INFO_VIEW_HEIGHT];    
-    _game.global.constants.INFO_VIEW_WIDTH = _game.width - _game.global.constants.INFO_VIEW_MARGIN*2 - _game.global.constants.SCROLLBAR_DIM[0];   
-    _game.global.constants.SCROLLBAR_POS = [_game.width - _game.global.constants.INFO_VIEW_MARGIN - _game.global.constants.SCROLLBAR_DIM[0], 
-        _game.global.constants.INFO_VIEW_MARGIN];
+    _game.global.constants.INFO_VIEW_MARGIN = 50;
+    _game.global.constants.INFO_VIEW_HEIGHT = _game.height - _game.global.constants.INFO_VIEW_MARGIN * 2;
+    _game.global.constants.SCROLLBAR_DIM = [30, _game.global.constants.INFO_VIEW_HEIGHT];
+    _game.global.constants.INFO_VIEW_WIDTH = _game.width - _game.global.constants.INFO_VIEW_MARGIN * 2 - _game.global.constants.SCROLLBAR_DIM[0];
+    _game.global.constants.SCROLLBAR_POS = [_game.width - _game.global.constants.INFO_VIEW_MARGIN - _game.global.constants.SCROLLBAR_DIM[0],
+    _game.global.constants.INFO_VIEW_MARGIN];
     _game.global.constants.SCROLLBAR_STROKEWIDTH = 2;
     _game.global.constants.INFO_OVERLAY_COLOR = 0x000000;
     _game.global.constants.INFO_OVERLAY_OPACITY = 0.7;
@@ -3193,21 +3193,21 @@ function CreateGlobalVars() {
 }
 
 module.exports = {
-    init: function() {
+    init: function () {
         console.log("Boot State");
-        if(_instance !== null)
+        if (_instance !== null)
             return _instance;
         ConnectionChecker.init(this.game);
         _game = this.game;
         return _instance;
     },
-    preload: function() {
+    preload: function () {
         //Tries to full screen on browser
         _game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
-        _game.load.script('webfont', '//ajax.googleapis.com/ajax/libs/webfont/1.4.7/webfont.js');
-        _game.load.image('connectionTestImage', './Images/Loading/connectionTestImage.jpg');
+        _game.load.script('webfont', 'http://ajax.googleapis.com/ajax/libs/webfont/1.4.7/webfont.js');
+        _game.load.image('connectionTestImage', 'Images/Loading/connectionTestImage.jpg');
     },
-    create: function() {
+    create: function () {
     }
 }
 
@@ -4584,15 +4584,15 @@ function initGame(Boot, Preload, StateManager, ResourceLoader) {
     /***************************************************************
     Loads Json Files and loading images
     ****************************************************************/
-    function preload () {
-        game.load.json('data', 'json/Data.json');        
+    function preload() {
+        game.load.json('data', 'json/Data.json');
         game.load.json('scenes', 'json/Scenes.json');
         game.load.json('style', 'json/Style.json');
-        game.load.image('progressSceneBackground', './Images/Loading/progress_bg.png');
-        game.load.image('progressBarFillFg', './Images/Loading/progressbar.png');
-        game.load.image('progressBarFillBg', './Images/Loading/progressbar_bg.png');
-        game.load.image('progressBarFrame', './Images/Loading/progressbar_frame.png');
-        game.load.image('progressBarText', './Images/Loading/progressbar_text.png');
+        game.load.image('progressSceneBackground', 'Images/Loading/progress_bg.png');
+        game.load.image('progressBarFillFg', 'Images/Loading/progressbar.png');
+        game.load.image('progressBarFillBg', 'Images/Loading/progressbar_bg.png');
+        game.load.image('progressBarFrame', 'Images/Loading/progressbar_frame.png');
+        game.load.image('progressBarText', 'Images/Loading/progressbar_text.png');
     }
 
     /***************************************************************
