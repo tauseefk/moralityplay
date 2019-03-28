@@ -1,0 +1,27 @@
+{
+  "name": "morality-play-2017",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js",
+    "build": "webpack --env.target production",
+    "build:mac": "electron-packager . MindField --name=MindField --platform=darwin --arch=x64 --overwrite --version-string.ProductName=Mind-Field"
+  },
+  "author": "tauseefk",
+  "license": "ISC",
+  "devDependencies": {
+    "electron": "^3.0.9",
+    "electron-packager": "^12.2.0"
+  },
+  "dependencies": {
+    "body-parser": "^1.17.1",
+    "cors": "^2.8.3",
+    "express": "^4.14.1",
+    "mongodb": "^2.2.26",
+    "script-loader": "^0.7.0",
+    "uuid": "^3.0.1",
+    "webpack": "^2.2.1"
+  }
+}
