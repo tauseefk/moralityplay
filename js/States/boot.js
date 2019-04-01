@@ -122,7 +122,7 @@ module.exports = {
     preload: function () {
         //Tries to full screen on browser
         _game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
-        _game.load.script('webfont', 'http://ajax.googleapis.com/ajax/libs/webfont/1.4.7/webfont.js');
+        _game.load.script('webfont', 'https://ajax.googleapis.com/ajax/libs/webfont/1.4.7/webfont.js');
         _game.load.image('connectionTestImage', 'Images/Loading/connectionTestImage.jpg');
     },
     create: function () {
