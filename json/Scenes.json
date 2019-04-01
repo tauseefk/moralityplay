@@ -45,8 +45,8 @@
                     null
                 ]
             ],
-            "movieSrcHD": "Videos/Intro_optimized.mp4",
-            "movieSrcSD": "Videos/Intro_optimized_lo.mp4",
+            "movieSrcHD": "Videos/intro_optimized.mp4",
+            "movieSrcSD": "Videos/intro_optimized_lo.mp4",
             "sub": "introScenesub",
             "stateType": "InteractState",
             "transition": {
